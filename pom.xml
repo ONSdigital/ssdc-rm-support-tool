@@ -153,7 +153,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <executable>true</executable>
-          <mainClass>uk.gov.ons.census.caseapisvc.Application</mainClass>
+          <mainClass>uk.gov.ons.ssdc.supporttool.Application</mainClass>
         </configuration>
         <executions>
           <execution>
@@ -174,7 +174,7 @@
             </goals>
             <phase>package</phase>
             <configuration>
-              <repository>eu.gcr.io/census-rm-ci/rm/${project.artifactId}</repository>
+              <repository>eu.gcr.io/ssdc-rm-ci/rm/${project.artifactId}</repository>
               <buildArgs>
                 <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
               </buildArgs>
