@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Button, Dialog, DialogContent, TextField, Paper } from '@material-ui/core';
+import { Button, Dialog, DialogContent, TextField, Paper, Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -96,6 +96,9 @@ class SurveyDetails extends Component {
 
     return (
       <div style={{ padding: 20 }}>
+        <Typography variant="h4" color="inherit" style={{marginBottom: 20}}>
+          Survey: {this.props.surveyName}
+        </Typography>
         <Button variant="contained" onClick={this.openDialog}>Create Collection Exercise</Button>
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>

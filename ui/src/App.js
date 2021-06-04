@@ -6,26 +6,34 @@ import CollectionExerciseDetails from './CollectionExerciseDetails'
 
 class App extends Component {
   state = {
-    selectedSurvey: null,
-    selectedCollex: null
+    selectedSurveyId: null,
+    selectedSurveyName: '',
+    selectedCollexId: null,
+    selectedCollexName: ''
   }
 
   onOpenSurveyDetails = (survey) => {
     const surveyId = survey._links.self.href.split('/')[4]
-    this.setState({ selectedSurvey: surveyId })
-  }
-
-  onBackToSurveys = () => {
-    this.setState({ selectedSurvey: null })
-  }
-
-  onBackToCollectionExercises = () => {
-    this.setState({ selectedCollex: null })
+    this.setState({
+      selectedSurveyId: surveyId,
+      selectedSurveyName: survey.name
+    })
   }
 
   onOpenCollectionExercise = (collectionExercise) => {
     const collexId = collectionExercise._links.self.href.split('/')[4]
-    this.setState({ selectedCollex: collexId })
+    this.setState({
+      selectedCollexId: collexId,
+      selectedCollexName: collectionExercise.name
+    })
+  }
+
+  onBackToSurveys = () => {
+    this.setState({ selectedSurveyId: null })
+  }
+
+  onBackToCollectionExercises = () => {
+    this.setState({ selectedCollexId: null })
   }
 
   render() {
@@ -38,21 +46,24 @@ class App extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        {!this.state.selectedSurvey &&
+        {!this.state.selectedSurveyId &&
           <Surveys onOpenSurveyDetails={this.onOpenSurveyDetails} />
         }
-        {this.state.selectedSurvey && !this.state.selectedCollex &&
+        {this.state.selectedSurveyId && !this.state.selectedCollexId &&
           <div>
             <Button onClick={this.onBackToSurveys}>Back</Button>
             <SurveyDetails
-              surveyId={this.state.selectedSurvey}
+              surveyId={this.state.selectedSurveyId}
+              surveyName={this.state.selectedSurveyName}
               onOpenCollectionExercise={this.onOpenCollectionExercise} />
           </div>
         }
-        {this.state.selectedCollex &&
+        {this.state.selectedCollexId &&
           <div>
             <Button onClick={this.onBackToCollectionExercises}>Back</Button>
-            <CollectionExerciseDetails collectionExerciseId={this.state.selectedCollex} />
+            <CollectionExerciseDetails
+              collectionExerciseId={this.state.selectedCollexId}
+              collectionExerciseName={this.state.selectedCollexName} />
           </div>
         }
       </Box>

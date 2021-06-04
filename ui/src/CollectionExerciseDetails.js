@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Button, Dialog, DialogContent, TextField, Paper, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
+import { Button, Dialog, DialogContent, TextField, Paper, Select, MenuItem, FormControl, InputLabel, Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -110,6 +110,9 @@ class CollectionExerciseDetails extends Component {
 
     return (
       <div style={{ padding: 20 }}>
+        <Typography variant="h4" color="inherit" style={{marginBottom: 20}}>
+          Collection Exercise: {this.props.collectionExerciseName}
+        </Typography>
         <Button variant="contained" onClick={this.openDialog}>Create Wave of Contact</Button>
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
