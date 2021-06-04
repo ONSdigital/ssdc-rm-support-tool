@@ -41,7 +41,8 @@ class CollectionExerciseDetails extends Component {
     this.setState({
       newWaveOfContactPrintSupplier: '',
       validationError: false,
-      createWaveOfContactsDialogDisplayed: true
+      createWaveOfContactsDialogDisplayed: true,
+      newWaveOfContactTriggerDate: this.getTimeNowForDateTimePicker()
     })
   }
 
@@ -57,6 +58,10 @@ class CollectionExerciseDetails extends Component {
     })
   }
 
+  onNewWaveOfTriggerDateChange = (event) => {
+    this.setState({ newWaveOfContactTriggerDate: event.target.value })
+  }
+
   onCreateWaveOfContact = async () => {
     if (!this.state.newWaveOfContactPrintSupplier.trim()) {
       this.setState({ validationError: true })
@@ -66,7 +71,7 @@ class CollectionExerciseDetails extends Component {
     const newWaveOfContact = {
       id: uuidv4(),
       type: 'PRINT',
-      triggerDateTime: '2021-01-01T00:00:00.000Z',
+      triggerDateTime: new Date(this.state.newWaveOfContactTriggerDate).toISOString(),
       hasTriggered: false,
       classifiers: '1=2',
       template: ['__caseref__', '__uac__', '__qid__'],
@@ -82,6 +87,12 @@ class CollectionExerciseDetails extends Component {
     })
 
     this.setState({ createWaveOfContactsDialogDisplayed: false })
+  }
+
+  getTimeNowForDateTimePicker = () => {
+    var dateNow = new Date()
+    dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset())
+    return dateNow.toJSON().slice(0, 16)
   }
 
   render() {
@@ -110,7 +121,7 @@ class CollectionExerciseDetails extends Component {
 
     return (
       <div style={{ padding: 20 }}>
-        <Typography variant="h4" color="inherit" style={{marginBottom: 20}}>
+        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Collection Exercise: {this.props.collectionExerciseName}
         </Typography>
         <Button variant="contained" onClick={this.openDialog}>Create Wave of Contact</Button>
@@ -137,9 +148,7 @@ class CollectionExerciseDetails extends Component {
               <div>
                 <FormControl>
                   <InputLabel>Type</InputLabel>
-                  <Select
-                    value={'PRINT'}
-                  >
+                  <Select value={'PRINT'}>
                     <MenuItem value={'PRINT'}>PRINT</MenuItem>
                     <MenuItem value={'FACE_TO_FACE'}>FACE-TO-FACE</MenuItem>
                     <MenuItem value={'OUTBOUND_PHONE'}>OUTBOUND PHONE</MenuItem>
@@ -149,15 +158,14 @@ class CollectionExerciseDetails extends Component {
                   required
                   fullWidth={true}
                   error={this.state.validationError}
-                  id="standard-required"
                   label="Print Supplier"
                   onChange={this.onNewWaveOfContactPrintSupplierChange}
                   value={this.state.newWaveOfContactPrintSupplier} />
                 <TextField
-                  id="datetime-local"
                   label="Trigger date"
                   type="datetime-local"
-                  defaultValue={new Date()}
+                  value={this.state.newWaveOfContactTriggerDate}
+                  onChange={this.onNewWaveOfTriggerDateChange}
                   style={{ marginTop: 20 }}
                   InputLabelProps={{
                     shrink: true,
