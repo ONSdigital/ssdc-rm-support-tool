@@ -13,8 +13,10 @@ class CollectionExerciseDetails extends Component {
   state = {
     waveOfContacts: [],
     createWaveOfContactsDialogDisplayed: false,
-    validationError: false,
-    newWaveOfContactPrintSupplier: ''
+    printSupplierValidationError: false,
+    packCodeValidationError: false,
+    newWaveOfContactPrintSupplier: '',
+    newWaveOfContactPackCode: ''
   }
 
   componentDidMount() {
@@ -40,7 +42,9 @@ class CollectionExerciseDetails extends Component {
   openDialog = () => {
     this.setState({
       newWaveOfContactPrintSupplier: '',
-      validationError: false,
+      printSupplierValidationError: false,
+      newWaveOfContactPackCode: '',
+      packCodeValidationError: false,
       createWaveOfContactsDialogDisplayed: true,
       newWaveOfContactTriggerDate: this.getTimeNowForDateTimePicker()
     })
@@ -53,8 +57,16 @@ class CollectionExerciseDetails extends Component {
   onNewWaveOfContactPrintSupplierChange = (event) => {
     const resetValidation = !event.target.value.trim()
     this.setState({
-      validationError: resetValidation,
+      printSupplierValidationError: resetValidation,
       newWaveOfContactPrintSupplier: event.target.value
+    })
+  }
+
+  onNewWaveOfContactPackCodeChange = (event) => {
+    const resetValidation = !event.target.value.trim()
+    this.setState({
+      packCodeValidationError: resetValidation,
+      newWaveOfContactPackCode: event.target.value
     })
   }
 
@@ -63,8 +75,19 @@ class CollectionExerciseDetails extends Component {
   }
 
   onCreateWaveOfContact = async () => {
+    var failedValidation = false
+
     if (!this.state.newWaveOfContactPrintSupplier.trim()) {
-      this.setState({ validationError: true })
+      this.setState({ printSupplierValidationError: true })
+      failedValidation = true
+    }
+
+    if (!this.state.newWaveOfContactPackCode.trim()) {
+      this.setState({ packCodeValidationError: true })
+      failedValidation = true
+    }
+
+    if (failedValidation) {
       return
     }
 
@@ -75,7 +98,7 @@ class CollectionExerciseDetails extends Component {
       hasTriggered: false,
       classifiers: '1=2',
       template: ['__caseref__', '__uac__', '__qid__'],
-      packCode: 'DUMMY_PACK',
+      packCode: this.state.newWaveOfContactPackCode,
       printSupplier: this.state.newWaveOfContactPrintSupplier,
       collectionExercise: 'collectionExercises/' + this.props.collectionExerciseId
     }
@@ -159,12 +182,21 @@ class CollectionExerciseDetails extends Component {
                 <TextField
                   required
                   fullWidth={true}
-                  error={this.state.validationError}
+                  style={{ marginTop: 20 }}
+                  error={this.state.printSupplierValidationError}
                   label="Print Supplier"
                   onChange={this.onNewWaveOfContactPrintSupplierChange}
                   value={this.state.newWaveOfContactPrintSupplier} />
                 <TextField
-                  label="Trigger date"
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.packCodeValidationError}
+                  label="Pack Code"
+                  onChange={this.onNewWaveOfContactPackCodeChange}
+                  value={this.state.newWaveOfContactPackCode} />
+                <TextField
+                  label="Trigger Date"
                   type="datetime-local"
                   value={this.state.newWaveOfContactTriggerDate}
                   onChange={this.onNewWaveOfTriggerDateChange}
