@@ -75,7 +75,9 @@ class SurveyDetails extends Component {
       body: JSON.stringify(newCollectionExercise)
     })
 
-    this.setState({ createCollectionExerciseDialogDisplayed: false })
+    if (response.ok) {
+      this.setState({ createCollectionExerciseDialogDisplayed: false })
+    }
   }
 
   render() {
@@ -96,7 +98,7 @@ class SurveyDetails extends Component {
 
     return (
       <div style={{ padding: 20 }}>
-        <Typography variant="h4" color="inherit" style={{marginBottom: 20}}>
+        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Survey: {this.props.surveyName}
         </Typography>
         <Button variant="contained" onClick={this.openDialog}>Create Collection Exercise</Button>

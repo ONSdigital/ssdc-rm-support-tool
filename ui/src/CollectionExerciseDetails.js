@@ -86,7 +86,9 @@ class CollectionExerciseDetails extends Component {
       body: JSON.stringify(newWaveOfContact)
     })
 
-    this.setState({ createWaveOfContactsDialogDisplayed: false })
+    if (response.ok) {
+      this.setState({ createWaveOfContactsDialogDisplayed: false })
+    }
   }
 
   getTimeNowForDateTimePicker = () => {
