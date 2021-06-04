@@ -82,7 +82,7 @@ class SurveyDetails extends Component {
     const collectionExerciseTableRows = this.state.collectionExercises.map(collex => (
       <TableRow key={collex.name}>
         <TableCell component="th" scope="row">
-        {collex.name}
+          {collex.name}
         </TableCell>
         <TableCell align="right">
           <Button
@@ -95,9 +95,9 @@ class SurveyDetails extends Component {
     ))
 
     return (
-      <div style={{padding: 20}}>
+      <div style={{ padding: 20 }}>
         <Button variant="contained" onClick={this.openDialog}>Create Collection Exercise</Button>
-        <TableContainer component={Paper} style={{marginTop: 20}}>
+        <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>
               <TableRow>

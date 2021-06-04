@@ -81,7 +81,7 @@ class Surveys extends Component {
     const surveyTableRows = this.state.surveys.map(survey => (
       <TableRow key={survey.name}>
         <TableCell component="th" scope="row">
-        {survey.name}
+          {survey.name}
         </TableCell>
         <TableCell align="right">
           <Button
@@ -94,9 +94,9 @@ class Surveys extends Component {
     ))
 
     return (
-      <div style={{padding: 20}}>
+      <div style={{ padding: 20 }}>
         <Button variant="contained" onClick={this.openDialog}>Create Survey</Button>
-        <TableContainer component={Paper} style={{marginTop: 20}}>
+        <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>
               <TableRow>

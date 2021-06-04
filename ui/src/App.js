@@ -52,7 +52,7 @@ class App extends Component {
         {this.state.selectedCollex &&
           <div>
             <Button onClick={this.onBackToCollectionExercises}>Back</Button>
-          <CollectionExerciseDetails collectionExerciseId={this.state.selectedCollex} />
+            <CollectionExerciseDetails collectionExerciseId={this.state.selectedCollex} />
           </div>
         }
       </Box>

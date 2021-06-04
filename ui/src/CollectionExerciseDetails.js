@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Button, Dialog, DialogContent, TextField, Paper } from '@material-ui/core';
+import { Button, Dialog, DialogContent, TextField, Paper, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -88,39 +88,39 @@ class CollectionExerciseDetails extends Component {
     const waveOfContactTableRows = this.state.waveOfContacts.map((woc, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
-        {woc.type}
+          {woc.type}
         </TableCell>
         <TableCell component="th" scope="row">
-        {woc.triggerDateTime}
+          {woc.triggerDateTime}
         </TableCell>
         <TableCell component="th" scope="row">
-        {woc.classifiers}
+          {woc.classifiers}
         </TableCell>
         <TableCell component="th" scope="row">
-        {woc.template}
+          {woc.template}
         </TableCell>
         <TableCell component="th" scope="row">
-        {woc.printSupplier}
+          {woc.printSupplier}
         </TableCell>
         <TableCell component="th" scope="row">
-        {woc.packCode}
+          {woc.packCode}
         </TableCell>
       </TableRow>
     ))
 
     return (
-      <div style={{padding: 20}}>
+      <div style={{ padding: 20 }}>
         <Button variant="contained" onClick={this.openDialog}>Create Wave of Contact</Button>
-        <TableContainer component={Paper} style={{marginTop: 20}}>
+        <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>
               <TableRow>
-              <TableCell>Type</TableCell>
-              <TableCell>Trigger date</TableCell>
-              <TableCell>Classifiers</TableCell>
-              <TableCell>Template</TableCell>
-              <TableCell>Print Supplier</TableCell>
-              <TableCell>Pack Code</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Trigger date</TableCell>
+                <TableCell>Classifiers</TableCell>
+                <TableCell>Template</TableCell>
+                <TableCell>Print Supplier</TableCell>
+                <TableCell>Pack Code</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -132,6 +132,16 @@ class CollectionExerciseDetails extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
+                <FormControl>
+                  <InputLabel>Type</InputLabel>
+                  <Select
+                    value={'PRINT'}
+                  >
+                    <MenuItem value={'PRINT'}>PRINT</MenuItem>
+                    <MenuItem value={'FACE_TO_FACE'}>FACE-TO-FACE</MenuItem>
+                    <MenuItem value={'OUTBOUND_PHONE'}>OUTBOUND PHONE</MenuItem>
+                  </Select>
+                </FormControl>
                 <TextField
                   required
                   fullWidth={true}
@@ -140,6 +150,15 @@ class CollectionExerciseDetails extends Component {
                   label="Print Supplier"
                   onChange={this.onNewWaveOfContactPrintSupplierChange}
                   value={this.state.newWaveOfContactPrintSupplier} />
+                <TextField
+                  id="datetime-local"
+                  label="Trigger date"
+                  type="datetime-local"
+                  defaultValue={new Date()}
+                  style={{ marginTop: 20 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }} />
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button onClick={this.onCreateWaveOfContact} variant="contained" style={{ margin: 10 }}>
