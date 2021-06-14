@@ -48,7 +48,7 @@ public class RowChunkProcessor {
         rabbitTemplate.convertAndSend(
             job.getBulkProcess().getTargetExchange(),
             job.getBulkProcess().getTargetRoutingKey(),
-            job.getBulkProcess().getTransformer().transformRow(jobRow.getRowData()));
+            job.getBulkProcess().getTransformer().transformRow(jobRow.getRowData(), job));
       }
 
       jobRow.setValidationErrorDescriptions(String.join(", ", rowValidationErrors));

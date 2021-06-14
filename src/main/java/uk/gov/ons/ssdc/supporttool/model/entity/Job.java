@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,6 +23,8 @@ public class Job {
   @Enumerated(EnumType.STRING)
   @Column
   private BulkProcess bulkProcess;
+
+  @ManyToOne private CollectionExercise collectionExercise;
 
   @Column(columnDefinition = "timestamp with time zone")
   @CreationTimestamp

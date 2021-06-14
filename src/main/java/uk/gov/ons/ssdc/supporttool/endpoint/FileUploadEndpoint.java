@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.supporttool.model.entity.BulkProcess;
+import uk.gov.ons.ssdc.supporttool.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
+import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
@@ -24,20 +27,32 @@ public class FileUploadEndpoint {
 
   private final JobRepository jobRepository;
   private final UserIdentity userIdentity;
+  private final CollectionExerciseRepository collectionExerciseRepository;
 
-  public FileUploadEndpoint(JobRepository jobRepository, UserIdentity userIdentity) {
+  public FileUploadEndpoint(
+      JobRepository jobRepository,
+      UserIdentity userIdentity,
+      CollectionExerciseRepository collectionExerciseRepository) {
     this.jobRepository = jobRepository;
     this.userIdentity = userIdentity;
+    this.collectionExerciseRepository = collectionExerciseRepository;
   }
 
   @PostMapping("/upload")
   public ResponseEntity<?> handleFileUpload(
       @RequestParam("file") MultipartFile file,
-      @RequestParam(value = "bulkProcess", required = false, defaultValue = "REFUSAL")
+      @RequestParam(value = "bulkProcess", required = false, defaultValue = "SAMPLE")
           BulkProcess bulkProcess,
+      @RequestParam(value = "collectionExerciseId") UUID collectionExerciseId,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
     if (!userIdentity.getBulkProcesses(jwtToken).contains(bulkProcess)) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
+    }
+
+    Optional<CollectionExercise> collexOpt =
+        collectionExerciseRepository.findById(collectionExerciseId);
+    if (!collexOpt.isPresent()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
     UUID fileId = UUID.randomUUID();
@@ -52,6 +67,7 @@ public class FileUploadEndpoint {
       job.setFileId(fileId);
       job.setJobStatus(JobStatus.FILE_UPLOADED);
       job.setCreatedBy(userIdentity.getUserEmail(jwtToken));
+      job.setCollectionExercise(collexOpt.get());
 
       int rowCount = 0;
       while (reader.ready()) {
