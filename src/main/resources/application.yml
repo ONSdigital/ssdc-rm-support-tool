@@ -1,0 +1,52 @@
+server:
+  port: 9999
+
+info:
+  app:
+    name: Support Tool
+    version: 1.0
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:6432/postgres?readOnly=true
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+    initialization-mode: always
+    hikari:
+      maximumPoolSize: 50
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: casev3
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+logging:
+  level:
+    ROOT: INFO
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: info, health
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+  metrics:
+    tags:
+      application: Support Tool
+      pod: ${HOSTNAME}
+    export:
+      stackdriver:
+        project-id: dummy-project-id
+        enabled: false
+        step: PT1M
