@@ -122,7 +122,7 @@ class CollectionExerciseDetails extends Component {
   }
 
   handleOpenDetails = (job) => {
-    this.setState({ showDetails: true, selectedJob: job.id })
+    this.setState({ showDetails: true, selectedJob: job.fileId })
   }
 
   handleClosedDetails = () => {
@@ -135,6 +135,10 @@ class CollectionExerciseDetails extends Component {
       printSupplierValidationError: false,
       newWaveOfContactPackCode: '',
       packCodeValidationError: false,
+      newWaveOfContactClassifiers: '',
+      classifiersValidationError: false,
+      newWaveOfContactTemplate: '',
+      templateValidationError: false,
       createWaveOfContactsDialogDisplayed: true,
       newWaveOfContactTriggerDate: this.getTimeNowForDateTimePicker()
     })
@@ -244,7 +248,7 @@ class CollectionExerciseDetails extends Component {
   }
 
   render() {
-    const selectedJob = this.state.jobs.find(job => job.id === this.state.selectedJob)
+    const selectedJob = this.state.jobs.find(job => job.fileId === this.state.selectedJob)
 
     const jobTableRows = this.state.jobs.map((job, index) => (
       <TableRow key={job.createdAt}>
