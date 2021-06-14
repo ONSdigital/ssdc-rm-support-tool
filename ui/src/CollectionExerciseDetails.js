@@ -17,8 +17,13 @@ class CollectionExerciseDetails extends Component {
     createWaveOfContactsDialogDisplayed: false,
     printSupplierValidationError: false,
     packCodeValidationError: false,
+    packCodeValidationError: false,
+    classifiersValidationError: false,
+    templateValidationError: false,
     newWaveOfContactPrintSupplier: '',
     newWaveOfContactPackCode: '',
+    newWaveOfContactClassifiers: '',
+    newWaveOfContactTemplate: '',
     jobs: [],
     fileProgress: 0,  // Percentage of the file uploaded
     fileUploadSuccess: false, // Flag to flash the snackbar message on the screen, when file uploads successfully
@@ -155,6 +160,22 @@ class CollectionExerciseDetails extends Component {
     })
   }
 
+  onNewWaveOfContactClassifiersChange = (event) => {
+    const resetValidation = !event.target.value.trim()
+    this.setState({
+      classifiersValidationError: resetValidation,
+      newWaveOfContactClassifiers: event.target.value
+    })
+  }
+
+  onNewWaveOfContactTemplateChange = (event) => {
+    const resetValidation = !event.target.value.trim()
+    this.setState({
+      templateValidationError: resetValidation,
+      newWaveOfContactTemplate: event.target.value
+    })
+  }
+
   onNewWaveOfTriggerDateChange = (event) => {
     this.setState({ newWaveOfContactTriggerDate: event.target.value })
   }
@@ -172,6 +193,23 @@ class CollectionExerciseDetails extends Component {
       failedValidation = true
     }
 
+    if (!this.state.newWaveOfContactClassifiers.trim()) {
+      this.setState({ classifiersValidationError: true })
+      failedValidation = true
+    }
+
+    if (!this.state.newWaveOfContactTemplate.trim()) {
+      this.setState({ templateValidationError: true })
+      failedValidation = true
+    } else {
+      try {
+        JSON.parse(this.state.newWaveOfContactTemplate)
+      } catch(err) {
+        this.setState({ templateValidationError: true })
+        failedValidation = true
+        }
+    }
+
     if (failedValidation) {
       return
     }
@@ -181,8 +219,8 @@ class CollectionExerciseDetails extends Component {
       type: 'PRINT',
       triggerDateTime: new Date(this.state.newWaveOfContactTriggerDate).toISOString(),
       hasTriggered: false,
-      classifiers: '1=2',
-      template: ['__caseref__', '__uac__', '__qid__'],
+      classifiers: this.state.newWaveOfContactClassifiers,
+      template: JSON.parse(this.state.newWaveOfContactTemplate),
       packCode: this.state.newWaveOfContactPackCode,
       printSupplier: this.state.newWaveOfContactPrintSupplier,
       collectionExercise: 'collectionExercises/' + this.props.collectionExerciseId
@@ -356,6 +394,22 @@ class CollectionExerciseDetails extends Component {
                   label="Pack Code"
                   onChange={this.onNewWaveOfContactPackCodeChange}
                   value={this.state.newWaveOfContactPackCode} />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.classifiersValidationError}
+                  label="Classifiers"
+                  onChange={this.onNewWaveOfContactClassifiersChange}
+                  value={this.state.newWaveOfContactClassifiers} />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.templateValidationError}
+                  label="Template"
+                  onChange={this.onNewWaveOfContactTemplateChange}
+                  value={this.state.newWaveOfContactTemplate} />
                 <TextField
                   label="Trigger Date"
                   type="datetime-local"
