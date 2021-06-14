@@ -208,10 +208,10 @@ class CollectionExerciseDetails extends Component {
     } else {
       try {
         JSON.parse(this.state.newWaveOfContactTemplate)
-      } catch(err) {
+      } catch (err) {
         this.setState({ templateValidationError: true })
         failedValidation = true
-        }
+      }
     }
 
     if (failedValidation) {
