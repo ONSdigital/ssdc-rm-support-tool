@@ -14,8 +14,8 @@ public enum BulkProcess {
       new String[] {"ADDRESS_LINE1", "ADDRESS_LINE2", "ADDRESS_LINE3", "TOWN_NAME", "POSTCODE"},
       new ColumnValidator[] {
         new ColumnValidator("ADDRESS_LINE1", new Rule[] {new MandatoryRule(), new LengthRule(60)}),
-        new ColumnValidator("ADDRESS_LINE2", new Rule[] {new MandatoryRule()}),
-        new ColumnValidator("ADDRESS_LINE3", new Rule[] {new MandatoryRule()}),
+        new ColumnValidator("ADDRESS_LINE2", new Rule[] {new LengthRule(60)}),
+        new ColumnValidator("ADDRESS_LINE3", new Rule[] {new LengthRule(60)}),
         new ColumnValidator("POSTCODE", new Rule[] {new MandatoryRule(), new AlphanumericRule()}),
         new ColumnValidator("TOWN_NAME", new Rule[] {new MandatoryRule()})
       },
