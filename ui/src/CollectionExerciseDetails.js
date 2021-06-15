@@ -7,9 +7,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { uuidv4, convertStatusText } from './common'
-import axios from 'axios';
-import JobDetails from './JobDetails';
+import { uuidv4 } from './common'
+import SampleUpload from "./SampleUpload";
+
 
 class CollectionExerciseDetails extends Component {
   state = {
@@ -17,101 +17,25 @@ class CollectionExerciseDetails extends Component {
     createWaveOfContactsDialogDisplayed: false,
     printSupplierValidationError: false,
     packCodeValidationError: false,
-    packCodeValidationError: false,
     classifiersValidationError: false,
     templateValidationError: false,
     newWaveOfContactPrintSupplier: '',
     newWaveOfContactPackCode: '',
     newWaveOfContactClassifiers: '',
     newWaveOfContactTemplate: '',
-    jobs: [],
-    fileProgress: 0,  // Percentage of the file uploaded
-    fileUploadSuccess: false, // Flag to flash the snackbar message on the screen, when file uploads successfully
-    uploadInProgress: false, // Flag to display the file upload progress modal dialog
-    showDetails: false // Flag to display the job details dialog
   }
 
   componentDidMount() {
-    this.getStuffFromBackend()
+    this.getWaveOfContacts()
 
     this.interval = setInterval(
-      () => this.getStuffFromBackend(),
+      () => this.getWaveOfContacts(),
       1000
     )
   }
 
-  getStuffFromBackend() {
-    this.getJobs()
-    this.getWaveOfContacts()
-  }
-
   componentWillUnmount() {
     clearInterval(this.interval)
-  }
-
-  handleUpload = (e) => {
-    if (e.target.files.length === 0) {
-      return
-    }
-
-    // Display the progress modal dialog
-    this.setState({
-      uploadInProgress: true,
-    })
-
-    const formData = new FormData();
-    formData.append("file", e.target.files[0]);
-    formData.append("bulkProcess", 'SAMPLE')
-    formData.append("collectionExerciseId", this.props.collectionExerciseId)
-
-    // Reset the file
-    e.target.value = null;
-
-    // Send the file data to the backend
-    axios.request({
-      method: "post",
-      url: "/upload",
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      onUploadProgress: (p) => {
-        console.log(p);
-
-        // Update file upload progress
-        this.setState({
-          fileProgress: p.loaded / p.total
-        })
-      }
-
-    }).then(data => {
-      // Hide the progress dialog and flash the snackbar message
-      this.setState({
-        fileProgress: 1.0,
-        fileUploadSuccess: true,
-        uploadInProgress: false,
-      })
-
-      this.getJobs()
-    })
-  }
-
-  handleClose = (event, reason) => {
-    // Ignore clickaways so that the dialog is modal
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({
-      fileUploadSuccess: false,
-    })
-  }
-
-  getJobs = async () => {
-    const response = await fetch('/collectionExercises/' + this.props.collectionExerciseId + '/jobs')
-    const jobs_json = await response.json()
-
-    this.setState({ jobs: jobs_json._embedded.jobs })
   }
 
   getWaveOfContacts = async () => {
@@ -119,14 +43,6 @@ class CollectionExerciseDetails extends Component {
     const woc_json = await response.json()
 
     this.setState({ waveOfContacts: woc_json._embedded.waveOfContacts })
-  }
-
-  handleOpenDetails = (job) => {
-    this.setState({ showDetails: true, selectedJob: job.fileId })
-  }
-
-  handleClosedDetails = () => {
-    this.setState({ showDetails: false })
   }
 
   openDialog = () => {
@@ -248,24 +164,6 @@ class CollectionExerciseDetails extends Component {
   }
 
   render() {
-    const selectedJob = this.state.jobs.find(job => job.fileId === this.state.selectedJob)
-
-    const jobTableRows = this.state.jobs.map((job, index) => (
-      <TableRow key={job.createdAt}>
-        <TableCell component="th" scope="row">
-          {job.fileName}
-        </TableCell>
-        <TableCell>{job.createdAt}</TableCell>
-        <TableCell align="right">
-          <Button
-            onClick={() => this.handleOpenDetails(job)}
-            variant="contained">
-            {convertStatusText(job.jobStatus)} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} style={{ marginLeft: 10 }} />}
-          </Button>
-        </TableCell>
-      </TableRow>
-    ))
-
     const waveOfContactTableRows = this.state.waveOfContacts.map((woc, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
@@ -312,64 +210,7 @@ class CollectionExerciseDetails extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <div style={{ marginTop: 20 }}>
-          <input
-            accept=".csv"
-            style={{ display: 'none' }}
-            id="contained-button-file"
-            type="file"
-            onChange={(e) => {
-              this.handleUpload(e)
-            }}
-          />
-          <label htmlFor="contained-button-file">
-            <Button variant="contained" component="span">
-              Upload Sample File
-              </Button>
-          </label>
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>File Name</TableCell>
-                  <TableCell>Date Uploaded</TableCell>
-                  <TableCell align="right">Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {jobTableRows}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Dialog open={this.state.uploadInProgress}>
-            <DialogContent style={{ padding: 30 }}>
-              <Typography variant="h6" color="inherit">
-                Uploading file...
-            </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={this.state.fileProgress * 100}
-                style={{ marginTop: 20, marginBottom: 20, width: 400 }} />
-              <Typography variant="h6" color="inherit">
-                {Math.round(this.state.fileProgress * 100)}%
-          </Typography>
-            </DialogContent>
-          </Dialog>
-          <Snackbar
-            open={this.state.fileUploadSuccess}
-            autoHideDuration={6000}
-            onClose={this.handleClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}>
-            <SnackbarContent style={{ backgroundColor: '#4caf50' }}
-              message={'File upload successful!'}
-            />
-          </Snackbar>
-          <JobDetails jobTitle={'Sample'} job={selectedJob} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails} onClickAway={this.handleClosedDetails}>
-          </JobDetails>
-        </div>
+          <SampleUpload collectionExerciseId={this.props.collectionExerciseId}></SampleUpload>
         <Dialog open={this.state.createWaveOfContactsDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
