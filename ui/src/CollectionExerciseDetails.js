@@ -123,7 +123,21 @@ class CollectionExerciseDetails extends Component {
       failedValidation = true
     } else {
       try {
-        JSON.parse(this.state.newWaveOfContactTemplate)
+        const parsedJson = JSON.parse(this.state.newWaveOfContactTemplate)
+        if (!Array.isArray(parsedJson)) {
+          this.setState({ templateValidationError: true })
+          failedValidation = true
+        } else {
+          const validTemplateItems = [
+              'ADDRESS_LINE1', 'ADDRESS_LINE2', 'ADDRESS_LINE3', 'TOWN_NAME', 'POSTCODE', '__uac__', '__qid__', '__caseref__']
+          parsedJson.forEach(
+              item => {
+                if (!validTemplateItems.includes(item)) {
+                  this.setState({ templateValidationError: true })
+                  failedValidation = true
+                }
+              })
+        }
       } catch (err) {
         this.setState({ templateValidationError: true })
         failedValidation = true
@@ -176,7 +190,7 @@ class CollectionExerciseDetails extends Component {
           {woc.classifiers}
         </TableCell>
         <TableCell component="th" scope="row">
-          {woc.template}
+          {JSON.stringify(woc.template)}
         </TableCell>
         <TableCell component="th" scope="row">
           {woc.printSupplier}
