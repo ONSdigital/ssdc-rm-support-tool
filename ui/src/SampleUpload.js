@@ -1,16 +1,17 @@
 import React, {Component} from "react";
 import axios from "axios";
-import {convertStatusText, uuidv4} from "./common";
+import {convertStatusText} from "./common";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import {
   Button,
   CircularProgress,
   Dialog,
-  DialogContent, FormControl, InputLabel,
-  LinearProgress, MenuItem,
-  Paper, Select,
-  Snackbar, SnackbarContent, TextField,
+  DialogContent,
+  LinearProgress,
+  Paper,
+  Snackbar,
+  SnackbarContent,
   Typography
 } from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer";
