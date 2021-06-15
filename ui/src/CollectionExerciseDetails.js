@@ -210,7 +210,7 @@ class CollectionExerciseDetails extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-          <SampleUpload collectionExerciseId={this.props.collectionExerciseId}></SampleUpload>
+          <SampleUpload collectionExerciseId={this.props.collectionExerciseId}/>
         <Dialog open={this.state.createWaveOfContactsDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
