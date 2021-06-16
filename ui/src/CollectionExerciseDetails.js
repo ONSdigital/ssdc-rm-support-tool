@@ -1,13 +1,26 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import '@fontsource/roboto';
-import { Button, Dialog, DialogContent, TextField, Paper, Select, MenuItem, FormControl, InputLabel, Typography } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography
+} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { uuidv4 } from './common'
+import {uuidv4} from './common'
+import SampleUpload from "./SampleUpload";
+
 
 class CollectionExerciseDetails extends Component {
   state = {
@@ -15,8 +28,12 @@ class CollectionExerciseDetails extends Component {
     createWaveOfContactsDialogDisplayed: false,
     printSupplierValidationError: false,
     packCodeValidationError: false,
+    classifiersValidationError: false,
+    templateValidationError: false,
     newWaveOfContactPrintSupplier: '',
-    newWaveOfContactPackCode: ''
+    newWaveOfContactPackCode: '',
+    newWaveOfContactClassifiers: '',
+    newWaveOfContactTemplate: '',
   }
 
   componentDidMount() {
@@ -45,6 +62,10 @@ class CollectionExerciseDetails extends Component {
       printSupplierValidationError: false,
       newWaveOfContactPackCode: '',
       packCodeValidationError: false,
+      newWaveOfContactClassifiers: '',
+      classifiersValidationError: false,
+      newWaveOfContactTemplate: '',
+      templateValidationError: false,
       createWaveOfContactsDialogDisplayed: true,
       newWaveOfContactTriggerDate: this.getTimeNowForDateTimePicker()
     })
@@ -70,6 +91,22 @@ class CollectionExerciseDetails extends Component {
     })
   }
 
+  onNewWaveOfContactClassifiersChange = (event) => {
+    const resetValidation = !event.target.value.trim()
+    this.setState({
+      classifiersValidationError: resetValidation,
+      newWaveOfContactClassifiers: event.target.value
+    })
+  }
+
+  onNewWaveOfContactTemplateChange = (event) => {
+    const resetValidation = !event.target.value.trim()
+    this.setState({
+      templateValidationError: resetValidation,
+      newWaveOfContactTemplate: event.target.value
+    })
+  }
+
   onNewWaveOfTriggerDateChange = (event) => {
     this.setState({ newWaveOfContactTriggerDate: event.target.value })
   }
@@ -87,6 +124,37 @@ class CollectionExerciseDetails extends Component {
       failedValidation = true
     }
 
+    if (!this.state.newWaveOfContactClassifiers.trim()) {
+      this.setState({ classifiersValidationError: true })
+      failedValidation = true
+    }
+
+    if (!this.state.newWaveOfContactTemplate.trim()) {
+      this.setState({ templateValidationError: true })
+      failedValidation = true
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.newWaveOfContactTemplate)
+        if (!Array.isArray(parsedJson)) {
+          this.setState({ templateValidationError: true })
+          failedValidation = true
+        } else {
+          const validTemplateItems = [
+              'ADDRESS_LINE1', 'ADDRESS_LINE2', 'ADDRESS_LINE3', 'TOWN_NAME', 'POSTCODE', '__uac__', '__qid__', '__caseref__']
+          parsedJson.forEach(
+              item => {
+                if (!validTemplateItems.includes(item)) {
+                  this.setState({ templateValidationError: true })
+                  failedValidation = true
+                }
+              })
+        }
+      } catch (err) {
+        this.setState({ templateValidationError: true })
+        failedValidation = true
+      }
+    }
+
     if (failedValidation) {
       return
     }
@@ -96,8 +164,8 @@ class CollectionExerciseDetails extends Component {
       type: 'PRINT',
       triggerDateTime: new Date(this.state.newWaveOfContactTriggerDate).toISOString(),
       hasTriggered: false,
-      classifiers: '1=2',
-      template: ['__caseref__', '__uac__', '__qid__'],
+      classifiers: this.state.newWaveOfContactClassifiers,
+      template: JSON.parse(this.state.newWaveOfContactTemplate),
       packCode: this.state.newWaveOfContactPackCode,
       printSupplier: this.state.newWaveOfContactPrintSupplier,
       collectionExercise: 'collectionExercises/' + this.props.collectionExerciseId
@@ -133,7 +201,7 @@ class CollectionExerciseDetails extends Component {
           {woc.classifiers}
         </TableCell>
         <TableCell component="th" scope="row">
-          {woc.template}
+          {JSON.stringify(woc.template)}
         </TableCell>
         <TableCell component="th" scope="row">
           {woc.printSupplier}
@@ -167,6 +235,7 @@ class CollectionExerciseDetails extends Component {
             </TableBody>
           </Table>
         </TableContainer>
+          <SampleUpload collectionExerciseId={this.props.collectionExerciseId}/>
         <Dialog open={this.state.createWaveOfContactsDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
@@ -195,6 +264,22 @@ class CollectionExerciseDetails extends Component {
                   label="Pack Code"
                   onChange={this.onNewWaveOfContactPackCodeChange}
                   value={this.state.newWaveOfContactPackCode} />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.classifiersValidationError}
+                  label="Classifiers"
+                  onChange={this.onNewWaveOfContactClassifiersChange}
+                  value={this.state.newWaveOfContactClassifiers} />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.templateValidationError}
+                  label="Template"
+                  onChange={this.onNewWaveOfContactTemplateChange}
+                  value={this.state.newWaveOfContactTemplate} />
                 <TextField
                   label="Trigger Date"
                   type="datetime-local"
