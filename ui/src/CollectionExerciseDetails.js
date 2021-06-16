@@ -25,6 +25,7 @@ import SampleUpload from "./SampleUpload";
 class CollectionExerciseDetails extends Component {
   state = {
     waveOfContacts: [],
+    printSuppliers: [],
     createWaveOfContactsDialogDisplayed: false,
     printSupplierValidationError: false,
     packCodeValidationError: false,
@@ -38,11 +39,19 @@ class CollectionExerciseDetails extends Component {
 
   componentDidMount() {
     this.getWaveOfContacts()
+    this.getPrintSuppliers()
 
     this.interval = setInterval(
       () => this.getWaveOfContacts(),
       1000
     )
+  }
+
+  getPrintSuppliers = async () => {
+    const response = await fetch('/printsuppliers')
+    const supplier_json = await response.json()
+
+    this.setState({printSuppliers: supplier_json})
   }
 
   componentWillUnmount() {
@@ -212,6 +221,10 @@ class CollectionExerciseDetails extends Component {
       </TableRow>
     ))
 
+    const printSupplierMenuItems = this.state.printSuppliers.map(supplier => (
+        <MenuItem value={supplier}>{supplier}</MenuItem>
+    ))
+
     return (
       <div style={{ padding: 20 }}>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
@@ -248,14 +261,16 @@ class CollectionExerciseDetails extends Component {
                     <MenuItem value={'OUTBOUND_PHONE'}>OUTBOUND PHONE</MenuItem>
                   </Select>
                 </FormControl>
-                <TextField
+                <FormControl
                   required
-                  fullWidth={true}
-                  style={{ marginTop: 20 }}
-                  error={this.state.printSupplierValidationError}
-                  label="Print Supplier"
-                  onChange={this.onNewWaveOfContactPrintSupplierChange}
-                  value={this.state.newWaveOfContactPrintSupplier} />
+                  fullWidth={true}>
+                  <InputLabel>Print Supplier</InputLabel>
+                  <Select
+                    onChange={this.onNewWaveOfContactPrintSupplierChange}
+                    error={this.state.printSupplierValidationError}>
+                    {printSupplierMenuItems}
+                  </Select>
+                </FormControl>
                 <TextField
                   required
                   fullWidth={true}
