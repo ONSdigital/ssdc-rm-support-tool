@@ -5,13 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
@@ -19,13 +16,14 @@ import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 public class PrintSuppliers {
 
   public static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
+
   @Value("${printsupplierconfig}")
   private String printSupplierConfig;
 
   private List<String> printSuppliers = null;
 
   @GetMapping
-  public List<String> getPrintSuppliers(){
+  public List<String> getPrintSuppliers() {
     if (printSuppliers != null) {
       return printSuppliers;
     }
