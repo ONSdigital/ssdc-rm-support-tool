@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.supporttool.model.dto.JobDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.JobStatusDto;
-import uk.gov.ons.ssdc.supporttool.model.entity.BulkProcess;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
@@ -44,13 +43,9 @@ public class JobEndpoint {
 
   @GetMapping
   public List<JobDto> findBulkProcessJobs(
-      @RequestParam(value = "bulkProcess") BulkProcess bulkProcess,
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
-    if (!userIdentity.getBulkProcesses(jwtToken).contains(bulkProcess)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
-    }
-
-    return jobRepository.findByBulkProcessOrderByCreatedAtDesc(bulkProcess).stream()
+      @RequestParam(value = "collectionExercise") UUID collectionExerciseId) {
+    return jobRepository.findByCollectionExerciseIdOrderByCreatedAtDesc(collectionExerciseId)
+        .stream()
         .map(this::mapJob)
         .collect(Collectors.toList());
   }
