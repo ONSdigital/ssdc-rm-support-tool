@@ -72,3 +72,5 @@ management:
         step: PT1M
 
 iapaudience: DUMMY
+
+printsupplierconfig: '{"SUP_A":{"sftpDirectory":"foo","encryptionKeyFilename": "bar"},"SUP_B":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"},"SUP_C":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"}}'
