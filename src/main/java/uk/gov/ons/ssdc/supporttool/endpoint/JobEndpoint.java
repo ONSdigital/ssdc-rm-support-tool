@@ -42,7 +42,7 @@ public class JobEndpoint {
   }
 
   @GetMapping
-  public List<JobDto> findBulkProcessJobs(
+  public List<JobDto> findCollexJobs(
       @RequestParam(value = "collectionExercise") UUID collectionExerciseId) {
     return jobRepository.findByCollectionExerciseIdOrderByCreatedAtDesc(collectionExerciseId)
         .stream()
