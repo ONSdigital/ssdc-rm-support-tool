@@ -29,8 +29,6 @@ public class RowStager {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS);
 
     for (Job job : jobs) {
-      JobStatus jobStatus = JobStatus.PROCESSING_IN_PROGRESS;
-
       try (Reader reader = Files.newBufferedReader(Path.of("/tmp/" + job.getFileId()));
           CSVReader csvReader = new CSVReader(reader)) {
         String[] headerRow = csvReader.readNext();
@@ -41,8 +39,12 @@ public class RowStager {
         }
 
         // Stage all the rows
+        JobStatus jobStatus = JobStatus.PROCESSING_IN_PROGRESS;
         while (job.getStagingRowNumber() < job.getFileRowCount() - 1) {
-          rowChunkStager.stageChunk(job, headerRow, csvReader);
+          jobStatus = rowChunkStager.stageChunk(job, headerRow, csvReader);
+          if (jobStatus == JobStatus.PROCESSED_TOTAL_FAILURE) {
+            break;
+          }
         }
 
         job.setJobStatus(jobStatus);
