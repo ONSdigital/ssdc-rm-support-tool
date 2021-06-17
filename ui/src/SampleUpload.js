@@ -1,6 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import axios from "axios";
-import {convertStatusText} from "./common";
+import { convertStatusText } from "./common";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import {
@@ -34,8 +34,8 @@ class SampleUpload extends Component {
     this.getJobs()
 
     this.interval = setInterval(
-        () => this.getJobs(),
-        1000
+      () => this.getJobs(),
+      1000
     )
   }
 
@@ -102,100 +102,100 @@ class SampleUpload extends Component {
   }
 
   getJobs = async () => {
-    const response = await fetch('/collectionExercises/' + this.props.collectionExerciseId + '/jobs')
+    const response = await fetch('/job?collectionExercise=' + this.props.collectionExerciseId)
     const jobs_json = await response.json()
 
-    this.setState({jobs: jobs_json._embedded.jobs})
+    this.setState({ jobs: jobs_json })
   }
 
   handleOpenDetails = (job) => {
-    this.setState({showDetails: true, selectedJob: job.fileId})
+    this.setState({ showDetails: true, selectedJob: job.id })
   }
 
   handleClosedDetails = () => {
-    this.setState({showDetails: false})
+    this.setState({ showDetails: false })
   }
 
   render() {
-    const selectedJob = this.state.jobs.find(job => job.fileId === this.state.selectedJob)
+    const selectedJob = this.state.jobs.find(job => job.id === this.state.selectedJob)
 
     const jobTableRows = this.state.jobs.map((job, index) => (
-        <TableRow key={job.createdAt}>
-          <TableCell component="th" scope="row">
-            {job.fileName}
-          </TableCell>
-          <TableCell>{job.createdAt}</TableCell>
-          <TableCell align="right">
-            <Button
-                onClick={() => this.handleOpenDetails(job)}
-                variant="contained">
-              {convertStatusText(job.jobStatus)} {!job.jobStatus.startsWith('PROCESSED') &&
-            <CircularProgress size={15} style={{marginLeft: 10}}/>}
-            </Button>
-          </TableCell>
-        </TableRow>
+      <TableRow key={job.createdAt}>
+        <TableCell component="th" scope="row">
+          {job.fileName}
+        </TableCell>
+        <TableCell>{job.createdAt}</TableCell>
+        <TableCell align="right">
+          <Button
+            onClick={() => this.handleOpenDetails(job)}
+            variant="contained">
+            {convertStatusText(job.jobStatus)} {!job.jobStatus.startsWith('PROCESSED') &&
+              <CircularProgress size={15} style={{ marginLeft: 10 }} />}
+          </Button>
+        </TableCell>
+      </TableRow>
     ))
 
     return (
-        <div style={{marginTop: 20}}>
-          <input
-              accept=".csv"
-              style={{display: 'none'}}
-              id="contained-button-file"
-              type="file"
-              onChange={(e) => {
-                this.handleUpload(e)
-              }}
-          />
-          <label htmlFor="contained-button-file">
-            <Button variant="contained" component="span">
-              Upload Sample File
+      <div style={{ marginTop: 20 }}>
+        <input
+          accept=".csv"
+          style={{ display: 'none' }}
+          id="contained-button-file"
+          type="file"
+          onChange={(e) => {
+            this.handleUpload(e)
+          }}
+        />
+        <label htmlFor="contained-button-file">
+          <Button variant="contained" component="span">
+            Upload Sample File
             </Button>
-          </label>
-          <TableContainer component={Paper} style={{marginTop: 20}}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>File Name</TableCell>
-                  <TableCell>Date Uploaded</TableCell>
-                  <TableCell align="right">Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {jobTableRows}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Dialog open={this.state.uploadInProgress}>
-            <DialogContent style={{padding: 30}}>
-              <Typography variant="h6" color="inherit">
-                Uploading file...
+        </label>
+        <TableContainer component={Paper} style={{ marginTop: 20 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>File Name</TableCell>
+                <TableCell>Date Uploaded</TableCell>
+                <TableCell align="right">Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {jobTableRows}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Dialog open={this.state.uploadInProgress}>
+          <DialogContent style={{ padding: 30 }}>
+            <Typography variant="h6" color="inherit">
+              Uploading file...
               </Typography>
-              <LinearProgress
-                  variant="determinate"
-                  value={this.state.fileProgress * 100}
-                  style={{marginTop: 20, marginBottom: 20, width: 400}}/>
-              <Typography variant="h6" color="inherit">
-                {Math.round(this.state.fileProgress * 100)}%
+            <LinearProgress
+              variant="determinate"
+              value={this.state.fileProgress * 100}
+              style={{ marginTop: 20, marginBottom: 20, width: 400 }} />
+            <Typography variant="h6" color="inherit">
+              {Math.round(this.state.fileProgress * 100)}%
               </Typography>
-            </DialogContent>
-          </Dialog>
-          <Snackbar
-              open={this.state.fileUploadSuccess}
-              autoHideDuration={6000}
-              onClose={this.handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}>
-            <SnackbarContent style={{backgroundColor: '#4caf50'}}
-                             message={'File upload successful!'}
-            />
-          </Snackbar>
-          <JobDetails jobTitle={'Sample'} job={selectedJob} showDetails={this.state.showDetails}
-                      handleClosedDetails={this.handleClosedDetails} onClickAway={this.handleClosedDetails}>
-          </JobDetails>
-        </div>
+          </DialogContent>
+        </Dialog>
+        <Snackbar
+          open={this.state.fileUploadSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}>
+          <SnackbarContent style={{ backgroundColor: '#4caf50' }}
+            message={'File upload successful!'}
+          />
+        </Snackbar>
+        <JobDetails jobTitle={'Sample'} job={selectedJob} showDetails={this.state.showDetails}
+          handleClosedDetails={this.handleClosedDetails} onClickAway={this.handleClosedDetails}>
+        </JobDetails>
+      </div>
     )
   }
 }

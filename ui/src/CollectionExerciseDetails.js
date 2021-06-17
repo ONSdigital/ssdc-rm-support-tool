@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import '@fontsource/roboto';
 import {
   Button,
@@ -18,7 +18,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import {uuidv4} from './common'
+import { uuidv4 } from './common'
 import SampleUpload from "./SampleUpload";
 
 
@@ -51,7 +51,7 @@ class CollectionExerciseDetails extends Component {
     const response = await fetch('/printsuppliers')
     const supplier_json = await response.json()
 
-    this.setState({printSuppliers: supplier_json})
+    this.setState({ printSuppliers: supplier_json })
   }
 
   componentWillUnmount() {
@@ -149,14 +149,14 @@ class CollectionExerciseDetails extends Component {
           failedValidation = true
         } else {
           const validTemplateItems = [
-              'ADDRESS_LINE1', 'ADDRESS_LINE2', 'ADDRESS_LINE3', 'TOWN_NAME', 'POSTCODE', '__uac__', '__qid__', '__caseref__']
+            'ADDRESS_LINE1', 'ADDRESS_LINE2', 'ADDRESS_LINE3', 'TOWN_NAME', 'POSTCODE', '__uac__', '__qid__', '__caseref__']
           parsedJson.forEach(
-              item => {
-                if (!validTemplateItems.includes(item)) {
-                  this.setState({ templateValidationError: true })
-                  failedValidation = true
-                }
-              })
+            item => {
+              if (!validTemplateItems.includes(item)) {
+                this.setState({ templateValidationError: true })
+                failedValidation = true
+              }
+            })
         }
       } catch (err) {
         this.setState({ templateValidationError: true })
@@ -207,6 +207,9 @@ class CollectionExerciseDetails extends Component {
           {woc.triggerDateTime}
         </TableCell>
         <TableCell component="th" scope="row">
+          {woc.hasTriggered ? "YES" : "NO"}
+        </TableCell>
+        <TableCell component="th" scope="row">
           {woc.classifiers}
         </TableCell>
         <TableCell component="th" scope="row">
@@ -222,7 +225,7 @@ class CollectionExerciseDetails extends Component {
     ))
 
     const printSupplierMenuItems = this.state.printSuppliers.map(supplier => (
-        <MenuItem value={supplier}>{supplier}</MenuItem>
+      <MenuItem value={supplier}>{supplier}</MenuItem>
     ))
 
     return (
@@ -237,6 +240,7 @@ class CollectionExerciseDetails extends Component {
               <TableRow>
                 <TableCell>Type</TableCell>
                 <TableCell>Trigger date</TableCell>
+                <TableCell>Has triggered?</TableCell>
                 <TableCell>Classifiers</TableCell>
                 <TableCell>Template</TableCell>
                 <TableCell>Print Supplier</TableCell>
@@ -248,7 +252,7 @@ class CollectionExerciseDetails extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-          <SampleUpload collectionExerciseId={this.props.collectionExerciseId}/>
+        <SampleUpload collectionExerciseId={this.props.collectionExerciseId} />
         <Dialog open={this.state.createWaveOfContactsDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>

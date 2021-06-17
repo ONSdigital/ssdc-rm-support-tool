@@ -73,4 +73,4 @@ management:
 
 iapaudience: DUMMY
 
-printsupplierconfig: '{"SUP_A":{"sftpDirectory":"foo","encryptionKeyFilename": "bar"},"SUP_B":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"},"SUP_C":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"}}'
+printsupplierconfig: '{"SUPPLIER_A":{"sftpDirectory":"foo","encryptionKeyFilename": "bar"},"SUPPLIER_B":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"}}'

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
+import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 
@@ -28,13 +29,21 @@ public class RowChunkStager {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void stageChunk(Job job, String[] headerRow, CSVReader csvReader) {
+  public JobStatus stageChunk(Job job, String[] headerRow, CSVReader csvReader) {
+    JobStatus jobStatus = JobStatus.PROCESSING_IN_PROGRESS;
+
     try {
       List<JobRow> jobRows = new LinkedList<>();
 
       for (int i = 0; i < CHUNK_SIZE; i++) {
         String[] line = csvReader.readNext();
         if (line == null) {
+          break;
+        }
+
+        if (line.length != headerRow.length) {
+          jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
+          job.setFatalErrorDescription("CSV corrupt: row data does not match columns");
           break;
         }
 
@@ -62,5 +71,7 @@ public class RowChunkStager {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
+    return jobStatus;
   }
 }
