@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.validation;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import java.util.Set;
 
@@ -7,7 +9,8 @@ public class InSetRule implements Rule {
 
   private final Set<String> set;
 
-  public InSetRule(String[] set) {
+  @JsonCreator
+  public InSetRule(@JsonProperty("set") String[] set) {
     this.set = Set.of(set);
   }
 

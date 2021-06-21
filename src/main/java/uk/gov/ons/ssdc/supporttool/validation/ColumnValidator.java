@@ -1,5 +1,8 @@
 package uk.gov.ons.ssdc.supporttool.validation;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,9 +11,16 @@ import java.util.Optional;
 public class ColumnValidator {
 
   private final String columnName;
-  private final Rule[] rules;
 
-  public ColumnValidator(String columnName, Rule[] rules) {
+  @JsonTypeInfo(
+      use = JsonTypeInfo.Id.CLASS,
+      include = JsonTypeInfo.As.PROPERTY,
+      property = "className")
+  private Rule[] rules;
+
+  @JsonCreator
+  public ColumnValidator(
+      @JsonProperty("columnName") String columnName, @JsonProperty("rules") Rule[] rules) {
     this.columnName = columnName;
     this.rules = rules;
   }
@@ -38,5 +48,9 @@ public class ColumnValidator {
     }
 
     return Optional.empty();
+  }
+
+  public String getColumnName() {
+    return columnName;
   }
 }

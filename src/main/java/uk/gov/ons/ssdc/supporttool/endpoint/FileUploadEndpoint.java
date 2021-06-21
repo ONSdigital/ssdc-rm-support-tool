@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import uk.gov.ons.ssdc.supporttool.model.entity.BulkProcess;
 import uk.gov.ons.ssdc.supporttool.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
@@ -41,18 +40,19 @@ public class FileUploadEndpoint {
   @PostMapping("/upload")
   public ResponseEntity<?> handleFileUpload(
       @RequestParam("file") MultipartFile file,
-      @RequestParam(value = "bulkProcess", required = false, defaultValue = "SAMPLE")
-          BulkProcess bulkProcess,
       @RequestParam(value = "collectionExerciseId") UUID collectionExerciseId,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
-    if (!userIdentity.getBulkProcesses(jwtToken).contains(bulkProcess)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
-    }
 
+    // Check that collex exists
     Optional<CollectionExercise> collexOpt =
         collectionExerciseRepository.findById(collectionExerciseId);
     if (!collexOpt.isPresent()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
+    }
+
+    // Check user is authorised to upload sample for this survey
+    if (!userIdentity.getSurveys(jwtToken).contains(collexOpt.get().getSurvey())) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
     }
 
     UUID fileId = UUID.randomUUID();
@@ -62,7 +62,6 @@ public class FileUploadEndpoint {
       Job job = new Job();
       job.setId(UUID.randomUUID());
 
-      job.setBulkProcess(bulkProcess);
       job.setFileName(file.getOriginalFilename());
       job.setFileId(fileId);
       job.setJobStatus(JobStatus.FILE_UPLOADED);

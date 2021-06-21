@@ -8,8 +8,6 @@ import lombok.Data;
 public class JobDto {
   private UUID id;
 
-  private String bulkProcess;
-
   private OffsetDateTime createdAt;
   private String createdBy;
   private OffsetDateTime lastUpdatedAt;

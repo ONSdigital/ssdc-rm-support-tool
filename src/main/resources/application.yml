@@ -74,3 +74,6 @@ management:
 iapaudience: DUMMY
 
 printsupplierconfig: '{"SUPPLIER_A":{"sftpDirectory":"foo","encryptionKeyFilename": "bar"},"SUPPLIER_B":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"}}'
+
+queueconfig:
+  sample-queue: case.sample.inbound
