@@ -40,7 +40,8 @@ public class UserIdentity {
     if (userOpt.isPresent()) {
       return userOpt.get().getSurveys();
     } else {
-      // Hack for local testing... return all bulk processors if user is not in DB
+      // Hack for local testing... return all surveys if user is not in DB
+      // TODO: remove this to productionise!
       Iterable<Survey> surveys = surveyRepository.findAll();
       List<Survey> result = new LinkedList<>();
       surveys.forEach(result::add);
