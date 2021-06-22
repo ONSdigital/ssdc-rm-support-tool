@@ -80,6 +80,17 @@ class Surveys extends Component {
     if (!this.state.newSurveyValidationRules.trim()) {
       this.setState({ validationRulesValidationError: true })
       validationFailed = true
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.newSurveyValidationRules)
+        if (!Array.isArray(parsedJson)) {
+          this.setState({ validationRulesValidationError: true })
+          validationFailed = true
+        }
+      } catch (err) {
+        this.setState({ validationRulesValidationError: true })
+        validationFailed = true
+      }
     }
 
     if (validationFailed) {
@@ -133,7 +144,7 @@ class Surveys extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <Dialog open={this.state.createSurveyDialogDisplayed}>
+        <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
@@ -146,6 +157,7 @@ class Surveys extends Component {
                   value={this.state.newSurveyName} />
                 <TextField
                   required
+                  multiline
                   fullWidth={true}
                   error={this.state.validationRulesValidationError}
                   id="standard-required"
