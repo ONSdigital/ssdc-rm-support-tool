@@ -100,7 +100,7 @@ class Surveys extends Component {
     const newSurvey = {
       id: uuidv4(),
       name: this.state.newSurveyName,
-      sampleValidationRules: this.state.newSurveyValidationRules
+      sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules)
     }
 
     await fetch('/surveys', {

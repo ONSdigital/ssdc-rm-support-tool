@@ -1,7 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +14,11 @@ import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.transformer.SampleTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
-import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
 @Component
 public class RowChunkProcessor {
   private static final Transformer TRANSFORMER = new SampleTransformer();
-  private static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
 
   private final JobRowRepository jobRowRepository;
   private final RabbitTemplate rabbitTemplate;
@@ -38,16 +34,8 @@ public class RowChunkProcessor {
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean processChunk(Job job) {
     boolean hadErrors = false;
-    ColumnValidator[] columnValidators;
-
-    try {
-      columnValidators =
-          OBJECT_MAPPER.readValue(
-              job.getCollectionExercise().getSurvey().getSampleValidationRules(),
-              ColumnValidator[].class);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException("Validation JSON could not be unmarshalled", e);
-    }
+    ColumnValidator[] columnValidators =
+        job.getCollectionExercise().getSurvey().getSampleValidationRules();
 
     List<JobRow> jobRows =
         jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED);

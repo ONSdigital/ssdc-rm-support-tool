@@ -3,12 +3,13 @@ package uk.gov.ons.ssdc.supporttool.validation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ColumnValidator {
+public class ColumnValidator implements Serializable {
 
   private final String columnName;
 

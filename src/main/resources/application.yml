@@ -46,6 +46,10 @@ spring:
       pool:
         size: 10
 
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
 logging:
   level:
     ROOT: INFO

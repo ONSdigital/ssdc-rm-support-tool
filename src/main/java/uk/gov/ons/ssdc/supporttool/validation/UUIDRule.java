@@ -1,8 +1,10 @@
 package uk.gov.ons.ssdc.supporttool.validation;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import java.util.Optional;
 import java.util.UUID;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class UUIDRule implements Rule {
 
   @Override

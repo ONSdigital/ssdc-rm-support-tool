@@ -22,4 +22,8 @@ public class InSetRule implements Rule {
 
     return Optional.empty();
   }
+
+  public Set<String> getSet() {
+    return set;
+  }
 }

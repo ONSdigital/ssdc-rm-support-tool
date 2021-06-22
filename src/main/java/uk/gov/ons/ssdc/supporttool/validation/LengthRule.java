@@ -21,4 +21,8 @@ public class LengthRule implements Rule {
 
     return Optional.empty();
   }
+
+  public int getMaxLength() {
+    return maxLength;
+  }
 }
