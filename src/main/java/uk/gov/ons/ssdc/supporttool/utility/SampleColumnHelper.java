@@ -11,8 +11,9 @@ public class SampleColumnHelper {
   public static String[] getExpectedColumns(Job job) {
     ColumnValidator[] sampleValidationRules;
     try {
-      sampleValidationRules = OBJECT_MAPPER
-          .readValue(job.getCollectionExercise().getSurvey().getSampleValidationRules(),
+      sampleValidationRules =
+          OBJECT_MAPPER.readValue(
+              job.getCollectionExercise().getSurvey().getSampleValidationRules(),
               ColumnValidator[].class);
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Validation JSON could not be unmarshalled", e);

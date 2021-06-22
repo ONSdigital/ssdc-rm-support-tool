@@ -1,7 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,8 +41,9 @@ public class RowChunkProcessor {
     ColumnValidator[] columnValidators;
 
     try {
-      columnValidators = OBJECT_MAPPER
-          .readValue(job.getCollectionExercise().getSurvey().getSampleValidationRules(),
+      columnValidators =
+          OBJECT_MAPPER.readValue(
+              job.getCollectionExercise().getSurvey().getSampleValidationRules(),
               ColumnValidator[].class);
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Validation JSON could not be unmarshalled", e);
@@ -56,8 +56,7 @@ public class RowChunkProcessor {
       JobRowStatus rowStatus = JobRowStatus.PROCESSED_OK;
       List<String> rowValidationErrors = new LinkedList<>();
 
-      for (ColumnValidator columnValidator :
-          columnValidators) {
+      for (ColumnValidator columnValidator : columnValidators) {
         Optional<String> columnValidationErrors = columnValidator.validateRow(jobRow.getRowData());
         if (columnValidationErrors.isPresent()) {
           rowStatus = JobRowStatus.PROCESSED_ERROR;
