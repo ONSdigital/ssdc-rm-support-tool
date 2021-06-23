@@ -14,7 +14,9 @@ class Surveys extends Component {
     surveys: [],
     createSurveyDialogDisplayed: false,
     validationError: false,
-    newSurveyName: ''
+    newSurveyName: '',
+    validationRulesValidationError: false,
+    newSurveyValidationRules: ''
   }
 
   componentDidMount() {
@@ -41,6 +43,8 @@ class Surveys extends Component {
     this.setState({
       newSurveyName: '',
       validationError: false,
+      validationRulesValidationError: false,
+      newSurveyValidationRules: '',
       createSurveyDialogDisplayed: true
     })
   }
@@ -57,15 +61,46 @@ class Surveys extends Component {
     })
   }
 
+  onNewSurveyValidationRulesChange = (event) => {
+    const resetValidation = !event.target.value.trim()
+    this.setState({
+      validationRulesValidationError: resetValidation,
+      newSurveyValidationRules: event.target.value
+    })
+  }
+
   onCreateSurvey = async () => {
+    let validationFailed = false
+
     if (!this.state.newSurveyName.trim()) {
       this.setState({ validationError: true })
+      validationFailed = true
+    }
+
+    if (!this.state.newSurveyValidationRules.trim()) {
+      this.setState({ validationRulesValidationError: true })
+      validationFailed = true
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.newSurveyValidationRules)
+        if (!Array.isArray(parsedJson)) {
+          this.setState({ validationRulesValidationError: true })
+          validationFailed = true
+        }
+      } catch (err) {
+        this.setState({ validationRulesValidationError: true })
+        validationFailed = true
+      }
+    }
+
+    if (validationFailed) {
       return
     }
 
     const newSurvey = {
       id: uuidv4(),
-      name: this.state.newSurveyName
+      name: this.state.newSurveyName,
+      sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules)
     }
 
     await fetch('/surveys', {
@@ -109,7 +144,7 @@ class Surveys extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <Dialog open={this.state.createSurveyDialogDisplayed}>
+        <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
@@ -120,6 +155,15 @@ class Surveys extends Component {
                   label="Survey name"
                   onChange={this.onNewSurveyNameChange}
                   value={this.state.newSurveyName} />
+                <TextField
+                  required
+                  multiline
+                  fullWidth={true}
+                  error={this.state.validationRulesValidationError}
+                  id="standard-required"
+                  label="Validation rules"
+                  onChange={this.onNewSurveyValidationRulesChange}
+                  value={this.state.newSurveyValidationRules} />
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button onClick={this.onCreateSurvey} variant="contained" style={{ margin: 10 }}>

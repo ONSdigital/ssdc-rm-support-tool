@@ -3,13 +3,15 @@ package uk.gov.ons.ssdc.supporttool.security;
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import uk.gov.ons.ssdc.supporttool.model.entity.BulkProcess;
+import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.entity.User;
+import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
@@ -17,24 +19,33 @@ public class UserIdentity {
   private static final String IAP_ISSUER_URL = "https://cloud.google.com/iap";
 
   private final UserRepository userRepository;
+  private final SurveyRepository surveyRepository;
   private final String iapAudience;
 
   private TokenVerifier tokenVerifier = null;
 
-  public UserIdentity(UserRepository userRepository, @Value("${iapaudience}") String iapAudience) {
+  public UserIdentity(
+      UserRepository userRepository,
+      SurveyRepository surveyRepository,
+      @Value("${iapaudience}") String iapAudience) {
     this.userRepository = userRepository;
+    this.surveyRepository = surveyRepository;
     this.iapAudience = iapAudience;
   }
 
-  public Collection<BulkProcess> getBulkProcesses(String jwtToken) {
+  public Collection<Survey> getSurveys(String jwtToken) {
     String userEmail = getUserEmail(jwtToken);
     Optional<User> userOpt = userRepository.findByEmail(userEmail);
 
     if (userOpt.isPresent()) {
-      return userOpt.get().getBulkProcesses();
+      return userOpt.get().getSurveys();
     } else {
-      // Hack for local testing... return all bulk processors if user is not in DB
-      return List.of(BulkProcess.values());
+      // Hack for local testing... return all surveys if user is not in DB
+      // TODO: remove this to productionise!
+      Iterable<Survey> surveys = surveyRepository.findAll();
+      List<Survey> result = new LinkedList<>();
+      surveys.forEach(result::add);
+      return result;
     }
   }
 

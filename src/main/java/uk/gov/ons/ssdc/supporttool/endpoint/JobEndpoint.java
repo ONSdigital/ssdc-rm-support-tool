@@ -25,6 +25,7 @@ import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 
 @RestController
 @RequestMapping(value = "/job")
@@ -55,9 +56,7 @@ public class JobEndpoint {
       @PathVariable("id") UUID id,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
     Job job = jobRepository.findById(id).get();
-    if (!userIdentity.getBulkProcesses(jwtToken).contains(job.getBulkProcess())) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
-    }
+    checkUserPermission(jwtToken, job);
 
     return mapJob(jobRepository.findById(id).get());
   }
@@ -69,9 +68,7 @@ public class JobEndpoint {
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken,
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
-    if (!userIdentity.getBulkProcesses(jwtToken).contains(job.getBulkProcess())) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
-    }
+    checkUserPermission(jwtToken, job);
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -89,7 +86,7 @@ public class JobEndpoint {
 
     try (StringWriter stringWriter = new StringWriter();
         CSVWriter csvWriter = new CSVWriter(stringWriter)) {
-      csvWriter.writeNext(job.getBulkProcess().getExpectedColumns());
+      csvWriter.writeNext(SampleColumnHelper.getExpectedColumns(job));
 
       for (JobRow jobRow : jobRows) {
         csvWriter.writeNext(jobRow.getOriginalRowData());
@@ -110,9 +107,7 @@ public class JobEndpoint {
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken,
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
-    if (!userIdentity.getBulkProcesses(jwtToken).contains(job.getBulkProcess())) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
-    }
+    checkUserPermission(jwtToken, job);
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -151,7 +146,6 @@ public class JobEndpoint {
   private JobDto mapJob(Job job) {
     JobDto jobDto = new JobDto();
     jobDto.setId(job.getId());
-    jobDto.setBulkProcess(job.getBulkProcess().name());
     jobDto.setCreatedAt(job.getCreatedAt());
     jobDto.setCreatedBy(job.getCreatedBy());
     jobDto.setLastUpdatedAt(job.getLastUpdatedAt());
@@ -174,5 +168,11 @@ public class JobEndpoint {
 
     jobDto.setFatalErrorDescription(job.getFatalErrorDescription());
     return jobDto;
+  }
+
+  private void checkUserPermission(String jwtToken, Job job) {
+    if (!userIdentity.getSurveys(jwtToken).contains(job.getCollectionExercise().getSurvey())) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
+    }
   }
 }

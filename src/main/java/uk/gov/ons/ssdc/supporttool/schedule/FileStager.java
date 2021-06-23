@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
+import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 
 @Component
 public class FileStager {
@@ -33,14 +34,15 @@ public class FileStager {
 
         // Validate the header row has the right number of columns
         String[] headerRow = csvReader.readNext();
-        if (headerRow.length != job.getBulkProcess().getExpectedColumns().length) {
+        String[] expectedColumns = SampleColumnHelper.getExpectedColumns(job);
+        if (headerRow.length != expectedColumns.length) {
           // The header row doesn't have enough columns
           jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
           job.setFatalErrorDescription("Header row does not have expected number of columns");
         } else {
           // Validate that the header rows are correct
           for (int index = 0; index < headerRow.length; index++) {
-            if (!headerRow[index].equals(job.getBulkProcess().getExpectedColumns()[index])) {
+            if (!headerRow[index].equals(expectedColumns[index])) {
               // The header row doesn't match what we expected
               jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
               job.setFatalErrorDescription("Header row does not match expected columns");
