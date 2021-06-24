@@ -48,6 +48,22 @@ class CaseSearch extends Component {
   }
 
   onSearch = async () => {
+    var failedValidation = false
+
+    if (!this.state.contains.trim()) {
+      this.setState({ containsValidationError: true })
+      failedValidation = true
+    }
+
+    if (!this.state.column.trim()) {
+      this.setState({ columnValidationError: true })
+      failedValidation = true
+    }
+
+    if (failedValidation) {
+      return
+    }
+
     const response = await fetch('/cases/search/findBySampleContains?collexId=' + this.props.collectionExerciseId + '&key=' + this.state.column + '&value=' + this.state.contains)
     const search_result_json = await response.json()
     this.setState({
@@ -57,7 +73,13 @@ class CaseSearch extends Component {
   }
 
   onOpenSearchDialog = () => {
-    this.setState({ searchDialogOpen: true })
+    this.setState({ 
+      searchDialogOpen: true,
+      contains: '',
+      containsValidationError: false,
+      column: '',
+      columnValidationError: false
+      })
   }
 
   onCloseDialog = () => {
