@@ -11,7 +11,8 @@ public class ReadValidationConfigTest {
 
   @Test
   public void testCanReadValidationJson() throws Exception {
-    try (FileInputStream fis = new FileInputStream("src/test/resources/example-validator-config.json")) {
+    try (FileInputStream fis =
+        new FileInputStream("src/test/resources/example-validator-config.json")) {
       ColumnValidator[] columnValidators = objectMapper.readValue(fis, ColumnValidator[].class);
       // This line would be unreachable if we couldn't unmarshal the JSON
     }
