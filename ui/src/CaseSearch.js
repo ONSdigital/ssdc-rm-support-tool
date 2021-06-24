@@ -18,6 +18,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import CaseDetails from './CaseDetails';
 
 
 class CaseSearch extends Component {
@@ -28,7 +29,9 @@ class CaseSearch extends Component {
     contains: '',
     containsValidationError: false,
     column: '',
-    columnValidationError: false
+    columnValidationError: false,
+    showDetails: false,
+    selectedCase: null
   }
 
   componentDidMount() {
@@ -73,13 +76,14 @@ class CaseSearch extends Component {
   }
 
   onOpenSearchDialog = () => {
-    this.setState({ 
+    this.setState({
       searchDialogOpen: true,
       contains: '',
       containsValidationError: false,
       column: '',
-      columnValidationError: false
-      })
+      columnValidationError: false,
+      selectedCase: null
+    })
   }
 
   onCloseDialog = () => {
@@ -102,10 +106,35 @@ class CaseSearch extends Component {
     })
   }
 
+  onOpenCaseDetails = (caze) => {
+    this.setState({
+      showDetails: true,
+      selectedCase: caze
+    })
+  }
+
+  onCloseDetails = () => {
+    this.setState({
+      showDetails: false
+    })
+  }
+
   getCaseCells = (caze) => {
-    return this.state.sampleColumns.map(sampleColumn => (
+    let caseCells = this.state.sampleColumns.map(sampleColumn => (
       <TableCell>{caze.sample[sampleColumn]}</TableCell>
     ))
+
+    caseCells.push((
+      <TableCell>
+        <Button
+          onClick={() => this.onOpenCaseDetails(caze)}
+          variant="contained">
+          Open
+        </Button>
+      </TableCell>
+    ))
+
+    return caseCells
   }
 
   render() {
@@ -113,8 +142,12 @@ class CaseSearch extends Component {
       <MenuItem key={sampleColumn} value={sampleColumn}>{sampleColumn}</MenuItem>
     ))
 
-    const tableHeaderRows = this.state.sampleColumns.map((sampleColumn, index) => (
+    let tableHeaderRows = this.state.sampleColumns.map((sampleColumn, index) => (
       <TableCell>{sampleColumn}</TableCell>
+    ))
+
+    tableHeaderRows.push((
+      <TableCell>Action</TableCell>
     ))
 
     const caseTableRows = this.state.cases.map((caze, index) => (
@@ -173,6 +206,7 @@ class CaseSearch extends Component {
             </div>
           </DialogContent>
         </Dialog>
+        <CaseDetails showDetails={this.state.showDetails} onCloseDetails={this.onCloseDetails} case={this.state.selectedCase} />
       </div>
     )
   }
