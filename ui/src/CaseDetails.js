@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Typography, Grid, Button, Dialog, DialogContent, LinearProgress } from '@material-ui/core';
+import { Button, Dialog, DialogContent } from '@material-ui/core';
 
 class CaseDetails extends Component {
   render() {
