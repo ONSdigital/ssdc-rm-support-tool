@@ -3,13 +3,15 @@ import { Button, Box, Typography, AppBar, Toolbar } from '@material-ui/core';
 import Surveys from './Surveys'
 import SurveyDetails from './SurveyDetails'
 import CollectionExerciseDetails from './CollectionExerciseDetails'
+import CaseSearch from './CaseSearch';
 
 class App extends Component {
   state = {
     selectedSurveyId: null,
     selectedSurveyName: '',
     selectedCollexId: null,
-    selectedCollexName: ''
+    selectedCollexName: '',
+    caseSearchActive: false
   }
 
   onOpenSurveyDetails = (survey) => {
@@ -28,12 +30,22 @@ class App extends Component {
     })
   }
 
+  onOpenCaseSearch = () => {
+    this.setState({
+      caseSearchActive: true
+    })
+  }
+
   onBackToSurveys = () => {
     this.setState({ selectedSurveyId: null })
   }
 
   onBackToCollectionExercises = () => {
     this.setState({ selectedCollexId: null })
+  }
+
+  onBackToCollexDetails = () => {
+    this.setState({ caseSearchActive: false })
   }
 
   render() {
@@ -58,10 +70,19 @@ class App extends Component {
               onOpenCollectionExercise={this.onOpenCollectionExercise} />
           </div>
         }
-        {this.state.selectedCollexId &&
+        {this.state.selectedCollexId && !this.state.caseSearchActive &&
           <div>
             <Button onClick={this.onBackToCollectionExercises}>Back</Button>
             <CollectionExerciseDetails
+              collectionExerciseId={this.state.selectedCollexId}
+              collectionExerciseName={this.state.selectedCollexName}
+              onOpenCaseSearch={this.onOpenCaseSearch} />
+          </div>
+        }
+        {this.state.caseSearchActive &&
+          <div>
+            <Button onClick={this.onBackToCollexDetails}>Back</Button>
+            <CaseSearch
               collectionExerciseId={this.state.selectedCollexId}
               collectionExerciseName={this.state.selectedCollexName} />
           </div>
