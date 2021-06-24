@@ -48,8 +48,12 @@ class CaseSearch extends Component {
   }
 
   onSearch = async () => {
-    const response = await fetch('/cases/search/findBySampleContains?collexId=' + this.props.collectionExerciseId + '&key=TOWN_NAME&value=city')
-
+    const response = await fetch('/cases/search/findBySampleContains?collexId=' + this.props.collectionExerciseId + '&key=' + this.state.column + '&value=' + this.state.contains)
+    const search_result_json = await response.json()
+    this.setState({
+      cases: search_result_json._embedded.cases,
+      searchDialogOpen: false
+    })
   }
 
   onOpenSearchDialog = () => {
@@ -72,8 +76,14 @@ class CaseSearch extends Component {
     const resetValidation = !event.target.value.trim()
     this.setState({
       columnValidationError: resetValidation,
-      contains: event.target.value
+      column: event.target.value
     })
+  }
+
+  getCaseCells = (caze) => {
+    return this.state.sampleColumns.map(sampleColumn => (
+      <TableCell>{caze.sample[sampleColumn]}</TableCell>
+    ))
   }
 
   render() {
@@ -87,15 +97,7 @@ class CaseSearch extends Component {
 
     const caseTableRows = this.state.cases.map((caze, index) => (
       <TableRow key={index}>
-        <TableCell component="th" scope="row">
-          a
-        </TableCell>
-        <TableCell component="th" scope="row">
-          b
-        </TableCell>
-        <TableCell component="th" scope="row">
-          c
-        </TableCell>
+        {this.getCaseCells(caze)}
       </TableRow>
     ))
 
