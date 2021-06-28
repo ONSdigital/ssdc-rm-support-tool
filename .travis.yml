@@ -9,7 +9,7 @@ jdk: openjdk11
 before_install:
   - mvn fmt:check
 
-install: echo "SKIPPING DEFAULT INSTALL" # Travis has a default maven install that will surely fail
+install: echo "SKIPPING DEFAULT INSTALL" # Travis has a default maven install. Don't build twice!
 
 script: travis_wait mvn verify jacoco:report
 
