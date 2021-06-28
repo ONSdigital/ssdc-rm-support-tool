@@ -234,10 +234,10 @@ class CollectionExerciseDetails extends Component {
           Collection Exercise: {this.props.collectionExerciseName}
         </Typography>
         <div>
-        <Button variant="contained" onClick={this.props.onOpenCaseSearch}>Search Cases</Button>
+          <Button variant="contained" onClick={this.props.onOpenCaseSearch}>Search Cases</Button>
         </div>
         <div style={{ marginTop: 20 }}>
-        <Button variant="contained" onClick={this.openDialog}>Create Wave of Contact</Button>
+          <Button variant="contained" onClick={this.openDialog}>Create Wave of Contact</Button>
         </div>
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>

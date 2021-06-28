@@ -150,7 +150,7 @@ class SampleUpload extends Component {
         <label htmlFor="contained-button-file">
           <Button variant="contained" component="span">
             Upload Sample File
-            </Button>
+          </Button>
         </label>
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
@@ -170,14 +170,14 @@ class SampleUpload extends Component {
           <DialogContent style={{ padding: 30 }}>
             <Typography variant="h6" color="inherit">
               Uploading file...
-              </Typography>
+            </Typography>
             <LinearProgress
               variant="determinate"
               value={this.state.fileProgress * 100}
               style={{ marginTop: 20, marginBottom: 20, width: 400 }} />
             <Typography variant="h6" color="inherit">
               {Math.round(this.state.fileProgress * 100)}%
-              </Typography>
+            </Typography>
           </DialogContent>
         </Dialog>
         <Snackbar
