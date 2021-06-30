@@ -233,7 +233,12 @@ class CollectionExerciseDetails extends Component {
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Collection Exercise: {this.props.collectionExerciseName}
         </Typography>
-        <Button variant="contained" onClick={this.openDialog}>Create Wave of Contact</Button>
+        <div>
+          <Button variant="contained" onClick={this.props.onOpenCaseSearch}>Search Cases</Button>
+        </div>
+        <div style={{ marginTop: 20 }}>
+          <Button variant="contained" onClick={this.openDialog}>Create Wave of Contact</Button>
+        </div>
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>

@@ -44,7 +44,7 @@ class JobDetails extends Component {
               <Grid container item xs={12} spacing={3}>
                 <Typography variant="inherit" color="inherit" style={{ margin: 10, padding: 10 }}>
                   Rows processed:
-            </Typography>
+                </Typography>
                 <LinearProgress
                   variant="determinate"
                   value={Math.round(((this.props.job.processedRowCount + this.props.job.rowErrorCount) / (this.props.job.fileRowCount - 1)) * 100)}
@@ -89,10 +89,10 @@ class JobDetails extends Component {
         <Grid container spacing={1}>
           <Button target="_blank" href={fileDownloadHost + "/job/" + this.props.job.id + "/error"} variant="contained" style={{ margin: 10 }}>
             Download Failed Rows CSV
-            </Button>
+          </Button>
           <Button target="_blank" href={fileDownloadHost + "/job/" + this.props.job.id + "/errorDetail"} variant="contained" style={{ margin: 10 }}>
             Download Error Details CSV
-            </Button>
+          </Button>
         </Grid>
       )
     }
