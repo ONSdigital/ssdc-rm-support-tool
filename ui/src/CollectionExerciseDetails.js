@@ -24,25 +24,25 @@ import SampleUpload from "./SampleUpload";
 
 class CollectionExerciseDetails extends Component {
   state = {
-    waveOfContacts: [],
+    actionRules: [],
     printSuppliers: [],
-    createWaveOfContactsDialogDisplayed: false,
+    createActionRulesDialogDisplayed: false,
     printSupplierValidationError: false,
     packCodeValidationError: false,
     classifiersValidationError: false,
     templateValidationError: false,
-    newWaveOfContactPrintSupplier: '',
-    newWaveOfContactPackCode: '',
-    newWaveOfContactClassifiers: '',
-    newWaveOfContactTemplate: '',
+    newActionRulePrintSupplier: '',
+    newActionRulePackCode: '',
+    newActionRuleClassifiers: '',
+    newActionRuleTemplate: '',
   }
 
   componentDidMount() {
-    this.getWaveOfContacts()
+    this.getActionRules()
     this.getPrintSuppliers()
 
     this.interval = setInterval(
-      () => this.getWaveOfContacts(),
+      () => this.getActionRules(),
       1000
     )
   }
@@ -58,92 +58,92 @@ class CollectionExerciseDetails extends Component {
     clearInterval(this.interval)
   }
 
-  getWaveOfContacts = async () => {
-    const response = await fetch('/collectionExercises/' + this.props.collectionExerciseId + '/waveOfContacts')
+  getActionRules = async () => {
+    const response = await fetch('/collectionExercises/' + this.props.collectionExerciseId + '/actionRules')
     const woc_json = await response.json()
 
-    this.setState({ waveOfContacts: woc_json._embedded.waveOfContacts })
+    this.setState({ actionRules: woc_json._embedded.actionRules })
   }
 
   openDialog = () => {
     this.setState({
-      newWaveOfContactPrintSupplier: '',
+      newActionRulePrintSupplier: '',
       printSupplierValidationError: false,
-      newWaveOfContactPackCode: '',
+      newActionRulePackCode: '',
       packCodeValidationError: false,
-      newWaveOfContactClassifiers: '',
+      newActionRuleClassifiers: '',
       classifiersValidationError: false,
-      newWaveOfContactTemplate: '',
+      newActionRuleTemplate: '',
       templateValidationError: false,
-      createWaveOfContactsDialogDisplayed: true,
-      newWaveOfContactTriggerDate: this.getTimeNowForDateTimePicker()
+      createActionRulesDialogDisplayed: true,
+      newActionRuleTriggerDate: this.getTimeNowForDateTimePicker()
     })
   }
 
   closeDialog = () => {
-    this.setState({ createWaveOfContactsDialogDisplayed: false })
+    this.setState({ createActionRulesDialogDisplayed: false })
   }
 
-  onNewWaveOfContactPrintSupplierChange = (event) => {
+  onNewActionRulePrintSupplierChange = (event) => {
     const resetValidation = !event.target.value.trim()
     this.setState({
       printSupplierValidationError: resetValidation,
-      newWaveOfContactPrintSupplier: event.target.value
+      newActionRulePrintSupplier: event.target.value
     })
   }
 
-  onNewWaveOfContactPackCodeChange = (event) => {
+  onNewActionRulePackCodeChange = (event) => {
     const resetValidation = !event.target.value.trim()
     this.setState({
       packCodeValidationError: resetValidation,
-      newWaveOfContactPackCode: event.target.value
+      newActionRulePackCode: event.target.value
     })
   }
 
-  onNewWaveOfContactClassifiersChange = (event) => {
+  onNewActionRuleClassifiersChange = (event) => {
     const resetValidation = !event.target.value.trim()
     this.setState({
       classifiersValidationError: resetValidation,
-      newWaveOfContactClassifiers: event.target.value
+      newActionRuleClassifiers: event.target.value
     })
   }
 
-  onNewWaveOfContactTemplateChange = (event) => {
+  onNewActionRuleTemplateChange = (event) => {
     const resetValidation = !event.target.value.trim()
     this.setState({
       templateValidationError: resetValidation,
-      newWaveOfContactTemplate: event.target.value
+      newActionRuleTemplate: event.target.value
     })
   }
 
-  onNewWaveOfTriggerDateChange = (event) => {
-    this.setState({ newWaveOfContactTriggerDate: event.target.value })
+  onNewActionRuleTriggerDateChange = (event) => {
+    this.setState({ newActionRuleTriggerDate: event.target.value })
   }
 
-  onCreateWaveOfContact = async () => {
+  onCreateActionRule = async () => {
     var failedValidation = false
 
-    if (!this.state.newWaveOfContactPrintSupplier.trim()) {
+    if (!this.state.newActionRulePrintSupplier.trim()) {
       this.setState({ printSupplierValidationError: true })
       failedValidation = true
     }
 
-    if (!this.state.newWaveOfContactPackCode.trim()) {
+    if (!this.state.newActionRulePackCode.trim()) {
       this.setState({ packCodeValidationError: true })
       failedValidation = true
     }
 
-    if (!this.state.newWaveOfContactClassifiers.trim()) {
+    if (!this.state.newActionRuleClassifiers.trim()) {
       this.setState({ classifiersValidationError: true })
       failedValidation = true
     }
 
-    if (!this.state.newWaveOfContactTemplate.trim()) {
+    if (!this.state.newActionRuleTemplate.trim()) {
       this.setState({ templateValidationError: true })
       failedValidation = true
     } else {
       try {
-        const parsedJson = JSON.parse(this.state.newWaveOfContactTemplate)
+        const parsedJson = JSON.parse(this.state.newActionRuleTemplate)
         if (!Array.isArray(parsedJson)) {
           this.setState({ templateValidationError: true })
           failedValidation = true
@@ -168,26 +168,26 @@ class CollectionExerciseDetails extends Component {
       return
     }
 
-    const newWaveOfContact = {
+    const newActionRule = {
       id: uuidv4(),
       type: 'PRINT',
-      triggerDateTime: new Date(this.state.newWaveOfContactTriggerDate).toISOString(),
+      triggerDateTime: new Date(this.state.newActionRuleTriggerDate).toISOString(),
       hasTriggered: false,
-      classifiers: this.state.newWaveOfContactClassifiers,
-      template: JSON.parse(this.state.newWaveOfContactTemplate),
-      packCode: this.state.newWaveOfContactPackCode,
-      printSupplier: this.state.newWaveOfContactPrintSupplier,
+      classifiers: this.state.newActionRuleClassifiers,
+      template: JSON.parse(this.state.newActionRuleTemplate),
+      packCode: this.state.newActionRulePackCode,
+      printSupplier: this.state.newActionRulePrintSupplier,
       collectionExercise: 'collectionExercises/' + this.props.collectionExerciseId
     }
 
-    const response = await fetch('/waveOfContacts', {
+    const response = await fetch('/actionRules', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newWaveOfContact)
+      body: JSON.stringify(newActionRule)
     })
 
     if (response.ok) {
-      this.setState({ createWaveOfContactsDialogDisplayed: false })
+      this.setState({ createActionRulesDialogDisplayed: false })
     }
   }
 
@@ -198,7 +198,7 @@ class CollectionExerciseDetails extends Component {
   }
 
   render() {
-    const waveOfContactTableRows = this.state.waveOfContacts.map((woc, index) => (
+    const actionRuleTableRows = this.state.actionRules.map((woc, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
           {woc.type}
@@ -237,7 +237,7 @@ class CollectionExerciseDetails extends Component {
           <Button variant="contained" onClick={this.props.onOpenCaseSearch}>Search Cases</Button>
         </div>
         <div style={{ marginTop: 20 }}>
-          <Button variant="contained" onClick={this.openDialog}>Create Wave of Contact</Button>
+          <Button variant="contained" onClick={this.openDialog}>Create Action Rule</Button>
         </div>
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
@@ -253,12 +253,12 @@ class CollectionExerciseDetails extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {waveOfContactTableRows}
+              {actionRuleTableRows}
             </TableBody>
           </Table>
         </TableContainer>
         <SampleUpload collectionExerciseId={this.props.collectionExerciseId} />
-        <Dialog open={this.state.createWaveOfContactsDialogDisplayed}>
+        <Dialog open={this.state.createActionRulesDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
@@ -275,7 +275,7 @@ class CollectionExerciseDetails extends Component {
                   fullWidth={true}>
                   <InputLabel>Print Supplier</InputLabel>
                   <Select
-                    onChange={this.onNewWaveOfContactPrintSupplierChange}
+                    onChange={this.onNewActionRulePrintSupplierChange}
                     error={this.state.printSupplierValidationError}>
                     {printSupplierMenuItems}
                   </Select>
@@ -286,37 +286,37 @@ class CollectionExerciseDetails extends Component {
                   style={{ marginTop: 20 }}
                   error={this.state.packCodeValidationError}
                   label="Pack Code"
-                  onChange={this.onNewWaveOfContactPackCodeChange}
-                  value={this.state.newWaveOfContactPackCode} />
+                  onChange={this.onNewActionRulePackCodeChange}
+                  value={this.state.newActionRulePackCode} />
                 <TextField
                   required
                   fullWidth={true}
                   style={{ marginTop: 20 }}
                   error={this.state.classifiersValidationError}
                   label="Classifiers"
-                  onChange={this.onNewWaveOfContactClassifiersChange}
-                  value={this.state.newWaveOfContactClassifiers} />
+                  onChange={this.onNewActionRuleClassifiersChange}
+                  value={this.state.newActionRuleClassifiers} />
                 <TextField
                   required
                   fullWidth={true}
                   style={{ marginTop: 20 }}
                   error={this.state.templateValidationError}
                   label="Template"
-                  onChange={this.onNewWaveOfContactTemplateChange}
-                  value={this.state.newWaveOfContactTemplate} />
+                  onChange={this.onNewActionRuleTemplateChange}
+                  value={this.state.newActionRuleTemplate} />
                 <TextField
                   label="Trigger Date"
                   type="datetime-local"
-                  value={this.state.newWaveOfContactTriggerDate}
-                  onChange={this.onNewWaveOfTriggerDateChange}
+                  value={this.state.newActionRuleTriggerDate}
+                  onChange={this.onNewActionRuleTriggerDateChange}
                   style={{ marginTop: 20 }}
                   InputLabelProps={{
                     shrink: true,
                   }} />
               </div>
               <div style={{ marginTop: 10 }}>
-                <Button onClick={this.onCreateWaveOfContact} variant="contained" style={{ margin: 10 }}>
-                  Create wave of contact
+                <Button onClick={this.onCreateActionRule} variant="contained" style={{ margin: 10 }}>
+                  Create action rule
                 </Button>
                 <Button onClick={this.closeDialog} variant="contained" style={{ margin: 10 }}>
                   Cancel
