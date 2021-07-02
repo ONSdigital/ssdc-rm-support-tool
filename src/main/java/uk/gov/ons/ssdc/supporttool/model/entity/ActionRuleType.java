@@ -4,5 +4,5 @@ public enum ActionRuleType {
   PRINT,
   OUTBOUND_TELEPHONE,
   FACE_TO_FACE,
-  DEACTIVATE_UAC,
+  DEACTIVATE_UAC
 }
