@@ -269,17 +269,18 @@ class CollectionExerciseDetails extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl required
-                             fullWidth={true}>
+                <FormControl
+                    required
+                    fullWidth={true}>
                   <InputLabel>Type</InputLabel>
                   <Select
-                  onChange={this.onNewActionRuleTypeChange}
-                      value={this.state.newActionRuleType}
-                  error={this.state.actionRuleTypeValidationError}>
-                    <MenuItem value={'PRINT'}>PRINT</MenuItem>
-                    <MenuItem value={'FACE_TO_FACE'}>FACE-TO-FACE</MenuItem>
-                    <MenuItem value={'OUTBOUND_PHONE'}>OUTBOUND PHONE</MenuItem>
-                    <MenuItem value={'DEACTIVATE_UAC'}>DEACTIVATE UAC</MenuItem>
+                    onChange={this.onNewActionRuleTypeChange}
+                    value={this.state.newActionRuleType}
+                    error={this.state.actionRuleTypeValidationError}>
+                      <MenuItem value={'PRINT'}>PRINT</MenuItem>
+                      <MenuItem value={'FACE_TO_FACE'}>FACE-TO-FACE</MenuItem>
+                      <MenuItem value={'OUTBOUND_PHONE'}>OUTBOUND PHONE</MenuItem>
+                      <MenuItem value={'DEACTIVATE_UAC'}>DEACTIVATE UAC</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl
