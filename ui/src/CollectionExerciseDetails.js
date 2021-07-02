@@ -29,12 +29,13 @@ class CollectionExerciseDetails extends Component {
     createActionRulesDialogDisplayed: false,
     printSupplierValidationError: false,
     packCodeValidationError: false,
-    classifiersValidationError: false,
     templateValidationError: false,
+    actionRuleTypeValidationError: false,
     newActionRulePrintSupplier: '',
     newActionRulePackCode: '',
     newActionRuleClassifiers: '',
     newActionRuleTemplate: '',
+    newActionRuleType: ''
   }
 
   componentDidMount() {
@@ -67,12 +68,13 @@ class CollectionExerciseDetails extends Component {
 
   openDialog = () => {
     this.setState({
+      newActionRuleType: '',
+      actionRuleTypeValidationError: false,
       newActionRulePrintSupplier: '',
       printSupplierValidationError: false,
       newActionRulePackCode: '',
       packCodeValidationError: false,
       newActionRuleClassifiers: '',
-      classifiersValidationError: false,
       newActionRuleTemplate: '',
       templateValidationError: false,
       createActionRulesDialogDisplayed: true,
@@ -101,9 +103,7 @@ class CollectionExerciseDetails extends Component {
   }
 
   onNewActionRuleClassifiersChange = (event) => {
-    const resetValidation = !event.target.value.trim()
     this.setState({
-      classifiersValidationError: resetValidation,
       newActionRuleClassifiers: event.target.value
     })
   }
@@ -120,8 +120,20 @@ class CollectionExerciseDetails extends Component {
     this.setState({ newActionRuleTriggerDate: event.target.value })
   }
 
+  onNewActionRuleTypeChange = (event) => {
+    this.setState({
+      newActionRuleType: event.target.value,
+      actionTypeValidationError: false
+    })
+  }
+
   onCreateActionRule = async () => {
     var failedValidation = false
+
+    if (!this.state.newActionRuleType.trim()) {
+      this.setState({ actionRuleTypeValidationError: true })
+      failedValidation = true
+    }
 
     if (!this.state.newActionRulePrintSupplier.trim()) {
       this.setState({ printSupplierValidationError: true })
@@ -130,11 +142,6 @@ class CollectionExerciseDetails extends Component {
 
     if (!this.state.newActionRulePackCode.trim()) {
       this.setState({ packCodeValidationError: true })
-      failedValidation = true
-    }
-
-    if (!this.state.newActionRuleClassifiers.trim()) {
-      this.setState({ classifiersValidationError: true })
       failedValidation = true
     }
 
@@ -170,7 +177,7 @@ class CollectionExerciseDetails extends Component {
 
     const newActionRule = {
       id: uuidv4(),
-      type: 'PRINT',
+      type: this.state.newActionRuleType,
       triggerDateTime: new Date(this.state.newActionRuleTriggerDate).toISOString(),
       hasTriggered: false,
       classifiers: this.state.newActionRuleClassifiers,
@@ -262,12 +269,17 @@ class CollectionExerciseDetails extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl>
+                <FormControl required
+                             fullWidth={true}>
                   <InputLabel>Type</InputLabel>
-                  <Select value={'PRINT'}>
+                  <Select
+                  onChange={this.onNewActionRuleTypeChange}
+                      value={this.state.newActionRuleType}
+                  error={this.state.actionRuleTypeValidationError}>
                     <MenuItem value={'PRINT'}>PRINT</MenuItem>
                     <MenuItem value={'FACE_TO_FACE'}>FACE-TO-FACE</MenuItem>
                     <MenuItem value={'OUTBOUND_PHONE'}>OUTBOUND PHONE</MenuItem>
+                    <MenuItem value={'DEACTIVATE_UAC'}>DEACTIVATE UAC</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl
@@ -289,7 +301,6 @@ class CollectionExerciseDetails extends Component {
                   onChange={this.onNewActionRulePackCodeChange}
                   value={this.state.newActionRulePackCode} />
                 <TextField
-                  required
                   fullWidth={true}
                   style={{ marginTop: 20 }}
                   error={this.state.classifiersValidationError}
