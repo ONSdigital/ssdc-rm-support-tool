@@ -5,4 +5,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import uk.gov.ons.ssdc.supporttool.model.entity.PrintTemplate;
 
 @RepositoryRestResource
-public interface PrintTemplateRepository extends PagingAndSortingRepository<PrintTemplate, String> {}
+public interface PrintTemplateRepository
+    extends PagingAndSortingRepository<PrintTemplate, String> {}

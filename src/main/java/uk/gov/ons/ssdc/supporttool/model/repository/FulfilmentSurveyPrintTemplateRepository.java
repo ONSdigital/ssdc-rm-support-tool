@@ -6,5 +6,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import uk.gov.ons.ssdc.supporttool.model.entity.FulfilmentSurveyPrintTemplate;
 
 @RepositoryRestResource
-public interface FulfilmentSurveyPrintTemplateRepository extends
-    PagingAndSortingRepository<FulfilmentSurveyPrintTemplate, UUID> {}
+public interface FulfilmentSurveyPrintTemplateRepository
+    extends PagingAndSortingRepository<FulfilmentSurveyPrintTemplate, UUID> {}

@@ -6,5 +6,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import uk.gov.ons.ssdc.supporttool.model.entity.ActionRuleSurveyPrintTemplate;
 
 @RepositoryRestResource
-public interface ActionRuleSurveyPrintTemplateRepository extends
-    PagingAndSortingRepository<ActionRuleSurveyPrintTemplate, UUID> {}
+public interface ActionRuleSurveyPrintTemplateRepository
+    extends PagingAndSortingRepository<ActionRuleSurveyPrintTemplate, UUID> {}
