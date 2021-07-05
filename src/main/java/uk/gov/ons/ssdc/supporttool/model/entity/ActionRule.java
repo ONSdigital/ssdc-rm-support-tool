@@ -52,11 +52,10 @@ public class ActionRule {
   public void setClassifiers(String classifierClauseStr) {
     if (classifierClauseStr == null) {
       classifiers = null;
+    } else {
+      classifiers = classifierClauseStr.getBytes();
     }
-
-    classifiers = classifierClauseStr.getBytes();
   }
-
   public String getClassifiers() {
     if (classifiers == null) {
       return null;
