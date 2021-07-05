@@ -56,6 +56,7 @@ public class ActionRule {
       classifiers = classifierClauseStr.getBytes();
     }
   }
+
   public String getClassifiers() {
     if (classifiers == null) {
       return null;
