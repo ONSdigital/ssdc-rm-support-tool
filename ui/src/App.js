@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Box, Typography, AppBar, Toolbar } from '@material-ui/core';
-import Surveys from './Surveys'
+import LandingPage from './LandingPage'
 import SurveyDetails from './SurveyDetails'
 import CollectionExerciseDetails from './CollectionExerciseDetails'
 import CaseSearch from './CaseSearch';
@@ -59,7 +59,7 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         {!this.state.selectedSurveyId &&
-          <Surveys onOpenSurveyDetails={this.onOpenSurveyDetails} />
+          <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails} />
         }
         {this.state.selectedSurveyId && !this.state.selectedCollexId &&
           <div>
@@ -74,6 +74,7 @@ class App extends Component {
           <div>
             <Button onClick={this.onBackToCollectionExercises}>Back</Button>
             <CollectionExerciseDetails
+              surveyId={this.state.selectedSurveyId}
               collectionExerciseId={this.state.selectedCollexId}
               collectionExerciseName={this.state.selectedCollexName}
               onOpenCaseSearch={this.onOpenCaseSearch} />
