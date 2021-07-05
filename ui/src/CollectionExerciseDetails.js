@@ -61,9 +61,9 @@ class CollectionExerciseDetails extends Component {
 
   getActionRules = async () => {
     const response = await fetch('/collectionExercises/' + this.props.collectionExerciseId + '/actionRules')
-    const woc_json = await response.json()
+    const action_rule_json = await response.json()
 
-    this.setState({ actionRules: woc_json._embedded.actionRules })
+    this.setState({ actionRules: action_rule_json._embedded.actionRules })
   }
 
   openDialog = () => {
@@ -205,28 +205,28 @@ class CollectionExerciseDetails extends Component {
   }
 
   render() {
-    const actionRuleTableRows = this.state.actionRules.map((woc, index) => (
+    const actionRuleTableRows = this.state.actionRules.map((actionRule, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
-          {woc.type}
+          {actionRule.type}
         </TableCell>
         <TableCell component="th" scope="row">
-          {woc.triggerDateTime}
+          {actionRule.triggerDateTime}
         </TableCell>
         <TableCell component="th" scope="row">
-          {woc.hasTriggered ? "YES" : "NO"}
+          {actionRule.hasTriggered ? "YES" : "NO"}
         </TableCell>
         <TableCell component="th" scope="row">
-          {woc.classifiers}
+          {actionRule.classifiers}
         </TableCell>
         <TableCell component="th" scope="row">
-          {JSON.stringify(woc.template)}
+          {JSON.stringify(actionRule.template)}
         </TableCell>
         <TableCell component="th" scope="row">
-          {woc.printSupplier}
+          {actionRule.printSupplier}
         </TableCell>
         <TableCell component="th" scope="row">
-          {woc.packCode}
+          {actionRule.packCode}
         </TableCell>
       </TableRow>
     ))
