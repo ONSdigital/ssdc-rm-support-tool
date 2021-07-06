@@ -9,21 +9,20 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import lombok.Data;
 
-@Data
 @Entity
-public class CaseToProcess {
+@Data
+public class FulfilmentToProcess {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(columnDefinition = "serial")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+
+  @Column private String fulfilmentCode;
 
   @ManyToOne private Case caze;
 
-  @ManyToOne private ActionRule actionRule;
+  @Column private Integer batchQuantity;
 
   @Column private UUID batchId;
-
-  @Column(nullable = false)
-  private int batchQuantity;
 }
