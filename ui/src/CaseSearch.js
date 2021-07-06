@@ -40,10 +40,10 @@ class CaseSearch extends Component {
 
   getSampleColumns = async () => {
     const response = await fetch('/collectionExercises/' + this.props.collectionExerciseId + '/survey')
-    const survey_json = await response.json()
+    const surveyJson = await response.json()
 
     let columns = []
-    survey_json.sampleValidationRules.forEach(rule => {
+    surveyJson.sampleValidationRules.forEach(rule => {
       columns.push(rule.columnName)
     })
 

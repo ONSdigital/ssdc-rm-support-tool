@@ -19,14 +19,14 @@ class SurveyDetails extends Component {
     allowFulfilmentPrintTemplateDialogDisplayed: false,
     actionRulePrintTemplates: [],
     fulfilmentPrintTemplates: [],
-    allPrintTemplates: [],
+    allowableActionRulePrintTemplates: [],
+    allowableFulfilmentPrintTemplates: [],
     printTemplateToAllow: '',
     printTemplateValidationError: false
   }
 
   componentDidMount() {
     this.refreshDataFromBackend()
-    this.getAllPrintTemplates()
 
     this.interval = setInterval(
       () => this.refreshDataFromBackend(),
@@ -37,63 +37,92 @@ class SurveyDetails extends Component {
   componentWillUnmount() {
     clearInterval(this.interval)
   }
-  
-  refreshDataFromBackend = () => {
+
+  refreshDataFromBackend = async () => {
     this.getCollectionExercises()
-    this.getActionRulePrintTemplates()  
-    this.getFulfilmentPrintTemplates()  
+    const allPrintTemplates = await this.getAllPrintTemplates()
+    const actionRulePrintTemplates = await this.getActionRulePrintTemplates()
+    const fulfilmentPrintTemplates = await this.getFulfilmentPrintTemplates()
+    let allowableActionRulePrintTemplates = []
+    let allowableFulfilmentPrintTemplates = []
+
+    allPrintTemplates.forEach(packCode => {
+      if (!actionRulePrintTemplates.includes(packCode)) {
+        allowableActionRulePrintTemplates.push(packCode)
+      }
+
+      if (!fulfilmentPrintTemplates.includes(packCode)) {
+        allowableFulfilmentPrintTemplates.push(packCode)
+      }
+    })
+
+    this.setState({
+      actionRulePrintTemplates: actionRulePrintTemplates,
+      fulfilmentPrintTemplates: fulfilmentPrintTemplates,
+      allowableActionRulePrintTemplates: allowableActionRulePrintTemplates,
+      allowableFulfilmentPrintTemplates: allowableFulfilmentPrintTemplates
+    })
   }
 
   getCollectionExercises = async () => {
     const response = await fetch('/surveys/' + this.props.surveyId + '/collectionExercises')
-    const collex_json = await response.json()
+    const collexJson = await response.json()
 
-    this.setState({ collectionExercises: collex_json._embedded.collectionExercises })
+    this.setState({ collectionExercises: collexJson._embedded.collectionExercises })
   }
 
   getAllPrintTemplates = async () => {
     const response = await fetch('/printTemplates')
-    const template_json = await response.json()
+    const templateJson = await response.json()
 
-    this.setState({ allPrintTemplates: template_json._embedded.printTemplates })
+    let templates = []
+
+    for (let i = 0; i < templateJson._embedded.printTemplates.length; i++) {
+      const packCode = templateJson._embedded.printTemplates[i]._links.self.href.split('/')[4]
+      templates.push(packCode)
+    }
+
+    return templates;
   }
 
   getActionRulePrintTemplates = async () => {
     const response = await fetch('/surveys/' + this.props.surveyId + '/actionRulePrintTemplates')
-    const print_templates_json = await response.json()
+    const printTemplatesJson = await response.json()
+    const printTemplates = printTemplatesJson._embedded.actionRuleSurveyPrintTemplates
 
     let templates = []
 
-    for (let i = 0; i < print_templates_json._embedded.actionRuleSurveyPrintTemplates.length; i++) {
-      const print_template_url = new URL(print_templates_json._embedded.actionRuleSurveyPrintTemplates[i]._links.printTemplate.href)
+    for (let i = 0; i < printTemplates.length; i++) {
+      const print_template_url = new URL(printTemplates[i]._links.printTemplate.href)
 
-      const print_template_response = await fetch(print_template_url.pathname)
-      const print_template_json = await print_template_response.json()
-      const packCode = print_template_json._links.self.href.split('/')[4]
+      const printTemplateResponse = await fetch(print_template_url.pathname)
+      const printTemplateJson = await printTemplateResponse.json()
+      const packCode = printTemplateJson._links.self.href.split('/')[4]
 
       templates.push(packCode)
     }
 
-    this.setState({ actionRulePrintTemplates: templates })
+    return templates
   }
 
   getFulfilmentPrintTemplates = async () => {
     const response = await fetch('/surveys/' + this.props.surveyId + '/fulfilmentPrintTemplates')
-    const print_templates_json = await response.json()
+    const printTemplatesJson = await response.json()
+    const printTemplates = printTemplatesJson._embedded.fulfilmentSurveyPrintTemplates
 
     let templates = []
 
-    for (let i = 0; i < print_templates_json._embedded.fulfilmentSurveyPrintTemplates.length; i++) {
-      const print_template_url = new URL(print_templates_json._embedded.fulfilmentSurveyPrintTemplates[i]._links.printTemplate.href)
+    for (let i = 0; i < printTemplates.length; i++) {
+      const printTemplateUrl = new URL(printTemplates[i]._links.printTemplate.href)
 
-      const print_template_response = await fetch(print_template_url.pathname)
-      const print_template_json = await print_template_response.json()
-      const packCode = print_template_json._links.self.href.split('/')[4]
+      const printTemplateResponse = await fetch(printTemplateUrl.pathname)
+      const printTemplateJson = await printTemplateResponse.json()
+      const packCode = printTemplateJson._links.self.href.split('/')[4]
 
       templates.push(packCode)
     }
 
-    this.setState({ fulfilmentPrintTemplates: templates })
+    return templates
   }
 
   openDialog = () => {
@@ -235,41 +264,29 @@ class SurveyDetails extends Component {
       </TableRow>
     ))
 
-    const actionRulePrintTemplateTableRows = this.state.actionRulePrintTemplates.map(printTemplate => {
-      return (
-        <TableRow key={printTemplate}>
-          <TableCell component="th" scope="row">
-            {printTemplate}
-          </TableCell>
-        </TableRow>
-      )
-    })
+    const actionRulePrintTemplateTableRows = this.state.actionRulePrintTemplates.map(printTemplate =>
+      <TableRow key={printTemplate}>
+        <TableCell component="th" scope="row">
+          {printTemplate}
+        </TableCell>
+      </TableRow>
+    )
 
-    const fulfilmentPrintTemplateTableRows = this.state.fulfilmentPrintTemplates.map(printTemplate => {
-      return (
-        <TableRow key={printTemplate}>
-          <TableCell component="th" scope="row">
-            {printTemplate}
-          </TableCell>
-        </TableRow>
-      )
-    })
+    const fulfilmentPrintTemplateTableRows = this.state.fulfilmentPrintTemplates.map(printTemplate =>
+      <TableRow key={printTemplate}>
+        <TableCell component="th" scope="row">
+          {printTemplate}
+        </TableCell>
+      </TableRow>
+    )
 
-    const actionRulePrintTemplateMenuItems = this.state.allPrintTemplates.map(printTemplate => {
-      const packCode = printTemplate._links.self.href.split('/')[4]
+    const actionRulePrintTemplateMenuItems = this.state.allowableActionRulePrintTemplates.map(packCode =>
+      <MenuItem value={packCode}>{packCode}</MenuItem>
+    )
 
-      return (
-        <MenuItem value={packCode}>{packCode}</MenuItem>
-      )
-    })
-
-    const fulfilmentPrintTemplateMenuItems = this.state.allPrintTemplates.map(printTemplate => {
-      const packCode = printTemplate._links.self.href.split('/')[4]
-
-      return (
-        <MenuItem value={packCode}>{packCode}</MenuItem>
-      )
-    })
+    const fulfilmentPrintTemplateMenuItems = this.state.allowableFulfilmentPrintTemplates.map(packCode =>
+      <MenuItem value={packCode}>{packCode}</MenuItem>
+    )
 
     return (
       <div style={{ padding: 20 }}>

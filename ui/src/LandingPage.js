@@ -49,23 +49,23 @@ class LandingPage extends Component {
 
   getSurveys = async () => {
     const response = await fetch('/surveys')
-    const survey_json = await response.json()
+    const surveyJson = await response.json()
 
-    this.setState({ surveys: survey_json._embedded.surveys })
+    this.setState({ surveys: surveyJson._embedded.surveys })
   }
 
   getPrintTemplates = async () => {
     const response = await fetch('/printTemplates')
-    const template_json = await response.json()
+    const templateJson = await response.json()
 
-    this.setState({ printTemplates: template_json._embedded.printTemplates })
+    this.setState({ printTemplates: templateJson._embedded.printTemplates })
   }
 
   getPrintSuppliers = async () => {
     const response = await fetch('/printsuppliers')
-    const supplier_json = await response.json()
+    const supplierJson = await response.json()
 
-    this.setState({ printSuppliers: supplier_json })
+    this.setState({ printSuppliers: supplierJson })
   }
 
   openDialog = () => {
@@ -273,7 +273,7 @@ class LandingPage extends Component {
             {printTemplate.printSupplier}
           </TableCell>
           <TableCell component="th" scope="row">
-          {JSON.stringify(printTemplate.template)}
+            {JSON.stringify(printTemplate.template)}
           </TableCell>
         </TableRow>
       )

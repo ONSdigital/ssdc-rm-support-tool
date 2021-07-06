@@ -103,9 +103,9 @@ class SampleUpload extends Component {
 
   getJobs = async () => {
     const response = await fetch('/job?collectionExercise=' + this.props.collectionExerciseId)
-    const jobs_json = await response.json()
+    const jobsJson = await response.json()
 
-    this.setState({ jobs: jobs_json })
+    this.setState({ jobs: jobsJson })
   }
 
   handleOpenDetails = (job) => {

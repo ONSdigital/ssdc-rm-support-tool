@@ -6,7 +6,6 @@ class CaseDetails extends Component {
   render() {
 
     return (
-
       <Dialog open={this.props.showDetails} onClose={this.props.onClickAway}>
         <DialogContent style={{ padding: 30 }}>
           <div>

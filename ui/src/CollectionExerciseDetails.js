@@ -51,39 +51,41 @@ class CollectionExerciseDetails extends Component {
 
   getActionRules = async () => {
     const response = await fetch('/collectionExercises/' + this.props.collectionExerciseId + '/actionRules')
-    const wocJson = await response.json()
+    const actionRuleJson = await response.json()
+    const actionRules = actionRuleJson._embedded.actionRules
 
     let printTemplateHrefToPackCodeMap = new Map()
 
-    for (let i = 0; i < wocJson._embedded.actionRules.length; i++) {
-      if (wocJson._embedded.actionRules[i].type === 'PRINT') {
-        const printTemplateUrl = new URL(wocJson._embedded.actionRules[i]._links.printTemplate.href)
+    for (let i = 0; i < actionRules.length; i++) {
+      if (actionRules[i].type === 'PRINT') {
+        const printTemplateUrl = new URL(actionRules[i]._links.printTemplate.href)
         const printTemplateResponse = await fetch(printTemplateUrl.pathname)
         const printTemplateJson = await printTemplateResponse.json()
         const packCode = printTemplateJson._links.self.href.split('/')[4]
 
-        printTemplateHrefToPackCodeMap.set(wocJson._embedded.actionRules[i]._links.printTemplate.href, packCode)
+        printTemplateHrefToPackCodeMap.set(actionRules[i]._links.printTemplate.href, packCode)
       }
     }
 
     this.setState({
-      actionRules: wocJson._embedded.actionRules,
+      actionRules: actionRules,
       printTemplateHrefToPackCodeMap: printTemplateHrefToPackCodeMap
     })
   }
 
   getPackCodes = async () => {
     const response = await fetch('/surveys/' + this.props.surveyId + '/actionRulePrintTemplates')
-    const print_templates_json = await response.json()
+    const printTemplatesJson = await response.json()
+    const printTemplates = printTemplatesJson._embedded.actionRuleSurveyPrintTemplates
 
     let packCodes = []
 
-    for (let i = 0; i < print_templates_json._embedded.actionRuleSurveyPrintTemplates.length; i++) {
-      const print_template_url = new URL(print_templates_json._embedded.actionRuleSurveyPrintTemplates[i]._links.printTemplate.href)
+    for (let i = 0; i < printTemplates.length; i++) {
+      const printTemplateUrl = new URL(printTemplates[i]._links.printTemplate.href)
 
-      const print_template_response = await fetch(print_template_url.pathname)
-      const print_template_json = await print_template_response.json()
-      const packCode = print_template_json._links.self.href.split('/')[4]
+      const printTemplateResponse = await fetch(printTemplateUrl.pathname)
+      const printTemplateJson = await printTemplateResponse.json()
+      const packCode = printTemplateJson._links.self.href.split('/')[4]
 
       packCodes.push(packCode)
     }
@@ -181,26 +183,26 @@ class CollectionExerciseDetails extends Component {
   }
 
   render() {
-    const actionRuleTableRows = this.state.actionRules.map((woc, index) => {
+    const actionRuleTableRows = this.state.actionRules.map((actionRule, index) => {
       let packCode = ''
-      
-      if (woc.type === 'PRINT') {
-        packCode = this.state.printTemplateHrefToPackCodeMap.get(woc._links.printTemplate.href)
+
+      if (actionRule.type === 'PRINT') {
+        packCode = this.state.printTemplateHrefToPackCodeMap.get(actionRule._links.printTemplate.href)
       }
 
       return (
         <TableRow key={index}>
           <TableCell component="th" scope="row">
-            {woc.type}
+            {actionRule.type}
           </TableCell>
           <TableCell component="th" scope="row">
-            {woc.triggerDateTime}
+            {actionRule.triggerDateTime}
           </TableCell>
           <TableCell component="th" scope="row">
-            {woc.hasTriggered ? "YES" : "NO"}
+            {actionRule.hasTriggered ? "YES" : "NO"}
           </TableCell>
           <TableCell component="th" scope="row">
-            {woc.classifiers}
+            {actionRule.classifiers}
           </TableCell>
           <TableCell component="th" scope="row">
             {packCode}
