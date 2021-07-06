@@ -138,16 +138,16 @@ class CaseSearch extends Component {
   }
 
   render() {
-    const searchColumnMenuItems = this.state.sampleColumns.map((sampleColumn, index) => (
+    const searchColumnMenuItems = this.state.sampleColumns.map(sampleColumn => (
       <MenuItem key={sampleColumn} value={sampleColumn}>{sampleColumn}</MenuItem>
     ))
 
     let tableHeaderRows = this.state.sampleColumns.map((sampleColumn, index) => (
-      <TableCell>{sampleColumn}</TableCell>
+      <TableCell key={index}>{sampleColumn}</TableCell>
     ))
 
     tableHeaderRows.push((
-      <TableCell>Action</TableCell>
+      <TableCell key={-1}>Action</TableCell>
     ))
 
     const caseTableRows = this.state.cases.map((caze, index) => (
@@ -182,6 +182,7 @@ class CaseSearch extends Component {
                   <InputLabel>Sample column</InputLabel>
                   <Select
                     onChange={this.onColumnChange}
+                    value={this.state.column}
                     error={this.state.columnValidationError}>
                     {searchColumnMenuItems}
                   </Select>

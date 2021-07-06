@@ -281,7 +281,7 @@ class LandingPage extends Component {
     )
 
     const printSupplierMenuItems = this.state.printSuppliers.map(supplier => (
-      <MenuItem value={supplier}>{supplier}</MenuItem>
+      <MenuItem key={supplier} value={supplier}>{supplier}</MenuItem>
     ))
 
     return (
@@ -357,6 +357,7 @@ class LandingPage extends Component {
                   <InputLabel>Print Supplier</InputLabel>
                   <Select
                     onChange={this.onPrintSupplierChange}
+                    value={this.state.printSupplier}
                     error={this.state.printSupplierValidationError}>
                     {printSupplierMenuItems}
                   </Select>

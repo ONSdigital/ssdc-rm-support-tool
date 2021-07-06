@@ -22,7 +22,7 @@ class SurveyDetails extends Component {
     allowableActionRulePrintTemplates: [],
     allowableFulfilmentPrintTemplates: [],
     printTemplateToAllow: '',
-    printTemplateValidationError: false
+    printTemplateValidationError: false,
   }
 
   componentDidMount() {
@@ -281,11 +281,11 @@ class SurveyDetails extends Component {
     )
 
     const actionRulePrintTemplateMenuItems = this.state.allowableActionRulePrintTemplates.map(packCode =>
-      <MenuItem value={packCode}>{packCode}</MenuItem>
+      <MenuItem key={packCode} value={packCode}>{packCode}</MenuItem>
     )
 
     const fulfilmentPrintTemplateMenuItems = this.state.allowableFulfilmentPrintTemplates.map(packCode =>
-      <MenuItem value={packCode}>{packCode}</MenuItem>
+      <MenuItem key={packCode} value={packCode}>{packCode}</MenuItem>
     )
 
     return (
@@ -367,6 +367,7 @@ class SurveyDetails extends Component {
                   <InputLabel>Print Template</InputLabel>
                   <Select
                     onChange={this.onPrintTemplateChange}
+                    value={this.state.printTemplateToAllow}
                     error={this.state.printTemplateValidationError}>
                     {actionRulePrintTemplateMenuItems}
                   </Select>
@@ -393,6 +394,7 @@ class SurveyDetails extends Component {
                   <InputLabel>Print Template</InputLabel>
                   <Select
                     onChange={this.onPrintTemplateChange}
+                    value={this.state.printTemplateToAllow}
                     error={this.state.printTemplateValidationError}>
                     {fulfilmentPrintTemplateMenuItems}
                   </Select>

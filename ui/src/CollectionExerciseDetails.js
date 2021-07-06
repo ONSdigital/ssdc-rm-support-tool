@@ -212,7 +212,7 @@ class CollectionExerciseDetails extends Component {
     })
 
     const packCodeMenuItems = this.state.packCodes.map(packCode => (
-      <MenuItem value={packCode}>{packCode}</MenuItem>
+      <MenuItem key={packCode} value={packCode}>{packCode}</MenuItem>
     ))
 
     return (
