@@ -24,6 +24,7 @@ import SampleUpload from "./SampleUpload";
 
 class CollectionExerciseDetails extends Component {
   state = {
+    authorisedActivities: [],
     actionRules: [],
     packCodes: [],
     printTemplateHrefToPackCodeMap: new Map(),
@@ -36,6 +37,7 @@ class CollectionExerciseDetails extends Component {
   }
 
   componentDidMount() {
+    this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getActionRules()
     this.getPackCodes()
 
@@ -47,6 +49,19 @@ class CollectionExerciseDetails extends Component {
 
   componentWillUnmount() {
     clearInterval(this.interval)
+  }
+
+  getAuthorisedActivities = async () => {
+    const response = await fetch('/auth?surveyId=' + this.props.surveyId)
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return
+    }
+
+    const authJson = await response.json()
+
+    this.setState({ authorisedActivities: authJson })
   }
 
   getActionRules = async () => {
@@ -242,7 +257,9 @@ class CollectionExerciseDetails extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <SampleUpload collectionExerciseId={this.props.collectionExerciseId} />
+        {(this.state.authorisedActivities.includes('LOAD_SAMPLE') || this.state.authorisedActivities.includes('VIEW_SAMPLE_LOAD_PROGRESS')) &&
+          <SampleUpload collectionExerciseId={this.props.collectionExerciseId} />
+        }
         <Dialog open={this.state.createActionRulesDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
