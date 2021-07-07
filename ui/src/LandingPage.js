@@ -11,6 +11,7 @@ import { uuidv4 } from './common'
 
 class LandingPage extends Component {
   state = {
+    authorisedActivities: [],
     surveys: [],
     createSurveyDialogDisplayed: false,
     validationError: false,
@@ -29,6 +30,7 @@ class LandingPage extends Component {
   }
 
   componentDidMount() {
+    this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend()
     this.getPrintSuppliers() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
@@ -40,6 +42,13 @@ class LandingPage extends Component {
 
   componentWillUnmount() {
     clearInterval(this.interval)
+  }
+
+  getAuthorisedActivities = async () => {
+    const response = await fetch('/auth')
+    const authJson = await response.json()
+
+    this.setState({ authorisedActivities: authJson })
   }
 
   refreshDataFromBackend = () => {
@@ -300,21 +309,25 @@ class LandingPage extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <Button variant="contained" onClick={this.openPrintTemplateDialog} style={{ marginTop: 20 }}>Create Print Template</Button>
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Pack Code</TableCell>
-                <TableCell>Print Supplier</TableCell>
-                <TableCell>Template</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {printTemplateRows}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {this.state.authorisedActivities.includes('CREATE_PRINT_TEMPLATE') &&
+          <div>
+            <Button variant="contained" onClick={this.openPrintTemplateDialog} style={{ marginTop: 20 }}>Create Print Template</Button>
+            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                    <TableCell>Print Supplier</TableCell>
+                    <TableCell>Template</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {printTemplateRows}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        }
         <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>

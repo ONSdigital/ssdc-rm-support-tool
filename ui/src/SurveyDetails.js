@@ -11,6 +11,7 @@ import { uuidv4 } from './common'
 
 class SurveyDetails extends Component {
   state = {
+    authorisedActivities: [],
     collectionExercises: [],
     createCollectionExerciseDialogDisplayed: false,
     validationError: false,
@@ -26,6 +27,7 @@ class SurveyDetails extends Component {
   }
 
   componentDidMount() {
+    this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend()
 
     this.interval = setInterval(
@@ -36,6 +38,13 @@ class SurveyDetails extends Component {
 
   componentWillUnmount() {
     clearInterval(this.interval)
+  }
+
+  getAuthorisedActivities = async () => {
+    const response = await fetch('/auth')
+    const authJson = await response.json()
+
+    this.setState({ authorisedActivities: authJson })
   }
 
   refreshDataFromBackend = async () => {
@@ -307,32 +316,40 @@ class SurveyDetails extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <Button variant="contained" onClick={this.openActionRulePrintTemplateDialog} style={{ marginTop: 20 }}>Allow Print Template on Action Rule</Button>
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Pack Code</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {actionRulePrintTemplateTableRows}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Button variant="contained" onClick={this.openFulfilmentPrintTemplateDialog} style={{ marginTop: 20 }}>Allow Print Template on Fulfilment</Button>
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Pack Code</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {fulfilmentPrintTemplateTableRows}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {this.state.authorisedActivities.includes('ALLOW_PRINT_TEMPLATE_ON_ACTION_RULE') &&
+          <Button variant="contained" onClick={this.openActionRulePrintTemplateDialog} style={{ marginTop: 20 }}>Allow Print Template on Action Rule</Button>
+        }
+        {this.state.authorisedActivities.includes('LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES') &&
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pack Code</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {actionRulePrintTemplateTableRows}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        }
+        {this.state.authorisedActivities.includes('ALLOW_PRINT_TEMPLATE_ON_FULFILMENT') &&
+          <Button variant="contained" onClick={this.openFulfilmentPrintTemplateDialog} style={{ marginTop: 20 }}>Allow Print Template on Fulfilment</Button>
+        }
+        {this.state.authorisedActivities.includes('LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS') &&
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pack Code</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {fulfilmentPrintTemplateTableRows}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        }
         <Dialog open={this.state.createCollectionExerciseDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
