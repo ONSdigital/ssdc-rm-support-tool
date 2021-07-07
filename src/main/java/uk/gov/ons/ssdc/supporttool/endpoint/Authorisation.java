@@ -1,9 +1,14 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.SUPER_USER;
+
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,14 +36,14 @@ public class Authorisation {
   }
 
   @GetMapping
-  public List<UserGroupAuthorisedActivityType> getAuthorisedActivities(
+  public Set<UserGroupAuthorisedActivityType> getAuthorisedActivities(
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken,
       @RequestParam(required = false, value = "surveyId") Optional<UUID> surveyId) {
     String userEmail = userIdentity.getUserEmail(jwtToken);
 
     // TODO: Remove this before releasing to production!
     if (userEmail.equals("dummy@fake-email.com")) {
-      return Arrays.asList(UserGroupAuthorisedActivityType.values());
+      return Set.of(UserGroupAuthorisedActivityType.values());
     }
 
     Optional<User> userOpt = userRepository.findByEmail(userEmail);
@@ -49,10 +54,15 @@ public class Authorisation {
 
     User user = userOpt.get();
 
-    List<UserGroupAuthorisedActivityType> result = new LinkedList<>();
+    Set<UserGroupAuthorisedActivityType> result = new HashSet<>();
     for (UserGroupMember groupMember : user.getMemberOf()) {
       for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
-        if (permission.getSurvey() != null
+        if (permission.getAuthorisedActivity() == SUPER_USER && (permission.getSurvey() == null
+        || (surveyId.isPresent()
+            && permission.getSurvey().getId().equals(surveyId.get())))) {
+          // User is a global super user or super user on the specified survey: give all permissions
+          return Set.of(UserGroupAuthorisedActivityType.values());
+        } else if (permission.getSurvey() != null
             && surveyId.isPresent()
             && permission.getSurvey().getId().equals(surveyId.get())) {
           // The user has permission on a specific survey, so we can include it

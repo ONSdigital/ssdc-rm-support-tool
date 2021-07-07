@@ -32,7 +32,6 @@ class LandingPage extends Component {
   componentDidMount() {
     this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend()
-    this.getPrintSuppliers() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
     this.interval = setInterval(
       () => this.refreshDataFromBackend(),
@@ -45,10 +44,20 @@ class LandingPage extends Component {
   }
 
   getAuthorisedActivities = async () => {
-    const response = await fetch('/auth')
-    const authJson = await response.json()
+    const authResponse = await fetch('/auth')
+    const authorisedActivities = await authResponse.json()
 
-    this.setState({ authorisedActivities: authJson })
+    if (authorisedActivities.includes('CREATE_PRINT_TEMPLATE')) {
+      const supplierResponse = await fetch('/printsuppliers')
+      const supplierJson = await supplierResponse.json()
+
+      this.setState({
+        authorisedActivities: authorisedActivities,
+        printSuppliers: supplierJson
+      })
+    } else {
+      this.setState({ authorisedActivities: authorisedActivities })
+    }
   }
 
   refreshDataFromBackend = () => {
@@ -68,13 +77,6 @@ class LandingPage extends Component {
     const templateJson = await response.json()
 
     this.setState({ printTemplates: templateJson._embedded.printTemplates })
-  }
-
-  getPrintSuppliers = async () => {
-    const response = await fetch('/printsuppliers')
-    const supplierJson = await response.json()
-
-    this.setState({ printSuppliers: supplierJson })
   }
 
   openDialog = () => {
