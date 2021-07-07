@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.supporttool.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
+import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
@@ -51,9 +52,8 @@ public class FileUploadEndpoint {
     }
 
     // Check user is authorised to upload sample for this survey
-    if (!userIdentity.getSurveys(jwtToken).contains(collexOpt.get().getSurvey())) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
-    }
+    userIdentity.checkUserPermission(
+        jwtToken, collexOpt.get().getSurvey(), UserGroupAuthorisedActivityType.LOAD_SAMPLE);
 
     UUID fileId = UUID.randomUUID();
 

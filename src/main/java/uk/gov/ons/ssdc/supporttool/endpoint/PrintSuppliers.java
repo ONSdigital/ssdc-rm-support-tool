@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -7,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
@@ -17,13 +21,22 @@ public class PrintSuppliers {
 
   public static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
 
+  private final UserIdentity userIdentity;
+
   @Value("${printsupplierconfig}")
   private String printSupplierConfig;
 
   private List<String> printSuppliers = null;
 
+  public PrintSuppliers(UserIdentity userIdentity) {
+    this.userIdentity = userIdentity;
+  }
+
   @GetMapping
-  public List<String> getPrintSuppliers() {
+  public List<String> getPrintSuppliers(
+      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
+    userIdentity.checkGlobalUserPermission(jwtToken, CREATE_PRINT_TEMPLATE);
+
     if (printSuppliers != null) {
       return printSuppliers;
     }
