@@ -41,7 +41,7 @@ class SurveyDetails extends Component {
   }
 
   getAuthorisedActivities = async () => {
-    const response = await fetch('/auth')
+    const response = await fetch('/auth?surveyId=' + this.props.surveyId)
     const authJson = await response.json()
 
     this.setState({ authorisedActivities: authJson })
