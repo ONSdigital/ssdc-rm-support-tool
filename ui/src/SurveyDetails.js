@@ -42,6 +42,12 @@ class SurveyDetails extends Component {
 
   getAuthorisedActivities = async () => {
     const response = await fetch('/auth?surveyId=' + this.props.surveyId)
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return
+    }
+
     const authJson = await response.json()
 
     this.setState({ authorisedActivities: authJson })

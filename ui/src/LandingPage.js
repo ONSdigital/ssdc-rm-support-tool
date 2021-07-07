@@ -45,10 +45,22 @@ class LandingPage extends Component {
 
   getAuthorisedActivities = async () => {
     const authResponse = await fetch('/auth')
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!authResponse.ok) {
+      return
+    }
+
     const authorisedActivities = await authResponse.json()
 
     if (authorisedActivities.includes('CREATE_PRINT_TEMPLATE')) {
       const supplierResponse = await fetch('/printsuppliers')
+
+      // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+      if (!supplierResponse.ok) {
+        return
+      }
+
       const supplierJson = await supplierResponse.json()
 
       this.setState({

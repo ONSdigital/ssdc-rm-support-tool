@@ -103,6 +103,12 @@ class SampleUpload extends Component {
 
   getJobs = async () => {
     const response = await fetch('/job?collectionExercise=' + this.props.collectionExerciseId)
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return
+    }
+
     const jobsJson = await response.json()
 
     this.setState({ jobs: jobsJson })

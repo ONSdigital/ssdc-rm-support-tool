@@ -2,11 +2,7 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.SUPER_USER;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -57,9 +53,10 @@ public class Authorisation {
     Set<UserGroupAuthorisedActivityType> result = new HashSet<>();
     for (UserGroupMember groupMember : user.getMemberOf()) {
       for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
-        if (permission.getAuthorisedActivity() == SUPER_USER && (permission.getSurvey() == null
-        || (surveyId.isPresent()
-            && permission.getSurvey().getId().equals(surveyId.get())))) {
+        if (permission.getAuthorisedActivity() == SUPER_USER
+            && (permission.getSurvey() == null
+                || (surveyId.isPresent()
+                    && permission.getSurvey().getId().equals(surveyId.get())))) {
           // User is a global super user or super user on the specified survey: give all permissions
           return Set.of(UserGroupAuthorisedActivityType.values());
         } else if (permission.getSurvey() != null
