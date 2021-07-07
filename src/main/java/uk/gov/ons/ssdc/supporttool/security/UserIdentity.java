@@ -2,16 +2,17 @@ package uk.gov.ons.ssdc.supporttool.security;
 
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.entity.User;
-import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
+import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupMember;
+import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
@@ -19,42 +20,93 @@ public class UserIdentity {
   private static final String IAP_ISSUER_URL = "https://cloud.google.com/iap";
 
   private final UserRepository userRepository;
-  private final SurveyRepository surveyRepository;
   private final String iapAudience;
 
   private TokenVerifier tokenVerifier = null;
 
-  public UserIdentity(
-      UserRepository userRepository,
-      SurveyRepository surveyRepository,
-      @Value("${iapaudience}") String iapAudience) {
+  public UserIdentity(UserRepository userRepository, @Value("${iapaudience}") String iapAudience) {
     this.userRepository = userRepository;
-    this.surveyRepository = surveyRepository;
     this.iapAudience = iapAudience;
   }
 
-  public Collection<Survey> getSurveys(String jwtToken) {
+  public void checkUserPermission(
+      String jwtToken, Survey survey, UserGroupAuthorisedActivityType activity) {
     String userEmail = getUserEmail(jwtToken);
+
+    // TODO: Remove this before releasing to production!
+    if (userEmail.equals("dummy@fake-email.com")) {
+      return; // User is authorised - hack workaround for ease of dev/testing... remember to remove!
+    }
+
     Optional<User> userOpt = userRepository.findByEmail(userEmail);
 
-    if (userOpt.isPresent()) {
-      // TODO: FIX!
-      //      return userOpt.get().getSurveys();
-      return null;
-    } else {
-      // Hack for local testing... return all surveys if user is not in DB
-      // TODO: remove this to productionise!
-      Iterable<Survey> surveys = surveyRepository.findAll();
-      List<Survey> result = new LinkedList<>();
-      surveys.forEach(result::add);
-      return result;
+    if (!userOpt.isPresent()) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
+
+    User user = userOpt.get();
+
+    for (UserGroupMember groupMember : user.getMemberOf()) {
+      for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
+        // SUPER USER without a survey = GLOBAL super user (all permissions)
+        if ((permission.getAuthorisedActivity() == UserGroupAuthorisedActivityType.SUPER_USER
+                && permission.getSurvey() == null)
+            // SUPER USER with a survey = super user only on the specified survey
+            || (permission.getAuthorisedActivity() == UserGroupAuthorisedActivityType.SUPER_USER
+                    && permission.getSurvey() != null
+                    && permission.getSurvey().getId().equals(survey.getId())
+                // Otherwise, user must have specific activity/survey combo to be authorised
+                || (permission.getAuthorisedActivity() == activity
+                    && permission.getSurvey() != null
+                    && permission.getSurvey().getId().equals(survey.getId())))) {
+          return; // User is authorised
+        }
+      }
+    }
+
+    throw new ResponseStatusException(
+        HttpStatus.FORBIDDEN,
+        String.format("User not authorised for activity %s", activity.name()));
+  }
+
+  public void checkGlobalUserPermission(String jwtToken, UserGroupAuthorisedActivityType activity) {
+    String userEmail = getUserEmail(jwtToken);
+
+    // TODO: Remove this before releasing to production!
+    if (userEmail.equals("dummy@fake-email.com")) {
+      return; // User is authorised - hack workaround for ease of dev/testing... remember to remove!
+    }
+
+    Optional<User> userOpt = userRepository.findByEmail(userEmail);
+
+    if (!userOpt.isPresent()) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
+    }
+
+    User user = userOpt.get();
+
+    for (UserGroupMember groupMember : user.getMemberOf()) {
+      for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
+        // SUPER USER without a survey = GLOBAL super user (all permissions)
+        if ((permission.getAuthorisedActivity() == UserGroupAuthorisedActivityType.SUPER_USER
+                && permission.getSurvey() == null)
+            // Otherwise, user must have specific activity to be authorised
+            || (permission.getAuthorisedActivity() == activity)) {
+          return; // User is authorised
+        }
+      }
+    }
+
+    throw new ResponseStatusException(
+        HttpStatus.FORBIDDEN,
+        String.format("User not authorised for activity %s", activity.name()));
   }
 
   public String getUserEmail(String jwtToken) {
     if (StringUtils.isEmpty(jwtToken)) {
       // This should throw an exception if we're running in GCP
       // We are faking the email address so that we can test locally
+      // TODO: remove this before releasing to production!
       return "dummy@fake-email.com";
     } else {
       return verifyJwtAndGetEmail(jwtToken);
