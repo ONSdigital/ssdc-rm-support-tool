@@ -38,7 +38,9 @@ public class UserIdentity {
     Optional<User> userOpt = userRepository.findByEmail(userEmail);
 
     if (userOpt.isPresent()) {
-      return userOpt.get().getSurveys();
+      // TODO: FIX!
+      //      return userOpt.get().getSurveys();
+      return null;
     } else {
       // Hack for local testing... return all surveys if user is not in DB
       // TODO: remove this to productionise!

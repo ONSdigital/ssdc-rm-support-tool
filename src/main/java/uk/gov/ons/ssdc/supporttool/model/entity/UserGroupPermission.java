@@ -1,27 +1,26 @@
 package uk.gov.ons.ssdc.supporttool.model.entity;
 
-import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.ManyToOne;
 import lombok.Data;
 import lombok.ToString;
 
 @ToString(onlyExplicitlyIncluded = true) // Bidirectional relationship causes IDE stackoverflow
 @Entity
 @Data
-@Table(name = "users")
-public class User {
+public class UserGroupPermission {
   @Id private UUID id;
 
-  @Column private String email;
+  @ManyToOne private UserGroup group;
 
-  @OneToMany(mappedBy = "user")
-  private List<UserGroupMember> memberOf;
+  @ManyToOne private Survey survey;
 
-  @OneToMany(mappedBy = "user")
-  private List<UserGroupAdmin> adminOf;
+  @Enumerated(EnumType.STRING)
+  @Column
+  private UserGroupAuthorisedActivityType authorisedActivity;
 }
