@@ -28,10 +28,6 @@ public class CasesEndpoint {
     this.caseRowMapper = caseRowMapper;
   }
 
-  // Entity like the current SpringRestMagic? or should it return a DTO,
-  // entity for now
-  //  can map to caseDTO of some sort if required
-
   @GetMapping(value = "/search")
   @ResponseBody
   public List<CaseContainerDto> searchCasesBySampleData(
