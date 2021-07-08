@@ -23,7 +23,9 @@ public class ColumnValidator implements Serializable {
 
   @JsonCreator
   public ColumnValidator(
-      @JsonProperty("columnName") String columnName, @JsonProperty("sensitive") boolean sensitive, @JsonProperty("rules") Rule[] rules) {
+      @JsonProperty("columnName") String columnName,
+      @JsonProperty("sensitive") boolean sensitive,
+      @JsonProperty("rules") Rule[] rules) {
     this.columnName = columnName;
     this.sensitive = sensitive;
     this.rules = rules;

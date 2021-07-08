@@ -9,8 +9,8 @@ import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
 public class SampleTransformer implements Transformer {
   @Override
-  public Object transformRow(Map<String, String> rowData, Job job,
-      ColumnValidator[] columnValidators) {
+  public Object transformRow(
+      Map<String, String> rowData, Job job, ColumnValidator[] columnValidators) {
     Sample sample = new Sample();
     sample.setCaseId(UUID.randomUUID());
     sample.setCollectionExerciseId(job.getCollectionExercise().getId());
