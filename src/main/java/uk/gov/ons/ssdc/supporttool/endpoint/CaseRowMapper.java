@@ -5,9 +5,11 @@ import lombok.SneakyThrows;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ssdc.supporttool.model.dto.CaseContainerDto;
+import uk.gov.ons.ssdc.supporttool.model.entity.RefusalType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,11 +24,14 @@ public class CaseRowMapper implements RowMapper<CaseContainerDto> {
     CaseContainerDto caseContainerDto = new CaseContainerDto();
     caseContainerDto.setId(resultSet.getObject("id", UUID.class));
     caseContainerDto.setCaseRef(resultSet.getString("case_ref"));
-    caseContainerDto.setSurveyLaunched(resultSet.getObject("survey_launched", boolean.class));
-    caseContainerDto.setReceiptReceived(resultSet.getObject("receipt_received", boolean.class));
-    caseContainerDto.setAddressInvalid(resultSet.getObject("address_invalid", boolean.class));
+    caseContainerDto.setSurveyLaunched(resultSet.getBoolean("survey_launched"));
+    caseContainerDto.setReceiptReceived(resultSet.getBoolean("receipt_received"));
+    caseContainerDto.setAddressInvalid(resultSet.getBoolean("address_invalid"));
     caseContainerDto.setSample(objectMapper.readValue(resultSet.getString("sample"), Map.class));
+    caseContainerDto.setRefusalReceived(resultSet.getString("refusal_received"));
 
+    caseContainerDto.setCreatedAt(resultSet.getObject("created_at", OffsetDateTime.class));
+    caseContainerDto.setLastUpdatedAt(resultSet.getObject("last_updated_at", OffsetDateTime.class));
 
     return caseContainerDto;
   }

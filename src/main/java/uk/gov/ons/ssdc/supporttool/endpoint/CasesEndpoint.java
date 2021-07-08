@@ -53,7 +53,8 @@ public class CasesEndpoint {
     searchTerm = '%' + searchTerm + '%';
 
     String query =
-        "SELECT ca.id, ca.case_ref, ca.sample, ca.address_invalid, ca.receipt_received, ca.refusal_received"
+        "SELECT ca.id, ca.case_ref, ca.sample, ca.address_invalid, ca.receipt_received, ca.refusal_received,"
+            + " ca.survey_launched, ca.created_at, ca.last_updated_at "
             + " FROM casev3.cases ca, casev3.collection_exercise ce WHERE ca.collection_exercise_id = ce.id"
             + " AND ce.survey_id = :surveyId"
             + " AND EXISTS (SELECT * FROM jsonb_each_text(ca.sample) AS x(ky, val) WHERE lower(x.val) LIKE lower(:searchTerm))";
