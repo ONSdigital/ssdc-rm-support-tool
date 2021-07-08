@@ -4,6 +4,7 @@ import LandingPage from './LandingPage'
 import SurveyDetails from './SurveyDetails'
 import CollectionExerciseDetails from './CollectionExerciseDetails'
 import CaseSearch from './CaseSearch';
+import CaseDetails from './CaseDetails';
 
 class App extends Component {
   state = {
@@ -11,7 +12,9 @@ class App extends Component {
     selectedSurveyName: '',
     selectedCollexId: null,
     selectedCollexName: '',
-    caseSearchActive: false
+    caseSearchActive: false,
+    caseSearchResults: [],
+    selectedCaseId: null,
   }
 
   onOpenSurveyDetails = (survey) => {
@@ -32,7 +35,20 @@ class App extends Component {
 
   onOpenCaseSearch = () => {
     this.setState({
+      caseSearchResults: [], // Clear previous search results
       caseSearchActive: true
+    })
+  }
+
+  onCaseSearchResults = (caseSearchResults) => {
+    this.setState({
+      caseSearchResults: caseSearchResults
+    })
+  }
+
+  onOpenCaseDetails = (caseId) => {
+    this.setState({
+      selectedCaseId: caseId
     })
   }
 
@@ -48,6 +64,12 @@ class App extends Component {
     this.setState({ caseSearchActive: false })
   }
 
+  onBackToCaseSearch = () => {
+    this.setState({
+      selectedCaseId: null
+    })
+  }
+
   render() {
     return (
       <Box>
@@ -61,7 +83,7 @@ class App extends Component {
         {!this.state.selectedSurveyId &&
           <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails} />
         }
-        {this.state.selectedSurveyId && !this.state.selectedCollexId &&
+        {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId) &&
           <div>
             <Button onClick={this.onBackToSurveys}>Back</Button>
             <SurveyDetails
@@ -70,7 +92,7 @@ class App extends Component {
               onOpenCollectionExercise={this.onOpenCollectionExercise} />
           </div>
         }
-        {this.state.selectedCollexId && !this.state.caseSearchActive &&
+        {(this.state.selectedCollexId && !this.state.caseSearchActive && !this.state.selectedCaseId) &&
           <div>
             <Button onClick={this.onBackToCollectionExercises}>Back</Button>
             <CollectionExerciseDetails
@@ -80,12 +102,21 @@ class App extends Component {
               onOpenCaseSearch={this.onOpenCaseSearch} />
           </div>
         }
-        {this.state.caseSearchActive &&
+        {(this.state.caseSearchActive && !this.state.selectedCaseId) &&
           <div>
             <Button onClick={this.onBackToCollexDetails}>Back</Button>
             <CaseSearch
+              onOpenCaseDetails={this.onOpenCaseDetails}
+              onCaseSearchResults={this.onCaseSearchResults}
+              caseSearchResults={this.state.caseSearchResults}
               collectionExerciseId={this.state.selectedCollexId}
               collectionExerciseName={this.state.selectedCollexName} />
+          </div>
+        }
+        {this.state.selectedCaseId &&
+          <div>
+            <Button onClick={this.onBackToCaseSearch}>Back</Button>
+            <CaseDetails caseId={this.state.selectedCaseId} />
           </div>
         }
       </Box>
