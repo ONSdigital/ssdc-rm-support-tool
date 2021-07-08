@@ -28,9 +28,11 @@ import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 public class CasesEndpoint {
 
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+  private final CaseRowMapper caseRowMapper;
 
-  public CasesEndpoint(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+  public CasesEndpoint(NamedParameterJdbcTemplate namedParameterJdbcTemplate, CaseRowMapper caseRowMapper) {
     this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    this.caseRowMapper = caseRowMapper;
   }
 
   // Entity like the current SpringRestMagic? or should it return a DTO,
@@ -75,14 +77,19 @@ public class CasesEndpoint {
       namedParameters.put("collexId", collexId);
     }
 
-    List<Map<String, Object>> result = namedParameterJdbcTemplate.queryForList(query, namedParameters);
+
+    List<CaseContainerDto> cases = namedParameterJdbcTemplate.query(query,
+            namedParameters,
+            caseRowMapper);
+
+//    List<Map<String, Object>> result = namedParameterJdbcTemplate.queryForList(query, namedParameters);
 //    ObjectMapper objectMapper = new ObjectMapper();
 //    final String str = objectMapper.writeValueAsString(result);
     var headers = new HttpHeaders();
     headers.add("Responded", "MyController");
 
 //    Not sure about headers, ignore?  Accepted is that 202? want 200?
-    return ResponseEntity.accepted().headers(headers).body(result);
+    return ResponseEntity.accepted().headers(headers).body(cases);
 
     //
     //    query = "SELECT ca.id, ca.case_ref, ca.sample, ca.address_invalid, ca.receipt_received,
