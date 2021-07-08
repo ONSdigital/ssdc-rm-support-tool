@@ -1,10 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.model.dto;
 
-import lombok.Data;
-
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
+import lombok.Data;
 
 @Data
 public class CaseContainerDto {
@@ -17,4 +16,4 @@ public class CaseContainerDto {
   public boolean addressInvalid;
   public boolean receiptReceived;
   public boolean surveyLaunched;
- }
+}

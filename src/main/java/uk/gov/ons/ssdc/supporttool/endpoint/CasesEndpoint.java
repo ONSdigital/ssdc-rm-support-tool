@@ -4,10 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.ssdc.supporttool.model.dto.CaseContainerDto;
+import uk.gov.ons.ssdc.supporttool.utility.CaseRowMapper;
 
 @RestController
 @RequestMapping(value = "/cases")
@@ -23,7 +20,8 @@ public class CasesEndpoint {
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
   private final CaseRowMapper caseRowMapper;
 
-  public CasesEndpoint(NamedParameterJdbcTemplate namedParameterJdbcTemplate, CaseRowMapper caseRowMapper) {
+  public CasesEndpoint(
+      NamedParameterJdbcTemplate namedParameterJdbcTemplate, CaseRowMapper caseRowMapper) {
     this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     this.caseRowMapper = caseRowMapper;
   }
@@ -39,9 +37,9 @@ public class CasesEndpoint {
       @RequestParam(value = "launched", required = false) Boolean surveyLaunched,
       @RequestParam(value = "refusal", required = false) String refusalReceived) {
 
-
     if (refusalReceived != null && refusalReceived.equals("null")) {
-      // We want to be able to search for cases where refusal received is null by supplying the string "null"
+      // We want to be able to search for cases where refusal received is null by supplying the
+      // string "null"
       // If no refusalReceived query string is provided at all then we do not filter at all
       refusalReceived = null;
     }
@@ -83,9 +81,6 @@ public class CasesEndpoint {
       namedParameters.put("refusalReceiced", refusalReceived);
     }
 
-
-    return namedParameterJdbcTemplate.query(query,
-        namedParameters,
-        caseRowMapper);
+    return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
   }
 }

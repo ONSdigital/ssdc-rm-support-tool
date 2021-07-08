@@ -1,19 +1,16 @@
-package uk.gov.ons.ssdc.supporttool.endpoint;
+package uk.gov.ons.ssdc.supporttool.utility;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
-import uk.gov.ons.ssdc.supporttool.model.dto.CaseContainerDto;
-import uk.gov.ons.ssdc.supporttool.model.entity.RefusalType;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
+import lombok.SneakyThrows;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import uk.gov.ons.ssdc.supporttool.model.dto.CaseContainerDto;
 
-//Needs moving somewhere
 @Component
 public class CaseRowMapper implements RowMapper<CaseContainerDto> {
   private static final ObjectMapper objectMapper = new ObjectMapper();
