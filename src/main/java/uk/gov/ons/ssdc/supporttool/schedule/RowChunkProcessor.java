@@ -57,7 +57,7 @@ public class RowChunkProcessor {
         rabbitTemplate.convertAndSend(
             "", // default exchange (i.e. direct to queue)
             sampleQueue,
-            TRANSFORMER.transformRow(jobRow.getRowData(), job));
+            TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators));
       }
 
       jobRow.setValidationErrorDescriptions(String.join(", ", rowValidationErrors));
