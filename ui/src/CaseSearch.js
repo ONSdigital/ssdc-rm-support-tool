@@ -18,20 +18,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import CaseDetails from './CaseDetails';
 
 
 class CaseSearch extends Component {
   state = {
-    cases: [],
     sampleColumns: [],
     searchDialogOpen: false,
     contains: '',
     containsValidationError: false,
     column: '',
-    columnValidationError: false,
-    showDetails: false,
-    selectedCase: null
+    columnValidationError: false
   }
 
   componentDidMount() {
@@ -69,10 +65,14 @@ class CaseSearch extends Component {
 
     const response = await fetch('/cases/search/findBySampleContains?collexId=' + this.props.collectionExerciseId + '&key=' + this.state.column + '&value=' + this.state.contains)
     const search_result_json = await response.json()
-    this.setState({
-      cases: search_result_json._embedded.cases,
-      searchDialogOpen: false
-    })
+
+    if (response.ok) {
+      this.props.onCaseSearchResults(search_result_json._embedded.cases)
+
+      this.setState({
+        searchDialogOpen: false
+      })
+    }
   }
 
   onOpenSearchDialog = () => {
@@ -106,13 +106,6 @@ class CaseSearch extends Component {
     })
   }
 
-  onOpenCaseDetails = (caze) => {
-    this.setState({
-      showDetails: true,
-      selectedCase: caze
-    })
-  }
-
   onCloseDetails = () => {
     this.setState({
       showDetails: false
@@ -120,6 +113,8 @@ class CaseSearch extends Component {
   }
 
   getCaseCells = (caze) => {
+    const caseId = caze._links.self.href.split('/')[4]
+
     let caseCells = this.state.sampleColumns.map(sampleColumn => (
       <TableCell>{caze.sample[sampleColumn]}</TableCell>
     ))
@@ -127,7 +122,7 @@ class CaseSearch extends Component {
     caseCells.push((
       <TableCell>
         <Button
-          onClick={() => this.onOpenCaseDetails(caze)}
+          onClick={() => this.props.onOpenCaseDetails(caseId)}
           variant="contained">
           Open
         </Button>
@@ -150,7 +145,7 @@ class CaseSearch extends Component {
       <TableCell key={-1}>Action</TableCell>
     ))
 
-    const caseTableRows = this.state.cases.map((caze, index) => (
+    const caseTableRows = this.props.caseSearchResults.map((caze, index) => (
       <TableRow key={index}>
         {this.getCaseCells(caze)}
       </TableRow>
@@ -207,7 +202,6 @@ class CaseSearch extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        <CaseDetails showDetails={this.state.showDetails} onCloseDetails={this.onCloseDetails} case={this.state.selectedCase} />
       </div>
     )
   }
