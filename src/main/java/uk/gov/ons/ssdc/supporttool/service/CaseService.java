@@ -44,7 +44,7 @@ public class CaseService {
   }
 
 
-  public void buildAndSendRefusalEvent(RefusalDTO refusalDTO, Case caze) {
+  public void buildAndSendRefusalEvent(RefusalDTO refusalDTO, UUID caseId) {
     EventDTO eventDTO = new EventDTO();
     eventDTO.setType(EventTypeDTO.REFUSAL_RECEIVED);
     eventDTO.setDateTime(OffsetDateTime.now());
@@ -53,7 +53,7 @@ public class CaseService {
     eventDTO.setSource("SUPPORT_TOOL");
 
     CollectionCase collectionCase = new CollectionCase();
-    collectionCase.setCaseId(caze.getId());
+    collectionCase.setCaseId(caseId);
 
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setRefusal(refusalDTO);

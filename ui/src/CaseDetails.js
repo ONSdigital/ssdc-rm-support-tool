@@ -236,9 +236,6 @@ class CaseDetails extends Component {
                 </div>
               </DialogContent>
             </Dialog>
-
-
-
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
               <Table>
                 <TableHead>
