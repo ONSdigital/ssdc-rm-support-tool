@@ -24,6 +24,7 @@ class SurveyDetails extends Component {
     allowableFulfilmentPrintTemplates: [],
     printTemplateToAllow: '',
     printTemplateValidationError: false,
+    matchedCases: [],
   }
 
   componentDidMount() {
@@ -51,7 +52,26 @@ class SurveyDetails extends Component {
     const authJson = await response.json()
 
     this.setState({ authorisedActivities: authJson })
+
+
+    // defo not the way to call it
+    this.getCasesFromSearchTerm()
   }
+
+  getCasesFromSearchTerm = async () => {
+    const response = await fetch('cases/search?surveyId=' + this.props.surveyId + '&searchTerm=NW')
+
+       // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+      if (!response.ok) {
+        return
+      }
+
+      const matchedCasesJson = await response.json()
+
+      this.setState( { matchedCases: matchedCasesJson})
+  
+  }
+
 
   refreshDataFromBackend = async () => {
     this.getCollectionExercises()
@@ -309,6 +329,9 @@ class SurveyDetails extends Component {
           Survey: {this.props.surveyName}
         </Typography>
         <Button variant="contained" onClick={this.openDialog}>Create Collection Exercise</Button>
+
+        <Button variant="contained" onClick={() => this.props.onOpenSurveyCaseSearch(this.props.surveyId)}>Search Survey Cases</Button>
+
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>

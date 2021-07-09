@@ -5,6 +5,7 @@ import SurveyDetails from './SurveyDetails'
 import CollectionExerciseDetails from './CollectionExerciseDetails'
 import CaseSearch from './CaseSearch';
 import CaseDetails from './CaseDetails';
+import SurveyCaseSearch from './SurveyCaseSearch'
 
 class App extends Component {
   state = {
@@ -30,6 +31,12 @@ class App extends Component {
     this.setState({
       selectedCollexId: collexId,
       selectedCollexName: collectionExercise.name
+    })
+  }
+
+  onOpenSurveyCaseSearch = (searchSurveyId) => {
+    this.setState({
+      selectedSearchSurveyId: searchSurveyId
     })
   }
 
@@ -89,8 +96,16 @@ class App extends Component {
             <SurveyDetails
               surveyId={this.state.selectedSurveyId}
               surveyName={this.state.selectedSurveyName}
-              onOpenCollectionExercise={this.onOpenCollectionExercise} />
+              onOpenCollectionExercise={this.onOpenCollectionExercise}
+              onOpenSurveyCaseSearch={this.onOpenSurveyCaseSearch} />
           </div>
+        }
+        {(this.state.selectedSearchSurveyId) &&
+          <div>
+            <SurveyCaseSearch
+                surveyId={this.state.selectedSearchSurveyId} />
+          </div>
+
         }
         {(this.state.selectedCollexId && !this.state.caseSearchActive && !this.state.selectedCaseId) &&
           <div>
