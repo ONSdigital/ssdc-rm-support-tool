@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Button,  Paper, Typography, TextField } from '@material-ui/core';
+import {Button, Paper, Typography, TextField, MenuItem} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,32 +11,21 @@ import TableRow from '@material-ui/core/TableRow';
 
 class SurveyCaseSearch extends Component {
   state = {
-    matchedCases: [],
+    sampleColumns: [],
+    caseSearchResults: [],
     searchTerm: '',
   }
 
   componentDidMount() {
+    this.getSampleColumns()
     // this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    // this.refreshDataFromBackend()
+      // this.refreshDataFromBackend()
 
     // this.interval = setInterval(
     //   () => this.refreshDataFromBackend(),
     //   1000
     // )
   }
-
-  // getCasesFromSearchTerm = async () => {
-  //   const response = await fetch('cases/search?surveyId=' + this.props.surveyId + '&searchTerm=NW')
-
-  //      // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
-  //     if (!response.ok) {
-  //       return
-  //     }
-
-  //     const matchedCasesJson = await response.json()
-
-  //     this.setState( { matchedCases: matchedCasesJson})
-  // }
 
   onSearchChange = (event) => {
     this.setState({
@@ -69,21 +58,68 @@ class SurveyCaseSearch extends Component {
 
    const matchedCasesJson = await response.json()
 
-   this.setState( { matchedCases: matchedCasesJson})
+   this.setState( { caseSearchResults: matchedCasesJson})
   }
 
+  getSampleColumns = async () => {
+    const response = await fetch('/surveys/' + this.props.surveyId)
+    if (!response.ok) {
+      return
+    }
 
+    const surveyJson = await response.json()
+    let columns = []
 
-  render() {
-    const matchedCasesTableRows = this.state.matchedCases.map(caze => (
-      <TableRow key={caze.caseRef}>
-        <TableCell component="th" scope="row">
-          {caze.caseRef}
+    surveyJson.sampleValidationRules.forEach(rule => {
+      columns.push(rule.columnName)
+    })
+
+    this.setState({ sampleColumns: columns })
+  }
+
+  getCaseCells = (caze) => {
+    const caseId = caze.id
+    let caseCells = []
+    caseCells.push(<TableCell>{caze.caseRef}</TableCell>)
+    caseCells.push(<TableCell>{caze.collectionExerciseName}</TableCell>)
+    caseCells.push(this.state.sampleColumns.map(sampleColumn => (
+        <TableCell>{caze.sample[sampleColumn]}</TableCell>
+    )))
+
+    caseCells.push((
+        <TableCell>
+          <Button
+              onClick={() => this.props.onOpenCaseDetails(caseId)}
+              variant="contained">
+            Open
+          </Button>
         </TableCell>
-        {/* <TableCell align="right">
-          {caze.sample}
-        </TableCell> */}
-      </TableRow>
+    ))
+
+    return caseCells
+  }
+  render() {
+    let tableHeaderRows = []
+    tableHeaderRows.push((
+        <TableCell key={0}>Case Ref</TableCell>
+    ))
+
+    tableHeaderRows.push((
+        <TableCell key={1}>Collection Exercise</TableCell>
+    ))
+
+    tableHeaderRows.push(this.state.sampleColumns.map((sampleColumn, index) => (
+        <TableCell key={index+2}>{sampleColumn}</TableCell>
+    )))
+
+    tableHeaderRows.push((
+        <TableCell key={-1}>Action</TableCell>
+    ))
+
+    const caseTableRows = this.state.caseSearchResults.map((caze, index) => (
+        <TableRow key={index}>
+          {this.getCaseCells(caze)}
+        </TableRow>
     ))
 
     return (
@@ -110,12 +146,11 @@ class SurveyCaseSearch extends Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Case Ref</TableCell>
-                {/* <TableCell align="right">Sample Data</TableCell> */}
+                {tableHeaderRows}
               </TableRow>
             </TableHead>
             <TableBody>
-              {matchedCasesTableRows}
+              {caseTableRows}
             </TableBody>
           </Table>
         </TableContainer>
