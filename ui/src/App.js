@@ -16,6 +16,8 @@ class App extends Component {
     caseSearchActive: false,
     caseSearchResults: [],
     selectedCaseId: null,
+    showCaseSearch: false,
+    hideSurvey: false
   }
 
   onOpenSurveyDetails = (survey) => {
@@ -36,7 +38,9 @@ class App extends Component {
 
   onOpenSurveyCaseSearch = (searchSurveyId) => {
     this.setState({
-      selectedSearchSurveyId: searchSurveyId
+      selectedSearchSurveyId: searchSurveyId,
+      showCaseSearch: true,
+      hideSurvey: true
     })
   }
 
@@ -90,7 +94,7 @@ class App extends Component {
         {!this.state.selectedSurveyId &&
           <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails} />
         }
-        {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId) &&
+        {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId &&!this.state.hideSurvey) &&
           <div>
             <Button onClick={this.onBackToSurveys}>Back</Button>
             <SurveyDetails
@@ -100,12 +104,11 @@ class App extends Component {
               onOpenSurveyCaseSearch={this.onOpenSurveyCaseSearch} />
           </div>
         }
-        {(this.state.selectedSearchSurveyId) &&
+        {(this.state.showCaseSearch) &&
           <div>
             <SurveyCaseSearch
                 surveyId={this.state.selectedSearchSurveyId} />
           </div>
-
         }
         {(this.state.selectedCollexId && !this.state.caseSearchActive && !this.state.selectedCaseId) &&
           <div>
