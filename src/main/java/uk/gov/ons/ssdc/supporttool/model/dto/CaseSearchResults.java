@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class CaseContainerDto {
+public class CaseSearchResults {
   public UUID id;
   public String caseRef;
   public Map<String, String> sample;
@@ -16,4 +16,6 @@ public class CaseContainerDto {
   public boolean addressInvalid;
   public boolean receiptReceived;
   public boolean surveyLaunched;
+  public UUID collectionExerciseId;
+  public String collectionExerciseName;
 }
