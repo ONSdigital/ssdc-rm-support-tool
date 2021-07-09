@@ -1,15 +1,16 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import '@fontsource/roboto';
 import {
-  Typography,
-  Paper,
   Button,
   Dialog,
   DialogContent,
   FormControl,
   InputLabel,
+  MenuItem,
+  Paper,
   Select,
-  MenuItem, TextField
+  TextField,
+  Typography
 } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -17,8 +18,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Tablelvl2Context from "@material-ui/core/Table/Tablelvl2Context";
-import {uuidv4} from "./common";
 
 class CaseDetails extends Component {
   state = {
@@ -50,7 +49,6 @@ class CaseDetails extends Component {
       newRefusalAgentId: '',
       newRefusalCallId: '',
       refusalTypeValidationError: false,
-      refusalAgentIdValidationError: false,
     })
   }
 
@@ -78,7 +76,7 @@ class CaseDetails extends Component {
   }
 
   onCreateRefusal = async () => {
-    var failedValidation = false
+    let failedValidation = false
 
     if (!this.state.newRefusalType) {
       this.setState({ refusalTypeValidationError: true })
@@ -91,19 +89,20 @@ class CaseDetails extends Component {
 
     const newRefusal = {
       type: this.state.newRefusalType,
-      agentId: this.state.agentId,
-      callId: this.state.callId,
-      collectionCase: this.state.case
+      agentId: this.state.newRefusalAgentId,
+      callId: this.state.newRefusalCallId,
+      collectionCase: this.state.case,
+      collectionExerciseId: this.props.collectionExerciseId
     }
 
-    const response = await fetch('/actionRules', {
+    const response = await fetch('/refusal', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newActionRule)
+      body: JSON.stringify(newRefusal)
     })
 
     if (response.ok) {
-      this.setState({ createActionRulesDialogDisplayed: false })
+      this.setState({ createRefusalDialogDisplayed: false })
     }
   }
 
@@ -236,9 +235,6 @@ class CaseDetails extends Component {
                 </div>
               </DialogContent>
             </Dialog>
-
-
-
 
 
 
