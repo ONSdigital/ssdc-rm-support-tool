@@ -116,8 +116,7 @@ class App extends Component {
         {this.state.selectedCaseId &&
           <div>
             <Button onClick={this.onBackToCaseSearch}>Back</Button>
-            <CaseDetails caseId={this.state.selectedCaseId}
-                         collectionExerciseId={this.state.selectedCollexId}/>
+            <CaseDetails caseId={this.state.selectedCaseId}/>
           </div>
         }
       </Box>

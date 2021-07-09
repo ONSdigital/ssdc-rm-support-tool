@@ -88,15 +88,16 @@ class CaseDetails extends Component {
     }
 
     const newRefusal = {
-      type: this.state.newRefusalType,
-      agentId: this.state.newRefusalAgentId,
-      callId: this.state.newRefusalCallId,
-      collectionCase: this.state.case,
-      collectionExerciseId: this.props.collectionExerciseId
+      "type": this.state.newRefusalType,
+      "agentId": this.state.newRefusalAgentId,
+      "callId": this.state.newRefusalCallId,
+      "collectionCase": {
+        "caseId": this.props.caseId
+      }
     }
 
     const response = await fetch('/refusal', {
-      method: 'POST',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newRefusal)
     })
