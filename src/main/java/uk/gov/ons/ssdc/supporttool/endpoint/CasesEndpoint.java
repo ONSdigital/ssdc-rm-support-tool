@@ -10,25 +10,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.ons.ssdc.supporttool.model.dto.CaseContainerDto;
-import uk.gov.ons.ssdc.supporttool.utility.CaseRowMapper;
+import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResults;
+import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
 @RestController
 @RequestMapping(value = "/cases")
 public class CasesEndpoint {
 
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-  private final CaseRowMapper caseRowMapper;
+  private final CaseSearchResultsMapper caseRowMapper;
 
   public CasesEndpoint(
-      NamedParameterJdbcTemplate namedParameterJdbcTemplate, CaseRowMapper caseRowMapper) {
+      NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+      CaseSearchResultsMapper caseRowMapper) {
     this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     this.caseRowMapper = caseRowMapper;
   }
 
   @GetMapping(value = "/search")
   @ResponseBody
-  public List<CaseContainerDto> searchCasesBySampleData(
+  public List<CaseSearchResults> searchCasesBySampleData(
       @RequestParam(value = "searchTerm") String searchTerm,
       @RequestParam(value = "surveyId") UUID surveyId,
       @RequestParam(value = "collexId", required = false) UUID collexId,
@@ -39,8 +40,8 @@ public class CasesEndpoint {
 
     if (refusalReceived != null && refusalReceived.equals("null")) {
       // We want to be able to search for cases where refusal received is null by supplying the
-      // string "null"
-      // If no refusalReceived query string is provided at all then we do not filter at all
+      // string "null". If no refusalReceived query string is provided at all then we do not filter
+      // at all
       refusalReceived = null;
     }
 
@@ -48,7 +49,7 @@ public class CasesEndpoint {
 
     String query =
         "SELECT ca.id, ca.case_ref, ca.sample, ca.address_invalid, ca.receipt_received, ca.refusal_received,"
-            + " ca.survey_launched, ca.created_at, ca.last_updated_at "
+            + " ca.survey_launched, ca.created_at, ca.last_updated_at, ca.collection_exercise_id, ce.name collex_name"
             + " FROM casev3.cases ca, casev3.collection_exercise ce WHERE ca.collection_exercise_id = ce.id"
             + " AND ce.survey_id = :surveyId"
             + " AND EXISTS (SELECT * FROM jsonb_each_text(ca.sample) AS x(ky, val) WHERE lower(x.val) LIKE lower(:searchTerm))";
