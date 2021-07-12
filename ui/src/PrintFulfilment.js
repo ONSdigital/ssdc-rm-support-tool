@@ -43,11 +43,10 @@ class PrintFulfilment extends Component {
     }
 
     const printFulfilment = {
-      "packCode": this.state.packCode,
-      "caseId": this.props.caseId
+      "packCode": this.state.packCode
     }
 
-    const response = await fetch('/fulfilment', {
+    const response = await fetch('/fulfilment/' + this.props.caseId, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(printFulfilment)

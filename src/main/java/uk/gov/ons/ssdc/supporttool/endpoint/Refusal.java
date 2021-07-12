@@ -1,9 +1,11 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,19 +27,20 @@ public class Refusal {
     this.caseService = caseService;
   }
 
-  @PutMapping(value = "/refusal")
+  @PutMapping(value = "/refusal/{caseId}")
   public ResponseEntity<?> handleRefusal(
+      @PathVariable("caseId") UUID caseId,
       @RequestBody RefusalDTO refusalDTO,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
 
-    Case caze = caseService.getCaseByCaseId(refusalDTO.getCollectionCase().getCaseId());
+    Case caze = caseService.getCaseByCaseId(caseId);
 
     // Check user is authorised to refuse a case for this survey
     userIdentity.checkUserPermission(
         jwtToken, caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_REFUSAL);
 
-    caseService.buildAndSendRefusalEvent(refusalDTO);
+    caseService.buildAndSendRefusalEvent(refusalDTO, caze);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

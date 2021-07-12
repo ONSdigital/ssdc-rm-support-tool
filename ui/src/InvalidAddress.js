@@ -48,10 +48,9 @@ class InvalidAddress extends Component {
     const invalidAddress = {
       "reason": this.state.reason,
       "notes": this.state.notes,
-      "caseId": this.props.caseId
     }
 
-    const response = await fetch('/invalid-address', {
+    const response = await fetch('/invalid-address/' + this.props.caseId, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(invalidAddress)

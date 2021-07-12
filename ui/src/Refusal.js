@@ -57,12 +57,9 @@ class Refusal extends Component {
       "type": this.state.type,
       "agentId": this.state.agentId,
       "callId": this.state.callId,
-      "collectionCase": {
-        "caseId": this.props.caseId
-      }
     }
 
-    const response = await fetch('/refusal', {
+    const response = await fetch('/refusal/' + this.props.caseId, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(newRefusal)
