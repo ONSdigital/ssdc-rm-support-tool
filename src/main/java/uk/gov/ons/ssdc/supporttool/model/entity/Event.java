@@ -1,5 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -24,8 +25,10 @@ import org.hibernate.annotations.TypeDefs;
 public class Event {
   @Id private UUID id;
 
+  @JsonIgnore // Required to avoid stack overflow when using Spring auto-generated CRUD REST API
   @ManyToOne private UacQidLink uacQidLink;
 
+  @JsonIgnore // Required to avoid stack overflow when using Spring auto-generated CRUD REST API
   @ManyToOne private Case caze;
 
   @Column(columnDefinition = "timestamp with time zone")
