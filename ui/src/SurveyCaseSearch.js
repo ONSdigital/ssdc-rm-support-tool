@@ -41,11 +41,6 @@ class SurveyCaseSearch extends Component {
       failedValidation = true
     }
 
-    if (!this.state.column.trim()) {
-      this.setState({columnValidationError: true})
-      failedValidation = true
-    }
-
     if (failedValidation) {
       return
     }
@@ -137,7 +132,7 @@ class SurveyCaseSearch extends Component {
 
           <TextField
               required
-              fullWidth={true}
+              // fullWidth={true}
               style={{marginTop: 20}}
               error={this.state.containsValidationError}
               label="SearchTerm"
