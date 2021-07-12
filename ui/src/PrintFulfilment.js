@@ -10,11 +10,8 @@ class PrintFulfilment extends Component {
     showDialog: false,
   }
 
-  componentDidMount() {
-    this.refreshDataFromBackend()
-  }
-
   openDialog = () => {
+    this.refreshDataFromBackend()
     this.setState({
       showDialog: true,
     })
