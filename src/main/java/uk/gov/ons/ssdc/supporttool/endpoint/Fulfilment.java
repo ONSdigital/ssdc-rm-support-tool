@@ -37,7 +37,7 @@ public class Fulfilment {
         jwtToken, caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_FULFILMENT);
 
-    caseService.buildAndSendFulfilmentCaseEvent(fulfilmentDTO, caze.getId());
+    caseService.buildAndSendFulfilmentCaseEvent(fulfilmentDTO);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

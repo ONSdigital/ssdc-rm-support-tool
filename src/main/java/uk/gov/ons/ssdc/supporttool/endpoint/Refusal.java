@@ -37,7 +37,7 @@ public class Refusal {
         jwtToken, caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_REFUSAL);
 
-    caseService.buildAndSendRefusalEvent(refusalDTO, caze.getId());
+    caseService.buildAndSendRefusalEvent(refusalDTO);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.gov.ons.ssdc.supporttool.model.dto.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.EventTypeDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.FulfilmentDTO;
@@ -52,16 +51,13 @@ public class CaseService {
   }
 
 
-  public void buildAndSendRefusalEvent(RefusalDTO refusalDTO, UUID caseId) {
+  public void buildAndSendRefusalEvent(RefusalDTO refusalDTO) {
     EventDTO eventDTO = new EventDTO();
     eventDTO.setType(EventTypeDTO.REFUSAL_RECEIVED);
     eventDTO.setDateTime(OffsetDateTime.now());
     eventDTO.setTransactionId(UUID.randomUUID());
     eventDTO.setChannel("RM");
     eventDTO.setSource("SUPPORT_TOOL");
-
-    CollectionCase collectionCase = new CollectionCase();
-    collectionCase.setCaseId(caseId);
 
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setRefusal(refusalDTO);
@@ -73,16 +69,13 @@ public class CaseService {
         eventsExchange, refusalEventRoutingKey, responseManagementEvent);
   }
 
-  public void buildAndSendInvalidAddressCaseEvent(InvalidAddressDTO invalidAddressDTO, UUID caseId) {
+  public void buildAndSendInvalidAddressCaseEvent(InvalidAddressDTO invalidAddressDTO) {
     EventDTO eventDTO = new EventDTO();
     eventDTO.setType(EventTypeDTO.ADDRESS_NOT_VALID);
     eventDTO.setDateTime(OffsetDateTime.now());
     eventDTO.setTransactionId(UUID.randomUUID());
     eventDTO.setChannel("RM");
     eventDTO.setSource("SUPPORT_TOOL");
-
-    CollectionCase collectionCase = new CollectionCase();
-    collectionCase.setCaseId(caseId);
 
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setInvalidAddress(invalidAddressDTO);
@@ -94,16 +87,13 @@ public class CaseService {
         eventsExchange, invalidAddressEventRoutingKey, responseManagementEvent);
   }
 
-  public void buildAndSendFulfilmentCaseEvent(FulfilmentDTO fulfilmentDTO, UUID caseId) {
+  public void buildAndSendFulfilmentCaseEvent(FulfilmentDTO fulfilmentDTO) {
     EventDTO eventDTO = new EventDTO();
     eventDTO.setType(EventTypeDTO.FULFILMENT);
     eventDTO.setDateTime(OffsetDateTime.now());
     eventDTO.setTransactionId(UUID.randomUUID());
     eventDTO.setChannel("RM");
     eventDTO.setSource("SUPPORT_TOOL");
-
-    CollectionCase collectionCase = new CollectionCase();
-    collectionCase.setCaseId(caseId);
 
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setFulfilment(fulfilmentDTO);

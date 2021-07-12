@@ -37,7 +37,7 @@ public class InvalidAddress {
         jwtToken, caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_INVALID_ADDRESS);
 
-    caseService.buildAndSendInvalidAddressCaseEvent(invalidAddressDto, caze.getId());
+    caseService.buildAndSendInvalidAddressCaseEvent(invalidAddressDto);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
