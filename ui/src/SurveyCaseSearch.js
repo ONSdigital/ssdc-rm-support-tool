@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import '@fontsource/roboto';
-import {Button, Paper, Typography, TextField, MenuItem} from '@material-ui/core';
+import {Button, Paper, TextField, Typography} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -18,8 +18,9 @@ class SurveyCaseSearch extends Component {
 
   componentDidMount() {
     this.getSampleColumns()
+    // TODO: RBAC
     // this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-      // this.refreshDataFromBackend()
+    // this.refreshDataFromBackend()
 
     // this.interval = setInterval(
     //   () => this.refreshDataFromBackend(),
@@ -34,31 +35,31 @@ class SurveyCaseSearch extends Component {
   }
 
   onSearch = async () => {
+    let failedValidation
+    if (!this.state.searchTerm.trim()) {
+      this.setState({containsValidationError: true})
+      failedValidation = true
+    }
 
-    // if (!this.state.searchTerm.trim()) {
-    //   this.setState({ containsValidationError: true })
-    //   failedValidation = true
-    // }
+    if (!this.state.column.trim()) {
+      this.setState({columnValidationError: true})
+      failedValidation = true
+    }
 
-    // if (!this.state.column.trim()) {
-    //   this.setState({ columnValidationError: true })
-    //   failedValidation = true
-    // }
-
-    // if (failedValidation) {
-    //   return
-    // }
+    if (failedValidation) {
+      return
+    }
 
     const response = await fetch('cases/search?surveyId=' + this.props.surveyId + '&searchTerm=' + this.state.searchTerm)
 
-      // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
       return
     }
 
-   const matchedCasesJson = await response.json()
+    const matchedCasesJson = await response.json()
 
-   this.setState( { caseSearchResults: matchedCasesJson})
+    this.setState({caseSearchResults: matchedCasesJson})
   }
 
   getSampleColumns = async () => {
@@ -74,7 +75,7 @@ class SurveyCaseSearch extends Component {
       columns.push(rule.columnName)
     })
 
-    this.setState({ sampleColumns: columns })
+    this.setState({sampleColumns: columns})
   }
 
   getCaseCells = (caze) => {
@@ -98,7 +99,8 @@ class SurveyCaseSearch extends Component {
 
     return caseCells
   }
-  render() {
+
+  getTableHeaderRows() {
     let tableHeaderRows = []
     tableHeaderRows.push((
         <TableCell key={0}>Case Ref</TableCell>
@@ -109,12 +111,17 @@ class SurveyCaseSearch extends Component {
     ))
 
     tableHeaderRows.push(this.state.sampleColumns.map((sampleColumn, index) => (
-        <TableCell key={index+2}>{sampleColumn}</TableCell>
+        <TableCell key={index + 2}>{sampleColumn}</TableCell>
     )))
 
     tableHeaderRows.push((
         <TableCell key={-1}>Action</TableCell>
     ))
+    return tableHeaderRows;
+  }
+
+  render() {
+    const tableHeaderRows = this.getTableHeaderRows();
 
     const caseTableRows = this.state.caseSearchResults.map((caze, index) => (
         <TableRow key={index}>
@@ -123,40 +130,41 @@ class SurveyCaseSearch extends Component {
     ))
 
     return (
-      <div style={{ padding: 20 }}>
-        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Survey: {this.props.surveyName}
-        </Typography>
+        <div style={{padding: 20}}>
+          <Typography variant="h4" color="inherit" style={{marginBottom: 20}}>
+            Survey: {this.props.surveyName}
+          </Typography>
 
-        <TextField
-                required
-                fullWidth={true}
-                style={{ marginTop: 20 }}
-                error={this.state.containsValidationError}
-                label="SearchTerm"
-                onChange={this.onSearchChange}
-                value={this.state.searchTerm} />
-          <div style={{ marginTop: 10 }}>
-            <Button onClick={this.onSearch} variant="contained" style={{ margin: 10 }}>
+          <TextField
+              required
+              fullWidth={true}
+              style={{marginTop: 20}}
+              error={this.state.containsValidationError}
+              label="SearchTerm"
+              onChange={this.onSearchChange}
+              value={this.state.searchTerm}/>
+          <div style={{marginTop: 10}}>
+            <Button onClick={this.onSearch} variant="contained" style={{margin: 10}}>
               Search
             </Button>
           </div>
 
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {tableHeaderRows}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {caseTableRows}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+          <TableContainer component={Paper} style={{marginTop: 20}}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {tableHeaderRows}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {caseTableRows}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
     )
   }
+
 }
 
 export default SurveyCaseSearch
