@@ -81,3 +81,5 @@ printsupplierconfig: '{"SUPPLIER_A":{"sftpDirectory":"foo","encryptionKeyFilenam
 
 queueconfig:
   sample-queue: supportTool.caseProcessor.sample
+  case-event-exchange: events
+  deactivate-uac-routing-key: events.caseProcessor.deactivateUac
