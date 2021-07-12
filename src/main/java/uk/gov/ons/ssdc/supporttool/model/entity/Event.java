@@ -26,10 +26,12 @@ public class Event {
   @Id private UUID id;
 
   @JsonIgnore // Required to avoid stack overflow when using Spring auto-generated CRUD REST API
-  @ManyToOne private UacQidLink uacQidLink;
+  @ManyToOne
+  private UacQidLink uacQidLink;
 
   @JsonIgnore // Required to avoid stack overflow when using Spring auto-generated CRUD REST API
-  @ManyToOne private Case caze;
+  @ManyToOne
+  private Case caze;
 
   @Column(columnDefinition = "timestamp with time zone")
   private OffsetDateTime eventDate;
