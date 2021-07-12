@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import uk.gov.ons.ssdc.supporttool.model.dto.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.EventTypeDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.FulfilmentDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.InvalidAddressDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.RefusalDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.ResponseManagementEvent;
@@ -27,6 +29,12 @@ public class CaseService {
 
   @Value("${queueconfig.refusal-event-routing-key}")
   private String refusalEventRoutingKey;
+
+  @Value("${queueconfig.invalid-address-event-routing-key}")
+  private String invalidAddressEventRoutingKey;
+
+  @Value("${queueconfig.fulfilment-queue}")
+  private String fulfilmentQueue;
 
   public CaseService(CaseRepository caseRepository,
       RabbitTemplate rabbitTemplate) {
@@ -63,5 +71,46 @@ public class CaseService {
 
     rabbitTemplate.convertAndSend(
         eventsExchange, refusalEventRoutingKey, responseManagementEvent);
+  }
+
+  public void buildAndSendInvalidAddressCaseEvent(InvalidAddressDTO invalidAddressDTO, UUID caseId) {
+    EventDTO eventDTO = new EventDTO();
+    eventDTO.setType(EventTypeDTO.ADDRESS_NOT_VALID);
+    eventDTO.setDateTime(OffsetDateTime.now());
+    eventDTO.setTransactionId(UUID.randomUUID());
+    eventDTO.setChannel("RM");
+    eventDTO.setSource("SUPPORT_TOOL");
+
+    CollectionCase collectionCase = new CollectionCase();
+    collectionCase.setCaseId(caseId);
+
+    PayloadDTO payloadDTO = new PayloadDTO();
+    payloadDTO.setInvalidAddress(invalidAddressDTO);
+
+    ResponseManagementEvent responseManagementEvent =
+        new ResponseManagementEvent(eventDTO, payloadDTO);
+
+    rabbitTemplate.convertAndSend(
+        eventsExchange, invalidAddressEventRoutingKey, responseManagementEvent);
+  }
+
+  public void buildAndSendFulfilmentCaseEvent(FulfilmentDTO fulfilmentDTO, UUID caseId) {
+    EventDTO eventDTO = new EventDTO();
+    eventDTO.setType(EventTypeDTO.FULFILMENT);
+    eventDTO.setDateTime(OffsetDateTime.now());
+    eventDTO.setTransactionId(UUID.randomUUID());
+    eventDTO.setChannel("RM");
+    eventDTO.setSource("SUPPORT_TOOL");
+
+    CollectionCase collectionCase = new CollectionCase();
+    collectionCase.setCaseId(caseId);
+
+    PayloadDTO payloadDTO = new PayloadDTO();
+    payloadDTO.setFulfilment(fulfilmentDTO);
+
+    ResponseManagementEvent responseManagementEvent =
+        new ResponseManagementEvent(eventDTO, payloadDTO);
+
+    rabbitTemplate.convertAndSend(fulfilmentQueue, responseManagementEvent);
   }
 }

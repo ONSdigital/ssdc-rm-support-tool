@@ -8,4 +8,6 @@ import lombok.Data;
 @JsonInclude(Include.NON_NULL)
 public class PayloadDTO {
   private RefusalDTO refusal;
+  private InvalidAddressDTO invalidAddress;
+  private FulfilmentDTO fulfilment;
 }

@@ -7,37 +7,37 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import uk.gov.ons.ssdc.supporttool.model.dto.RefusalDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.FulfilmentDTO;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
 
 @Controller
-public class Refusal {
+public class Fulfilment {
 
   private final CaseService caseService;
   private final UserIdentity userIdentity;
 
   @Autowired
-  public Refusal(UserIdentity userIdentity, CaseService caseService) {
+  public Fulfilment(UserIdentity userIdentity, CaseService caseService) {
     this.userIdentity = userIdentity;
     this.caseService = caseService;
   }
 
-  @PutMapping(value = "/refusal")
-  public ResponseEntity<?> handleRefusal(
-      @RequestBody RefusalDTO refusalDTO,
+  @PutMapping(value = "/fulfilment")
+  public ResponseEntity<?> handleFulfilment(
+      @RequestBody FulfilmentDTO fulfilmentDTO,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
 
-    Case caze = caseService.getCaseByCaseId(refusalDTO.getCollectionCase().getCaseId());
+    Case caze = caseService.getCaseByCaseId(fulfilmentDTO.getCaseId());
 
-    // Check user is authorised to refuse a case for this survey
+    // Check user is authorised to request a fulfilment on a case for this survey
     userIdentity.checkUserPermission(
         jwtToken, caze.getCollectionExercise().getSurvey(),
-        UserGroupAuthorisedActivityType.CREATE_CASE_REFUSAL);
+        UserGroupAuthorisedActivityType.CREATE_CASE_FULFILMENT);
 
-    caseService.buildAndSendRefusalEvent(refusalDTO, caze.getId());
+    caseService.buildAndSendFulfilmentCaseEvent(fulfilmentDTO, caze.getId());
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
