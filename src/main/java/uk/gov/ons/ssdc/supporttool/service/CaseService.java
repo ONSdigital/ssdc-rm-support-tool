@@ -29,7 +29,7 @@ public class CaseService {
   private final CaseRepository caseRepository;
   private final RabbitTemplate rabbitTemplate;
 
-  @Value("${queueconfig.events-exchange}")
+  @Value("${queueconfig.case-event-exchange}")
   private String eventsExchange;
 
   @Value("${queueconfig.refusal-event-routing-key}")
