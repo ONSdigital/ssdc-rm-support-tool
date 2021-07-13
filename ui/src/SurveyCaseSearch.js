@@ -37,7 +37,7 @@ class SurveyCaseSearch extends Component {
       return
     }
 
-    const response = await fetch('surveyCases/search?surveyId=' + this.props.surveyId + '&searchTerm=' + this.state.searchTerm)
+    const response = await fetch('searchInSurvey/' + this.props.surveyId + '?searchTerm=' + this.state.searchTerm)
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
@@ -119,7 +119,6 @@ class SurveyCaseSearch extends Component {
 
         <TextField
           required
-          // fullWidth={true}
           style={{ marginTop: 20 }}
           error={this.state.containsValidationError}
           label="SearchTerm"

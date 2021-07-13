@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class CaseSearchResults {
+public class CaseSearchResult {
   public UUID id;
   public String caseRef;
   public Map<String, String> sample;

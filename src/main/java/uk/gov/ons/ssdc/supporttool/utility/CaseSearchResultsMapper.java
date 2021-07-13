@@ -9,16 +9,16 @@ import java.util.UUID;
 import lombok.SneakyThrows;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResults;
+import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResult;
 
 @Component
-public class CaseSearchResultsMapper implements RowMapper<CaseSearchResults> {
+public class CaseSearchResultsMapper implements RowMapper<CaseSearchResult> {
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
   @SneakyThrows
   @Override
-  public CaseSearchResults mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-    CaseSearchResults caseContainerDto = new CaseSearchResults();
+  public CaseSearchResult mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+    CaseSearchResult caseContainerDto = new CaseSearchResult();
     caseContainerDto.setId(resultSet.getObject("id", UUID.class));
     caseContainerDto.setCaseRef(resultSet.getString("case_ref"));
     caseContainerDto.setRefusalReceived(resultSet.getString("refusal_received"));

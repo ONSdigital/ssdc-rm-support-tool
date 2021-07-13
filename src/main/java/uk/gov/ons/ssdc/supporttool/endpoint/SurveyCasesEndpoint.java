@@ -1,24 +1,34 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResults;
+import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResult;
 import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 @RestController
-@RequestMapping(value = "/surveyCases")
+@RequestMapping(value = "/searchInSurvey")
 public class SurveyCasesEndpoint {
 
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
   private final CaseSearchResultsMapper caseRowMapper;
+
+
+  private static final String searchCasesPartialQuery =
+      "SELECT c.id, c.case_ref, c.sample, c.address_invalid, c.receipt_received, c.refusal_received,"
+          + " c.survey_launched, c.created_at, c.last_updated_at, c.collection_exercise_id, e.name collex_name";
+  private static final String searchCasesInSurveyPartialQuery = searchCasesPartialQuery
+      + " FROM casev3.cases c, casev3.collection_exercise e WHERE c.collection_exercise_id = e.id"
+      + " AND e.survey_id = :surveyId";
 
   public SurveyCasesEndpoint(
       NamedParameterJdbcTemplate namedParameterJdbcTemplate,
@@ -26,12 +36,12 @@ public class SurveyCasesEndpoint {
     this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     this.caseRowMapper = caseRowMapper;
   }
-  
-  @GetMapping(value = "/search")
+
+  @GetMapping(value = "/{surveyId}/")
   @ResponseBody
-  public List<CaseSearchResults> searchCasesBySampleData(
+  public List<CaseSearchResult> searchCasesBySampleData(
+      @PathVariable(value = "surveyId") UUID surveyId,
       @RequestParam(value = "searchTerm") String searchTerm,
-      @RequestParam(value = "surveyId") UUID surveyId,
       @RequestParam(value = "collexId", required = false) UUID collexId,
       @RequestParam(value = "receipted", required = false) Boolean receiptReceived,
       @RequestParam(value = "invalid", required = false) Boolean addressInvalid,
@@ -47,12 +57,8 @@ public class SurveyCasesEndpoint {
 
     searchTerm = '%' + searchTerm + '%';
 
-    String query =
-        "SELECT ca.id, ca.case_ref, ca.sample, ca.address_invalid, ca.receipt_received, ca.refusal_received,"
-            + " ca.survey_launched, ca.created_at, ca.last_updated_at, ca.collection_exercise_id, ce.name collex_name"
-            + " FROM casev3.cases ca, casev3.collection_exercise ce WHERE ca.collection_exercise_id = ce.id"
-            + " AND ce.survey_id = :surveyId"
-            + " AND EXISTS (SELECT * FROM jsonb_each_text(ca.sample) AS x(ky, val) WHERE lower(x.val) LIKE lower(:searchTerm))";
+    String query = searchCasesInSurveyPartialQuery
+        + " AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val) WHERE lower(x.val) LIKE lower(:searchTerm))";
 
     Map<String, Object> namedParameters = new HashMap();
     namedParameters.put("surveyId", surveyId);
@@ -84,4 +90,32 @@ public class SurveyCasesEndpoint {
 
     return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
   }
+
+  @GetMapping(value = "/{surveyId}/caseRef/{caseRef}")
+  @ResponseBody
+  public List<CaseSearchResult> getCaseByCaseRef(@PathVariable(value = "surveyId") UUID surveyId,
+                                                 @PathVariable(value = "caseRef") long caseRef) {
+
+    String query = searchCasesInSurveyPartialQuery + " AND c.case_ref = :caseRef";
+
+    Map<String, Object> namedParameters = new HashMap();
+    namedParameters.put("surveyId", surveyId);
+    namedParameters.put("caseRef", caseRef);
+    return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
+  }
+
+  @GetMapping(value = "/{surveyId}/qid/{qid}")
+  @ResponseBody
+  public List<CaseSearchResult> getCaseByQid(@PathVariable(value = "surveyId") UUID surveyId,
+                                             @PathVariable(value = "qid") String qid) {
+    String query = searchCasesPartialQuery + " FROM casev3.uac_qid_link u, casev3.cases c, casev3.collection_exercise e"
+        + " WHERE c.collection_exercise_id = e.id AND u.caze_id = c.id"
+        + " AND u.qid = :qid";
+    Map<String, Object> namedParameters = new HashMap();
+    namedParameters.put("surveyId", surveyId);
+    namedParameters.put("qid", qid);
+
+    return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
+  }
+
 }
