@@ -54,28 +54,7 @@ class PrintFulfilment extends Component {
       this.closeDialog()
     }
   }
-
-  // TODO: These next 2 functions are duplicated in SurveyDetails.js. Move to helper?
-  getFulfilmentPrintTemplates = async () => {
-    const response = await fetch('/surveys/' + this.props.surveyId + '/fulfilmentPrintTemplates')
-    const printTemplatesJson = await response.json()
-    const printTemplates = printTemplatesJson._embedded.fulfilmentSurveyPrintTemplates
-
-    let templates = []
-
-    for (let i = 0; i < printTemplates.length; i++) {
-      const printTemplateUrl = new URL(printTemplates[i]._links.printTemplate.href)
-
-      const printTemplateResponse = await fetch(printTemplateUrl.pathname)
-      const printTemplateJson = await printTemplateResponse.json()
-      const packCode = printTemplateJson._links.self.href.split('/')[4]
-
-      templates.push(packCode)
-    }
-
-    return templates
-  }
-
+  
 
   // TODO: Need to handle errors from Promises
   refreshDataFromBackend = async () => {
