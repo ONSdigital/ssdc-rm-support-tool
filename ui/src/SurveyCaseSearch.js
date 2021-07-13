@@ -15,6 +15,7 @@ class SurveyCaseSearch extends Component {
     caseSearchResults: [],
     searchTerm: '',
     caseRef: '',
+    qid: '',
   }
 
   componentDidMount() {
@@ -33,6 +34,11 @@ class SurveyCaseSearch extends Component {
     })
   }
 
+  onQidChange = (event) => {
+    this.setState({
+      qid: event.target.value
+    })
+  }
 
 
   onSearch = async () => {
@@ -60,7 +66,7 @@ class SurveyCaseSearch extends Component {
 
   onCaseRefSearch = async () => {
     let failedValidation
-    if (!this.state.searchTerm.trim()) {
+    if (!this.state.caseRef.trim()) {
       this.setState({ containsValidationError: true })
       failedValidation = true
     }
@@ -70,6 +76,29 @@ class SurveyCaseSearch extends Component {
     }
 
     const response = await fetch('searchInSurvey/' + this.props.surveyId + '/caseRef/' + this.state.caseRef)
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return
+    }
+
+    const matchedCasesJson = await response.json()
+
+    this.setState({ caseSearchResults: matchedCasesJson })
+  }
+
+  onQidSearch = async () => {
+    let failedValidation
+    if (!this.state.qid.trim()) {
+      this.setState({ containsValidationError: true })
+      failedValidation = true
+    }
+
+    if (failedValidation) {
+      return
+    }
+
+    const response = await fetch('searchInSurvey/' + this.props.surveyId + '/qid/' + this.state.qid)
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
@@ -175,6 +204,18 @@ class SurveyCaseSearch extends Component {
           </Button>
         </div>
 
+        <TextField
+          required
+          style={{ marginTop: 20 }}
+          error={this.state.containsValidationError}
+          label="qid search"
+          onChange={this.onQidChange}
+          value={this.state.qid} />
+        <div style={{ marginTop: 10 }}>
+          <Button onClick={this.onQidSearch} variant="contained" style={{ margin: 10 }}>
+            Search By Qid
+          </Button>
+        </div>
 
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
