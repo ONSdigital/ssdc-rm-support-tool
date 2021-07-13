@@ -86,9 +86,7 @@ class SurveyDetails extends Component {
     let allowableActionRulePrintTemplates = []
     let allowableFulfilmentPrintTemplates = []
     allPrintFulfilmentTemplates
-        .then((templates) => {
-
-          templates.forEach(packCode => {
+        .forEach(packCode => {
             if (!actionRulePrintTemplates.includes(packCode)) {
               allowableActionRulePrintTemplates.push(packCode)
             }
@@ -97,8 +95,6 @@ class SurveyDetails extends Component {
               allowableFulfilmentPrintTemplates.push(packCode)
             }
           })
-        })
-
 
     this.setState({
       actionRulePrintTemplates: actionRulePrintTemplates,
