@@ -80,8 +80,9 @@ iapaudience: DUMMY
 printsupplierconfig: '{"SUPPLIER_A":{"sftpDirectory":"foo","encryptionKeyFilename": "bar"},"SUPPLIER_B":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"}}'
 
 queueconfig:
+  case-event-exchange: events
   sample-queue: supportTool.caseProcessor.sample
+  fulfilment-queue: events.caseProcessor.fulfilment
+  deactivate-uac-routing-key: events.caseProcessor.deactivateUac
   refusal-event-routing-key: events.caseProcessor.refusal
   invalid-address-event-routing-key: events.caseProcessor.invalidAddress
-  fulfilment-queue: events.caseProcessor.fulfilment
-  events-exchange: events

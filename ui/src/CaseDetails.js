@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import '@fontsource/roboto';
-import {Paper, Typography} from '@material-ui/core';
+import { Typography, Paper, Button } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,13 +13,15 @@ import PrintFulfilment from "./PrintFulfilment";
 
 class CaseDetails extends Component {
   state = {
+    authorisedActivities: [],
     case: null,
-    authorisedActivities: []
+    uacQidLinks: []
   }
 
   componentDidMount() {
+    this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCase()
-    this.getAuthorisedActivities()
+    this.getUacQidLinks()
 
     this.interval = setInterval(
         () => this.getCase(),
@@ -37,7 +39,7 @@ class CaseDetails extends Component {
 
     const authJson = await response.json()
 
-    this.setState({authorisedActivities: authJson})
+    this.setState({ authorisedActivities: authJson })
   }
 
   getCase = async () => {
@@ -49,9 +51,29 @@ class CaseDetails extends Component {
     }
   }
 
+  getUacQidLinks = async () => {
+    const response = await fetch('/cases/' + this.props.caseId + '/uacQidLinks')
+    const uacQidLinksJson = await response.json()
+
+    if (response.ok) {
+      this.setState({ uacQidLinks: uacQidLinksJson._embedded.uacQidLinks })
+    }
+  }
+
+  onDeactivate = async (qid) => {
+    const response = await fetch('/deactivateUac/' + qid)
+
+    if (response.ok) {
+      // NOTE: UIs don't play nice with async stuff... we have no idea if/when the UAC will actually be dectivated... go figure
+      await new Promise(r => setTimeout(r, 1000)) // This sleep ought to work... ish. There's no better way to do this
+
+      // Now, refresh the UAC QID Link data so we can see that the UAC is deactivated
+      this.getUacQidLinks()
+    }
+  }
+
   render() {
     var caseEvents
-    var uacQids
 
     if (this.state.case) {
       caseEvents = this.state.case.events.map((event, index) => (
@@ -67,24 +89,33 @@ class CaseDetails extends Component {
           </TableCell>
         </TableRow>
       ))
-
-      uacQids = this.state.case.uacQidLinks.map((uacQidLink, index) => (
-        <TableRow key={index}>
-          <TableCell component="th" scope="row">
-            {uacQidLink.qid}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {uacQidLink.createdAt}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {uacQidLink.lastUpdatedAt}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {uacQidLink.active ? 'Yes' : 'No'}
-          </TableCell>
-        </TableRow>
-      ))
     }
+
+    const uacQids = this.state.uacQidLinks.map((uacQidLink, index) => (
+      <TableRow key={index}>
+        <TableCell component="th" scope="row">
+          {uacQidLink.qid}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {uacQidLink.createdAt}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {uacQidLink.lastUpdatedAt}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {uacQidLink.active ? 'Yes' : 'No'}
+        </TableCell>
+        <TableCell>
+          {(this.state.authorisedActivities.includes('DEACTIVATE_UAC') && uacQidLink.active) &&
+            <Button
+              onClick={() => this.onDeactivate(uacQidLink.qid)}
+              variant="contained">
+              Deactivate
+            </Button>
+          }
+        </TableCell>
+      </TableRow>
+    ))
 
     return (
       <div style={{ padding: 20 }}>
@@ -153,6 +184,7 @@ class CaseDetails extends Component {
                     <TableCell>Created At</TableCell>
                     <TableCell>Last Updated At</TableCell>
                     <TableCell>Active</TableCell>
+                    <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>

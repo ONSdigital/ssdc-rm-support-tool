@@ -115,8 +115,8 @@ class CaseSearch extends Component {
   getCaseCells = (caze) => {
     const caseId = caze._links.self.href.split('/')[4]
 
-    let caseCells = this.state.sampleColumns.map(sampleColumn => (
-      <TableCell>{caze.sample[sampleColumn]}</TableCell>
+    let caseCells = this.state.sampleColumns.map((sampleColumn, index) => (
+      <TableCell key={index}>{caze.sample[sampleColumn]}</TableCell>
     ))
 
     caseCells.push((

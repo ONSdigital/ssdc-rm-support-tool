@@ -109,6 +109,7 @@ class App extends Component {
               onOpenCaseDetails={this.onOpenCaseDetails}
               onCaseSearchResults={this.onCaseSearchResults}
               caseSearchResults={this.state.caseSearchResults}
+              surveyId={this.state.selectedSurveyId}
               collectionExerciseId={this.state.selectedCollexId}
               collectionExerciseName={this.state.selectedCollexName} />
           </div>
@@ -117,8 +118,8 @@ class App extends Component {
           <div>
             <Button onClick={this.onBackToCaseSearch}>Back</Button>
             <CaseDetails
-              caseId={this.state.selectedCaseId}
-              surveyId={this.state.selectedSurveyId}/>
+              surveyId={this.state.selectedSurveyId}
+              caseId={this.state.selectedCaseId} />
           </div>
         }
       </Box>

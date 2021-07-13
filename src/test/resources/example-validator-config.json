@@ -47,5 +47,10 @@
         "className": "uk.gov.ons.ssdc.supporttool.validation.AlphanumericRule"
       }
     ]
+  },
+  {
+    "columnName": "PHONE_NUMBER",
+    "sensitive": true,
+    "rules": []
   }
 ]
