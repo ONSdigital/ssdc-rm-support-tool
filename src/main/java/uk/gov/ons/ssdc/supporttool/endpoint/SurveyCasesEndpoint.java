@@ -37,7 +37,7 @@ public class SurveyCasesEndpoint {
     this.caseRowMapper = caseRowMapper;
   }
 
-  @GetMapping(value = "/{surveyId}/")
+  @GetMapping(value = "/{surveyId}")
   @ResponseBody
   public List<CaseSearchResult> searchCasesBySampleData(
       @PathVariable(value = "surveyId") UUID surveyId,
