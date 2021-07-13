@@ -57,7 +57,6 @@ public class CaseService {
     return cazeResult.get();
   }
 
-
   public void buildAndSendRefusalEvent(Refusal refusal, Case caze) {
     EventDTO eventDTO = new EventDTO();
     eventDTO.setType(EventTypeDTO.REFUSAL_RECEIVED);
