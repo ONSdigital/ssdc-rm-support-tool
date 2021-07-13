@@ -14,6 +14,7 @@ class SurveyCaseSearch extends Component {
     sampleColumns: [],
     caseSearchResults: [],
     searchTerm: '',
+    caseRef: '',
   }
 
   componentDidMount() {
@@ -25,6 +26,14 @@ class SurveyCaseSearch extends Component {
       searchTerm: event.target.value
     })
   }
+
+  onCaseRefChange = (event) => {
+    this.setState({
+      caseRef: event.target.value
+    })
+  }
+
+
 
   onSearch = async () => {
     let failedValidation
@@ -38,6 +47,29 @@ class SurveyCaseSearch extends Component {
     }
 
     const response = await fetch('searchInSurvey/' + this.props.surveyId + '?searchTerm=' + this.state.searchTerm)
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return
+    }
+
+    const matchedCasesJson = await response.json()
+
+    this.setState({ caseSearchResults: matchedCasesJson })
+  }
+
+  onCaseRefSearch = async () => {
+    let failedValidation
+    if (!this.state.searchTerm.trim()) {
+      this.setState({ containsValidationError: true })
+      failedValidation = true
+    }
+
+    if (failedValidation) {
+      return
+    }
+
+    const response = await fetch('searchInSurvey/' + this.props.surveyId + '/caseRef/' + this.state.caseRef)
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
@@ -126,9 +158,23 @@ class SurveyCaseSearch extends Component {
           value={this.state.searchTerm} />
         <div style={{ marginTop: 10 }}>
           <Button onClick={this.onSearch} variant="contained" style={{ margin: 10 }}>
-            Search
+            Search Sample Data
           </Button>
         </div>
+
+        <TextField
+          required
+          style={{ marginTop: 20 }}
+          error={this.state.containsValidationError}
+          label="caseRef search"
+          onChange={this.onCaseRefChange}
+          value={this.state.caseRef} />
+        <div style={{ marginTop: 10 }}>
+          <Button onClick={this.onCaseRefSearch} variant="contained" style={{ margin: 10 }}>
+            Search By Case Ref
+          </Button>
+        </div>
+
 
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
