@@ -94,7 +94,7 @@ class App extends Component {
         {!this.state.selectedSurveyId &&
           <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails} />
         }
-        {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId &&!this.state.hideSurvey) &&
+        {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId && !this.state.hideSurvey) &&
           <div>
             <Button onClick={this.onBackToSurveys}>Back</Button>
             <SurveyDetails
@@ -107,7 +107,9 @@ class App extends Component {
         {(this.state.showCaseSearch) &&
           <div>
             <SurveyCaseSearch
-                surveyId={this.state.selectedSearchSurveyId} />
+              surveyId={this.state.selectedSearchSurveyId}
+              onOpenCaseDetails={this.onOpenCaseDetails}
+            />
           </div>
         }
         {(this.state.selectedCollexId && !this.state.caseSearchActive && !this.state.selectedCaseId) &&

@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import '@fontsource/roboto';
-import {Button, Paper, TextField, Typography} from '@material-ui/core';
+import { Button, Paper, TextField, Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -18,14 +18,6 @@ class SurveyCaseSearch extends Component {
 
   componentDidMount() {
     this.getSampleColumns()
-    // TODO: RBAC
-    // this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    // this.refreshDataFromBackend()
-
-    // this.interval = setInterval(
-    //   () => this.refreshDataFromBackend(),
-    //   1000
-    // )
   }
 
   onSearchChange = (event) => {
@@ -37,7 +29,7 @@ class SurveyCaseSearch extends Component {
   onSearch = async () => {
     let failedValidation
     if (!this.state.searchTerm.trim()) {
-      this.setState({containsValidationError: true})
+      this.setState({ containsValidationError: true })
       failedValidation = true
     }
 
@@ -54,7 +46,7 @@ class SurveyCaseSearch extends Component {
 
     const matchedCasesJson = await response.json()
 
-    this.setState({caseSearchResults: matchedCasesJson})
+    this.setState({ caseSearchResults: matchedCasesJson })
   }
 
   getSampleColumns = async () => {
@@ -70,27 +62,25 @@ class SurveyCaseSearch extends Component {
       columns.push(rule.columnName)
     })
 
-    this.setState({sampleColumns: columns})
+    this.setState({ sampleColumns: columns })
   }
 
   getCaseCells = (caze) => {
     const caseId = caze.id
     let caseCells = []
-    caseCells.push(<TableCell>{caze.caseRef}</TableCell>)
+    caseCells.push((
+      <TableCell>
+        <Button
+          onClick={() => this.props.onOpenCaseDetails(caseId)}
+          variant="contained">
+          {caze.caseRef}
+        </Button>
+      </TableCell>
+    ))
     caseCells.push(<TableCell>{caze.collectionExerciseName}</TableCell>)
     caseCells.push(this.state.sampleColumns.map(sampleColumn => (
-        <TableCell>{caze.sample[sampleColumn]}</TableCell>
+      <TableCell>{caze.sample[sampleColumn]}</TableCell>
     )))
-
-    caseCells.push((
-        <TableCell>
-          <Button
-              onClick={() => this.props.onOpenCaseDetails(caseId)}
-              variant="contained">
-            Open
-          </Button>
-        </TableCell>
-    ))
 
     return caseCells
   }
@@ -98,20 +88,17 @@ class SurveyCaseSearch extends Component {
   getTableHeaderRows() {
     let tableHeaderRows = []
     tableHeaderRows.push((
-        <TableCell key={0}>Case Ref</TableCell>
+      <TableCell key={0}>Case Ref</TableCell>
     ))
 
     tableHeaderRows.push((
-        <TableCell key={1}>Collection Exercise</TableCell>
+      <TableCell key={1}>Collection Exercise</TableCell>
     ))
 
     tableHeaderRows.push(this.state.sampleColumns.map((sampleColumn, index) => (
-        <TableCell key={index + 2}>{sampleColumn}</TableCell>
+      <TableCell key={index + 2}>{sampleColumn}</TableCell>
     )))
 
-    tableHeaderRows.push((
-        <TableCell key={-1}>Action</TableCell>
-    ))
     return tableHeaderRows;
   }
 
@@ -119,44 +106,44 @@ class SurveyCaseSearch extends Component {
     const tableHeaderRows = this.getTableHeaderRows();
 
     const caseTableRows = this.state.caseSearchResults.map((caze, index) => (
-        <TableRow key={index}>
-          {this.getCaseCells(caze)}
-        </TableRow>
+      <TableRow key={index}>
+        {this.getCaseCells(caze)}
+      </TableRow>
     ))
 
     return (
-        <div style={{padding: 20}}>
-          <Typography variant="h4" color="inherit" style={{marginBottom: 20}}>
-            Survey: {this.props.surveyName}
-          </Typography>
+      <div style={{ padding: 20 }}>
+        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
+          Survey: {this.props.surveyName}
+        </Typography>
 
-          <TextField
-              required
-              // fullWidth={true}
-              style={{marginTop: 20}}
-              error={this.state.containsValidationError}
-              label="SearchTerm"
-              onChange={this.onSearchChange}
-              value={this.state.searchTerm}/>
-          <div style={{marginTop: 10}}>
-            <Button onClick={this.onSearch} variant="contained" style={{margin: 10}}>
-              Search
-            </Button>
-          </div>
-
-          <TableContainer component={Paper} style={{marginTop: 20}}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {tableHeaderRows}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {caseTableRows}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        <TextField
+          required
+          // fullWidth={true}
+          style={{ marginTop: 20 }}
+          error={this.state.containsValidationError}
+          label="SearchTerm"
+          onChange={this.onSearchChange}
+          value={this.state.searchTerm} />
+        <div style={{ marginTop: 10 }}>
+          <Button onClick={this.onSearch} variant="contained" style={{ margin: 10 }}>
+            Search
+          </Button>
         </div>
+
+        <TableContainer component={Paper} style={{ marginTop: 20 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {tableHeaderRows}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {caseTableRows}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
     )
   }
 

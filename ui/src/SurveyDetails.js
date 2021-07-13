@@ -55,7 +55,6 @@ class SurveyDetails extends Component {
   }
 
 
-
   refreshDataFromBackend = async () => {
     this.getCollectionExercises()
     const allPrintTemplates = await this.getAllPrintTemplates()
