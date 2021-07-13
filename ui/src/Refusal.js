@@ -59,8 +59,8 @@ class Refusal extends Component {
       "callId": this.state.callId,
     }
 
-    const response = await fetch('/cases/refusal/' + this.props.caseId, {
-      method: 'PUT',
+    const response = await fetch(`/cases/${this.props.caseId}/action/refusal`, {
+      method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(newRefusal)
     })
@@ -106,7 +106,7 @@ class Refusal extends Component {
                     onChange={this.onCallIdChange}
                     value={this.state.callId}/>
               </div>
-              <div style={{marginTop: 10}}>
+              <div style={{marginTop: 20}}>
                 <Button onClick={this.onCreate} variant="contained" style={{margin: 10}}>
                   Refuse this case
                 </Button>

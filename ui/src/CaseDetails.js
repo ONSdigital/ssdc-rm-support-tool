@@ -113,7 +113,10 @@ class CaseDetails extends Component {
                   </TableCell>
                   <TableCell align="right">
                     {this.state.authorisedActivities.includes('CREATE_CASE_REFUSAL') &&
-                    <Refusal caseId={this.props.caseId}/>
+                    <Refusal
+                        caseId={this.props.caseId}
+                        case={this.state.case}
+                    />
                     }
                     {this.state.authorisedActivities.includes('CREATE_CASE_INVALID_ADDRESS') &&
                     <InvalidAddress caseId={this.props.caseId}/>
