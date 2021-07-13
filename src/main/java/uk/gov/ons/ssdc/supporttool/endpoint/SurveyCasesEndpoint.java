@@ -15,18 +15,18 @@ import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
 @RestController
 @RequestMapping(value = "/surveyCases")
-public class CasesEndpoint {
+public class SurveyCasesEndpoint {
 
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
   private final CaseSearchResultsMapper caseRowMapper;
 
-  public CasesEndpoint(
+  public SurveyCasesEndpoint(
       NamedParameterJdbcTemplate namedParameterJdbcTemplate,
       CaseSearchResultsMapper caseRowMapper) {
     this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     this.caseRowMapper = caseRowMapper;
   }
-
+  
   @GetMapping(value = "/search")
   @ResponseBody
   public List<CaseSearchResults> searchCasesBySampleData(
