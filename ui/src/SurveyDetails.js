@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Button, Dialog, DialogContent, TextField, Paper, Typography, MenuItem, FormControl, InputLabel, Select } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  TextField,
+  Paper,
+  Typography,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select
+} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,6 +19,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { uuidv4 } from './common'
+import {getActionRulePrintTemplates, getAllPrintTemplates, getFulfilmentPrintTemplates} from "./Utils";
 
 class SurveyDetails extends Component {
   state = {
@@ -55,21 +67,38 @@ class SurveyDetails extends Component {
 
   refreshDataFromBackend = async () => {
     this.getCollectionExercises()
-    const allPrintTemplates = await this.getAllPrintTemplates()
-    const actionRulePrintTemplates = await this.getActionRulePrintTemplates()
-    const fulfilmentPrintTemplates = await this.getFulfilmentPrintTemplates()
+
+    const allPrintFulfilmentTemplates = await getAllPrintTemplates()
+        .then((templates) => {
+          return templates
+        })
+
+    const actionRulePrintTemplates = await getActionRulePrintTemplates(this.props.surveyId)
+        .then((actionRuleTemplates) => {
+          return actionRuleTemplates
+        })
+
+    const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(this.props.surveyId)
+        .then((fulfilmentTemplates) => {
+          return fulfilmentTemplates
+        })
+
     let allowableActionRulePrintTemplates = []
     let allowableFulfilmentPrintTemplates = []
+    allPrintFulfilmentTemplates
+        .then((templates) => {
 
-    allPrintTemplates.forEach(packCode => {
-      if (!actionRulePrintTemplates.includes(packCode)) {
-        allowableActionRulePrintTemplates.push(packCode)
-      }
+          templates.forEach(packCode => {
+            if (!actionRulePrintTemplates.includes(packCode)) {
+              allowableActionRulePrintTemplates.push(packCode)
+            }
 
-      if (!fulfilmentPrintTemplates.includes(packCode)) {
-        allowableFulfilmentPrintTemplates.push(packCode)
-      }
-    })
+            if (!fulfilmentPrintTemplates.includes(packCode)) {
+              allowableFulfilmentPrintTemplates.push(packCode)
+            }
+          })
+        })
+
 
     this.setState({
       actionRulePrintTemplates: actionRulePrintTemplates,
@@ -84,60 +113,6 @@ class SurveyDetails extends Component {
     const collexJson = await response.json()
 
     this.setState({ collectionExercises: collexJson._embedded.collectionExercises })
-  }
-
-  getAllPrintTemplates = async () => {
-    const response = await fetch('/printTemplates')
-    const templateJson = await response.json()
-
-    let templates = []
-
-    for (let i = 0; i < templateJson._embedded.printTemplates.length; i++) {
-      const packCode = templateJson._embedded.printTemplates[i]._links.self.href.split('/')[4]
-      templates.push(packCode)
-    }
-
-    return templates;
-  }
-
-  getActionRulePrintTemplates = async () => {
-    const response = await fetch('/surveys/' + this.props.surveyId + '/actionRulePrintTemplates')
-    const printTemplatesJson = await response.json()
-    const printTemplates = printTemplatesJson._embedded.actionRuleSurveyPrintTemplates
-
-    let templates = []
-
-    for (let i = 0; i < printTemplates.length; i++) {
-      const print_template_url = new URL(printTemplates[i]._links.printTemplate.href)
-
-      const printTemplateResponse = await fetch(print_template_url.pathname)
-      const printTemplateJson = await printTemplateResponse.json()
-      const packCode = printTemplateJson._links.self.href.split('/')[4]
-
-      templates.push(packCode)
-    }
-
-    return templates
-  }
-
-  getFulfilmentPrintTemplates = async () => {
-    const response = await fetch('/surveys/' + this.props.surveyId + '/fulfilmentPrintTemplates')
-    const printTemplatesJson = await response.json()
-    const printTemplates = printTemplatesJson._embedded.fulfilmentSurveyPrintTemplates
-
-    let templates = []
-
-    for (let i = 0; i < printTemplates.length; i++) {
-      const printTemplateUrl = new URL(printTemplates[i]._links.printTemplate.href)
-
-      const printTemplateResponse = await fetch(printTemplateUrl.pathname)
-      const printTemplateJson = await printTemplateResponse.json()
-      const packCode = printTemplateJson._links.self.href.split('/')[4]
-
-      templates.push(packCode)
-    }
-
-    return templates
   }
 
   openDialog = () => {
