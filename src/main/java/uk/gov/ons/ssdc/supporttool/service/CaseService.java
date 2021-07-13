@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.messaging.dto.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.messaging.dto.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.messaging.dto.EventTypeDTO;
@@ -14,12 +15,10 @@ import uk.gov.ons.ssdc.supporttool.model.messaging.dto.InvalidAddressDTO;
 import uk.gov.ons.ssdc.supporttool.model.messaging.dto.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.messaging.dto.RefusalDTO;
 import uk.gov.ons.ssdc.supporttool.model.messaging.dto.ResponseManagementEvent;
-import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 import uk.gov.ons.ssdc.supporttool.model.ui.dto.Fulfilment;
 import uk.gov.ons.ssdc.supporttool.model.ui.dto.InvalidAddress;
 import uk.gov.ons.ssdc.supporttool.model.ui.dto.Refusal;
-
 
 @Service
 public class CaseService {
@@ -42,8 +41,7 @@ public class CaseService {
   @Value("${queueconfig.fulfilment-queue}")
   private String fulfilmentQueue;
 
-  public CaseService(CaseRepository caseRepository,
-      RabbitTemplate rabbitTemplate) {
+  public CaseService(CaseRepository caseRepository, RabbitTemplate rabbitTemplate) {
     this.caseRepository = caseRepository;
     this.rabbitTemplate = rabbitTemplate;
   }
@@ -86,8 +84,7 @@ public class CaseService {
     ResponseManagementEvent responseManagementEvent =
         new ResponseManagementEvent(eventDTO, payloadDTO);
 
-    rabbitTemplate.convertAndSend(
-        eventsExchange, refusalEventRoutingKey, responseManagementEvent);
+    rabbitTemplate.convertAndSend(eventsExchange, refusalEventRoutingKey, responseManagementEvent);
   }
 
   public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {

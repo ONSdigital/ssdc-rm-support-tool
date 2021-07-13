@@ -7,11 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import uk.gov.ons.ssdc.supporttool.model.messaging.dto.InvalidAddressDTO;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.ui.dto.Fulfilment;
@@ -43,7 +41,8 @@ public class CaseEndpoint {
 
     // Check user is authorised to refuse a case for this survey
     userIdentity.checkUserPermission(
-        jwtToken, caze.getCollectionExercise().getSurvey(),
+        jwtToken,
+        caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_REFUSAL);
 
     caseService.buildAndSendRefusalEvent(refusal, caze);
@@ -61,7 +60,8 @@ public class CaseEndpoint {
 
     // Check user is authorised to request a fulfilment on a case for this survey
     userIdentity.checkUserPermission(
-        jwtToken, caze.getCollectionExercise().getSurvey(),
+        jwtToken,
+        caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_FULFILMENT);
 
     caseService.buildAndSendFulfilmentCaseEvent(fulfilment, caze);
@@ -79,7 +79,8 @@ public class CaseEndpoint {
 
     // Check user is authorised to invalidate a case address for this survey
     userIdentity.checkUserPermission(
-        jwtToken, caze.getCollectionExercise().getSurvey(),
+        jwtToken,
+        caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_INVALID_ADDRESS);
 
     caseService.buildAndSendInvalidAddressCaseEvent(invalidAddress, caze);
