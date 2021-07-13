@@ -312,7 +312,10 @@ class SurveyDetails extends Component {
         </Typography>
         <Button variant="contained" onClick={this.openDialog}>Create Collection Exercise</Button>
 
-        <Button variant="contained" onClick={() => this.props.onOpenSurveyCaseSearch(this.props.surveyId)}>Search Survey Cases</Button>
+        <Button variant="contained" onClick={() => this.props.onOpenSurveyCaseSearch(this.props.surveyId)}
+          style={{ marginLeft: 20 }}>
+          Search Survey Cases
+        </Button>
 
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>

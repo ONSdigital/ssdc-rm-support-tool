@@ -16,6 +16,9 @@ class SurveyCaseSearch extends Component {
     searchTerm: '',
     caseRef: '',
     qid: '',
+    textFieldWidth: 400,
+    SearchButtonWidth: 200,
+    noCasesFoundMsg: ''
   }
 
   componentDidMount() {
@@ -40,61 +43,45 @@ class SurveyCaseSearch extends Component {
     })
   }
 
-
-  onSearch = async () => {
-    let failedValidation
-    if (!this.state.searchTerm.trim()) {
-      this.setState({ containsValidationError: true })
-      failedValidation = true
-    }
-
-    if (failedValidation) {
-      return
-    }
-
-    const response = await fetch('searchInSurvey/' + this.props.surveyId + '?searchTerm=' + this.state.searchTerm)
+  onSearchExecuteAndPopulateList = async (searchUrl) => {
+    const response = await fetch(searchUrl)
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
+      alert('Error: ' + response.state)
       return
     }
 
     const matchedCasesJson = await response.json()
 
     this.setState({ caseSearchResults: matchedCasesJson })
+
+    if (this.state.caseSearchResults.length === 0) {
+      this.setState({ noCasesFoundMsg: 'No cases found matching search' })
+    }
+  }
+
+  onSearch = async () => {
+    if (!this.checkValidation(this.state.searchTerm)) {
+      this.setState({ searchTermFailedValidation: true })
+      return
+    }
+
+    this.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '?searchTerm=' + this.state.searchTerm)
   }
 
   onCaseRefSearch = async () => {
-    let failedValidation
-    if (!this.state.caseRef.trim()) {
-      this.setState({ containsValidationError: true })
-      failedValidation = true
-    }
-
-    if (failedValidation) {
+    if (!this.checkValidation(this.state.caseRef)) {
+      this.setState({ caseRefSearchFailedValidation: true })
       return
     }
 
-    const response = await fetch('searchInSurvey/' + this.props.surveyId + '/caseRef/' + this.state.caseRef)
-
-    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
-    if (!response.ok) {
-      return
-    }
-
-    const matchedCasesJson = await response.json()
-
-    this.setState({ caseSearchResults: matchedCasesJson })
+    this.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '/caseRef/' + this.state.caseRef)
   }
 
   onQidSearch = async () => {
-    let failedValidation
-    if (!this.state.qid.trim()) {
-      this.setState({ containsValidationError: true })
-      failedValidation = true
-    }
-
-    if (failedValidation) {
+    if (!this.checkValidation(this.state.qid)) {
+      this.setState({ qidSearchFailedValidation: true })
       return
     }
 
@@ -108,6 +95,14 @@ class SurveyCaseSearch extends Component {
     const matchedCasesJson = await response.json()
 
     this.setState({ caseSearchResults: matchedCasesJson })
+  }
+
+  checkValidation = (valueToValidate) => {
+    if (!valueToValidate.trim()) {
+      return false;
+    }
+
+    return true;
   }
 
   getSampleColumns = async () => {
@@ -174,62 +169,73 @@ class SurveyCaseSearch extends Component {
 
     return (
       <div style={{ padding: 20 }}>
-        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Survey: {this.props.surveyName}
-        </Typography>
+        <div style={{ margin: 10 }}>
+          <Typography variant="h4" color="inherit" style={{ marginBottom: 10 }}>
+            Survey: {this.props.surveyName}
+          </Typography>
 
-        <TextField
-          required
-          style={{ marginTop: 20 }}
-          error={this.state.containsValidationError}
-          label="SearchTerm"
-          onChange={this.onSearchChange}
-          value={this.state.searchTerm} />
-        <div style={{ marginTop: 10 }}>
-          <Button onClick={this.onSearch} variant="contained" style={{ margin: 10 }}>
+          <TextField
+            required
+            style={{ minWidth: this.state.textFieldWidth }}
+            error={this.state.searchTermFailedValidation}
+            label="Search All Sample Data"
+            onChange={this.onSearchChange}
+            value={this.state.searchTerm} />
+          <Button onClick={this.onSearch} variant="contained"
+            style={{ margin: 10, minWidth: this.state.SearchButtonWidth }}>
             Search Sample Data
           </Button>
         </div>
 
-        <TextField
-          required
-          style={{ marginTop: 20 }}
-          error={this.state.containsValidationError}
-          label="caseRef search"
-          onChange={this.onCaseRefChange}
-          value={this.state.caseRef} />
-        <div style={{ marginTop: 10 }}>
-          <Button onClick={this.onCaseRefSearch} variant="contained" style={{ margin: 10 }}>
+        <div style={{ margin: 10 }}>
+          <TextField
+            required
+            style={{ minWidth: this.state.textFieldWidth }}
+            error={this.state.caseRefSearchFailedValidation}
+            label="caseRef search"
+            onChange={this.onCaseRefChange}
+            value={this.state.caseRef} />
+
+          <Button onClick={this.onCaseRefSearch} variant="contained"
+            style={{ margin: 10, minWidth: this.state.SearchButtonWidth }}>
             Search By Case Ref
           </Button>
         </div>
 
-        <TextField
-          required
-          style={{ marginTop: 20 }}
-          error={this.state.containsValidationError}
-          label="qid search"
-          onChange={this.onQidChange}
-          value={this.state.qid} />
-        <div style={{ marginTop: 10 }}>
-          <Button onClick={this.onQidSearch} variant="contained" style={{ margin: 10 }}>
+        <div style={{ margin: 10 }}>
+          <TextField
+            required
+            style={{ minWidth: this.state.textFieldWidth }}
+            error={this.state.qidSearchFailedValidation}
+            label="qid search"
+            onChange={this.onQidChange}
+            value={this.state.qid} />
+
+          <Button onClick={this.onQidSearch} variant="contained"
+            style={{ margin: 10, minWidth: this.state.SearchButtonWidth }}>
             Search By Qid
           </Button>
         </div>
 
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {tableHeaderRows}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {caseTableRows}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {(this.state.caseSearchResults.length > 0) &&
+          < TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {tableHeaderRows}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {caseTableRows}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        }
+        {(this.state.caseSearchResults.length === 0) &&
+          <p>{this.state.noCasesFoundMsg}</p>
+        }
       </div>
+
     )
   }
 
