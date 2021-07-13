@@ -1,4 +1,4 @@
-package uk.gov.ons.ssdc.supporttool.model.dto;
+package uk.gov.ons.ssdc.supporttool.model.messaging.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

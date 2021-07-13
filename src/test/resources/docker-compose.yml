@@ -15,7 +15,7 @@ services:
       retries: 5
 
   rabbitmq:
-    container_name: rabbitmq-case-it
+    container_name: rabbitmq-support-tool-it
     image: rabbitmq:3.8-management
     ports:
       - "34369:4369"
@@ -29,3 +29,51 @@ services:
     volumes:
       - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./definitions.json:/opt/definitions.json
+
+  case-processor:
+    container_name: case-processor-support-tool-it
+    image: eu.gcr.io/ssdc-rm-ci/rm/ssdc-rm-caseprocessor
+    external_links:
+      - postgres-support-tool-it
+      - rabbitmq-support-tool-it
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-support-tool-it:5432/postgres?sslmode=disable
+      - SPRING_RABBITMQ_HOST=rabbitmq-support-tool-it
+      - SPRING_RABBITMQ_PORT=5672
+      - QUEUECONFIG_UAC_QID_CREATED_QUEUE=dummy.uac-qid-created
+      - JAVA_OPTS=-Xmx128m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5121 -Dspring.profiles.active=dev
+      - CASEREFGENERATORKEY=6+VLkvz5XYkF7vFLVX7FDnfxavQ7M+iY
+      - SPRING_CLOUD_GCP_PUBSUB_EMULATOR_HOST=localhost:18538
+      - SPRING_CLOUD_GCP_PUBSUB_PROJECT_ID=aims-new-address-project
+    healthcheck:
+      test: ["CMD", "cat", "/tmp/case-service-healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+#  case-processor:
+#    container_name: case-processor-case-api-it
+#    image: eu.gcr.io/ssdc-rm-ci/rm/ssdc-rm-caseprocessor
+#    external_links:
+#      - postgres-case-api-it
+#      - rabbitmq-case-api-it
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-case-api-it:5432/postgres?sslmode=disable
+#      - SPRING_RABBITMQ_HOST=rabbitmq-case-api-it
+#      - SPRING_RABBITMQ_PORT=5672
+#      - QUEUECONFIG_UAC_QID_CREATED_QUEUE=dummy.uac-qid-created
+#      - JAVA_OPTS=-Xmx128m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5121 -Dspring.profiles.active=dev
+#      - CASEREFGENERATORKEY=6+VLkvz5XYkF7vFLVX7FDnfxavQ7M+iY
+#      - SPRING_CLOUD_GCP_PUBSUB_EMULATOR_HOST=localhost:18538
+#      - SPRING_CLOUD_GCP_PUBSUB_PROJECT_ID=aims-new-address-project
+#    healthcheck:
+#      test: ["CMD", "cat", "/tmp/case-service-healthy"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 20
+#    depends_on:
+#      postgres:
+#        condition: service_healthy

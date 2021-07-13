@@ -1,4 +1,4 @@
-package uk.gov.ons.ssdc.supporttool.model.dto;
+package uk.gov.ons.ssdc.supporttool.model.messaging.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

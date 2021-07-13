@@ -6,15 +6,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import uk.gov.ons.ssdc.supporttool.model.dto.FulfilmentDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.InvalidAddressDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.RefusalDTO;
+import uk.gov.ons.ssdc.supporttool.model.messaging.dto.InvalidAddressDTO;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.supporttool.model.ui.dto.Fulfilment;
+import uk.gov.ons.ssdc.supporttool.model.ui.dto.InvalidAddress;
+import uk.gov.ons.ssdc.supporttool.model.ui.dto.Refusal;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
 
@@ -31,10 +33,10 @@ public class CaseEndpoint {
     this.caseService = caseService;
   }
 
-  @PutMapping(value = "/refusal/{caseId}")
+  @PostMapping(value = "/{caseId}/action/refusal")
   public ResponseEntity<?> handleRefusal(
       @PathVariable("caseId") UUID caseId,
-      @RequestBody RefusalDTO refusalDTO,
+      @RequestBody Refusal refusal,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
 
     Case caze = caseService.getCaseByCaseId(caseId);
@@ -44,15 +46,15 @@ public class CaseEndpoint {
         jwtToken, caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_REFUSAL);
 
-    caseService.buildAndSendRefusalEvent(refusalDTO, caze);
+    caseService.buildAndSendRefusalEvent(refusal, caze);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PutMapping(value = "/fulfilment/{caseId}")
+  @PostMapping(value = "/{caseId}/action/fulfilment")
   public ResponseEntity<?> handleFulfilment(
       @PathVariable("caseId") UUID caseId,
-      @RequestBody FulfilmentDTO fulfilmentDTO,
+      @RequestBody Fulfilment fulfilment,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
 
     Case caze = caseService.getCaseByCaseId(caseId);
@@ -62,15 +64,15 @@ public class CaseEndpoint {
         jwtToken, caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_FULFILMENT);
 
-    caseService.buildAndSendFulfilmentCaseEvent(fulfilmentDTO, caze);
+    caseService.buildAndSendFulfilmentCaseEvent(fulfilment, caze);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PutMapping(value = "/invalid-address/{caseId}")
+  @PostMapping(value = "/{caseId}/action/invalid-address")
   public ResponseEntity<?> handleInvalidAddress(
       @PathVariable("caseId") UUID caseId,
-      @RequestBody InvalidAddressDTO invalidAddressDto,
+      @RequestBody InvalidAddress invalidAddress,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
 
     Case caze = caseService.getCaseByCaseId(caseId);
@@ -80,7 +82,7 @@ public class CaseEndpoint {
         jwtToken, caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_INVALID_ADDRESS);
 
-    caseService.buildAndSendInvalidAddressCaseEvent(invalidAddressDto, caze);
+    caseService.buildAndSendInvalidAddressCaseEvent(invalidAddress, caze);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

@@ -1,4 +1,4 @@
-package uk.gov.ons.ssdc.supporttool.model.messaging.dto;
+package uk.gov.ons.ssdc.supporttool.model.ui.dto;
 
 public enum JobStatusDto {
   FILE_UPLOADED,
