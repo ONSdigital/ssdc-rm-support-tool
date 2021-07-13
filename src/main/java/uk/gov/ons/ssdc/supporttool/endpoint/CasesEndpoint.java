@@ -14,7 +14,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResults;
 import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
 @RestController
-@RequestMapping(value = "/cases")
+@RequestMapping(value = "/surveyCases")
 public class CasesEndpoint {
 
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
