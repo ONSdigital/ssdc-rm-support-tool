@@ -7,6 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { Label } from '@material-ui/icons';
 
 
 class SurveyCaseSearch extends Component {
@@ -77,8 +78,13 @@ class SurveyCaseSearch extends Component {
       return
     }
 
-    this.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '?searchTerm=' + this.state.searchTerm)
-  }
+    let searchUrl = 'searchInSurvey/' + this.props.surveyId + '?searchTerm=' + this.state.searchTerm
+    if (this.state.selectedCollectionExercise) {
+      searchUrl += '&collexId=' + this.state.selectedCollectionExercise
+    }
+
+    this.onSearchExecuteAndPopulateList(searchUrl)
+  } 
 
   onCaseRefSearch = async () => {
     if (!this.checkValidation(this.state.caseRef)) {
@@ -191,7 +197,7 @@ class SurveyCaseSearch extends Component {
                 error={this.state.searchTermFailedValidation}
                 label="Search All Sample Data"
                 onChange={this.onSearchChange}
-                defaultValue={defaultMenuItem}
+                defaultValue={{label: 'Any', value:''}}
                 value={this.state.searchTerm}/>
             <Button onClick={this.onSearch} variant="contained"
                     style={{margin: 10, minWidth: this.state.SearchButtonWidth}}>
@@ -222,7 +228,6 @@ class SurveyCaseSearch extends Component {
               Search By Case Ref
             </Button>
           </div>
-
           <div style={{margin: 10}}>
             <TextField
                 required

@@ -80,26 +80,26 @@ public class SurveyCasesEndpoint {
     namedParameters.put("searchTerm", searchTerm);
 
     if (collexId != null) {
-      query += " AND ce.id = :collexId";
+      query += " AND e.id = :collexId";
       namedParameters.put("collexId", collexId);
     }
     if (receiptReceived != null) {
-      query += " AND ca.receipt_received = :receiptReceived";
+      query += " AND c.receipt_received = :receiptReceived";
       namedParameters.put("receiptReceived", receiptReceived);
     }
 
     if (addressInvalid != null) {
-      query += " AND ca.address_invalid = :addressInvalid";
+      query += " AND c.address_invalid = :addressInvalid";
       namedParameters.put("addressInvalid", addressInvalid);
     }
 
     if (surveyLaunched != null) {
-      query += " AND ca.survey_launched = :surveyLaunched";
+      query += " AND c.survey_launched = :surveyLaunched";
       namedParameters.put("surveyLaunched", surveyLaunched);
     }
 
     if (refusalReceived != null) {
-      query += " AND ca.refusal_received = :refusalReceived";
+      query += " AND c.refusal_received = :refusalReceived";
       namedParameters.put("refusalReceiced", refusalReceived);
     }
 
