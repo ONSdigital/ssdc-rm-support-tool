@@ -66,6 +66,7 @@ class InvalidAddress extends Component {
     return (
         <div>
           <Button
+              style={{marginTop: 10, marginBottom: 10}}
               onClick={this.openDialog}
               variant="contained">
             Invalidate this case
