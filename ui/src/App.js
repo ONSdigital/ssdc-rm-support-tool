@@ -64,7 +64,11 @@ class App extends Component {
   }
 
   onBackToSurveys = () => {
-    this.setState({ selectedSurveyId: null, showCaseSearch: false})
+    this.setState({ selectedSurveyId: null })
+  }
+
+  onBackToSurveyDetails= () => {
+    this.setState({ showCaseSearch: false, hideSurvey: false })
   }
 
   onBackToCollectionExercises = () => {
@@ -76,9 +80,7 @@ class App extends Component {
   }
 
   onBackToCaseSearch = () => {
-    this.setState({
-      selectedCaseId: null
-    })
+    this.setState({ selectedCaseId: null })
   }
 
   render() {
@@ -106,7 +108,7 @@ class App extends Component {
         }
         {(this.state.showCaseSearch) &&
           <div>
-            <Button onClick={this.onBackToSurveys}>Back</Button>
+            <Button onClick={this.onBackToSurveyDetails}>Back</Button>
             <SurveyCaseSearch
               surveyId={this.state.selectedSearchSurveyId}
               surveyName={this.state.selectedSurveyName}
