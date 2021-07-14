@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import '@fontsource/roboto';
-import { Button, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@material-ui/core';
+import {Button, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Label } from '@material-ui/icons';
 
 
 const NOT_REFUSED = "NOT REFUSED";
+
 class SurveyCaseSearch extends Component {
   state = {
     sampleColumns: [],
@@ -24,7 +24,10 @@ class SurveyCaseSearch extends Component {
     collectionExercises: [],
     selectedCollectionExercise: '',
     refusalTypes: [],
-    selectedRefusal: NOT_REFUSED
+    selectedRefusalFilter: '',
+    selectedReceiptedFilter: '',
+    selectedInvalidFilter: '',
+    selectedLaunchedFilter: '',
   }
 
   componentDidMount() {
@@ -37,7 +40,7 @@ class SurveyCaseSearch extends Component {
     const response = await fetch('/surveys/' + this.props.surveyId + '/collectionExercises')
     const collexJson = await response.json()
 
-    this.setState({ collectionExercises: collexJson._embedded.collectionExercises })
+    this.setState({collectionExercises: collexJson._embedded.collectionExercises})
   }
 
   getRefusalTypes = async () => {
@@ -46,7 +49,7 @@ class SurveyCaseSearch extends Component {
 
     refusalJson.push(NOT_REFUSED)
 
-    this.setState({ refusalTypes: refusalJson })
+    this.setState({refusalTypes: refusalJson})
   }
 
   onSearchChange = (event) => {
@@ -78,16 +81,16 @@ class SurveyCaseSearch extends Component {
 
     const matchedCasesJson = await response.json()
 
-    this.setState({ caseSearchResults: matchedCasesJson })
+    this.setState({caseSearchResults: matchedCasesJson})
 
     if (this.state.caseSearchResults.length === 0) {
-      this.setState({ noCasesFoundMsg: 'No cases found matching search' })
+      this.setState({noCasesFoundMsg: 'No cases found matching search'})
     }
   }
 
   onSearch = async () => {
     if (!this.checkValidation(this.state.searchTerm)) {
-      this.setState({ searchTermFailedValidation: true })
+      this.setState({searchTermFailedValidation: true})
       return
     }
 
@@ -97,8 +100,20 @@ class SurveyCaseSearch extends Component {
       searchUrl += '&collexId=' + this.state.selectedCollectionExercise
     }
 
-    if (this.state.selectedRefusal !== NOT_REFUSED) {
-      searchUrl += '&refusal=' + this.state.selectedRefusal
+    if (this.state.selectedRefusalFilter) {
+      searchUrl += '&refusal=' + this.state.selectedRefusalFilter
+    }
+
+    if (this.state.selectedReceiptedFilter) {
+      searchUrl += '&receipted=' + this.state.selectedReceiptedFilter
+    }
+
+    if (this.state.selectedInvalidFilter) {
+      searchUrl += '&invalid=' + this.state.selectedInvalidFilter
+    }
+
+    if (this.state.selectedLaunchedFilter) {
+      searchUrl += '&launched=' + this.state.selectedLaunchedFilter
     }
 
     this.onSearchExecuteAndPopulateList(searchUrl)
@@ -106,7 +121,7 @@ class SurveyCaseSearch extends Component {
 
   onCaseRefSearch = async () => {
     if (!this.checkValidation(this.state.caseRef)) {
-      this.setState({ caseRefSearchFailedValidation: true })
+      this.setState({caseRefSearchFailedValidation: true})
       return
     }
 
@@ -115,7 +130,7 @@ class SurveyCaseSearch extends Component {
 
   onQidSearch = async () => {
     if (!this.checkValidation(this.state.qid)) {
-      this.setState({ qidSearchFailedValidation: true })
+      this.setState({qidSearchFailedValidation: true})
       return
     }
 
@@ -134,7 +149,24 @@ class SurveyCaseSearch extends Component {
 
   onFilterRefusal = (event) => {
     this.setState({
-      selectedRefusal: event.target.value
+      selectedRefusalFilter: event.target.value
+    })
+  }
+  onFilterReceipted = (event) => {
+    this.setState({
+      selectedReceiptedFilter: event.target.value
+    })
+  }
+
+  onFilterInvalid = (event) => {
+    this.setState({
+      selectedInvalidFilter: event.target.value
+    })
+  }
+
+  onFilterLaunched = (event) => {
+    this.setState({
+      selectedLaunchedFilter: event.target.value
     })
   }
 
@@ -151,24 +183,24 @@ class SurveyCaseSearch extends Component {
       columns.push(rule.columnName)
     })
 
-    this.setState({ sampleColumns: columns })
+    this.setState({sampleColumns: columns})
   }
 
   getCaseCells = (caze) => {
     const caseId = caze.id
     let caseCells = []
     caseCells.push((
-      <TableCell key={0}>
-        <Button
-          onClick={() => this.props.onOpenCaseDetails(caseId)}
-          variant="contained">
-          {caze.caseRef}
-        </Button>
-      </TableCell>
+        <TableCell key={0}>
+          <Button
+              onClick={() => this.props.onOpenCaseDetails(caseId)}
+              variant="contained">
+            {caze.caseRef}
+          </Button>
+        </TableCell>
     ))
     caseCells.push(<TableCell key={1}>{caze.collectionExerciseName}</TableCell>)
     caseCells.push(this.state.sampleColumns.map((sampleColumn, index) => (
-      <TableCell key={index + 2}>{caze.sample[sampleColumn]}</TableCell>
+        <TableCell key={index + 2}>{caze.sample[sampleColumn]}</TableCell>
     )))
 
 
@@ -178,15 +210,15 @@ class SurveyCaseSearch extends Component {
   getTableHeaderRows() {
     let tableHeaderRows = []
     tableHeaderRows.push((
-      <TableCell key={0}>Case Ref</TableCell>
+        <TableCell key={0}>Case Ref</TableCell>
     ))
 
     tableHeaderRows.push((
-      <TableCell key={1}>Collection Exercise</TableCell>
+        <TableCell key={1}>Collection Exercise</TableCell>
     ))
 
     tableHeaderRows.push(this.state.sampleColumns.map((sampleColumn, index) => (
-      <TableCell key={index + 2}>{sampleColumn}</TableCell>
+        <TableCell key={index + 2}>{sampleColumn}</TableCell>
     )))
 
     return tableHeaderRows;
@@ -196,94 +228,126 @@ class SurveyCaseSearch extends Component {
     const tableHeaderRows = this.getTableHeaderRows();
 
     const caseTableRows = this.state.caseSearchResults.map((caze, index) => (
-      <TableRow key={index}>
-        {this.getCaseCells(caze)}
-      </TableRow>
+        <TableRow key={index}>
+          {this.getCaseCells(caze)}
+        </TableRow>
     ))
 
-    const defaultMenuItem = <MenuItem key={'Any'} value={''}>{'Any'}</MenuItem>
+    const noFilterMenuItem = <MenuItem key={'NO FILTER'} value={''}>{'NO FILTER'}</MenuItem>
     let collectionExerciseMenuItems = []
-    collectionExerciseMenuItems.push(defaultMenuItem)
+    collectionExerciseMenuItems.push(noFilterMenuItem)
     collectionExerciseMenuItems.push(this.state.collectionExercises.map(collex => (
-      <MenuItem key={collex.name} value={collex._links.self.href.split("/")[4]}>{collex.name}</MenuItem>
+        <MenuItem key={collex.name} value={collex._links.self.href.split("/")[4]}>{collex.name}</MenuItem>
     )))
 
     const refusalMenuItems = []
+    refusalMenuItems.push(noFilterMenuItem)
     refusalMenuItems.push(this.state.refusalTypes.map(refusalType => (
-      <MenuItem key={refusalType} value={refusalType}>{refusalType}</MenuItem>
+        <MenuItem key={refusalType} value={refusalType}>{refusalType}</MenuItem>
     )))
 
 
+    const trueOrFalseFilterMenuItems = []
+    trueOrFalseFilterMenuItems.push(noFilterMenuItem)
+    trueOrFalseFilterMenuItems.push([<MenuItem key={'true'} value={'true'}>{'TRUE'}</MenuItem>,
+      <MenuItem key={'false'} value={'false'}>{'FALSE'}</MenuItem>])
+
     return (
-      <div style={{ padding: 20 }}>
-        <div style={{ margin: 10 }}>
-          <Typography variant="h4" color="inherit" style={{ marginBottom: 10 }}>
-            Survey: {this.props.surveyName}
-          </Typography>
+        <div style={{padding: 20}}>
+          <div style={{margin: 10}}>
+            <Typography variant="h4" color="inherit" style={{marginBottom: 10}}>
+              Survey: {this.props.surveyName}
+            </Typography>
 
-          <TextField
-            required
-            style={{ minWidth: this.state.textFieldWidth }}
-            error={this.state.searchTermFailedValidation}
-            label="Search All Sample Data"
-            onChange={this.onSearchChange}
-            defaultValue={{ label: 'Any', value: '' }}
-            value={this.state.searchTerm} />
-          <Button onClick={this.onSearch} variant="contained"
-            style={{ margin: 10, minWidth: this.state.SearchButtonWidth }}>
-            Search Sample Data
-          </Button>
+            <TextField
+                required
+                style={{minWidth: this.state.textFieldWidth}}
+                error={this.state.searchTermFailedValidation}
+                label="Search All Sample Data"
+                onChange={this.onSearchChange}
+                value={this.state.searchTerm}/>
+            <Button onClick={this.onSearch} variant="contained"
+                    style={{margin: 10, minWidth: this.state.SearchButtonWidth}}>
+              Search Sample Data
+            </Button>
 
-          <FormControl style={{ minWidth: 200 }}>
-            <InputLabel>Collection Exercise</InputLabel>
-            <Select
-              onChange={this.onFilterCollectionExercise}
-              value={this.state.selectedCollectionExercise}>
-              {collectionExerciseMenuItems}
-            </Select>
-          </FormControl>
+            <FormControl style={{minWidth: 200, marginLeft: 20, marginRight: 20}}>
+              <InputLabel>Collection Exercise</InputLabel>
+              <Select
+                  onChange={this.onFilterCollectionExercise}
+                  value={this.state.selectedCollectionExercise}>
+                {collectionExerciseMenuItems}
+              </Select>
+            </FormControl>
 
-          <FormControl style={{ minWidth: 200 }}>
-            <InputLabel>Refused</InputLabel>
-            <Select
-              onChange={this.onFilterRefusal}
-              value={this.state.selectedRefusal}>
-              {refusalMenuItems}
-            </Select>
-          </FormControl>
-        </div>
+            <FormControl style={{minWidth: 200, marginLeft: 20, marginRight: 20}}>
+              <InputLabel>Refused</InputLabel>
+              <Select
+                  onChange={this.onFilterRefusal}
+                  value={this.state.selectedRefusalFilter}>
+                {refusalMenuItems}
+              </Select>
+            </FormControl>
 
-        <div style={{ margin: 10 }}>
-          <TextField
-            required
-            style={{ minWidth: this.state.textFieldWidth }}
-            error={this.state.caseRefSearchFailedValidation}
-            label="caseRef search"
-            onChange={this.onCaseRefChange}
-            value={this.state.caseRef} />
+            <FormControl style={{minWidth: 100, marginLeft: 20, marginRight: 20}}>
+              <InputLabel>Receipted</InputLabel>
+              <Select
+                  onChange={this.onFilterReceipted}
+                  value={this.state.selectedReceiptedFilter}>
+                {trueOrFalseFilterMenuItems}
+              </Select>
+            </FormControl>
 
-          <Button onClick={this.onCaseRefSearch} variant="contained"
-            style={{ margin: 10, minWidth: this.state.SearchButtonWidth }}>
-            Search By Case Ref
-          </Button>
-        </div>
-        <div style={{ margin: 10 }}>
-          <TextField
-            required
-            style={{ minWidth: this.state.textFieldWidth }}
-            error={this.state.qidSearchFailedValidation}
-            label="qid search"
-            onChange={this.onQidChange}
-            value={this.state.qid} />
+            <FormControl style={{minWidth: 100, marginLeft: 20, marginRight: 20}}>
+              <InputLabel>Invalid</InputLabel>
+              <Select
+                  onChange={this.onFilterInvalid}
+                  value={this.state.selectedInvalidFilter}>
+                {trueOrFalseFilterMenuItems}
+              </Select>
+            </FormControl>
 
-          <Button onClick={this.onQidSearch} variant="contained"
-            style={{ margin: 10, minWidth: this.state.SearchButtonWidth }}>
-            Search By Qid
-          </Button>
-        </div>
+            <FormControl style={{minWidth: 100, marginLeft: 20, marginRight: 20}}>
+              <InputLabel>Launched</InputLabel>
+              <Select
+                  onChange={this.onFilterLaunched}
+                  value={this.state.selectedLaunchedFilter}>
+                {trueOrFalseFilterMenuItems}
+              </Select>
+            </FormControl>
+          </div>
 
-        {(this.state.caseSearchResults.length > 0) &&
-          < TableContainer component={Paper} style={{ marginTop: 20 }}>
+          <div style={{margin: 10}}>
+            <TextField
+                required
+                style={{minWidth: this.state.textFieldWidth}}
+                error={this.state.caseRefSearchFailedValidation}
+                label="caseRef search"
+                onChange={this.onCaseRefChange}
+                value={this.state.caseRef}/>
+
+            <Button onClick={this.onCaseRefSearch} variant="contained"
+                    style={{margin: 10, minWidth: this.state.SearchButtonWidth}}>
+              Search By Case Ref
+            </Button>
+          </div>
+          <div style={{margin: 10}}>
+            <TextField
+                required
+                style={{minWidth: this.state.textFieldWidth}}
+                error={this.state.qidSearchFailedValidation}
+                label="qid search"
+                onChange={this.onQidChange}
+                value={this.state.qid}/>
+
+            <Button onClick={this.onQidSearch} variant="contained"
+                    style={{margin: 10, minWidth: this.state.SearchButtonWidth}}>
+              Search By Qid
+            </Button>
+          </div>
+
+          {(this.state.caseSearchResults.length > 0) &&
+          < TableContainer component={Paper} style={{marginTop: 20}}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -295,11 +359,11 @@ class SurveyCaseSearch extends Component {
               </TableBody>
             </Table>
           </TableContainer>
-        }
-        {(this.state.caseSearchResults.length === 0) &&
+          }
+          {(this.state.caseSearchResults.length === 0) &&
           <p>{this.state.noCasesFoundMsg}</p>
-        }
-      </div>
+          }
+        </div>
 
     )
   }

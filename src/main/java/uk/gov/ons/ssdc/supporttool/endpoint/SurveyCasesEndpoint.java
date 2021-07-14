@@ -1,5 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +25,6 @@ import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @RestController
 @RequestMapping(value = "/searchInSurvey")
 public class SurveyCasesEndpoint {
@@ -35,17 +34,21 @@ public class SurveyCasesEndpoint {
   private final CaseSearchResultsMapper caseRowMapper;
   private final UserIdentity userIdentity;
 
+  private static final String NOT_REFUSED = "NOT_REFUSED";
 
   private static final String searchCasesPartialQuery =
       "SELECT c.id, c.case_ref, c.sample, c.address_invalid, c.receipt_received, c.refusal_received,"
           + " c.survey_launched, c.created_at, c.last_updated_at, c.collection_exercise_id, e.name collex_name";
-  private static final String searchCasesInSurveyPartialQuery = searchCasesPartialQuery
-      + " FROM casev3.cases c, casev3.collection_exercise e WHERE c.collection_exercise_id = e.id"
-      + " AND e.survey_id = :surveyId";
+  private static final String searchCasesInSurveyPartialQuery =
+      searchCasesPartialQuery
+          + " FROM casev3.cases c, casev3.collection_exercise e WHERE c.collection_exercise_id = e.id"
+          + " AND e.survey_id = :surveyId";
 
   public SurveyCasesEndpoint(
-      SurveyRepository surveyRepository, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-      CaseSearchResultsMapper caseRowMapper, UserIdentity userIdentity) {
+      SurveyRepository surveyRepository,
+      NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+      CaseSearchResultsMapper caseRowMapper,
+      UserIdentity userIdentity) {
     this.surveyRepository = surveyRepository;
     this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     this.caseRowMapper = caseRowMapper;
@@ -66,17 +69,11 @@ public class SurveyCasesEndpoint {
 
     checkSurveySearchCasesPermission(jwt, surveyId);
 
-    if (refusalReceived != null && refusalReceived.equals("null")) {
-      // We want to be able to search for cases where refusal received is null by supplying the
-      // string "null". If no refusalReceived query string is provided at all then we do not filter
-      // at all
-      refusalReceived = null;
-    }
-
     searchTerm = '%' + searchTerm + '%';
 
-    String query = searchCasesInSurveyPartialQuery
-        + " AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val) WHERE lower(x.val) LIKE lower(:searchTerm))";
+    String query =
+        searchCasesInSurveyPartialQuery
+            + " AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val) WHERE lower(x.val) LIKE lower(:searchTerm))";
 
     Map<String, Object> namedParameters = new HashMap();
     namedParameters.put("surveyId", surveyId);
@@ -102,8 +99,12 @@ public class SurveyCasesEndpoint {
     }
 
     if (refusalReceived != null) {
-      query += " AND c.refusal_received = :refusalReceived";
-      namedParameters.put("refusalReceived", refusalReceived);
+      if (refusalReceived.equals(NOT_REFUSED)) {
+        query += " AND c.refusal_received IS NULL";
+      } else {
+        query += " AND c.refusal_received = :refusalReceived";
+        namedParameters.put("refusalReceived", refusalReceived);
+      }
     }
 
     return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
@@ -113,8 +114,8 @@ public class SurveyCasesEndpoint {
   @ResponseBody
   public List<CaseSearchResult> getCaseByCaseRef(
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
-                                                 @PathVariable(value = "surveyId") UUID surveyId,
-                                                 @PathVariable(value = "caseRef") long caseRef) {
+      @PathVariable(value = "surveyId") UUID surveyId,
+      @PathVariable(value = "caseRef") long caseRef) {
     checkSurveySearchCasesPermission(jwt, surveyId);
 
     String query = searchCasesInSurveyPartialQuery + " AND c.case_ref = :caseRef";
@@ -129,13 +130,15 @@ public class SurveyCasesEndpoint {
   @ResponseBody
   public List<CaseSearchResult> getCaseByQid(
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
-                                             @PathVariable(value = "surveyId") UUID surveyId,
-                                             @PathVariable(value = "qid") String qid) {
+      @PathVariable(value = "surveyId") UUID surveyId,
+      @PathVariable(value = "qid") String qid) {
     checkSurveySearchCasesPermission(jwt, surveyId);
 
-    String query = searchCasesPartialQuery + " FROM casev3.uac_qid_link u, casev3.cases c, casev3.collection_exercise e"
-        + " WHERE c.collection_exercise_id = e.id AND u.caze_id = c.id"
-        + " AND u.qid = :qid";
+    String query =
+        searchCasesPartialQuery
+            + " FROM casev3.uac_qid_link u, casev3.cases c, casev3.collection_exercise e"
+            + " WHERE c.collection_exercise_id = e.id AND u.caze_id = c.id"
+            + " AND u.qid = :qid";
     Map<String, Object> namedParameters = new HashMap();
     namedParameters.put("surveyId", surveyId);
     namedParameters.put("qid", qid);
@@ -146,19 +149,18 @@ public class SurveyCasesEndpoint {
   @GetMapping(value = "/refusalTypes")
   @ResponseBody
   public List<String> getRefusalType() {
-    List<String> refusals = Stream.of(RefusalType.values())
-            .map(Enum::name)
-            .collect(Collectors.toList());
+    List<String> refusals =
+        Stream.of(RefusalType.values()).map(Enum::name).collect(Collectors.toList());
 
     return refusals;
   }
-
 
   private void checkSurveySearchCasesPermission(String jwt, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
       throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Survey not found");
     }
-    userIdentity.checkUserPermission(jwt, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
+    userIdentity.checkUserPermission(
+        jwt, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
   }
 }
