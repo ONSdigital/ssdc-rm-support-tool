@@ -12,13 +12,13 @@ class CaseDetails extends Component {
   state = {
     authorisedActivities: [],
     case: null,
+    events: [],
     uacQidLinks: []
   }
 
   componentDidMount() {
     this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCase()
-    this.getUacQidLinks()
+    this.getAllBackendData()
   }
 
   getAuthorisedActivities = async () => {
@@ -34,21 +34,30 @@ class CaseDetails extends Component {
     this.setState({ authorisedActivities: authJson })
   }
 
-  getCase = async () => {
+  getAllBackendData = async () => {
     const response = await fetch('/cases/' + this.props.caseId)
     const caseJson = await response.json()
 
     if (response.ok) {
       this.setState({ case: caseJson })
-    }
-  }
 
-  getUacQidLinks = async () => {
-    const response = await fetch('/cases/' + this.props.caseId + '/uacQidLinks')
-    const uacQidLinksJson = await response.json()
+      const uacQidLinksResponse = await fetch('/cases/' + this.props.caseId + '/uacQidLinks')
+      const uacQidLinksJson = await uacQidLinksResponse.json()
 
-    if (response.ok) {
-      this.setState({ uacQidLinks: uacQidLinksJson._embedded.uacQidLinks })
+      const uacQidLinks = uacQidLinksJson._embedded.uacQidLinks
+
+      let events = caseJson.events
+      for (let i = 0; i < uacQidLinks.length; i++) {
+        events = events.concat(uacQidLinks[i].events)
+      }
+
+      if (uacQidLinksResponse.ok) {
+        this.setState({
+          case: caseJson,
+          uacQidLinks: uacQidLinks,
+          events: events
+        })
+      }
     }
   }
 
@@ -59,29 +68,25 @@ class CaseDetails extends Component {
       // NOTE: UIs don't play nice with async stuff... we have no idea if/when the UAC will actually be dectivated... go figure
       await new Promise(r => setTimeout(r, 1000)) // This sleep ought to work... ish. There's no better way to do this
 
-      // Now, refresh the UAC QID Link data so we can see that the UAC is deactivated
-      this.getUacQidLinks()
+      // Now, refresh the data so we can see that the event and that the UAC is deactivated
+      this.getAllBackendData()
     }
   }
 
   render() {
-    var caseEvents
-
-    if (this.state.case) {
-      caseEvents = this.state.case.events.map((event, index) => (
-        <TableRow key={index}>
-          <TableCell component="th" scope="row">
-            {event.eventDate}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {event.eventDescription}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {event.eventSource}
-          </TableCell>
-        </TableRow>
-      ))
-    }
+    const caseEvents = this.state.events.map((event, index) => (
+      <TableRow key={index}>
+        <TableCell component="th" scope="row">
+          {event.eventDate}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {event.eventDescription}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {event.eventSource}
+        </TableCell>
+      </TableRow>
+    ))
 
     const uacQids = this.state.uacQidLinks.map((uacQidLink, index) => (
       <TableRow key={index}>
