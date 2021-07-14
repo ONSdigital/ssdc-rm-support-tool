@@ -1,26 +1,36 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResult;
+import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
+import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
+import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/searchInSurvey")
 public class SurveyCasesEndpoint {
 
+  private final SurveyRepository surveyRepository;
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
   private final CaseSearchResultsMapper caseRowMapper;
+  private final UserIdentity userIdentity;
 
 
   private static final String searchCasesPartialQuery =
@@ -31,15 +41,18 @@ public class SurveyCasesEndpoint {
       + " AND e.survey_id = :surveyId";
 
   public SurveyCasesEndpoint(
-      NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-      CaseSearchResultsMapper caseRowMapper) {
+      SurveyRepository surveyRepository, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+      CaseSearchResultsMapper caseRowMapper, UserIdentity userIdentity) {
+    this.surveyRepository = surveyRepository;
     this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     this.caseRowMapper = caseRowMapper;
+    this.userIdentity = userIdentity;
   }
 
   @GetMapping(value = "/{surveyId}")
   @ResponseBody
   public List<CaseSearchResult> searchCasesBySampleData(
+      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
       @PathVariable(value = "surveyId") UUID surveyId,
       @RequestParam(value = "searchTerm") String searchTerm,
       @RequestParam(value = "collexId", required = false) UUID collexId,
@@ -47,6 +60,8 @@ public class SurveyCasesEndpoint {
       @RequestParam(value = "invalid", required = false) Boolean addressInvalid,
       @RequestParam(value = "launched", required = false) Boolean surveyLaunched,
       @RequestParam(value = "refusal", required = false) String refusalReceived) {
+
+    checkSurveySearchCasesPermission(jwt, surveyId);
 
     if (refusalReceived != null && refusalReceived.equals("null")) {
       // We want to be able to search for cases where refusal received is null by supplying the
@@ -93,8 +108,11 @@ public class SurveyCasesEndpoint {
 
   @GetMapping(value = "/{surveyId}/caseRef/{caseRef}")
   @ResponseBody
-  public List<CaseSearchResult> getCaseByCaseRef(@PathVariable(value = "surveyId") UUID surveyId,
+  public List<CaseSearchResult> getCaseByCaseRef(
+      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
+                                                 @PathVariable(value = "surveyId") UUID surveyId,
                                                  @PathVariable(value = "caseRef") long caseRef) {
+    checkSurveySearchCasesPermission(jwt, surveyId);
 
     String query = searchCasesInSurveyPartialQuery + " AND c.case_ref = :caseRef";
 
@@ -106,8 +124,12 @@ public class SurveyCasesEndpoint {
 
   @GetMapping(value = "/{surveyId}/qid/{qid}")
   @ResponseBody
-  public List<CaseSearchResult> getCaseByQid(@PathVariable(value = "surveyId") UUID surveyId,
+  public List<CaseSearchResult> getCaseByQid(
+      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
+                                             @PathVariable(value = "surveyId") UUID surveyId,
                                              @PathVariable(value = "qid") String qid) {
+    checkSurveySearchCasesPermission(jwt, surveyId);
+
     String query = searchCasesPartialQuery + " FROM casev3.uac_qid_link u, casev3.cases c, casev3.collection_exercise e"
         + " WHERE c.collection_exercise_id = e.id AND u.caze_id = c.id"
         + " AND u.qid = :qid";
@@ -118,4 +140,11 @@ public class SurveyCasesEndpoint {
     return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
   }
 
+  private void checkSurveySearchCasesPermission(String jwt, UUID surveyId) {
+    Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
+    if (surveyOptional.isEmpty()) {
+      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid survey ID");
+    }
+    userIdentity.checkUserPermission(jwt, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
+  }
 }
