@@ -7,6 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import SurveySimpleSearchInput from './SurveySimpleSearchInput'
 
 
 const NOT_REFUSED = "NOT REFUSED";
@@ -59,18 +60,6 @@ class SurveyCaseSearch extends Component {
     })
   }
 
-  onCaseRefChange = (event) => {
-    this.setState({
-      caseRef: event.target.value
-    })
-  }
-
-  onQidChange = (event) => {
-    this.setState({
-      qid: event.target.value
-    })
-  }
-
   onSearchExecuteAndPopulateList = async (searchUrl) => {
     const response = await fetch(searchUrl)
 
@@ -118,24 +107,6 @@ class SurveyCaseSearch extends Component {
     }
 
     this.onSearchExecuteAndPopulateList(searchUrl)
-  }
-
-  onCaseRefSearch = async () => {
-    if (!this.isNumeric(this.state.caseRef)) {
-      this.setState({ caseRefSearchFailedValidation: true })
-      return
-    }
-    this.setState({ caseRefSearchFailedValidation: false })
-    this.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '/caseRef/' + this.state.caseRef)
-  }
-
-  onQidSearch = async () => {
-    if (!this.isNumeric(this.state.qid)) {
-      this.setState({ qidSearchFailedValidation: true })
-      return
-    }
-    this.setState({ qidSearchFailedValidation: false })
-    this.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '/qid/' + this.state.qid)
   }
 
   checkWhitespace = (valueToValidate) => {
@@ -325,34 +296,19 @@ class SurveyCaseSearch extends Component {
           </div>
         </div>
 
-        <div style={{ margin: 10 }}>
-          <TextField
-            required
-            style={{ minWidth: SEARCH_FIELD_WIDTH }}
-            error={this.state.caseRefSearchFailedValidation}
-            label="caseRef search"
-            onChange={this.onCaseRefChange}
-            value={this.state.caseRef} />
+        <SurveySimpleSearchInput surveyId={this.props.surveyId}
+          onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
+          isNumeric={this.isNumeric}
+          urlpathName='caseRef'
+          displayText='Search By Case Ref'>
+        </SurveySimpleSearchInput>
 
-          <Button onClick={this.onCaseRefSearch} variant="contained"
-            style={{ margin: 10, minWidth: SEARCH_BUTTON_WIDTH }}>
-            Search By Case Ref
-          </Button>
-        </div>
-        <div style={{ margin: 10 }}>
-          <TextField
-            required
-            style={{ minWidth: SEARCH_FIELD_WIDTH }}
-            error={this.state.qidSearchFailedValidation}
-            label="qid search"
-            onChange={this.onQidChange}
-            value={this.state.qid} />
-
-          <Button onClick={this.onQidSearch} variant="contained"
-            style={{ margin: 10, minWidth: SEARCH_BUTTON_WIDTH }}>
-            Search By Qid
-          </Button>
-        </div>
+        <SurveySimpleSearchInput surveyId={this.props.surveyId}
+          onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
+          isNumeric={this.isNumeric}
+          urlpathName='qid'
+          displayText='Search By Qid'>
+        </SurveySimpleSearchInput>
 
         {
           (this.state.caseSearchResults.length > 0) &&
