@@ -25,7 +25,6 @@ class PrintFulfilment extends Component {
       packCodeValidationError: false,
       showDialog: false,
     })
-    this.props.onClose()
   }
 
   onPrintTemplateChange = (event) => {
