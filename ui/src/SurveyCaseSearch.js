@@ -85,24 +85,11 @@ class SurveyCaseSearch extends Component {
       return
     }
 
-    const response = await fetch('searchInSurvey/' + this.props.surveyId + '/qid/' + this.state.qid)
-
-    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
-    if (!response.ok) {
-      return
-    }
-
-    const matchedCasesJson = await response.json()
-
-    this.setState({ caseSearchResults: matchedCasesJson })
+    this.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '/qid/' + this.state.qid)
   }
 
   checkValidation = (valueToValidate) => {
-    if (!valueToValidate.trim()) {
-      return false;
-    }
-
-    return true;
+    return valueToValidate.trim();
   }
 
   getSampleColumns = async () => {
@@ -125,7 +112,7 @@ class SurveyCaseSearch extends Component {
     const caseId = caze.id
     let caseCells = []
     caseCells.push((
-      <TableCell>
+      <TableCell key={0}>
         <Button
           onClick={() => this.props.onOpenCaseDetails(caseId)}
           variant="contained">
@@ -133,10 +120,11 @@ class SurveyCaseSearch extends Component {
         </Button>
       </TableCell>
     ))
-    caseCells.push(<TableCell>{caze.collectionExerciseName}</TableCell>)
-    caseCells.push(this.state.sampleColumns.map(sampleColumn => (
-      <TableCell>{caze.sample[sampleColumn]}</TableCell>
+    caseCells.push(<TableCell key={1}>{caze.collectionExerciseName}</TableCell>)
+    caseCells.push(this.state.sampleColumns.map((sampleColumn, index) => (
+      <TableCell key={index+2}>{caze.sample[sampleColumn]}</TableCell>
     )))
+
 
     return caseCells
   }

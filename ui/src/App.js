@@ -106,8 +106,10 @@ class App extends Component {
         }
         {(this.state.showCaseSearch) &&
           <div>
+            <Button onClick={this.onBackToSurveys}>Back</Button>
             <SurveyCaseSearch
               surveyId={this.state.selectedSearchSurveyId}
+              surveyName={this.state.selectedSurveyName}
               onOpenCaseDetails={this.onOpenCaseDetails}
             />
           </div>
