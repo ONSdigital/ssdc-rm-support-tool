@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResult;
+import uk.gov.ons.ssdc.supporttool.model.entity.RefusalType;
 import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(value = "/searchInSurvey")
@@ -100,7 +103,7 @@ public class SurveyCasesEndpoint {
 
     if (refusalReceived != null) {
       query += " AND c.refusal_received = :refusalReceived";
-      namedParameters.put("refusalReceiced", refusalReceived);
+      namedParameters.put("refusalReceived", refusalReceived);
     }
 
     return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
@@ -139,6 +142,17 @@ public class SurveyCasesEndpoint {
 
     return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
   }
+
+  @GetMapping(value = "/refusalTypes")
+  @ResponseBody
+  public List<String> getRefusalType() {
+    List<String> refusals = Stream.of(RefusalType.values())
+            .map(Enum::name)
+            .collect(Collectors.toList());
+
+    return refusals;
+  }
+
 
   private void checkSurveySearchCasesPermission(String jwt, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
