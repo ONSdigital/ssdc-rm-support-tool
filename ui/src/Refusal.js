@@ -25,6 +25,7 @@ class Refusal extends Component {
       typeValidationError: false,
       showDialog: false,
     })
+    this.props.onClose()
   }
 
   onTypeChange = (event) => {

@@ -23,6 +23,7 @@ class InvalidAddress extends Component {
       reasonValidationError: false,
       showDialog: false,
     })
+    this.props.onClose()
   }
 
   onReasonChange = (event) => {

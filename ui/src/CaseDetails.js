@@ -78,51 +78,51 @@ class CaseDetails extends Component {
 
   render() {
     const caseEvents = this.state.events.map((event, index) => (
-      <TableRow key={index}>
-        <TableCell component="th" scope="row">
-          {event.eventDate}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {event.eventDescription}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {event.eventSource}
-        </TableCell>
-      </TableRow>
+        <TableRow key={index}>
+          <TableCell component="th" scope="row">
+            {event.eventDate}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {event.eventDescription}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {event.eventSource}
+          </TableCell>
+        </TableRow>
     ))
 
     const uacQids = this.state.uacQidLinks.map((uacQidLink, index) => (
-      <TableRow key={index}>
-        <TableCell component="th" scope="row">
-          {uacQidLink.qid}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {uacQidLink.createdAt}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {uacQidLink.lastUpdatedAt}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {uacQidLink.active ? 'Yes' : 'No'}
-        </TableCell>
-        <TableCell>
-          {(this.state.authorisedActivities.includes('DEACTIVATE_UAC') && uacQidLink.active) &&
+        <TableRow key={index}>
+          <TableCell component="th" scope="row">
+            {uacQidLink.qid}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {uacQidLink.createdAt}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {uacQidLink.lastUpdatedAt}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {uacQidLink.active ? 'Yes' : 'No'}
+          </TableCell>
+          <TableCell>
+            {(this.state.authorisedActivities.includes('DEACTIVATE_UAC') && uacQidLink.active) &&
             <Button
-              onClick={() => this.onDeactivate(uacQidLink.qid)}
-              variant="contained">
+                onClick={() => this.onDeactivate(uacQidLink.qid)}
+                variant="contained">
               Deactivate
             </Button>
-          }
-        </TableCell>
-      </TableRow>
+            }
+          </TableCell>
+        </TableRow>
     ))
 
     return (
-      <div style={{ padding: 20 }}>
-        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Case Details
-        </Typography>
-        {this.state.case &&
+        <div style={{ padding: 20 }}>
+          <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
+            Case Details
+          </Typography>
+          {this.state.case &&
           <div>
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
               <Table>
@@ -147,15 +147,20 @@ class CaseDetails extends Component {
                     <Refusal
                         caseId={this.props.caseId}
                         case={this.state.case}
+                        onClose={this.getAllBackendData}
                     />
                     }
                     {this.state.authorisedActivities.includes('CREATE_CASE_INVALID_ADDRESS') &&
-                    <InvalidAddress caseId={this.props.caseId}/>
+                    <InvalidAddress
+                        caseId={this.props.caseId}
+                        onClose={this.getAllBackendData}
+                    />
                     }
                     {this.state.authorisedActivities.includes('CREATE_CASE_FULFILMENT') &&
                     <PrintFulfilment
                         caseId={this.props.caseId}
                         surveyId={this.props.surveyId}
+                        onClose={this.getAllBackendData}
                     />
                     }
                   </TableCell>
@@ -193,8 +198,8 @@ class CaseDetails extends Component {
               </Table>
             </TableContainer>
           </div>
-        }
-      </div>
+          }
+        </div>
     )
   }
 }
