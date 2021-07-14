@@ -89,11 +89,11 @@ class SurveyCaseSearch extends Component {
   }
 
   onSearch = async () => {
-    if (!this.checkValidation(this.state.searchTerm)) {
+    if (!this.checkWhitespace(this.state.searchTerm)) {
       this.setState({searchTermFailedValidation: true})
       return
     }
-
+    this.setState({searchTermFailedValidation: false})
     let searchUrl = 'searchInSurvey/' + this.props.surveyId + '?searchTerm=' + this.state.searchTerm
 
     if (this.state.selectedCollectionExercise) {
@@ -120,25 +120,29 @@ class SurveyCaseSearch extends Component {
   }
 
   onCaseRefSearch = async () => {
-    if (!this.checkValidation(this.state.caseRef)) {
+    if (!this.isNumeric(this.state.caseRef)) {
       this.setState({caseRefSearchFailedValidation: true})
       return
     }
-
+    this.setState({caseRefSearchFailedValidation: false})
     this.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '/caseRef/' + this.state.caseRef)
   }
 
   onQidSearch = async () => {
-    if (!this.checkValidation(this.state.qid)) {
+    if (!this.isNumeric(this.state.qid)) {
       this.setState({qidSearchFailedValidation: true})
       return
     }
-
+    this.setState({qidSearchFailedValidation: false})
     this.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '/qid/' + this.state.qid)
   }
 
-  checkValidation = (valueToValidate) => {
+  checkWhitespace = (valueToValidate) => {
     return valueToValidate.trim();
+  }
+
+  isNumeric = (str) => {
+    return /^\+?\d+$/.test(str)
   }
 
   onFilterCollectionExercise = (event) => {
