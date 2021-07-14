@@ -143,7 +143,7 @@ public class SurveyCasesEndpoint {
   private void checkSurveySearchCasesPermission(String jwt, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
-      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid survey ID");
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Survey not found");
     }
     userIdentity.checkUserPermission(jwt, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
   }
