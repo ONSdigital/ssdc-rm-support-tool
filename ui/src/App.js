@@ -64,7 +64,7 @@ class App extends Component {
   }
 
   onBackToSurveys = () => {
-    this.setState({ selectedSurveyId: null })
+    this.setState({ selectedSurveyId: null, showCaseSearch: false})
   }
 
   onBackToCollectionExercises = () => {
