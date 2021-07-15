@@ -75,7 +75,6 @@ class InvalidAddress extends Component {
               <div>
                 <TextField
                     required
-                    inputProps={{style: {textTransform: 'uppercase'}}}
                     fullWidth={true}
                     style={{marginTop: 20}}
                     label="Reason"

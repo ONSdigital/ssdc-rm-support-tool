@@ -59,26 +59,13 @@ class PrintFulfilment extends Component {
   // TODO: Need to handle errors from Promises
   refreshDataFromBackend = async () => {
 
-    const allPrintFulfilmentTemplates = await getAllPrintTemplates()
-        .then((templates) => {
-              return templates
-        })
-
     const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(this.props.surveyId)
         .then((fulfilmentTemplates) => {
           return fulfilmentTemplates
         })
 
-    let allowableFulfilmentPrintTemplates = []
-    allPrintFulfilmentTemplates
-        .forEach(packCode => {
-            if (fulfilmentPrintTemplates.includes(packCode)) {
-              allowableFulfilmentPrintTemplates.push(packCode)
-            }
-          })
-
     this.setState({
-      allowableFulfilmentPrintTemplates: allowableFulfilmentPrintTemplates
+      allowableFulfilmentPrintTemplates: fulfilmentPrintTemplates
     })
   }
 

@@ -37,14 +37,10 @@ class CollectionExerciseDetails extends Component {
     newActionRuleType: ''
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getActionRules()
-
-    await getActionRulePrintTemplates(this.props.surveyId)
-        .then((codes) => {
-          this.setState({ packCodes: codes })
-        })
+    this.getPrintTemplates()
 
     this.interval = setInterval(
       () => this.getActionRules(),
@@ -91,6 +87,11 @@ class CollectionExerciseDetails extends Component {
       actionRules: actionRules,
       printTemplateHrefToPackCodeMap: printTemplateHrefToPackCodeMap
     })
+  }
+
+  getPrintTemplates = async () => {
+    const packCodes = await getActionRulePrintTemplates(this.props.surveyId)
+    this.setState({ packCodes: packCodes })
   }
 
   openDialog = () => {
