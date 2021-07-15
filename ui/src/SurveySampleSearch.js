@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Button, FormControl, Select, InputLabel, TextField, MenuItem, Typography } from '@material-ui/core';
+import { Button, FormControl, Select, InputLabel, TextField, MenuItem } from '@material-ui/core';
 
 const NOT_REFUSED = "NOT REFUSED";
 const SEARCH_FIELD_WIDTH = 200;
@@ -130,10 +130,6 @@ class SurveySampleSearch extends Component {
         return (
             <div id="sampleSearchDiv">
                 <div id="searchTxtDiv" style={{ margin: 10 }}>
-                    <Typography variant="h4" color="inherit" style={{ marginBottom: 10 }}>
-                        Survey: {this.props.surveyName}
-                    </Typography>
-
                     <TextField
                         required
                         style={{ minWidth: SEARCH_FIELD_WIDTH }}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Button, Paper } from '@material-ui/core';
+import { Button, Paper, Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -81,7 +81,6 @@ class SurveyCaseSearch extends Component {
       <TableCell key={index + 2}>{caze.sample[sampleColumn]}</TableCell>
     )))
 
-
     return caseCells
   }
 
@@ -113,6 +112,11 @@ class SurveyCaseSearch extends Component {
 
     return (
       <div style={{ padding: 20 }}>
+        <Typography variant="h4" color="inherit" style={{ marginBottom: 10 }}>
+          Survey: {this.props.surveyName}
+        </Typography>
+
+
         <SurveySampleSearch surveyId={this.props.surveyId}
           onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
           isNumeric={this.isNumeric}
@@ -152,7 +156,7 @@ class SurveyCaseSearch extends Component {
           (this.state.caseSearchResults.length === 0) &&
           <p>{this.state.noCasesFoundMsg}</p>
         }
-      </div >
+      </div>
 
     )
   }
