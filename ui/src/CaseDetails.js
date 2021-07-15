@@ -7,6 +7,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Refusal from "./Refusal";
+import InvalidAddress from "./InvalidAddress";
+import PrintFulfilment from "./PrintFulfilment";
 
 class CaseDetails extends Component {
   state = {
@@ -19,6 +22,15 @@ class CaseDetails extends Component {
   componentDidMount() {
     this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getAllBackendData()
+
+    this.interval = setInterval(
+        () => this.getAllBackendData(),
+        1000
+    )
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval)
   }
 
   getAuthorisedActivities = async () => {
@@ -61,16 +73,8 @@ class CaseDetails extends Component {
     }
   }
 
-  onDeactivate = async (qid) => {
-    const response = await fetch('/deactivateUac/' + qid)
-
-    if (response.ok) {
-      // NOTE: UIs don't play nice with async stuff... we have no idea if/when the UAC will actually be dectivated... go figure
-      await new Promise(r => setTimeout(r, 1000)) // This sleep ought to work... ish. There's no better way to do this
-
-      // Now, refresh the data so we can see that the event and that the UAC is deactivated
-      this.getAllBackendData()
-    }
+  onDeactivate = (qid) => {
+    fetch('/deactivateUac/' + qid)
   }
 
   render() {
@@ -121,14 +125,47 @@ class CaseDetails extends Component {
         </Typography>
         {this.state.case &&
           <div>
-            <div>Case ref: {this.state.case.caseRef}</div>
-            <div>Created at: {this.state.case.createdAt}</div>
-            <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
-            <div>Receipted: {this.state.case.receiptReceived ? "Yes" : "No"}</div>
-            <div>Refused: {this.state.case.refusalReceived ? this.state.case.refusalReceived : "No"}</div>
-            <div>Invalid: {this.state.case.addressInvalid ? "Yes" : "No"}</div>
-            <div>Launched EQ: {this.state.case.surveyLaunched ? "Yes" : "No"}</div>
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Details</TableCell>
+                    <TableCell align="right">Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableCell component="th" scope="row">
+                    <div>Case ref: {this.state.case.caseRef}</div>
+                    <div>Created at: {this.state.case.createdAt}</div>
+                    <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
+                    <div>Receipted: {this.state.case.receiptReceived ? "Yes" : "No"}</div>
+                    <div>Refused: {this.state.case.refusalReceived ? this.state.case.refusalReceived : "No"}</div>
+                    <div>Invalid: {this.state.case.addressInvalid ? "Yes" : "No"}</div>
+                    <div>Launched EQ: {this.state.case.surveyLaunched ? "Yes" : "No"}</div>
+                  </TableCell>
+                  <TableCell align="right">
+                    {this.state.authorisedActivities.includes('CREATE_CASE_REFUSAL') &&
+                    <Refusal
+                        caseId={this.props.caseId}
+                        case={this.state.case}
+                    />
+                    }
+                    {this.state.authorisedActivities.includes('CREATE_CASE_INVALID_ADDRESS') &&
+                    <InvalidAddress
+                        caseId={this.props.caseId}
+                    />
+                    }
+                    {this.state.authorisedActivities.includes('CREATE_CASE_FULFILMENT') &&
+                    <PrintFulfilment
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                    />
+                    }
+                  </TableCell>
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TableContainer component={Paper} style={{marginTop: 20}}>
               <Table>
                 <TableHead>
                   <TableRow>

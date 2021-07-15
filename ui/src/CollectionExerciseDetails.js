@@ -20,6 +20,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { uuidv4 } from './common'
 import SampleUpload from "./SampleUpload";
+import {getActionRulePrintTemplates} from "./Utils";
 
 
 class CollectionExerciseDetails extends Component {
@@ -39,7 +40,7 @@ class CollectionExerciseDetails extends Component {
   componentDidMount() {
     this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getActionRules()
-    this.getPackCodes()
+    this.getPrintTemplates()
 
     this.interval = setInterval(
       () => this.getActionRules(),
@@ -88,23 +89,8 @@ class CollectionExerciseDetails extends Component {
     })
   }
 
-  getPackCodes = async () => {
-    const response = await fetch('/surveys/' + this.props.surveyId + '/actionRulePrintTemplates')
-    const printTemplatesJson = await response.json()
-    const printTemplates = printTemplatesJson._embedded.actionRuleSurveyPrintTemplates
-
-    let packCodes = []
-
-    for (let i = 0; i < printTemplates.length; i++) {
-      const printTemplateUrl = new URL(printTemplates[i]._links.printTemplate.href)
-
-      const printTemplateResponse = await fetch(printTemplateUrl.pathname)
-      const printTemplateJson = await printTemplateResponse.json()
-      const packCode = printTemplateJson._links.self.href.split('/')[4]
-
-      packCodes.push(packCode)
-    }
-
+  getPrintTemplates = async () => {
+    const packCodes = await getActionRulePrintTemplates(this.props.surveyId)
     this.setState({ packCodes: packCodes })
   }
 
