@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.Fulfilment;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidAddress;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.model.ui.dto.Fulfilment;
-import uk.gov.ons.ssdc.supporttool.model.ui.dto.InvalidAddress;
-import uk.gov.ons.ssdc.supporttool.model.ui.dto.Refusal;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
 

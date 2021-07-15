@@ -1,16 +1,16 @@
-package uk.gov.ons.ssdc.supporttool.model.messaging.dto;
+package uk.gov.ons.ssdc.supporttool.model.dto.ui;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalTypeDTO;
 
 @Data
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class RefusalDTO {
+public class Refusal {
   private RefusalTypeDTO type;
   private String agentId;
   private String callId;
-  private CollectionCase collectionCase;
 }

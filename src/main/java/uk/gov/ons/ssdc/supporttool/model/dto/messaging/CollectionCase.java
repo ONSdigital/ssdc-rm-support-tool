@@ -1,4 +1,4 @@
-package uk.gov.ons.ssdc.supporttool.model.messaging.dto;
+package uk.gov.ons.ssdc.supporttool.model.dto.messaging;
 
 import java.util.Map;
 import java.util.UUID;

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobDto;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobStatusDto;
 import uk.gov.ons.ssdc.supporttool.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
@@ -28,8 +30,6 @@ import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
-import uk.gov.ons.ssdc.supporttool.model.ui.dto.JobDto;
-import uk.gov.ons.ssdc.supporttool.model.ui.dto.JobStatusDto;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 

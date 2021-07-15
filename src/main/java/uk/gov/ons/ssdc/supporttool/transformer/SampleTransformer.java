@@ -3,8 +3,8 @@ package uk.gov.ons.ssdc.supporttool.transformer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.Sample;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
-import uk.gov.ons.ssdc.supporttool.model.messaging.dto.Sample;
 import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
 public class SampleTransformer implements Transformer {
