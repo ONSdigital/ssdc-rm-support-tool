@@ -40,7 +40,8 @@ class App extends Component {
     this.setState({
       selectedSearchSurveyId: searchSurveyId,
       showCaseSearch: true,
-      hideSurvey: true
+      hideSurvey: true,
+      caseSearchResults: [], // Clear previous search results
     })
   }
 
@@ -57,10 +58,11 @@ class App extends Component {
     })
   }
 
-  onOpenCaseDetails = (caseId) => {
+  onOpenCaseDetails = (caseId, caseSearchResults) => {
     this.setState({
       selectedCaseId: caseId,
       showCaseSearch: false,
+      caseSearchResults: caseSearchResults,  // Preserve search results so we can go back to them
     })
   }
 
@@ -81,7 +83,10 @@ class App extends Component {
   }
 
   onBackToSurveyCaseSearch = () => {
-    this.setState({ selectedCaseId: null, showCaseSearch: true })
+    this.setState({
+      selectedCaseId: null,
+      showCaseSearch: true,
+    })
   }
 
   render() {
@@ -114,6 +119,7 @@ class App extends Component {
               surveyId={this.state.selectedSearchSurveyId}
               surveyName={this.state.selectedSurveyName}
               onOpenCaseDetails={this.onOpenCaseDetails}
+              caseSearchResults={this.state.caseSearchResults}
             />
           </div>
         }

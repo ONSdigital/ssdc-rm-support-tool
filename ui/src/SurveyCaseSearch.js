@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Button, Paper, Typography } from '@material-ui/core';
+import {Button, Link, Paper, Typography} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -20,6 +20,7 @@ class SurveyCaseSearch extends Component {
 
   componentDidMount() {
     this.getSampleColumns()
+    this.setState({caseSearchResults: this.props.caseSearchResults})
   }
 
   onSearchExecuteAndPopulateList = async (searchUrl) => {
@@ -69,11 +70,11 @@ class SurveyCaseSearch extends Component {
     let caseCells = []
     caseCells.push((
       <TableCell key={0}>
-        <Button
-          onClick={() => this.props.onOpenCaseDetails(caseId)}
+        <Link
+          onClick={() => this.props.onOpenCaseDetails(caseId, this.state.caseSearchResults)}
           variant="contained">
           {caze.caseRef}
-        </Button>
+        </Link>
       </TableCell>
     ))
     caseCells.push(<TableCell key={1}>{caze.collectionExerciseName}</TableCell>)
@@ -132,8 +133,6 @@ class SurveyCaseSearch extends Component {
           urlpathName='qid'
           displayText='Search By Qid'/>
 
-        {
-          (this.state.caseSearchResults.length > 0) &&
           < TableContainer component={Paper} style={{ marginTop: 20 }}>
             <Table>
               <TableHead>
@@ -141,12 +140,14 @@ class SurveyCaseSearch extends Component {
                   {tableHeaderRows}
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {caseTableRows}
-              </TableBody>
+              {
+                (this.state.caseSearchResults.length > 0) &&
+                <TableBody>
+                  {caseTableRows}
+                </TableBody>
+              }
             </Table>
           </TableContainer>
-        }
         {
           (this.state.caseSearchResults.length === 0) &&
           <p>{this.state.noCasesFoundMsg}</p>
