@@ -48,7 +48,7 @@ class SurveySampleSearch extends Component {
     }
 
     onSearch = async () => {
-        if (!this.props.checkWhitespace(this.state.searchTerm)) {
+        if (!this.props.searchTermValidator(this.state.searchTerm)) {
             this.setState({ searchTermFailedValidation: true })
             return
         }

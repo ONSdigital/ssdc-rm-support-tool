@@ -44,7 +44,7 @@ class App extends Component {
     })
   }
 
-  onOpenCaseSearch = () => {
+  onOpenCollexCaseSearch = () => {
     this.setState({
       caseSearchResults: [], // Clear previous search results
       caseSearchActive: true
@@ -59,7 +59,8 @@ class App extends Component {
 
   onOpenCaseDetails = (caseId) => {
     this.setState({
-      selectedCaseId: caseId
+      selectedCaseId: caseId,
+      showCaseSearch: false,
     })
   }
 
@@ -79,8 +80,8 @@ class App extends Component {
     this.setState({ caseSearchActive: false })
   }
 
-  onBackToCaseSearch = () => {
-    this.setState({ selectedCaseId: null })
+  onBackToSurveyCaseSearch = () => {
+    this.setState({ selectedCaseId: null, showCaseSearch: true })
   }
 
   render() {
@@ -123,7 +124,7 @@ class App extends Component {
               surveyId={this.state.selectedSurveyId}
               collectionExerciseId={this.state.selectedCollexId}
               collectionExerciseName={this.state.selectedCollexName}
-              onOpenCaseSearch={this.onOpenCaseSearch} />
+              onOpenCaseSearch={this.onOpenCollexCaseSearch} />
           </div>
         }
         {(this.state.caseSearchActive && !this.state.selectedCaseId) &&
@@ -140,7 +141,7 @@ class App extends Component {
         }
         {this.state.selectedCaseId &&
           <div>
-            <Button onClick={this.onBackToCaseSearch}>Back</Button>
+            <Button onClick={this.onBackToSurveyCaseSearch}>Back</Button>
             <CaseDetails
               surveyId={this.state.selectedSurveyId}
               caseId={this.state.selectedCaseId} />

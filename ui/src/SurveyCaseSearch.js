@@ -116,26 +116,21 @@ class SurveyCaseSearch extends Component {
           Survey: {this.props.surveyName}
         </Typography>
 
-
         <SurveySampleSearch surveyId={this.props.surveyId}
           onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
-          isNumeric={this.isNumeric}
-          checkWhitespace={this.checkWhitespace}
-        ></SurveySampleSearch>
+          searchTermValidator={this.checkWhitespace}/>
 
         <SurveySimpleSearchInput surveyId={this.props.surveyId}
           onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
-          isNumeric={this.isNumeric}
+          searchTermValidator={this.isNumeric}
           urlpathName='caseRef'
-          displayText='Search By Case Ref'>
-        </SurveySimpleSearchInput>
+          displayText='Search By Case Ref'/>
 
         <SurveySimpleSearchInput surveyId={this.props.surveyId}
           onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
-          isNumeric={this.isNumeric}
+          searchTermValidator={this.isNumeric}
           urlpathName='qid'
-          displayText='Search By Qid'>
-        </SurveySimpleSearchInput>
+          displayText='Search By Qid'/>
 
         {
           (this.state.caseSearchResults.length > 0) &&

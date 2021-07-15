@@ -5,7 +5,7 @@ import { Button, TextField } from '@material-ui/core';
 
 class SurveySimpleSearchInput extends Component {
     state = {
-        filterValue: '',
+        searchTerm: '',
         failedValidation: false
     }
 
@@ -14,17 +14,17 @@ class SurveySimpleSearchInput extends Component {
 
     onChange = (event) => {
         this.setState({
-            filterValue: event.target.value
+            searchTerm: event.target.value
         })
     }
 
     onSearch = async () => {
-        if (!this.props.isNumeric(this.state.filterValue)) {
+        if (!this.props.searchTermValidator(this.state.searchTerm)) {
             this.setState({ failedValidation: true })
             return
         }
         this.setState({ failedValidation: false })
-        this.props.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '/' + this.props.urlpathName + '/' + this.state.filterValue)
+        this.props.onSearchExecuteAndPopulateList('searchInSurvey/' + this.props.surveyId + '/' + this.props.urlpathName + '/' + this.state.searchTerm)
     }
 
     render() {
@@ -36,7 +36,7 @@ class SurveySimpleSearchInput extends Component {
                     error={this.state.failedValidation}
                     label={this.props.displayText}
                     onChange={this.onChange}
-                    value={this.state.filterValue} />
+                    value={this.state.searchTerm} />
 
                 <Button onClick={this.onSearch} variant="contained"
                     style={{ margin: 10, minWidth: 200 }}>
