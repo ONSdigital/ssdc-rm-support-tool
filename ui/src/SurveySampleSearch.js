@@ -75,7 +75,7 @@ class SurveySampleSearch extends Component {
             searchUrl += '&launched=' + this.state.selectedLaunchedFilter
         }
 
-        this.props.onSearchExecuteAndPopulateList(searchUrl)
+        this.props.onSearchExecuteAndPopulateList(searchUrl, this.state.searchTerm, "sample data containing")
     }
 
     onFilterCollectionExercise = (event) => {
