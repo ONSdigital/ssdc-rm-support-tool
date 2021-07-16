@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import '@fontsource/roboto';
-import {Button, Link, Paper, Typography} from '@material-ui/core';
+import { Link, Paper, Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -19,7 +19,7 @@ class SurveyCaseSearch extends Component {
 
   componentDidMount() {
     this.getSampleColumns()
-    this.setState({caseSearchResults: this.props.caseSearchResults})
+    this.setState({ caseSearchResults: this.props.caseSearchResults })
   }
 
   onSearchExecuteAndPopulateList = async (searchUrl, searchTerm, searchDesc) => {
@@ -53,23 +53,23 @@ class SurveyCaseSearch extends Component {
     const surveyJson = await response.json()
     const nonSensitiveColumns = surveyJson.sampleValidationRules.filter(rule => !rule.sensitive).map(rule => rule.columnName)
 
-    this.setState({sampleColumns: nonSensitiveColumns})
+    this.setState({ sampleColumns: nonSensitiveColumns })
   }
 
   getCaseCells = (caze) => {
     const caseId = caze.id
     let caseCells = []
     caseCells.push((
-        <TableCell key={0}>
-          <Link
-              onClick={() => this.props.onOpenCaseDetails(caseId)}>
-            {caze.caseRef}
-          </Link>
-        </TableCell>
+      <TableCell key={0}>
+        <Link
+          onClick={() => this.props.onOpenCaseDetails(caseId)}>
+          {caze.caseRef}
+        </Link>
+      </TableCell>
     ))
     caseCells.push(<TableCell key={1}>{caze.collectionExerciseName}</TableCell>)
     caseCells.push(this.state.sampleColumns.map((sampleColumn, index) => (
-        <TableCell key={index + 2}>{caze.sample[sampleColumn]}</TableCell>
+      <TableCell key={index + 2}>{caze.sample[sampleColumn]}</TableCell>
     )))
 
     return caseCells
@@ -78,15 +78,15 @@ class SurveyCaseSearch extends Component {
   getTableHeaderRows() {
     let tableHeaderRows = []
     tableHeaderRows.push((
-        <TableCell key={0}>Case Ref</TableCell>
+      <TableCell key={0}>Case Ref</TableCell>
     ))
 
     tableHeaderRows.push((
-        <TableCell key={1}>Collection Exercise</TableCell>
+      <TableCell key={1}>Collection Exercise</TableCell>
     ))
 
     tableHeaderRows.push(this.state.sampleColumns.map((sampleColumn, index) => (
-        <TableCell key={index + 2}>{sampleColumn}</TableCell>
+      <TableCell key={index + 2}>{sampleColumn}</TableCell>
     )))
 
     return tableHeaderRows;
@@ -96,64 +96,76 @@ class SurveyCaseSearch extends Component {
     const tableHeaderRows = this.getTableHeaderRows();
 
     const caseTableRows = this.props.caseSearchResults.map((caze, index) => (
-        <TableRow key={index}>
-          {this.getCaseCells(caze)}
-        </TableRow>
+      <TableRow key={index}>
+        {this.getCaseCells(caze)}
+      </TableRow>
     ))
 
+    const borderStyles = {
+      border: '1px solid black',
+      marginTop: '10px'
+    }
+
     return (
-        <div style={{padding: 20}}>
-          <Typography variant="h4" color="inherit" style={{marginBottom: 10}}>
-            Survey: {this.props.surveyName}
-          </Typography>
+      <div style={{ padding: 20 }}>
+        <Typography variant="h4" color="inherit" style={{ marginBottom: 10 }}>
+          Survey: {this.props.surveyName}
+        </Typography>
 
-          <SurveySampleSearch surveyId={this.props.surveyId}
-                              onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
-                              searchTermValidator={this.checkWhitespace}
-                              collectionExercises={this.props.collectionExercises}
-          />
+        <div style={borderStyles}>
+          <SurveySampleSearch style={borderStyles} surveyId={this.props.surveyId}
+            onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
+            searchTermValidator={this.checkWhitespace}
+            collectionExercises={this.props.collectionExercises}>
+          </SurveySampleSearch>
+        </div>
 
-          <SurveySimpleSearchInput surveyId={this.props.surveyId}
-                                   onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
-                                   searchTermValidator={this.isNumeric}
-                                   urlpathName='caseRef'
-                                   displayText='Search By Case Ref'
-                                   searchDesc='Case Ref matching'
+        <div style={borderStyles}>
+          <SurveySimpleSearchInput style={borderStyles} surveyId={this.props.surveyId}
+            onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
+            searchTermValidator={this.isNumeric}
+            urlpathName='caseRef'
+            displayText='Search By Case Ref'
+            searchDesc='Case Ref matching'
           />
+        </div>
 
-          <SurveySimpleSearchInput surveyId={this.props.surveyId}
-                                   onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
-                                   searchTermValidator={this.isNumeric}
-                                   urlpathName='qid'
-                                   displayText='Search By Qid'
-                                   searchDesc='cases linked to QID'
+        <div style={borderStyles}>
+          <SurveySimpleSearchInput style={borderStyles} surveyId={this.props.surveyId}
+            onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
+            searchTermValidator={this.isNumeric}
+            urlpathName='qid'
+            displayText='Search By Qid'
+            searchDesc='cases linked to QID'
           />
-          {(this.props.caseSearchTerm) ?
-          <Typography variant="h5" color="inherit" style={{marginTop: 30, marginBottom: 10}}>
+        </div>
+
+        {(this.props.caseSearchTerm) ?
+          <Typography variant="h5" color="inherit" style={{ marginTop: 30, marginBottom: 10 }}>
             Results for {this.props.caseSearchDesc} "{this.props.caseSearchTerm}":
           </Typography> :
-          <Typography variant="h5" color="inherit" style={{marginTop: 30, marginBottom: 10}}>
+          <Typography variant="h5" color="inherit" style={{ marginTop: 30, marginBottom: 10 }}>
             Make a search
           </Typography>
-            }
-          {(this.props.caseSearchTerm && this.props.caseSearchResults.length > 0) &&
-              <TableContainer component={Paper} style={{marginTop: 20}}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      {tableHeaderRows}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {caseTableRows}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-          }
-          {(this.props.caseSearchTerm && !this.props.caseSearchResults.length > 0) &&
-            <p>No cases found</p>
-          }
-        </div>
+        }
+        {(this.props.caseSearchTerm && this.props.caseSearchResults.length > 0) &&
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {tableHeaderRows}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {caseTableRows}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        }
+        {(this.props.caseSearchTerm && !this.props.caseSearchResults.length > 0) &&
+          <p>No cases found</p>
+        }
+      </div>
 
     )
   }

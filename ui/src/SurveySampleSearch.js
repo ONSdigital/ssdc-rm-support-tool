@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import '@fontsource/roboto';
 import { Button, FormControl, Select, InputLabel, TextField, MenuItem } from '@material-ui/core';
 
-const NOT_REFUSED = "NOT_REFUSED";
 const SEARCH_FIELD_WIDTH = 200;
 const SEARCH_BUTTON_WIDTH = 200;
 const BOOL_FILTER_STYLE = { minWidth: 100, marginLeft: 20, marginRight: 20 };
@@ -25,8 +24,6 @@ class SurveySampleSearch extends Component {
     getRefusalTypes = async () => {
         const response = await fetch('/refusals/types')
         let refusalJson = await response.json()
-
-        // refusalJson.push(NOT_REFUSED)
 
         this.setState({ refusalTypes: refusalJson })
     }
@@ -120,19 +117,6 @@ class SurveySampleSearch extends Component {
 
         return (
             <div id="sampleSearchDiv">
-                <div id="searchTxtDiv" style={{ margin: 10 }}>
-                    <TextField
-                        required
-                        style={{ minWidth: SEARCH_FIELD_WIDTH }}
-                        error={this.state.searchTermFailedValidation}
-                        label="Search All Sample Data"
-                        onChange={this.onSearchChange}
-                        value={this.state.searchTerm} />
-                    <Button onClick={this.onSearch} variant="contained"
-                        style={{ margin: 10, minWidth: SEARCH_BUTTON_WIDTH }}>
-                        Search Sample Data
-                    </Button>
-                </div>
                 <div id="searchSampleFiltersDiv">
                     <FormControl style={{ minWidth: 200, marginLeft: 20, marginRight: 20 }}>
                         <InputLabel>Collection Exercise</InputLabel>
@@ -178,6 +162,19 @@ class SurveySampleSearch extends Component {
                             {trueOrFalseFilterMenuItems}
                         </Select>
                     </FormControl>
+                </div>
+                <div id="searchTxtDiv" style={{ margin: 10 }}>
+                    <TextField
+                        required
+                        style={{ minWidth: SEARCH_FIELD_WIDTH }}
+                        error={this.state.searchTermFailedValidation}
+                        label="Search All Sample Data"
+                        onChange={this.onSearchChange}
+                        value={this.state.searchTerm} />
+                    <Button onClick={this.onSearch} variant="contained"
+                        style={{ margin: 10, minWidth: SEARCH_BUTTON_WIDTH }}>
+                        Search Sample Data
+                    </Button>
                 </div>
             </div>
         )
