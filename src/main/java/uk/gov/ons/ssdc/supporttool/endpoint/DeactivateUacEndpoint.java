@@ -2,9 +2,7 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
 
-import java.time.OffsetDateTime;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,6 +20,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.messaging.ResponseManagementEvent;
 import uk.gov.ons.ssdc.supporttool.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.supporttool.model.repository.UacQidLinkRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 
 @RestController
 @RequestMapping(value = "/deactivateUac")
@@ -62,12 +61,8 @@ public class DeactivateUacEndpoint {
         CREATE_PRINT_TEMPLATE);
 
     ResponseManagementEvent rme = new ResponseManagementEvent();
-    EventDTO event = new EventDTO();
-    event.setChannel("RM");
-    event.setSource("SUPPORT_TOOL");
-    event.setDateTime(OffsetDateTime.now());
-    event.setType(EventTypeDTO.DEACTIVATE_UAC);
-    event.setTransactionId(UUID.randomUUID());
+
+    EventDTO event = EventHelper.createEventDTO(EventTypeDTO.DEACTIVATE_UAC);
     rme.setEvent(event);
 
     PayloadDTO payload = new PayloadDTO();
