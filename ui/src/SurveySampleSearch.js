@@ -30,9 +30,9 @@ class SurveySampleSearch extends Component {
     this.getRefusalTypes();
   }
 
-    getRefusalTypes = async () => {
-      const response = await fetch('/refusals/types')
-        let refusalJson = await response.json()
+  getRefusalTypes = async () => {
+    const response = await fetch("/refusals/types");
+    let refusalJson = await response.json();
 
     this.setState({ refusalTypes: refusalJson });
   };
@@ -52,23 +52,23 @@ class SurveySampleSearch extends Component {
     let searchUrl = `searchInSurvey/${this.props.surveyId}?searchTerm=${this.state.searchTerm}`;
 
     if (this.state.selectedCollectionExercise) {
-      searchUrl += "&collexId=" + this.state.selectedCollectionExercise;
+      searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
     }
 
     if (this.state.selectedRefusalFilter) {
-      searchUrl += "&refusal=" + this.state.selectedRefusalFilter;
+      searchUrl += `&refusal=${this.state.selectedRefusalFilter}`;
     }
 
     if (this.state.selectedReceiptedFilter) {
-      searchUrl += "&receipted=" + this.state.selectedReceiptedFilter;
+      searchUrl += `&receipted=${this.state.selectedReceiptedFilter}`;
     }
 
     if (this.state.selectedInvalidFilter) {
-      searchUrl += "&invalid=" + this.state.selectedInvalidFilter;
+      searchUrl += `&invalid=${this.state.selectedInvalidFilter}`;
     }
 
     if (this.state.selectedLaunchedFilter) {
-      searchUrl += "&launched=" + this.state.selectedLaunchedFilter;
+      searchUrl += `&launched=${this.state.selectedLaunchedFilter}`;
     }
 
     this.props.onSearchExecuteAndPopulateList(
@@ -185,7 +185,6 @@ class SurveySampleSearch extends Component {
               onChange={this.onFilterCollectionExercise}
               value={this.state.selectedCollectionExercise}
             >
-              value={this.state.selectedCollectionExercise}>
               {collectionExerciseMenuItems}
             </Select>
           </FormControl>

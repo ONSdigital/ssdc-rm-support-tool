@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import { Box, Button, Link, Paper, Typography } from "@material-ui/core";
+import { Box, Link, Paper, Typography } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -30,7 +30,7 @@ class SurveyCaseSearch extends Component {
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
-      alert("Error: " + response.state);
+      alert(`Error: ${response.state}`);
       return;
     }
 
@@ -48,7 +48,7 @@ class SurveyCaseSearch extends Component {
   };
 
   getSampleColumns = async () => {
-    const response = await fetch("/surveys/" + this.props.surveyId);
+    const response = await fetch(`/surveys/${this.props.surveyId}`);
     if (!response.ok) {
       return;
     }
