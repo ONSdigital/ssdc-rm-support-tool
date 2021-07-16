@@ -3,7 +3,6 @@ import { Button, Box, Typography, AppBar, Toolbar } from '@material-ui/core';
 import LandingPage from './LandingPage'
 import SurveyDetails from './SurveyDetails'
 import CollectionExerciseDetails from './CollectionExerciseDetails'
-import CaseSearch from './CaseSearch';
 import CaseDetails from './CaseDetails';
 import SurveyCaseSearch from './SurveyCaseSearch'
 
@@ -14,7 +13,6 @@ class App extends Component {
     collectionExercises: [],
     selectedCollexId: null,
     selectedCollexName: '',
-    caseSearchActive: false,
     caseSearchResults: [],
     caseSearchTerm: '',
     caseSearchDesc: '',
@@ -51,13 +49,6 @@ class App extends Component {
     })
   }
 
-  onOpenCollexCaseSearch = () => {
-    this.setState({
-      caseSearchResults: [], // Clear previous search results
-      caseSearchActive: true
-    })
-  }
-
   onCaseSearchResults = (caseSearchResults, caseSearchTerm, caseSearchDesc) => {
     this.setState({
       caseSearchResults: caseSearchResults,
@@ -77,16 +68,12 @@ class App extends Component {
     this.setState({ selectedSurveyId: null })
   }
 
-  onBackToSurveyDetails= () => {
+  onBackToSurveyDetails = () => {
     this.setState({ showCaseSearch: false, hideSurvey: false })
   }
 
   onBackToCollectionExercises = () => {
     this.setState({ selectedCollexId: null })
-  }
-
-  onBackToCollexDetails = () => {
-    this.setState({ caseSearchActive: false })
   }
 
   onBackToSurveyCaseSearch = () => {
@@ -113,7 +100,7 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         {!this.state.selectedSurveyId &&
-          <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails}/>
+          <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails} />
         }
         {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId && !this.state.hideSurvey) &&
           <div>
@@ -143,23 +130,10 @@ class App extends Component {
             />
           </div>
         }
-        {(this.state.selectedCollexId && !this.state.caseSearchActive && !this.state.selectedCaseId) &&
+        {(this.state.selectedCollexId && !this.state.selectedCaseId) &&
           <div>
             <Button onClick={this.onBackToCollectionExercises}>Back</Button>
             <CollectionExerciseDetails
-              surveyId={this.state.selectedSurveyId}
-              collectionExerciseId={this.state.selectedCollexId}
-              collectionExerciseName={this.state.selectedCollexName}
-              onOpenCaseSearch={this.onOpenCollexCaseSearch} />
-          </div>
-        }
-        {(this.state.caseSearchActive && !this.state.selectedCaseId) &&
-          <div>
-            <Button onClick={this.onBackToCollexDetails}>Back</Button>
-            <CaseSearch
-              onOpenCaseDetails={this.onOpenCaseDetails}
-              onCaseSearchResults={this.onCaseSearchResults}
-              caseSearchResults={this.state.caseSearchResults}
               surveyId={this.state.selectedSurveyId}
               collectionExerciseId={this.state.selectedCollexId}
               collectionExerciseName={this.state.selectedCollexName} />
