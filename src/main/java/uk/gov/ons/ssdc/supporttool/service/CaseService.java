@@ -38,8 +38,8 @@ public class CaseService {
   @Value("${queueconfig.invalid-address-event-routing-key}")
   private String invalidAddressEventRoutingKey;
 
-  @Value("${queueconfig.fulfilment-queue}")
-  private String fulfilmentQueue;
+  @Value("${queueconfig.fulfilment-routing-key}")
+  private String fulfilmentRoutingKey;
 
   public CaseService(CaseRepository caseRepository, RabbitTemplate rabbitTemplate) {
     this.caseRepository = caseRepository;
@@ -128,6 +128,6 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(fulfilmentQueue, responseManagementEvent);
+    rabbitTemplate.convertAndSend(eventsExchange, fulfilmentRoutingKey, responseManagementEvent);
   }
 }
