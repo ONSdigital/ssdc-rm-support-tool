@@ -56,13 +56,9 @@ class SurveyCaseSearch extends Component {
     }
 
     const surveyJson = await response.json()
-    let columns = []
+    const nonSensitiveColumns = surveyJson.sampleValidationRules.filter(rule => !rule.sensitive).map(rule => rule.columnName)
 
-    surveyJson.sampleValidationRules.forEach(rule => {
-      columns.push(rule.columnName)
-    })
-
-    this.setState({ sampleColumns: columns })
+    this.setState({ sampleColumns: nonSensitiveColumns })
   }
 
   getCaseCells = (caze) => {
@@ -133,7 +129,7 @@ class SurveyCaseSearch extends Component {
           urlpathName='qid'
           displayText='Search By Qid'/>
 
-          < TableContainer component={Paper} style={{ marginTop: 20 }}>
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
             <Table>
               <TableHead>
                 <TableRow>

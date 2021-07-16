@@ -33,7 +33,7 @@ class SurveySampleSearch extends Component {
 
     getRefusalTypes = async () => {
         const response = await fetch('/searchInSurvey/refusalTypes')
-        const refusalJson = await response.json()
+        let refusalJson = await response.json()
 
         refusalJson.push(NOT_REFUSED)
 
@@ -53,7 +53,7 @@ class SurveySampleSearch extends Component {
             return
         }
         this.setState({ searchTermFailedValidation: false })
-        let searchUrl = 'searchInSurvey/' + this.props.surveyId + '?searchTerm=' + this.state.searchTerm
+        let searchUrl = `searchInSurvey/${this.props.surveyId}?searchTerm=${this.state.searchTerm}`
 
         if (this.state.selectedCollectionExercise) {
             searchUrl += '&collexId=' + this.state.selectedCollectionExercise
