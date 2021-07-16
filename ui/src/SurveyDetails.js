@@ -24,7 +24,6 @@ import {getActionRulePrintTemplates, getAllPrintTemplates, getFulfilmentPrintTem
 class SurveyDetails extends Component {
   state = {
     authorisedActivities: [],
-    collectionExercises: [],
     createCollectionExerciseDialogDisplayed: false,
     validationError: false,
     newCollectionExerciseName: '',
@@ -109,8 +108,7 @@ class SurveyDetails extends Component {
   getCollectionExercises = async () => {
     const response = await fetch('/surveys/' + this.props.surveyId + '/collectionExercises')
     const collexJson = await response.json()
-
-    this.setState({ collectionExercises: collexJson._embedded.collectionExercises })
+    this.props.onFetchCollectionExercises(collexJson._embedded.collectionExercises)
   }
 
   openDialog = () => {
@@ -236,8 +234,9 @@ class SurveyDetails extends Component {
     this.setState({ printTemplateToAllow: event.target.value })
   }
 
+
   render() {
-    const collectionExerciseTableRows = this.state.collectionExercises.map(collex => (
+    const collectionExerciseTableRows = this.props.collectionExercises.map(collex => (
       <TableRow key={collex.name}>
         <TableCell component="th" scope="row">
           {collex.name}

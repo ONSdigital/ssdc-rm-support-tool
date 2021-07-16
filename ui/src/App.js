@@ -11,6 +11,7 @@ class App extends Component {
   state = {
     selectedSurveyId: null,
     selectedSurveyName: '',
+    collectionExercises: [],
     selectedCollexId: null,
     selectedCollexName: '',
     caseSearchActive: false,
@@ -26,7 +27,8 @@ class App extends Component {
     const surveyId = survey._links.self.href.split('/')[4]
     this.setState({
       selectedSurveyId: surveyId,
-      selectedSurveyName: survey.name
+      selectedSurveyName: survey.name,
+      collectionExercises: []
     })
   }
 
@@ -94,6 +96,12 @@ class App extends Component {
     })
   }
 
+  onFetchCollectionExercises = (collectionExercises) => {
+    this.setState({
+      collectionExercises: collectionExercises
+    })
+  }
+
   render() {
     return (
       <Box>
@@ -105,7 +113,7 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         {!this.state.selectedSurveyId &&
-          <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails} />
+          <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails}/>
         }
         {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId && !this.state.hideSurvey) &&
           <div>
@@ -113,8 +121,11 @@ class App extends Component {
             <SurveyDetails
               surveyId={this.state.selectedSurveyId}
               surveyName={this.state.selectedSurveyName}
+              collectionExercises={this.state.collectionExercises}
               onOpenCollectionExercise={this.onOpenCollectionExercise}
-              onOpenSurveyCaseSearch={this.onOpenSurveyCaseSearch} />
+              onOpenSurveyCaseSearch={this.onOpenSurveyCaseSearch}
+              onFetchCollectionExercises={this.onFetchCollectionExercises}
+            />
           </div>
         }
         {(this.state.showCaseSearch) &&
@@ -126,6 +137,7 @@ class App extends Component {
               caseSearchResults={this.state.caseSearchResults}
               caseSearchTerm={this.state.caseSearchTerm}
               caseSearchDesc={this.state.caseSearchDesc}
+              collectionExercises={this.state.collectionExercises}
               onOpenCaseDetails={this.onOpenCaseDetails}
               onCaseSearchResults={this.onCaseSearchResults}
             />

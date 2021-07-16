@@ -9,7 +9,6 @@ const BOOL_FILTER_STYLE = { minWidth: 100, marginLeft: 20, marginRight: 20 };
 
 class SurveySampleSearch extends Component {
     state = {
-        collectionExercises: [],
         selectedCollectionExercise: '',
         refusalTypes: [],
         selectedRefusalFilter: '',
@@ -20,15 +19,7 @@ class SurveySampleSearch extends Component {
     }
 
     componentDidMount() {
-        this.getCollectionExercises()
         this.getRefusalTypes()
-    }
-
-    getCollectionExercises = async () => {
-        const response = await fetch('/surveys/' + this.props.surveyId + '/collectionExercises')
-        const collexJson = await response.json()
-
-        this.setState({ collectionExercises: collexJson._embedded.collectionExercises })
     }
 
     getRefusalTypes = async () => {
@@ -111,7 +102,7 @@ class SurveySampleSearch extends Component {
         const noFilterMenuItem = <MenuItem key={'NO FILTER'} value={''}>{'NO FILTER'}</MenuItem>
         let collectionExerciseMenuItems = []
         collectionExerciseMenuItems.push(noFilterMenuItem)
-        collectionExerciseMenuItems.push(this.state.collectionExercises.map(collex => (
+        collectionExerciseMenuItems.push(this.props.collectionExercises.map(collex => (
             <MenuItem key={collex.name} value={collex._links.self.href.split("/")[4]}>{collex.name}</MenuItem>
         )))
 

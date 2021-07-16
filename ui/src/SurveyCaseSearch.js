@@ -109,7 +109,9 @@ class SurveyCaseSearch extends Component {
 
           <SurveySampleSearch surveyId={this.props.surveyId}
                               onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
-                              searchTermValidator={this.checkWhitespace}/>
+                              searchTermValidator={this.checkWhitespace}
+                              collectionExercises={this.props.collectionExercises}
+          />
 
           <SurveySimpleSearchInput surveyId={this.props.surveyId}
                                    onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
