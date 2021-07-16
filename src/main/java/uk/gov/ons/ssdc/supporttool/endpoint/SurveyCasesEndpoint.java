@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResult;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.UIRefusalTypeDTO;
 import uk.gov.ons.ssdc.supporttool.model.entity.RefusalType;
 import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
@@ -64,7 +65,7 @@ public class SurveyCasesEndpoint {
       @RequestParam(value = "receipted", required = false) Optional<Boolean> receiptReceived,
       @RequestParam(value = "invalid", required = false) Optional<Boolean> addressInvalid,
       @RequestParam(value = "launched", required = false) Optional<Boolean> surveyLaunched,
-      @RequestParam(value = "refusal", required = false) Optional<String> refusalReceived) {
+      @RequestParam(value = "refusal", required = false) Optional<UIRefusalTypeDTO> refusalReceived) {
 
     checkSurveySearchCasesPermission(jwt, surveyId);
 
@@ -100,11 +101,11 @@ public class SurveyCasesEndpoint {
     }
 
     if (refusalReceived.isPresent()) {
-      if (refusalReceived.get().equals(NOT_REFUSED)) {
+      if (refusalReceived.get() == UIRefusalTypeDTO.NOT_REFUSED) {
         query += " AND c.refusal_received IS NULL";
       } else {
         query += " AND c.refusal_received = :refusalReceived";
-        namedParameters.put("refusalReceived", refusalReceived.get());
+        namedParameters.put("refusalReceived", refusalReceived.get().toString());
       }
     }
 
@@ -145,15 +146,6 @@ public class SurveyCasesEndpoint {
     namedParameters.put("qid", qid);
 
     return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
-  }
-
-  @GetMapping(value = "/refusalTypes")
-  @ResponseBody
-  public List<String> getRefusalType() {
-    List<String> refusals =
-        Stream.of(RefusalType.values()).map(Enum::name).collect(Collectors.toList());
-
-    return refusals;
   }
 
   private void checkSurveySearchCasesPermission(String jwt, UUID surveyId) {

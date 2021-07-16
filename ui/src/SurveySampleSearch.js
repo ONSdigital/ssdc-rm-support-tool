@@ -11,7 +11,6 @@ import {
   Box,
 } from "@material-ui/core";
 
-const NOT_REFUSED = "NOT_REFUSED";
 const SEARCH_FIELD_WIDTH = 200;
 const SEARCH_BUTTON_WIDTH = 200;
 const BOOL_FILTER_STYLE = { minWidth: 100, marginLeft: 20, marginRight: 20 };
@@ -31,11 +30,9 @@ class SurveySampleSearch extends Component {
     this.getRefusalTypes();
   }
 
-  getRefusalTypes = async () => {
-    const response = await fetch("/searchInSurvey/refusalTypes");
-    let refusalJson = await response.json();
-
-    refusalJson.push(NOT_REFUSED);
+    getRefusalTypes = async () => {
+      const response = await fetch('/refusals/types')
+        let refusalJson = await response.json()
 
     this.setState({ refusalTypes: refusalJson });
   };
