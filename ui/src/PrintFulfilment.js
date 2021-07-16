@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import '@fontsource/roboto';
 import {Button, Dialog, DialogContent, FormControl, InputLabel, MenuItem, Select} from '@material-ui/core';
-import {getAllPrintTemplates, getFulfilmentPrintTemplates} from "./Utils";
+import {getFulfilmentPrintTemplates} from "./Utils";
 
 class PrintFulfilment extends Component {
   state = {
