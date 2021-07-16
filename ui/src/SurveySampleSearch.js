@@ -149,23 +149,6 @@ class SurveySampleSearch extends Component {
 
         return (
             <div id="sampleSearchDiv">
-                <div id="searchTxtDiv" style={{ margin: 10 }}>
-                    <TextField
-                        required
-                        style={{ minWidth: SEARCH_FIELD_WIDTH }}
-                        error={this.state.searchTermFailedValidation}
-                        label="Search All Sample Data"
-                        onChange={this.onSearchChange}
-                        value={this.state.searchTerm}
-                    />
-                    <Button
-                        onClick={this.onSearch}
-                        variant="contained"
-                        style={{ margin: 10, minWidth: SEARCH_BUTTON_WIDTH }}
-                    >
-                        Search Sample Data
-                    </Button>
-                </div>
                 <div id="searchSampleFiltersDiv">
                     <Box marginTop={2} marginLeft={1}>
                         <Typography display={"inline"} variant="subtitle2">
@@ -229,6 +212,24 @@ class SurveySampleSearch extends Component {
                         </Select>
                     </FormControl>
                 </div>
+                <div id="searchTxtDiv" style={{ margin: 10 }}>
+                    <TextField
+                        required
+                        style={{ minWidth: SEARCH_FIELD_WIDTH }}
+                        error={this.state.searchTermFailedValidation}
+                        label="Search All Sample Data"
+                        onChange={this.onSearchChange}
+                        value={this.state.searchTerm}
+                    />
+                    <Button
+                        onClick={this.onSearch}
+                        variant="contained"
+                        style={{ margin: 10, minWidth: SEARCH_BUTTON_WIDTH }}
+                    >
+                        Search Sample Data
+                    </Button>
+                </div>
+
             </div>
         );
     }
