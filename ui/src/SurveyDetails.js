@@ -35,7 +35,6 @@ class SurveyDetails extends Component {
     allowableFulfilmentPrintTemplates: [],
     printTemplateToAllow: '',
     printTemplateValidationError: false,
-    matchedCases: [],
   }
 
   componentDidMount() {
