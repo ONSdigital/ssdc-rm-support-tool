@@ -32,10 +32,10 @@ class SurveySampleSearch extends Component {
     }
 
     getRefusalTypes = async () => {
-        const response = await fetch('/searchInSurvey/refusalTypes')
+        const response = await fetch('/refusals/types')
         let refusalJson = await response.json()
 
-        refusalJson.push(NOT_REFUSED)
+        // refusalJson.push(NOT_REFUSED)
 
         this.setState({ refusalTypes: refusalJson })
     }
