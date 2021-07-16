@@ -1,6 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.service;
 
-import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,12 +18,10 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidAddress;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
+import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 
 @Service
 public class CaseService {
-
-  private static final String EVENT_SOURCE = "SUPPORT_TOOL";
-  private static final String EVENT_CHANNEL = "RM";
 
   private final CaseRepository caseRepository;
   private final RabbitTemplate rabbitTemplate;
@@ -56,13 +53,6 @@ public class CaseService {
   }
 
   public void buildAndSendRefusalEvent(Refusal refusal, Case caze) {
-    EventDTO eventDTO = new EventDTO();
-    eventDTO.setType(EventTypeDTO.REFUSAL_RECEIVED);
-    eventDTO.setDateTime(OffsetDateTime.now());
-    eventDTO.setTransactionId(UUID.randomUUID());
-    eventDTO.setChannel(EVENT_CHANNEL);
-    eventDTO.setSource(EVENT_SOURCE);
-
     CollectionCase collectionCase = new CollectionCase();
     collectionCase.setCaseId(caze.getId());
 
@@ -77,6 +67,7 @@ public class CaseService {
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.REFUSAL_RECEIVED);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
@@ -84,13 +75,6 @@ public class CaseService {
   }
 
   public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {
-    EventDTO eventDTO = new EventDTO();
-    eventDTO.setType(EventTypeDTO.ADDRESS_NOT_VALID);
-    eventDTO.setDateTime(OffsetDateTime.now());
-    eventDTO.setTransactionId(UUID.randomUUID());
-    eventDTO.setChannel(EVENT_CHANNEL);
-    eventDTO.setSource(EVENT_SOURCE);
-
     InvalidAddressDTO invalidAddressDTO = new InvalidAddressDTO();
     invalidAddressDTO.setCaseId(caze.getId());
     invalidAddressDTO.setReason(invalidAddress.getReason());
@@ -101,6 +85,7 @@ public class CaseService {
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.ADDRESS_NOT_VALID);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
@@ -109,12 +94,6 @@ public class CaseService {
   }
 
   public void buildAndSendFulfilmentCaseEvent(Fulfilment fulfilment, Case caze) {
-    EventDTO eventDTO = new EventDTO();
-    eventDTO.setType(EventTypeDTO.FULFILMENT);
-    eventDTO.setDateTime(OffsetDateTime.now());
-    eventDTO.setTransactionId(UUID.randomUUID());
-    eventDTO.setChannel(EVENT_CHANNEL);
-    eventDTO.setSource(EVENT_SOURCE);
 
     FulfilmentDTO fulfilmentDTO = new FulfilmentDTO();
     fulfilmentDTO.setCaseId(caze.getId());
@@ -125,6 +104,7 @@ public class CaseService {
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.FULFILMENT);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
