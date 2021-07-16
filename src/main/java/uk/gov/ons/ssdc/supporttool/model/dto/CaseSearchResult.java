@@ -10,12 +10,6 @@ public class CaseSearchResult {
   public UUID id;
   public String caseRef;
   public Map<String, String> sample;
-  public OffsetDateTime createdAt;
-  public OffsetDateTime lastUpdatedAt;
-  public String refusalReceived;
-  public boolean addressInvalid;
-  public boolean receiptReceived;
-  public boolean surveyLaunched;
   public UUID collectionExerciseId;
   public String collectionExerciseName;
 }

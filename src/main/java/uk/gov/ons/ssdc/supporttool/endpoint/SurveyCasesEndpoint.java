@@ -37,8 +37,7 @@ public class SurveyCasesEndpoint {
   private static final String NOT_REFUSED = "NOT_REFUSED";
 
   private static final String searchCasesPartialQuery =
-      "SELECT c.id, c.case_ref, c.sample, c.address_invalid, c.receipt_received, c.refusal_received,"
-          + " c.survey_launched, c.created_at, c.last_updated_at, c.collection_exercise_id, e.name collex_name";
+      "SELECT c.id, c.case_ref, c.sample, c.collection_exercise_id, e.name collex_name";
   private static final String searchCasesInSurveyPartialQuery =
       searchCasesPartialQuery
           + " FROM casev3.cases c, casev3.collection_exercise e WHERE c.collection_exercise_id = e.id"
@@ -61,11 +60,11 @@ public class SurveyCasesEndpoint {
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
       @PathVariable(value = "surveyId") UUID surveyId,
       @RequestParam(value = "searchTerm") String searchTerm,
-      @RequestParam(value = "collexId", required = false) UUID collexId,
-      @RequestParam(value = "receipted", required = false) Boolean receiptReceived,
-      @RequestParam(value = "invalid", required = false) Boolean addressInvalid,
-      @RequestParam(value = "launched", required = false) Boolean surveyLaunched,
-      @RequestParam(value = "refusal", required = false) String refusalReceived) {
+      @RequestParam(value = "collexId", required = false) Optional<UUID> collexId,
+      @RequestParam(value = "receipted", required = false) Optional<Boolean> receiptReceived,
+      @RequestParam(value = "invalid", required = false) Optional<Boolean> addressInvalid,
+      @RequestParam(value = "launched", required = false) Optional<Boolean> surveyLaunched,
+      @RequestParam(value = "refusal", required = false) Optional<String> refusalReceived) {
 
     checkSurveySearchCasesPermission(jwt, surveyId);
 
@@ -73,37 +72,39 @@ public class SurveyCasesEndpoint {
 
     String query =
         searchCasesInSurveyPartialQuery
-            + " AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val) WHERE lower(x.val) LIKE lower(:searchTerm))";
+            + " AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val)"
+            + " WHERE LOWER(REPLACE(x.val, ' ', '')) LIKE LOWER(REPLACE(:searchTerm, ' ', '')))";
 
     Map<String, Object> namedParameters = new HashMap();
     namedParameters.put("surveyId", surveyId);
     namedParameters.put("searchTerm", searchTerm);
 
-    if (collexId != null) {
+    if (collexId.isPresent()) {
       query += " AND e.id = :collexId";
-      namedParameters.put("collexId", collexId);
+      namedParameters.put("collexId", collexId.get());
     }
-    if (receiptReceived != null) {
+
+    if (receiptReceived.isPresent()) {
       query += " AND c.receipt_received = :receiptReceived";
-      namedParameters.put("receiptReceived", receiptReceived);
+      namedParameters.put("receiptReceived", receiptReceived.get());
     }
 
-    if (addressInvalid != null) {
+    if (addressInvalid.isPresent()) {
       query += " AND c.address_invalid = :addressInvalid";
-      namedParameters.put("addressInvalid", addressInvalid);
+      namedParameters.put("addressInvalid", addressInvalid.get());
     }
 
-    if (surveyLaunched != null) {
+    if (surveyLaunched.isPresent()) {
       query += " AND c.survey_launched = :surveyLaunched";
-      namedParameters.put("surveyLaunched", surveyLaunched);
+      namedParameters.put("surveyLaunched", surveyLaunched.get());
     }
 
-    if (refusalReceived != null) {
-      if (refusalReceived.equals(NOT_REFUSED)) {
+    if (refusalReceived.isPresent()) {
+      if (refusalReceived.get().equals(NOT_REFUSED)) {
         query += " AND c.refusal_received IS NULL";
       } else {
         query += " AND c.refusal_received = :refusalReceived";
-        namedParameters.put("refusalReceived", refusalReceived);
+        namedParameters.put("refusalReceived", refusalReceived.get());
       }
     }
 

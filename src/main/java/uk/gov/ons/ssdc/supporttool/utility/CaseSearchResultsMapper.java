@@ -21,15 +21,7 @@ public class CaseSearchResultsMapper implements RowMapper<CaseSearchResult> {
     CaseSearchResult caseContainerDto = new CaseSearchResult();
     caseContainerDto.setId(resultSet.getObject("id", UUID.class));
     caseContainerDto.setCaseRef(resultSet.getString("case_ref"));
-    caseContainerDto.setRefusalReceived(resultSet.getString("refusal_received"));
-    caseContainerDto.setSurveyLaunched(resultSet.getBoolean("survey_launched"));
-    caseContainerDto.setReceiptReceived(resultSet.getBoolean("receipt_received"));
-    caseContainerDto.setAddressInvalid(resultSet.getBoolean("address_invalid"));
-
     caseContainerDto.setSample(objectMapper.readValue(resultSet.getString("sample"), Map.class));
-
-    caseContainerDto.setCreatedAt(resultSet.getObject("created_at", OffsetDateTime.class));
-    caseContainerDto.setLastUpdatedAt(resultSet.getObject("last_updated_at", OffsetDateTime.class));
 
     caseContainerDto.setCollectionExerciseId(
         resultSet.getObject("collection_exercise_id", UUID.class));
