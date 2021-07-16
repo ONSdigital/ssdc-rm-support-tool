@@ -181,8 +181,8 @@ class LandingPage extends Component {
       id: uuidv4(),
       name: this.state.newSurveyName,
       sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules),
-      sampleHasNoHeaderRow: !this.state.newSurveyHeaderRow,
-      sampleSeparator: ':'
+      sampleWithHeaderRow: this.state.newSurveyHeaderRow,
+      sampleSeparator: this.state.newSurveySampleSeparator
     }
 
     await fetch('/surveys', {
