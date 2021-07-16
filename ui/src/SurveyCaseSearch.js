@@ -134,7 +134,7 @@ class SurveyCaseSearch extends Component {
             onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
             searchTermValidator={this.checkWhitespace}
             collectionExercises={this.props.collectionExercises}
-          ></SurveySampleSearch>
+          />
         </div>
 
         <div style={borderStyles}>

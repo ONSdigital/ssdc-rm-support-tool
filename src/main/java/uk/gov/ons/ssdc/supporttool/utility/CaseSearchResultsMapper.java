@@ -3,7 +3,6 @@ package uk.gov.ons.ssdc.supporttool.utility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
 import lombok.SneakyThrows;

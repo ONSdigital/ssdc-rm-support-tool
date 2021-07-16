@@ -1,14 +1,13 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UIRefusalTypeDTO;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(value = "/refusals")

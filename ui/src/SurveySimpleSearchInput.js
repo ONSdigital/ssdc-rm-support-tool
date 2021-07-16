@@ -31,7 +31,7 @@ class SurveySimpleSearchInput extends Component {
 
   render() {
     return (
-      <div style={{ margin: 24 }}>
+      <div style={{ margin: 10 }}>
         <TextField
           required
           style={{ minWidth: 200 }}

@@ -1,6 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.model.dto;
 
-import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Data;

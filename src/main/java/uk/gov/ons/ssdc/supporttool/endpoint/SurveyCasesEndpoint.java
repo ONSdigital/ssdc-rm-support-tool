@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResult;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UIRefusalTypeDTO;
-import uk.gov.ons.ssdc.supporttool.model.entity.RefusalType;
 import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
@@ -65,7 +62,8 @@ public class SurveyCasesEndpoint {
       @RequestParam(value = "receipted", required = false) Optional<Boolean> receiptReceived,
       @RequestParam(value = "invalid", required = false) Optional<Boolean> addressInvalid,
       @RequestParam(value = "launched", required = false) Optional<Boolean> surveyLaunched,
-      @RequestParam(value = "refusal", required = false) Optional<UIRefusalTypeDTO> refusalReceived) {
+      @RequestParam(value = "refusal", required = false)
+          Optional<UIRefusalTypeDTO> refusalReceived) {
 
     checkSurveySearchCasesPermission(jwt, surveyId);
 
