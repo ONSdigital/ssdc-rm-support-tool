@@ -7,18 +7,30 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Refusal from "./Refusal";
+import InvalidAddress from "./InvalidAddress";
+import PrintFulfilment from "./PrintFulfilment";
 
 class CaseDetails extends Component {
   state = {
     authorisedActivities: [],
     case: null,
+    events: [],
     uacQidLinks: []
   }
 
   componentDidMount() {
     this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCase()
-    this.getUacQidLinks()
+    this.getAllBackendData()
+
+    this.interval = setInterval(
+        () => this.getAllBackendData(),
+        1000
+    )
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval)
   }
 
   getAuthorisedActivities = async () => {
@@ -34,54 +46,51 @@ class CaseDetails extends Component {
     this.setState({ authorisedActivities: authJson })
   }
 
-  getCase = async () => {
+  getAllBackendData = async () => {
     const response = await fetch('/cases/' + this.props.caseId)
     const caseJson = await response.json()
 
     if (response.ok) {
       this.setState({ case: caseJson })
+
+      const uacQidLinksResponse = await fetch('/cases/' + this.props.caseId + '/uacQidLinks')
+      const uacQidLinksJson = await uacQidLinksResponse.json()
+
+      const uacQidLinks = uacQidLinksJson._embedded.uacQidLinks
+
+      let events = caseJson.events
+      for (let i = 0; i < uacQidLinks.length; i++) {
+        events = events.concat(uacQidLinks[i].events)
+      }
+
+      if (uacQidLinksResponse.ok) {
+        this.setState({
+          case: caseJson,
+          uacQidLinks: uacQidLinks,
+          events: events
+        })
+      }
     }
   }
 
-  getUacQidLinks = async () => {
-    const response = await fetch('/cases/' + this.props.caseId + '/uacQidLinks')
-    const uacQidLinksJson = await response.json()
-
-    if (response.ok) {
-      this.setState({ uacQidLinks: uacQidLinksJson._embedded.uacQidLinks })
-    }
-  }
-
-  onDeactivate = async (qid) => {
-    const response = await fetch('/deactivateUac/' + qid)
-
-    if (response.ok) {
-      // NOTE: UIs don't play nice with async stuff... we have no idea if/when the UAC will actually be dectivated... go figure
-      await new Promise(r => setTimeout(r, 1000)) // This sleep ought to work... ish. There's no better way to do this
-
-      // Now, refresh the UAC QID Link data so we can see that the UAC is deactivated
-      this.getUacQidLinks()
-    }
+  onDeactivate = (qid) => {
+    fetch('/deactivateUac/' + qid)
   }
 
   render() {
-    var caseEvents
-
-    if (this.state.case) {
-      caseEvents = this.state.case.events.map((event, index) => (
-        <TableRow key={index}>
-          <TableCell component="th" scope="row">
-            {event.eventDate}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {event.eventDescription}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {event.eventSource}
-          </TableCell>
-        </TableRow>
-      ))
-    }
+    const caseEvents = this.state.events.map((event, index) => (
+      <TableRow key={index}>
+        <TableCell component="th" scope="row">
+          {event.eventDate}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {event.eventDescription}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {event.eventSource}
+        </TableCell>
+      </TableRow>
+    ))
 
     const uacQids = this.state.uacQidLinks.map((uacQidLink, index) => (
       <TableRow key={index}>
@@ -116,14 +125,47 @@ class CaseDetails extends Component {
         </Typography>
         {this.state.case &&
           <div>
-            <div>Case ref: {this.state.case.caseRef}</div>
-            <div>Created at: {this.state.case.createdAt}</div>
-            <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
-            <div>Receipted: {this.state.case.receiptReceived ? "Yes" : "No"}</div>
-            <div>Refused: {this.state.case.refusalReceived ? this.state.case.refusalReceived : "No"}</div>
-            <div>Invalid: {this.state.case.addressInvalid ? "Yes" : "No"}</div>
-            <div>Launched EQ: {this.state.case.surveyLaunched ? "Yes" : "No"}</div>
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Details</TableCell>
+                    <TableCell align="right">Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableCell component="th" scope="row">
+                    <div>Case ref: {this.state.case.caseRef}</div>
+                    <div>Created at: {this.state.case.createdAt}</div>
+                    <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
+                    <div>Receipted: {this.state.case.receiptReceived ? "Yes" : "No"}</div>
+                    <div>Refused: {this.state.case.refusalReceived ? this.state.case.refusalReceived : "No"}</div>
+                    <div>Invalid: {this.state.case.addressInvalid ? "Yes" : "No"}</div>
+                    <div>Launched EQ: {this.state.case.surveyLaunched ? "Yes" : "No"}</div>
+                  </TableCell>
+                  <TableCell align="right">
+                    {this.state.authorisedActivities.includes('CREATE_CASE_REFUSAL') &&
+                    <Refusal
+                        caseId={this.props.caseId}
+                        case={this.state.case}
+                    />
+                    }
+                    {this.state.authorisedActivities.includes('CREATE_CASE_INVALID_ADDRESS') &&
+                    <InvalidAddress
+                        caseId={this.props.caseId}
+                    />
+                    }
+                    {this.state.authorisedActivities.includes('CREATE_CASE_FULFILMENT') &&
+                    <PrintFulfilment
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                    />
+                    }
+                  </TableCell>
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TableContainer component={Paper} style={{marginTop: 20}}>
               <Table>
                 <TableHead>
                   <TableRow>
