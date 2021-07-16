@@ -15,43 +15,49 @@ class SurveyCaseSearch extends Component {
   state = {
     sampleColumns: [],
     caseSearchResults: [],
-  }
+  };
 
   componentDidMount() {
     this.getSampleColumns()
     this.setState({ caseSearchResults: this.props.caseSearchResults })
   }
 
-  onSearchExecuteAndPopulateList = async (searchUrl, searchTerm, searchDesc) => {
-    const response = await fetch(searchUrl)
+  onSearchExecuteAndPopulateList = async (
+    searchUrl,
+    searchTerm,
+    searchDesc
+  ) => {
+    const response = await fetch(searchUrl);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
-      alert('Error: ' + response.state)
-      return
+      alert("Error: " + response.state);
+      return;
     }
 
-    const matchedCasesJson = await response.json()
+    const matchedCasesJson = await response.json();
 
-    this.props.onCaseSearchResults(matchedCasesJson, searchTerm, searchDesc)
-  }
+    this.props.onCaseSearchResults(matchedCasesJson, searchTerm, searchDesc);
+  };
 
   checkWhitespace = (valueToValidate) => {
     return valueToValidate.trim();
-  }
+  };
 
   isNumeric = (str) => {
-    return /^\+?\d+$/.test(str)
-  }
+    return /^\+?\d+$/.test(str);
+  };
 
   getSampleColumns = async () => {
-    const response = await fetch('/surveys/' + this.props.surveyId)
+    const response = await fetch("/surveys/" + this.props.surveyId);
     if (!response.ok) {
-      return
+      return;
     }
 
-    const surveyJson = await response.json()
-    const nonSensitiveColumns = surveyJson.sampleValidationRules.filter(rule => !rule.sensitive).map(rule => rule.columnName)
+    const surveyJson = await response.json();
+    const nonSensitiveColumns = surveyJson.sampleValidationRules
+      .filter((rule) => !rule.sensitive)
+      .map((rule) => rule.columnName);
 
     this.setState({ sampleColumns: nonSensitiveColumns })
   }
@@ -72,8 +78,8 @@ class SurveyCaseSearch extends Component {
       <TableCell key={index + 2}>{caze.sample[sampleColumn]}</TableCell>
     )))
 
-    return caseCells
-  }
+    return caseCells;
+  };
 
   getTableHeaderRows() {
     let tableHeaderRows = []
@@ -140,15 +146,17 @@ class SurveyCaseSearch extends Component {
           />
         </div>
 
-        {(this.props.caseSearchTerm) ?
-          <Typography variant="h5" color="inherit" style={{ marginTop: 30, marginBottom: 10 }}>
-            Results for {this.props.caseSearchDesc} "{this.props.caseSearchTerm}":
-          </Typography> :
-          <Typography variant="h5" color="inherit" style={{ marginTop: 30, marginBottom: 10 }}>
-            Make a search
-          </Typography>
+        {
+          (this.props.caseSearchTerm) ?
+            <Typography variant="h5" color="inherit" style={{ marginTop: 30, marginBottom: 10 }}>
+              Results for {this.props.caseSearchDesc} "{this.props.caseSearchTerm}":
+            </Typography> :
+            <Typography variant="h5" color="inherit" style={{ marginTop: 30, marginBottom: 10 }}>
+              Make a search
+            </Typography>
         }
-        {(this.props.caseSearchTerm && this.props.caseSearchResults.length > 0) &&
+        {
+          (this.props.caseSearchTerm && this.props.caseSearchResults.length > 0) &&
           <TableContainer component={Paper} style={{ marginTop: 20 }}>
             <Table>
               <TableHead>
@@ -162,14 +170,14 @@ class SurveyCaseSearch extends Component {
             </Table>
           </TableContainer>
         }
-        {(this.props.caseSearchTerm && !this.props.caseSearchResults.length > 0) &&
+        {
+          (this.props.caseSearchTerm && !this.props.caseSearchResults.length > 0) &&
           <p>No cases found</p>
         }
       </div>
 
     )
   }
-
 }
 
-export default SurveyCaseSearch
+export default SurveyCaseSearch;
