@@ -32,8 +32,6 @@ public class SurveyCasesEndpoint {
   private final CaseSearchResultsMapper caseRowMapper;
   private final UserIdentity userIdentity;
 
-  private static final String NOT_REFUSED = "NOT_REFUSED";
-
   private static final String searchCasesPartialQuery =
       "SELECT c.id, c.case_ref, c.sample, c.collection_exercise_id, e.name collex_name";
   private static final String searchCasesInSurveyPartialQuery =
