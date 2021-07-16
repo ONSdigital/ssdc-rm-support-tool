@@ -15,6 +15,8 @@ class App extends Component {
     selectedCollexName: '',
     caseSearchActive: false,
     caseSearchResults: [],
+    caseSearchTerm: '',
+    caseSearchDesc: '',
     selectedCaseId: null,
     showCaseSearch: false,
     hideSurvey: false
@@ -42,6 +44,8 @@ class App extends Component {
       showCaseSearch: true,
       hideSurvey: true,
       caseSearchResults: [], // Clear previous search results
+      caseSearchTerm: '',
+      caseSearchDesc: ''
     })
   }
 
@@ -52,17 +56,18 @@ class App extends Component {
     })
   }
 
-  onCaseSearchResults = (caseSearchResults) => {
+  onCaseSearchResults = (caseSearchResults, caseSearchTerm, caseSearchDesc) => {
     this.setState({
-      caseSearchResults: caseSearchResults
+      caseSearchResults: caseSearchResults,
+      caseSearchTerm: caseSearchTerm,
+      caseSearchDesc: caseSearchDesc
     })
   }
 
-  onOpenCaseDetails = (caseId, caseSearchResults) => {
+  onOpenCaseDetails = (caseId) => {
     this.setState({
       selectedCaseId: caseId,
       showCaseSearch: false,
-      caseSearchResults: caseSearchResults,  // Preserve search results so we can go back to them
     })
   }
 
@@ -118,8 +123,11 @@ class App extends Component {
             <SurveyCaseSearch
               surveyId={this.state.selectedSearchSurveyId}
               surveyName={this.state.selectedSurveyName}
-              onOpenCaseDetails={this.onOpenCaseDetails}
               caseSearchResults={this.state.caseSearchResults}
+              caseSearchTerm={this.state.caseSearchTerm}
+              caseSearchDesc={this.state.caseSearchDesc}
+              onOpenCaseDetails={this.onOpenCaseDetails}
+              onCaseSearchResults={this.onCaseSearchResults}
             />
           </div>
         }
