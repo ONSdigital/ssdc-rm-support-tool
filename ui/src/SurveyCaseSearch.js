@@ -36,17 +36,15 @@ class SurveyCaseSearch extends Component {
     this.setState({ isWaitingForResults: true });
 
     const response = await fetch(searchUrl);
+    this.setState({ isWaitingForResults: false });
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
       alert(`Error: ${response.state}`);
-      this.setState({ isWaitingForResults: false });
       return;
     }
 
     const matchedCasesJson = await response.json();
-    this.setState({ isWaitingForResults: false });
-
     this.props.onCaseSearchResults(matchedCasesJson, searchTerm, searchDesc);
   };
 
