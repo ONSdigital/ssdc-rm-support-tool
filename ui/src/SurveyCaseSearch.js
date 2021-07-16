@@ -108,8 +108,9 @@ class SurveyCaseSearch extends Component {
     ))
 
     const borderStyles = {
-      border: '1px solid black',
-      marginTop: '10px'
+      border: '1px solid grey',
+      marginTop: '10px',
+      paddingBottom: "10px"
     }
 
     return (
