@@ -92,10 +92,7 @@ class App extends Component {
         {!this.state.selectedSurveyId && (
           <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails} />
         )}
-        {this.state.selectedSurveyId &&
-          !this.state.selectedCollexId &&
-          !this.state.selectedCaseId &&
-          !this.state.showCaseSearch && (
+        {this.state.selectedSurveyId &&  !this.state.selectedCollexId && !this.state.selectedCaseId && !this.state.showCaseSearch && (
             <div>
               <Button onClick={this.onBackToSurveys}>Back</Button>
               <SurveyDetails

@@ -63,7 +63,9 @@ class SurveyDetails extends Component {
 
     const authJson = await response.json();
 
-    this.setState({ authorisedActivities: authJson });
+    this.setState({
+      authorisedActivities: authJson,
+    });
   };
 
   refreshDataFromBackend = async () => {
