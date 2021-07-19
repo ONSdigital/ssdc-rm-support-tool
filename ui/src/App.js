@@ -98,8 +98,8 @@ class App extends Component {
             <SurveyDetails
               surveyId={this.state.selectedSurveyId}
               surveyName={this.state.selectedSurveyName}
+              onOpenCollectionExercise={this.onOpenCollectionExercise}
               onOpenSurveyCaseSearch={this.onOpenSurveyCaseSearch}
-              onFetchCollectionExercises={this.onFetchCollectionExercises}
             />
           </div>
         }
