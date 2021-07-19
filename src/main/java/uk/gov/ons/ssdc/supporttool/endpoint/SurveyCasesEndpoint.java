@@ -33,7 +33,7 @@ public class SurveyCasesEndpoint {
   private final UserIdentity userIdentity;
 
   private static final String searchCasesPartialQuery =
-      "SELECT c.id, c.case_ref, c.sample, c.collection_exercise_id, e.name collex_name";
+      "SELECT c.id, c.case_ref, c.sample, e.name collex_name";
   private static final String searchCasesInSurveyPartialQuery =
       searchCasesPartialQuery
           + " FROM casev3.cases c, casev3.collection_exercise e WHERE c.collection_exercise_id = e.id"
@@ -69,7 +69,8 @@ public class SurveyCasesEndpoint {
     StringBuilder queryStringBuilder = new StringBuilder(searchCasesInSurveyPartialQuery);
     queryStringBuilder
         .append(" AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val)")
-        .append(" WHERE LOWER(REPLACE(x.val, ' ', '')) LIKE LOWER(REPLACE(:likeSearchTerm, ' ', '')))");
+        .append(
+            " WHERE LOWER(REPLACE(x.val, ' ', '')) LIKE LOWER(REPLACE(:likeSearchTerm, ' ', '')))");
 
     Map<String, Object> namedParameters = new HashMap();
     namedParameters.put("surveyId", surveyId);

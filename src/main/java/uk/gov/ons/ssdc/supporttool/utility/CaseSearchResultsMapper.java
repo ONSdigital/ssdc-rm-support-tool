@@ -1,11 +1,11 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
-import lombok.SneakyThrows;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseSearchResult;
@@ -14,14 +14,17 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseSearchResult;
 public class CaseSearchResultsMapper implements RowMapper<CaseSearchResult> {
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
-  @SneakyThrows
   @Override
-  public CaseSearchResult mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+  public CaseSearchResult mapRow(ResultSet resultSet, int rowNum) {
     CaseSearchResult caseContainerDto = new CaseSearchResult();
-    caseContainerDto.setId(resultSet.getObject("id", UUID.class));
-    caseContainerDto.setCaseRef(resultSet.getString("case_ref"));
-    caseContainerDto.setSample(objectMapper.readValue(resultSet.getString("sample"), Map.class));
-    caseContainerDto.setCollectionExerciseName(resultSet.getString("collex_name"));
+    try {
+      caseContainerDto.setId(resultSet.getObject("id", UUID.class));
+      caseContainerDto.setCaseRef(resultSet.getString("case_ref"));
+      caseContainerDto.setCollectionExerciseName(resultSet.getString("collex_name"));
+      caseContainerDto.setSample(objectMapper.readValue(resultSet.getString("sample"), Map.class));
+    } catch (SQLException | JsonProcessingException e) {
+      throw new RuntimeException("Error mapping case search results", e);
+    }
     return caseContainerDto;
   }
 }

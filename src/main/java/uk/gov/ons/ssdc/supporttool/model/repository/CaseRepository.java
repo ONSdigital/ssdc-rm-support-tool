@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 
-@RepositoryRestResource()
+@RepositoryRestResource
 public interface CaseRepository extends PagingAndSortingRepository<Case, UUID> {
   Optional<Case> findByCaseRef(@Param("caseRef") Long caseRef);
 
