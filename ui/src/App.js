@@ -10,7 +10,6 @@ class App extends Component {
   state = {
     selectedSurveyId: null,
     selectedSurveyName: '',
-    collectionExercises: [],
     selectedCollexId: null,
     selectedCollexName: '',
     caseSearchResults: [],
@@ -18,7 +17,6 @@ class App extends Component {
     caseSearchDesc: '',
     selectedCaseId: null,
     showCaseSearch: false,
-    hideSurvey: false
   }
 
   onOpenSurveyDetails = (survey) => {
@@ -26,7 +24,6 @@ class App extends Component {
     this.setState({
       selectedSurveyId: surveyId,
       selectedSurveyName: survey.name,
-      collectionExercises: []
     })
   }
 
@@ -42,7 +39,6 @@ class App extends Component {
     this.setState({
       selectedSearchSurveyId: searchSurveyId,
       showCaseSearch: true,
-      hideSurvey: true,
       caseSearchResults: [], // Clear previous search results
       caseSearchTerm: '',
       caseSearchDesc: ''
@@ -69,7 +65,7 @@ class App extends Component {
   }
 
   onBackToSurveyDetails = () => {
-    this.setState({ showCaseSearch: false, hideSurvey: false })
+    this.setState({ showCaseSearch: false })
   }
 
   onBackToCollectionExercises = () => {
@@ -80,12 +76,6 @@ class App extends Component {
     this.setState({
       selectedCaseId: null,
       showCaseSearch: true,
-    })
-  }
-
-  onFetchCollectionExercises = (collectionExercises) => {
-    this.setState({
-      collectionExercises: collectionExercises
     })
   }
 
@@ -102,14 +92,12 @@ class App extends Component {
         {!this.state.selectedSurveyId &&
           <LandingPage onOpenSurveyDetails={this.onOpenSurveyDetails} />
         }
-        {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId && !this.state.hideSurvey) &&
+        {(this.state.selectedSurveyId && !this.state.selectedCollexId && !this.state.selectedCaseId && !this.state.showCaseSearch) &&
           <div>
             <Button onClick={this.onBackToSurveys}>Back</Button>
             <SurveyDetails
               surveyId={this.state.selectedSurveyId}
               surveyName={this.state.selectedSurveyName}
-              collectionExercises={this.state.collectionExercises}
-              onOpenCollectionExercise={this.onOpenCollectionExercise}
               onOpenSurveyCaseSearch={this.onOpenSurveyCaseSearch}
               onFetchCollectionExercises={this.onFetchCollectionExercises}
             />
@@ -124,7 +112,6 @@ class App extends Component {
               caseSearchResults={this.state.caseSearchResults}
               caseSearchTerm={this.state.caseSearchTerm}
               caseSearchDesc={this.state.caseSearchDesc}
-              collectionExercises={this.state.collectionExercises}
               onOpenCaseDetails={this.onOpenCaseDetails}
               onCaseSearchResults={this.onCaseSearchResults}
             />

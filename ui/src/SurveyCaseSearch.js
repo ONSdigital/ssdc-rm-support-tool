@@ -20,12 +20,20 @@ class SurveyCaseSearch extends Component {
   state = {
     sampleColumns: [],
     caseSearchResults: [],
+    collectionExercises: [],
     isWaitingForResults: false,
   };
 
   componentDidMount() {
     this.getSampleColumns();
-    this.setState({ caseSearchResults: this.props.caseSearchResults });
+    this.getCollectionExercises();
+  }
+
+  getCollectionExercises = async () => {
+    const response = await fetch(`/surveys/${this.props.surveyId}/collectionExercises`)
+    const collexJson = await response.json()
+
+    this.setState({collectionExercises: collexJson._embedded.collectionExercises})
   }
 
   onSearchExecuteAndPopulateList = async (
@@ -132,7 +140,7 @@ class SurveyCaseSearch extends Component {
             surveyId={this.props.surveyId}
             onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
             searchTermValidator={this.checkWhitespace}
-            collectionExercises={this.props.collectionExercises}
+            collectionExercises={this.state.collectionExercises}
           />
         </div>
 
