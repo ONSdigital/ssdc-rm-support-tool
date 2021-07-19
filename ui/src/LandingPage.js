@@ -1,13 +1,23 @@
-import React, { Component } from 'react';
-import '@fontsource/roboto';
-import { Button, Dialog, DialogContent, TextField, Paper, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { uuidv4 } from './common'
+import React, { Component } from "react";
+import "@fontsource/roboto";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  TextField,
+  Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@material-ui/core";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import { uuidv4 } from "./common";
 
 class LandingPage extends Component {
   state = {
@@ -15,261 +25,265 @@ class LandingPage extends Component {
     surveys: [],
     createSurveyDialogDisplayed: false,
     validationError: false,
-    newSurveyName: '',
+    newSurveyName: "",
     validationRulesValidationError: false,
-    newSurveyValidationRules: '',
+    newSurveyValidationRules: "",
     printTemplates: [],
     createPrintTemplateDialogDisplayed: false,
     printSuppliers: [],
-    printSupplier: '',
-    packCode: '',
-    template: '',
+    printSupplier: "",
+    packCode: "",
+    template: "",
     printSupplierValidationError: false,
     packCodeValidationError: false,
     templateValidationError: false,
-  }
+  };
 
   componentDidMount() {
-    this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend()
+    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend();
 
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(),
-      1000
-    )
+    this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval)
+    clearInterval(this.interval);
   }
 
   getAuthorisedActivities = async () => {
-    const authResponse = await fetch('/auth')
+    const authResponse = await fetch("/auth");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!authResponse.ok) {
-      return
+      return;
     }
 
-    const authorisedActivities = await authResponse.json()
+    const authorisedActivities = await authResponse.json();
 
-    if (authorisedActivities.includes('CREATE_PRINT_TEMPLATE')) {
-      const supplierResponse = await fetch('/printsuppliers')
+    if (authorisedActivities.includes("CREATE_PRINT_TEMPLATE")) {
+      const supplierResponse = await fetch("/printsuppliers");
 
       // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
       if (!supplierResponse.ok) {
-        return
+        return;
       }
 
-      const supplierJson = await supplierResponse.json()
+      const supplierJson = await supplierResponse.json();
 
       this.setState({
         authorisedActivities: authorisedActivities,
-        printSuppliers: supplierJson
-      })
+        printSuppliers: supplierJson,
+      });
     } else {
-      this.setState({ authorisedActivities: authorisedActivities })
+      this.setState({ authorisedActivities: authorisedActivities });
     }
-  }
+  };
 
   refreshDataFromBackend = () => {
-    this.getSurveys()
-    this.getPrintTemplates()
-  }
+    this.getSurveys();
+    this.getPrintTemplates();
+  };
 
   getSurveys = async () => {
-    const response = await fetch('/surveys')
-    const surveyJson = await response.json()
+    const response = await fetch("/surveys");
+    const surveyJson = await response.json();
 
-    this.setState({ surveys: surveyJson._embedded.surveys })
-  }
+    this.setState({ surveys: surveyJson._embedded.surveys });
+  };
 
   getPrintTemplates = async () => {
-    const response = await fetch('/printTemplates')
-    const templateJson = await response.json()
+    const response = await fetch("/printTemplates");
+    const templateJson = await response.json();
 
-    this.setState({ printTemplates: templateJson._embedded.printTemplates })
-  }
+    this.setState({ printTemplates: templateJson._embedded.printTemplates });
+  };
 
   openDialog = () => {
     this.setState({
-      newSurveyName: '',
+      newSurveyName: "",
       validationError: false,
       validationRulesValidationError: false,
-      newSurveyValidationRules: '',
-      createSurveyDialogDisplayed: true
-    })
-  }
+      newSurveyValidationRules: "",
+      createSurveyDialogDisplayed: true,
+    });
+  };
 
   openPrintTemplateDialog = () => {
     this.setState({
-      printSupplier: '',
-      packCode: '',
-      template: '',
+      printSupplier: "",
+      packCode: "",
+      template: "",
       printSupplierValidationError: false,
       packCodeValidationError: false,
       templateValidationError: false,
-      createPrintTemplateDialogDisplayed: true
-    })
-  }
+      createPrintTemplateDialogDisplayed: true,
+    });
+  };
 
   closeDialog = () => {
-    this.setState({ createSurveyDialogDisplayed: false })
-  }
+    this.setState({ createSurveyDialogDisplayed: false });
+  };
 
   closePrintTemplateDialog = () => {
-    this.setState({ createPrintTemplateDialogDisplayed: false })
-  }
+    this.setState({ createPrintTemplateDialogDisplayed: false });
+  };
 
   onNewSurveyNameChange = (event) => {
-    const resetValidation = !event.target.value.trim()
+    const resetValidation = !event.target.value.trim();
     this.setState({
       validationError: resetValidation,
-      newSurveyName: event.target.value
-    })
-  }
+      newSurveyName: event.target.value,
+    });
+  };
 
   onNewSurveyValidationRulesChange = (event) => {
-    const resetValidation = !event.target.value.trim()
+    const resetValidation = !event.target.value.trim();
     this.setState({
       validationRulesValidationError: resetValidation,
-      newSurveyValidationRules: event.target.value
-    })
-  }
+      newSurveyValidationRules: event.target.value,
+    });
+  };
 
   onCreateSurvey = async () => {
-    let validationFailed = false
+    let validationFailed = false;
 
     if (!this.state.newSurveyName.trim()) {
-      this.setState({ validationError: true })
-      validationFailed = true
+      this.setState({ validationError: true });
+      validationFailed = true;
     }
 
     if (!this.state.newSurveyValidationRules.trim()) {
-      this.setState({ validationRulesValidationError: true })
-      validationFailed = true
+      this.setState({ validationRulesValidationError: true });
+      validationFailed = true;
     } else {
       try {
-        const parsedJson = JSON.parse(this.state.newSurveyValidationRules)
+        const parsedJson = JSON.parse(this.state.newSurveyValidationRules);
         if (!Array.isArray(parsedJson)) {
-          this.setState({ validationRulesValidationError: true })
-          validationFailed = true
+          this.setState({ validationRulesValidationError: true });
+          validationFailed = true;
         }
       } catch (err) {
-        this.setState({ validationRulesValidationError: true })
-        validationFailed = true
+        this.setState({ validationRulesValidationError: true });
+        validationFailed = true;
       }
     }
 
     if (validationFailed) {
-      return
+      return;
     }
 
     const newSurvey = {
       id: uuidv4(),
       name: this.state.newSurveyName,
-      sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules)
-    }
+      sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules),
+    };
 
-    await fetch('/surveys', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newSurvey)
-    })
+    await fetch("/surveys", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newSurvey),
+    });
 
-    this.setState({ createSurveyDialogDisplayed: false })
-  }
+    this.setState({ createSurveyDialogDisplayed: false });
+  };
 
   onPrintSupplierChange = (event) => {
     this.setState({
       printSupplier: event.target.value,
-      printSupplierValidationError: false
-    })
-  }
+      printSupplierValidationError: false,
+    });
+  };
 
   onPackCodeChange = (event) => {
-    const resetValidation = !event.target.value.trim()
+    const resetValidation = !event.target.value.trim();
 
     this.setState({
       packCode: event.target.value,
-      packCodeValidationError: resetValidation
-    })
-  }
+      packCodeValidationError: resetValidation,
+    });
+  };
 
   onTemplateChange = (event) => {
-    const resetValidation = !event.target.value.trim()
+    const resetValidation = !event.target.value.trim();
 
     this.setState({
       template: event.target.value,
-      templateValidationError: resetValidation
-    })
-  }
+      templateValidationError: resetValidation,
+    });
+  };
 
   onCreatePrintTemplate = async () => {
-    var failedValidation = false
+    var failedValidation = false;
 
     if (!this.state.printSupplier.trim()) {
-      this.setState({ printSupplierValidationError: true })
-      failedValidation = true
+      this.setState({ printSupplierValidationError: true });
+      failedValidation = true;
     }
 
     if (!this.state.printSupplier.trim()) {
-      this.setState({ printSupplierValidationError: true })
-      failedValidation = true
+      this.setState({ printSupplierValidationError: true });
+      failedValidation = true;
     }
 
     if (!this.state.packCode.trim()) {
-      this.setState({ packCodeValidationError: true })
-      failedValidation = true
+      this.setState({ packCodeValidationError: true });
+      failedValidation = true;
     }
 
     if (!this.state.template.trim()) {
-      this.setState({ templateValidationError: true })
-      failedValidation = true
+      this.setState({ templateValidationError: true });
+      failedValidation = true;
     } else {
       try {
-        const parsedJson = JSON.parse(this.state.template)
+        const parsedJson = JSON.parse(this.state.template);
         if (!Array.isArray(parsedJson)) {
-          this.setState({ templateValidationError: true })
-          failedValidation = true
+          this.setState({ templateValidationError: true });
+          failedValidation = true;
         } else {
           const validTemplateItems = [
-            'ADDRESS_LINE1', 'ADDRESS_LINE2', 'ADDRESS_LINE3', 'TOWN_NAME', 'POSTCODE', '__uac__', '__qid__', '__caseref__']
-          parsedJson.forEach(
-            item => {
-              if (!validTemplateItems.includes(item)) {
-                this.setState({ templateValidationError: true })
-                failedValidation = true
-              }
-            })
+            "ADDRESS_LINE1",
+            "ADDRESS_LINE2",
+            "ADDRESS_LINE3",
+            "TOWN_NAME",
+            "POSTCODE",
+            "__uac__",
+            "__qid__",
+            "__caseref__",
+          ];
+          parsedJson.forEach((item) => {
+            if (!validTemplateItems.includes(item)) {
+              this.setState({ templateValidationError: true });
+              failedValidation = true;
+            }
+          });
         }
       } catch (err) {
-        this.setState({ templateValidationError: true })
-        failedValidation = true
+        this.setState({ templateValidationError: true });
+        failedValidation = true;
       }
     }
 
     if (failedValidation) {
-      return
+      return;
     }
 
     const newPrintTemplate = {
       packCode: this.state.packCode,
       printSupplier: this.state.printSupplier,
-      template: JSON.parse(this.state.template)
-    }
+      template: JSON.parse(this.state.template),
+    };
 
-    await fetch('/printTemplates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newPrintTemplate)
-    })
+    await fetch("/printTemplates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newPrintTemplate),
+    });
 
-    this.setState({ createPrintTemplateDialogDisplayed: false })
-  }
+    this.setState({ createPrintTemplateDialogDisplayed: false });
+  };
 
   render() {
-    const surveyTableRows = this.state.surveys.map(survey => (
+    const surveyTableRows = this.state.surveys.map((survey) => (
       <TableRow key={survey.name}>
         <TableCell component="th" scope="row">
           {survey.name}
@@ -277,15 +291,16 @@ class LandingPage extends Component {
         <TableCell align="right">
           <Button
             onClick={() => this.props.onOpenSurveyDetails(survey)}
-            variant="contained">
+            variant="contained"
+          >
             Open
           </Button>
         </TableCell>
       </TableRow>
-    ))
+    ));
 
-    const printTemplateRows = this.state.printTemplates.map(printTemplate => {
-      const packCode = printTemplate._links.self.href.split('/')[4]
+    const printTemplateRows = this.state.printTemplates.map((printTemplate) => {
+      const packCode = printTemplate._links.self.href.split("/")[4];
 
       return (
         <TableRow key={packCode}>
@@ -299,17 +314,20 @@ class LandingPage extends Component {
             {JSON.stringify(printTemplate.template)}
           </TableCell>
         </TableRow>
-      )
-    }
-    )
+      );
+    });
 
-    const printSupplierMenuItems = this.state.printSuppliers.map(supplier => (
-      <MenuItem key={supplier} value={supplier}>{supplier}</MenuItem>
-    ))
+    const printSupplierMenuItems = this.state.printSuppliers.map((supplier) => (
+      <MenuItem key={supplier} value={supplier}>
+        {supplier}
+      </MenuItem>
+    ));
 
     return (
       <div style={{ padding: 20 }}>
-        <Button variant="contained" onClick={this.openDialog}>Create Survey</Button>
+        <Button variant="contained" onClick={this.openDialog}>
+          Create Survey
+        </Button>
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>
@@ -318,14 +336,18 @@ class LandingPage extends Component {
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {surveyTableRows}
-            </TableBody>
+            <TableBody>{surveyTableRows}</TableBody>
           </Table>
         </TableContainer>
-        {this.state.authorisedActivities.includes('CREATE_PRINT_TEMPLATE') &&
+        {this.state.authorisedActivities.includes("CREATE_PRINT_TEMPLATE") && (
           <div>
-            <Button variant="contained" onClick={this.openPrintTemplateDialog} style={{ marginTop: 20 }}>Create Print Template</Button>
+            <Button
+              variant="contained"
+              onClick={this.openPrintTemplateDialog}
+              style={{ marginTop: 20 }}
+            >
+              Create Print Template
+            </Button>
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
               <Table>
                 <TableHead>
@@ -335,13 +357,11 @@ class LandingPage extends Component {
                     <TableCell>Template</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {printTemplateRows}
-                </TableBody>
+                <TableBody>{printTemplateRows}</TableBody>
               </Table>
             </TableContainer>
           </div>
-        }
+        )}
         <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>
@@ -352,7 +372,8 @@ class LandingPage extends Component {
                   id="standard-required"
                   label="Survey name"
                   onChange={this.onNewSurveyNameChange}
-                  value={this.state.newSurveyName} />
+                  value={this.state.newSurveyName}
+                />
                 <TextField
                   required
                   multiline
@@ -361,31 +382,42 @@ class LandingPage extends Component {
                   id="standard-required"
                   label="Validation rules"
                   onChange={this.onNewSurveyValidationRulesChange}
-                  value={this.state.newSurveyValidationRules} />
+                  value={this.state.newSurveyValidationRules}
+                />
               </div>
               <div style={{ marginTop: 10 }}>
-                <Button onClick={this.onCreateSurvey} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.onCreateSurvey}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Create survey
                 </Button>
-                <Button onClick={this.closeDialog} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.closeDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Cancel
                 </Button>
               </div>
             </div>
           </DialogContent>
         </Dialog>
-        <Dialog open={this.state.createPrintTemplateDialogDisplayed} fullWidth={true}>
+        <Dialog
+          open={this.state.createPrintTemplateDialogDisplayed}
+          fullWidth={true}
+        >
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl
-                  required
-                  fullWidth={true}>
+                <FormControl required fullWidth={true}>
                   <InputLabel>Print Supplier</InputLabel>
                   <Select
                     onChange={this.onPrintSupplierChange}
                     value={this.state.printSupplier}
-                    error={this.state.printSupplierValidationError}>
+                    error={this.state.printSupplierValidationError}
+                  >
                     {printSupplierMenuItems}
                   </Select>
                 </FormControl>
@@ -396,7 +428,8 @@ class LandingPage extends Component {
                   error={this.state.packCodeValidationError}
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
-                  value={this.state.packCode} />
+                  value={this.state.packCode}
+                />
                 <TextField
                   required
                   fullWidth={true}
@@ -404,13 +437,22 @@ class LandingPage extends Component {
                   error={this.state.templateValidationError}
                   label="Template"
                   onChange={this.onTemplateChange}
-                  value={this.state.template} />
+                  value={this.state.template}
+                />
               </div>
               <div style={{ marginTop: 10 }}>
-                <Button onClick={this.onCreatePrintTemplate} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.onCreatePrintTemplate}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Create print template
                 </Button>
-                <Button onClick={this.closePrintTemplateDialog} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.closePrintTemplateDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Cancel
                 </Button>
               </div>
@@ -418,8 +460,8 @@ class LandingPage extends Component {
           </DialogContent>
         </Dialog>
       </div>
-    )
+    );
   }
 }
 
-export default LandingPage
+export default LandingPage;
