@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
-import uk.gov.ons.ssdc.supporttool.model.dto.CaseSearchResult;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseSearchResult;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UIRefusalTypeDTO;
 import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
@@ -24,7 +24,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
 @RestController
-@RequestMapping(value = "/searchInSurvey")
+@RequestMapping(value = "/surveyCases")
 public class SurveyCasesEndpoint {
 
   private final SurveyRepository surveyRepository;
@@ -65,47 +65,47 @@ public class SurveyCasesEndpoint {
 
     checkSurveySearchCasesPermission(jwt, surveyId);
 
-    searchTerm = '%' + searchTerm + '%';
-
-    String query =
-        searchCasesInSurveyPartialQuery
-            + " AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val)"
-            + " WHERE LOWER(REPLACE(x.val, ' ', '')) LIKE LOWER(REPLACE(:searchTerm, ' ', '')))";
+    String likeSearchTerm = String.format("%%%s%%", searchTerm);
+    StringBuilder queryStringBuilder = new StringBuilder(searchCasesInSurveyPartialQuery);
+    queryStringBuilder
+        .append(" AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val)")
+        .append(" WHERE LOWER(REPLACE(x.val, ' ', '')) LIKE LOWER(REPLACE(:likeSearchTerm, ' ', '')))");
 
     Map<String, Object> namedParameters = new HashMap();
     namedParameters.put("surveyId", surveyId);
-    namedParameters.put("searchTerm", searchTerm);
+    namedParameters.put("likeSearchTerm", likeSearchTerm);
 
     if (collexId.isPresent()) {
-      query += " AND e.id = :collexId";
+      queryStringBuilder.append(" AND e.id = :collexId");
       namedParameters.put("collexId", collexId.get());
     }
 
     if (receiptReceived.isPresent()) {
-      query += " AND c.receipt_received = :receiptReceived";
+      queryStringBuilder.append(" AND c.receipt_received = :receiptReceived");
       namedParameters.put("receiptReceived", receiptReceived.get());
     }
 
     if (addressInvalid.isPresent()) {
-      query += " AND c.address_invalid = :addressInvalid";
+      queryStringBuilder.append(" AND c.address_invalid = :addressInvalid");
       namedParameters.put("addressInvalid", addressInvalid.get());
     }
 
     if (surveyLaunched.isPresent()) {
-      query += " AND c.survey_launched = :surveyLaunched";
+      queryStringBuilder.append(" AND c.survey_launched = :surveyLaunched");
       namedParameters.put("surveyLaunched", surveyLaunched.get());
     }
 
     if (refusalReceived.isPresent()) {
       if (refusalReceived.get() == UIRefusalTypeDTO.NOT_REFUSED) {
-        query += " AND c.refusal_received IS NULL";
+        queryStringBuilder.append(" AND c.refusal_received IS NULL");
       } else {
-        query += " AND c.refusal_received = :refusalReceived";
+        queryStringBuilder.append(" AND c.refusal_received = :refusalReceived");
         namedParameters.put("refusalReceived", refusalReceived.get().toString());
       }
     }
 
-    return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
+    return namedParameterJdbcTemplate.query(
+        queryStringBuilder.toString(), namedParameters, caseRowMapper);
   }
 
   @GetMapping(value = "/{surveyId}/caseRef/{caseRef}")

@@ -1,4 +1,4 @@
-package uk.gov.ons.ssdc.supporttool.model.dto;
+package uk.gov.ons.ssdc.supporttool.model.dto.ui;
 
 import java.util.Map;
 import java.util.UUID;
@@ -9,6 +9,5 @@ public class CaseSearchResult {
   public UUID id;
   public String caseRef;
   public Map<String, String> sample;
-  public UUID collectionExerciseId;
   public String collectionExerciseName;
 }
