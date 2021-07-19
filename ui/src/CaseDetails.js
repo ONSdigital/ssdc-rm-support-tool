@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import '@fontsource/roboto';
-import { Typography, Paper, Button } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import React, { Component } from "react";
+import "@fontsource/roboto";
+import { Typography, Paper, Button } from "@material-ui/core";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 import Refusal from "./Refusal";
 import InvalidAddress from "./InvalidAddress";
 import PrintFulfilment from "./PrintFulfilment";
@@ -16,66 +16,65 @@ class CaseDetails extends Component {
     authorisedActivities: [],
     case: null,
     events: [],
-    uacQidLinks: []
-  }
+    uacQidLinks: [],
+  };
 
   componentDidMount() {
-    this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getAllBackendData()
+    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getAllBackendData();
 
-    this.interval = setInterval(
-        () => this.getAllBackendData(),
-        1000
-    )
+    this.interval = setInterval(() => this.getAllBackendData(), 1000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval)
+    clearInterval(this.interval);
   }
 
   getAuthorisedActivities = async () => {
-    const response = await fetch('/auth?surveyId=' + this.props.surveyId)
+    const response = await fetch("/auth?surveyId=" + this.props.surveyId);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
-      return
+      return;
     }
 
-    const authJson = await response.json()
+    const authJson = await response.json();
 
-    this.setState({ authorisedActivities: authJson })
-  }
+    this.setState({ authorisedActivities: authJson });
+  };
 
   getAllBackendData = async () => {
-    const response = await fetch('/cases/' + this.props.caseId)
-    const caseJson = await response.json()
+    const response = await fetch("/cases/" + this.props.caseId);
+    const caseJson = await response.json();
 
     if (response.ok) {
-      this.setState({ case: caseJson })
+      this.setState({ case: caseJson });
 
-      const uacQidLinksResponse = await fetch('/cases/' + this.props.caseId + '/uacQidLinks')
-      const uacQidLinksJson = await uacQidLinksResponse.json()
+      const uacQidLinksResponse = await fetch(
+        "/cases/" + this.props.caseId + "/uacQidLinks"
+      );
+      const uacQidLinksJson = await uacQidLinksResponse.json();
 
-      const uacQidLinks = uacQidLinksJson._embedded.uacQidLinks
+      const uacQidLinks = uacQidLinksJson._embedded.uacQidLinks;
 
-      let events = caseJson.events
+      let events = caseJson.events;
       for (let i = 0; i < uacQidLinks.length; i++) {
-        events = events.concat(uacQidLinks[i].events)
+        events = events.concat(uacQidLinks[i].events);
       }
 
       if (uacQidLinksResponse.ok) {
         this.setState({
           case: caseJson,
           uacQidLinks: uacQidLinks,
-          events: events
-        })
+          events: events,
+        });
       }
     }
-  }
+  };
 
   onDeactivate = (qid) => {
-    fetch('/deactivateUac/' + qid)
-  }
+    fetch("/deactivateUac/" + qid);
+  };
 
   render() {
     const caseEvents = this.state.events.map((event, index) => (
@@ -90,7 +89,7 @@ class CaseDetails extends Component {
           {event.eventSource}
         </TableCell>
       </TableRow>
-    ))
+    ));
 
     const uacQids = this.state.uacQidLinks.map((uacQidLink, index) => (
       <TableRow key={index}>
@@ -104,26 +103,28 @@ class CaseDetails extends Component {
           {uacQidLink.lastUpdatedAt}
         </TableCell>
         <TableCell component="th" scope="row">
-          {uacQidLink.active ? 'Yes' : 'No'}
+          {uacQidLink.active ? "Yes" : "No"}
         </TableCell>
         <TableCell>
-          {(this.state.authorisedActivities.includes('DEACTIVATE_UAC') && uacQidLink.active) &&
-            <Button
-              onClick={() => this.onDeactivate(uacQidLink.qid)}
-              variant="contained">
-              Deactivate
-            </Button>
-          }
+          {this.state.authorisedActivities.includes("DEACTIVATE_UAC") &&
+            uacQidLink.active && (
+              <Button
+                onClick={() => this.onDeactivate(uacQidLink.qid)}
+                variant="contained"
+              >
+                Deactivate
+              </Button>
+            )}
         </TableCell>
       </TableRow>
-    ))
+    ));
 
     return (
       <div style={{ padding: 20 }}>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Case Details
         </Typography>
-        {this.state.case &&
+        {this.state.case && (
           <div>
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
               <Table>
@@ -138,34 +139,49 @@ class CaseDetails extends Component {
                     <div>Case ref: {this.state.case.caseRef}</div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
-                    <div>Receipted: {this.state.case.receiptReceived ? "Yes" : "No"}</div>
-                    <div>Refused: {this.state.case.refusalReceived ? this.state.case.refusalReceived : "No"}</div>
-                    <div>Invalid: {this.state.case.addressInvalid ? "Yes" : "No"}</div>
-                    <div>Launched EQ: {this.state.case.surveyLaunched ? "Yes" : "No"}</div>
+                    <div>
+                      Receipted:{" "}
+                      {this.state.case.receiptReceived ? "Yes" : "No"}
+                    </div>
+                    <div>
+                      Refused:{" "}
+                      {this.state.case.refusalReceived
+                        ? this.state.case.refusalReceived
+                        : "No"}
+                    </div>
+                    <div>
+                      Invalid: {this.state.case.addressInvalid ? "Yes" : "No"}
+                    </div>
+                    <div>
+                      Launched EQ:{" "}
+                      {this.state.case.surveyLaunched ? "Yes" : "No"}
+                    </div>
                   </TableCell>
                   <TableCell align="right">
-                    {this.state.authorisedActivities.includes('CREATE_CASE_REFUSAL') &&
-                    <Refusal
+                    {this.state.authorisedActivities.includes(
+                      "CREATE_CASE_REFUSAL"
+                    ) && (
+                      <Refusal
                         caseId={this.props.caseId}
                         case={this.state.case}
-                    />
-                    }
-                    {this.state.authorisedActivities.includes('CREATE_CASE_INVALID_ADDRESS') &&
-                    <InvalidAddress
-                        caseId={this.props.caseId}
-                    />
-                    }
-                    {this.state.authorisedActivities.includes('CREATE_CASE_FULFILMENT') &&
-                    <PrintFulfilment
+                      />
+                    )}
+                    {this.state.authorisedActivities.includes(
+                      "CREATE_CASE_INVALID_ADDRESS"
+                    ) && <InvalidAddress caseId={this.props.caseId} />}
+                    {this.state.authorisedActivities.includes(
+                      "CREATE_CASE_FULFILMENT"
+                    ) && (
+                      <PrintFulfilment
                         caseId={this.props.caseId}
                         surveyId={this.props.surveyId}
-                    />
-                    }
+                      />
+                    )}
                   </TableCell>
                 </TableBody>
               </Table>
             </TableContainer>
-            <TableContainer component={Paper} style={{marginTop: 20}}>
+            <TableContainer component={Paper} style={{ marginTop: 20 }}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -174,9 +190,7 @@ class CaseDetails extends Component {
                     <TableCell>Source</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {caseEvents}
-                </TableBody>
+                <TableBody>{caseEvents}</TableBody>
               </Table>
             </TableContainer>
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
@@ -190,16 +204,14 @@ class CaseDetails extends Component {
                     <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {uacQids}
-                </TableBody>
+                <TableBody>{uacQids}</TableBody>
               </Table>
             </TableContainer>
           </div>
-        }
+        )}
       </div>
-    )
+    );
   }
 }
 
-export default CaseDetails
+export default CaseDetails;
