@@ -12,3 +12,19 @@ run-dev-api: build
 
 run-dev-ui:
 	cd ui && npm install && npm start
+
+format-check-mvn:
+	mvn fmt:check
+
+format-check-ui:
+	$(MAKE) -C ui format-check
+
+format-check: format-check-mvn format-check-ui
+
+format-mvn:
+	mvn fmt:format
+
+format-ui:
+	$(MAKE) -C ui format
+
+format: format-mvn format-ui

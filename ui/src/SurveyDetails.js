@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import '@fontsource/roboto';
+import React, { Component } from "react";
+import "@fontsource/roboto";
 import {
   Button,
   Dialog,
@@ -10,16 +10,20 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Select
-} from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { uuidv4 } from './common'
-import {getActionRulePrintTemplates, getAllPrintTemplates, getFulfilmentPrintTemplates} from "./Utils";
+  Select,
+} from "@material-ui/core";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import { uuidv4 } from "./common";
+import {
+  getActionRulePrintTemplates,
+  getAllPrintTemplates,
+  getFulfilmentPrintTemplates,
+} from "./Utils";
 
 class SurveyDetails extends Component {
   state = {
@@ -27,267 +31,286 @@ class SurveyDetails extends Component {
     collectionExercises: [],
     createCollectionExerciseDialogDisplayed: false,
     validationError: false,
-    newCollectionExerciseName: '',
+    newCollectionExerciseName: "",
     allowActionRulePrintTemplateDialogDisplayed: false,
     allowFulfilmentPrintTemplateDialogDisplayed: false,
     actionRulePrintTemplates: [],
     fulfilmentPrintTemplates: [],
     allowableActionRulePrintTemplates: [],
     allowableFulfilmentPrintTemplates: [],
-    printTemplateToAllow: '',
+    printTemplateToAllow: "",
     printTemplateValidationError: false,
-  }
+  };
 
   componentDidMount() {
-    this.getAuthorisedActivities() // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend()
+    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend();
 
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(),
-      1000
-    )
+    this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval)
+    clearInterval(this.interval);
   }
 
   getAuthorisedActivities = async () => {
-    const response = await fetch('/auth?surveyId=' + this.props.surveyId)
+    const response = await fetch("/auth?surveyId=" + this.props.surveyId);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
-      return
+      return;
     }
 
-    const authJson = await response.json()
+    const authJson = await response.json();
 
-    this.setState({ authorisedActivities: authJson })
-  }
-
+    this.setState({ authorisedActivities: authJson });
+  };
 
   refreshDataFromBackend = async () => {
-    this.getCollectionExercises()
+    this.getCollectionExercises();
 
-    const allPrintFulfilmentTemplates = await getAllPrintTemplates()
-        .then((templates) => {
-          return templates
-        })
+    const allPrintFulfilmentTemplates = await getAllPrintTemplates().then(
+      (templates) => {
+        return templates;
+      }
+    );
 
-    const actionRulePrintTemplates = await getActionRulePrintTemplates(this.props.surveyId)
-        .then((actionRuleTemplates) => {
-          return actionRuleTemplates
-        })
+    const actionRulePrintTemplates = await getActionRulePrintTemplates(
+      this.props.surveyId
+    ).then((actionRuleTemplates) => {
+      return actionRuleTemplates;
+    });
 
-    const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(this.props.surveyId)
-        .then((fulfilmentTemplates) => {
-          return fulfilmentTemplates
-        })
+    const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
+      this.props.surveyId
+    ).then((fulfilmentTemplates) => {
+      return fulfilmentTemplates;
+    });
 
-    let allowableActionRulePrintTemplates = []
-    let allowableFulfilmentPrintTemplates = []
-    allPrintFulfilmentTemplates
-        .forEach(packCode => {
-            if (!actionRulePrintTemplates.includes(packCode)) {
-              allowableActionRulePrintTemplates.push(packCode)
-            }
+    let allowableActionRulePrintTemplates = [];
+    let allowableFulfilmentPrintTemplates = [];
+    allPrintFulfilmentTemplates.forEach((packCode) => {
+      if (!actionRulePrintTemplates.includes(packCode)) {
+        allowableActionRulePrintTemplates.push(packCode);
+      }
 
-            if (!fulfilmentPrintTemplates.includes(packCode)) {
-              allowableFulfilmentPrintTemplates.push(packCode)
-            }
-          })
+      if (!fulfilmentPrintTemplates.includes(packCode)) {
+        allowableFulfilmentPrintTemplates.push(packCode);
+      }
+    });
 
     this.setState({
       actionRulePrintTemplates: actionRulePrintTemplates,
       fulfilmentPrintTemplates: fulfilmentPrintTemplates,
       allowableActionRulePrintTemplates: allowableActionRulePrintTemplates,
-      allowableFulfilmentPrintTemplates: allowableFulfilmentPrintTemplates
-    })
-  }
+      allowableFulfilmentPrintTemplates: allowableFulfilmentPrintTemplates,
+    });
+  };
 
   getCollectionExercises = async () => {
-    const response = await fetch(`/surveys/${this.props.surveyId}/collectionExercises`)
-    const collexJson = await response.json()
+    const response = await fetch(
+      `/surveys/${this.props.surveyId}/collectionExercises`
+    );
+    const collexJson = await response.json();
 
-    this.setState({collectionExercises: collexJson._embedded.collectionExercises})
-  }
+    this.setState({
+      collectionExercises: collexJson._embedded.collectionExercises,
+    });
+  };
 
   openDialog = () => {
     this.setState({
-      newCollectionExerciseName: '',
+      newCollectionExerciseName: "",
       validationError: false,
-      createCollectionExerciseDialogDisplayed: true
-    })
-  }
+      createCollectionExerciseDialogDisplayed: true,
+    });
+  };
 
   closeDialog = () => {
-    this.setState({ createCollectionExerciseDialogDisplayed: false })
-  }
+    this.setState({ createCollectionExerciseDialogDisplayed: false });
+  };
 
   onNewCollectionExerciseNameChange = (event) => {
-    const resetValidation = !event.target.value.trim()
+    const resetValidation = !event.target.value.trim();
     this.setState({
       validationError: resetValidation,
-      newCollectionExerciseName: event.target.value
-    })
-  }
+      newCollectionExerciseName: event.target.value,
+    });
+  };
 
   onCreateCollectionExercise = async () => {
     if (!this.state.newCollectionExerciseName.trim()) {
-      this.setState({ validationError: true })
-      return
+      this.setState({ validationError: true });
+      return;
     }
 
     const newCollectionExercise = {
       id: uuidv4(),
       name: this.state.newCollectionExerciseName,
-      survey: 'surveys/' + this.props.surveyId
-    }
+      survey: "surveys/" + this.props.surveyId,
+    };
 
-    const response = await fetch('/collectionExercises', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newCollectionExercise)
-    })
+    const response = await fetch("/collectionExercises", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newCollectionExercise),
+    });
 
     if (response.ok) {
-      this.setState({ createCollectionExerciseDialogDisplayed: false })
+      this.setState({ createCollectionExerciseDialogDisplayed: false });
     }
-  }
+  };
 
   openActionRulePrintTemplateDialog = () => {
     this.setState({
       allowActionRulePrintTemplateDialogDisplayed: true,
-      printTemplateToAllow: '',
-      printTemplateValidationError: false
-    })
-  }
+      printTemplateToAllow: "",
+      printTemplateValidationError: false,
+    });
+  };
 
   openFulfilmentPrintTemplateDialog = () => {
     this.setState({
       allowFulfilmentPrintTemplateDialogDisplayed: true,
-      printTemplateToAllow: '',
-      printTemplateValidationError: false
-    })
-  }
+      printTemplateToAllow: "",
+      printTemplateValidationError: false,
+    });
+  };
 
   onAllowActionRulePrintTemplate = async () => {
     if (!this.state.printTemplateToAllow) {
       this.setState({
-        printTemplateValidationError: true
-      })
+        printTemplateValidationError: true,
+      });
 
-      return
+      return;
     }
 
     const newAllowPrintTemplate = {
       id: uuidv4(),
-      survey: '/surveys/' + this.props.surveyId,
-      printTemplate: '/printTemplates/' + this.state.printTemplateToAllow
-    }
+      survey: "/surveys/" + this.props.surveyId,
+      printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
+    };
 
-    const response = await fetch('/actionRuleSurveyPrintTemplates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newAllowPrintTemplate)
-    })
+    const response = await fetch("/actionRuleSurveyPrintTemplates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newAllowPrintTemplate),
+    });
 
     if (response.ok) {
-      this.setState({ allowActionRulePrintTemplateDialogDisplayed: false })
+      this.setState({ allowActionRulePrintTemplateDialogDisplayed: false });
     }
-  }
+  };
 
   onAllowFulfilmentPrintTemplate = async () => {
     if (!this.state.printTemplateToAllow) {
       this.setState({
-        printTemplateValidationError: true
-      })
+        printTemplateValidationError: true,
+      });
 
-      return
+      return;
     }
 
     const newAllowPrintTemplate = {
       id: uuidv4(),
-      survey: '/surveys/' + this.props.surveyId,
-      printTemplate: '/printTemplates/' + this.state.printTemplateToAllow
-    }
+      survey: "/surveys/" + this.props.surveyId,
+      printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
+    };
 
-    const response = await fetch('/fulfilmentSurveyPrintTemplates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newAllowPrintTemplate)
-    })
+    const response = await fetch("/fulfilmentSurveyPrintTemplates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newAllowPrintTemplate),
+    });
 
     if (response.ok) {
-      this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false })
+      this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false });
     }
-  }
+  };
 
   closeAllowActionRulePrintTemplateDialog = () => {
-    this.setState({ allowActionRulePrintTemplateDialogDisplayed: false })
-  }
+    this.setState({ allowActionRulePrintTemplateDialogDisplayed: false });
+  };
 
   closeAllowFulfilmentPrintTemplateDialog = () => {
-    this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false })
-  }
+    this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false });
+  };
 
   onPrintTemplateChange = (event) => {
-    this.setState({ printTemplateToAllow: event.target.value })
-  }
-
+    this.setState({ printTemplateToAllow: event.target.value });
+  };
 
   render() {
-    const collectionExerciseTableRows = this.state.collectionExercises.map(collex => (
-      <TableRow key={collex.name}>
-        <TableCell component="th" scope="row">
-          {collex.name}
-        </TableCell>
-        <TableCell align="right">
-          <Button
-            onClick={() => this.props.onOpenCollectionExercise(collex)}
-            variant="contained">
-            Open
-          </Button>
-        </TableCell>
-      </TableRow>
-    ))
+    const collectionExerciseTableRows = this.state.collectionExercises.map(
+      (collex) => (
+        <TableRow key={collex.name}>
+          <TableCell component="th" scope="row">
+            {collex.name}
+          </TableCell>
+          <TableCell align="right">
+            <Button
+              onClick={() => this.props.onOpenCollectionExercise(collex)}
+              variant="contained"
+            >
+              Open
+            </Button>
+          </TableCell>
+        </TableRow>
+      )
+    );
 
-    const actionRulePrintTemplateTableRows = this.state.actionRulePrintTemplates.map(printTemplate =>
-      <TableRow key={printTemplate}>
-        <TableCell component="th" scope="row">
-          {printTemplate}
-        </TableCell>
-      </TableRow>
-    )
+    const actionRulePrintTemplateTableRows =
+      this.state.actionRulePrintTemplates.map((printTemplate) => (
+        <TableRow key={printTemplate}>
+          <TableCell component="th" scope="row">
+            {printTemplate}
+          </TableCell>
+        </TableRow>
+      ));
 
-    const fulfilmentPrintTemplateTableRows = this.state.fulfilmentPrintTemplates.map(printTemplate =>
-      <TableRow key={printTemplate}>
-        <TableCell component="th" scope="row">
-          {printTemplate}
-        </TableCell>
-      </TableRow>
-    )
+    const fulfilmentPrintTemplateTableRows =
+      this.state.fulfilmentPrintTemplates.map((printTemplate) => (
+        <TableRow key={printTemplate}>
+          <TableCell component="th" scope="row">
+            {printTemplate}
+          </TableCell>
+        </TableRow>
+      ));
 
-    const actionRulePrintTemplateMenuItems = this.state.allowableActionRulePrintTemplates.map(packCode =>
-      <MenuItem key={packCode} value={packCode}>{packCode}</MenuItem>
-    )
+    const actionRulePrintTemplateMenuItems =
+      this.state.allowableActionRulePrintTemplates.map((packCode) => (
+        <MenuItem key={packCode} value={packCode}>
+          {packCode}
+        </MenuItem>
+      ));
 
-    const fulfilmentPrintTemplateMenuItems = this.state.allowableFulfilmentPrintTemplates.map(packCode =>
-      <MenuItem key={packCode} value={packCode}>{packCode}</MenuItem>
-    )
+    const fulfilmentPrintTemplateMenuItems =
+      this.state.allowableFulfilmentPrintTemplates.map((packCode) => (
+        <MenuItem key={packCode} value={packCode}>
+          {packCode}
+        </MenuItem>
+      ));
 
     return (
       <div style={{ padding: 20 }}>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Survey: {this.props.surveyName}
         </Typography>
-        <Button variant="contained" onClick={this.openDialog}>Create Collection Exercise</Button>
-        {this.state.authorisedActivities.includes('SEARCH_CASES') &&
-          <Button variant="contained" onClick={() => this.props.onOpenSurveyCaseSearch(this.props.surveyId)}
-            style={{ marginLeft: 20 }}>
+        <Button variant="contained" onClick={this.openDialog}>
+          Create Collection Exercise
+        </Button>
+        {this.state.authorisedActivities.includes("SEARCH_CASES") && (
+          <Button
+            variant="contained"
+            onClick={() =>
+              this.props.onOpenSurveyCaseSearch(this.props.surveyId)
+            }
+            style={{ marginLeft: 20 }}
+          >
             Search Cases
           </Button>
-        }
+        )}
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>
@@ -296,15 +319,23 @@ class SurveyDetails extends Component {
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {collectionExerciseTableRows}
-            </TableBody>
+            <TableBody>{collectionExerciseTableRows}</TableBody>
           </Table>
         </TableContainer>
-        {this.state.authorisedActivities.includes('ALLOW_PRINT_TEMPLATE_ON_ACTION_RULE') &&
-          <Button variant="contained" onClick={this.openActionRulePrintTemplateDialog} style={{ marginTop: 20 }}>Allow Print Template on Action Rule</Button>
-        }
-        {this.state.authorisedActivities.includes('LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES') &&
+        {this.state.authorisedActivities.includes(
+          "ALLOW_PRINT_TEMPLATE_ON_ACTION_RULE"
+        ) && (
+          <Button
+            variant="contained"
+            onClick={this.openActionRulePrintTemplateDialog}
+            style={{ marginTop: 20 }}
+          >
+            Allow Print Template on Action Rule
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes(
+          "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+        ) && (
           <TableContainer component={Paper} style={{ marginTop: 20 }}>
             <Table>
               <TableHead>
@@ -312,16 +343,24 @@ class SurveyDetails extends Component {
                   <TableCell>Pack Code</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {actionRulePrintTemplateTableRows}
-              </TableBody>
+              <TableBody>{actionRulePrintTemplateTableRows}</TableBody>
             </Table>
           </TableContainer>
-        }
-        {this.state.authorisedActivities.includes('ALLOW_PRINT_TEMPLATE_ON_FULFILMENT') &&
-          <Button variant="contained" onClick={this.openFulfilmentPrintTemplateDialog} style={{ marginTop: 20 }}>Allow Print Template on Fulfilment</Button>
-        }
-        {this.state.authorisedActivities.includes('LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS') &&
+        )}
+        {this.state.authorisedActivities.includes(
+          "ALLOW_PRINT_TEMPLATE_ON_FULFILMENT"
+        ) && (
+          <Button
+            variant="contained"
+            onClick={this.openFulfilmentPrintTemplateDialog}
+            style={{ marginTop: 20 }}
+          >
+            Allow Print Template on Fulfilment
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes(
+          "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
+        ) && (
           <TableContainer component={Paper} style={{ marginTop: 20 }}>
             <Table>
               <TableHead>
@@ -329,12 +368,10 @@ class SurveyDetails extends Component {
                   <TableCell>Pack Code</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {fulfilmentPrintTemplateTableRows}
-              </TableBody>
+              <TableBody>{fulfilmentPrintTemplateTableRows}</TableBody>
             </Table>
           </TableContainer>
-        }
+        )}
         <Dialog open={this.state.createCollectionExerciseDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
@@ -346,13 +383,22 @@ class SurveyDetails extends Component {
                   id="standard-required"
                   label="Collection exercise name"
                   onChange={this.onNewCollectionExerciseNameChange}
-                  value={this.state.newCollectionExerciseName} />
+                  value={this.state.newCollectionExerciseName}
+                />
               </div>
               <div style={{ marginTop: 10 }}>
-                <Button onClick={this.onCreateCollectionExercise} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.onCreateCollectionExercise}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Create collection exercise
                 </Button>
-                <Button onClick={this.closeDialog} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.closeDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Cancel
                 </Button>
               </div>
@@ -363,23 +409,30 @@ class SurveyDetails extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl
-                  required
-                  fullWidth={true}>
+                <FormControl required fullWidth={true}>
                   <InputLabel>Print Template</InputLabel>
                   <Select
                     onChange={this.onPrintTemplateChange}
                     value={this.state.printTemplateToAllow}
-                    error={this.state.printTemplateValidationError}>
+                    error={this.state.printTemplateValidationError}
+                  >
                     {actionRulePrintTemplateMenuItems}
                   </Select>
                 </FormControl>
               </div>
               <div style={{ marginTop: 10 }}>
-                <Button onClick={this.onAllowActionRulePrintTemplate} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.onAllowActionRulePrintTemplate}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Allow
                 </Button>
-                <Button onClick={this.closeAllowActionRulePrintTemplateDialog} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.closeAllowActionRulePrintTemplateDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Cancel
                 </Button>
               </div>
@@ -390,23 +443,30 @@ class SurveyDetails extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl
-                  required
-                  fullWidth={true}>
+                <FormControl required fullWidth={true}>
                   <InputLabel>Print Template</InputLabel>
                   <Select
                     onChange={this.onPrintTemplateChange}
                     value={this.state.printTemplateToAllow}
-                    error={this.state.printTemplateValidationError}>
+                    error={this.state.printTemplateValidationError}
+                  >
                     {fulfilmentPrintTemplateMenuItems}
                   </Select>
                 </FormControl>
               </div>
               <div style={{ marginTop: 10 }}>
-                <Button onClick={this.onAllowFulfilmentPrintTemplate} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.onAllowFulfilmentPrintTemplate}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Allow
                 </Button>
-                <Button onClick={this.closeAllowFulfilmentPrintTemplateDialog} variant="contained" style={{ margin: 10 }}>
+                <Button
+                  onClick={this.closeAllowFulfilmentPrintTemplateDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
                   Cancel
                 </Button>
               </div>
@@ -414,8 +474,8 @@ class SurveyDetails extends Component {
           </DialogContent>
         </Dialog>
       </div>
-    )
+    );
   }
 }
 
-export default SurveyDetails
+export default SurveyDetails;

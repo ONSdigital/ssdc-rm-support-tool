@@ -30,11 +30,15 @@ class SurveyCaseSearch extends Component {
   }
 
   getCollectionExercises = async () => {
-    const response = await fetch(`/surveys/${this.props.surveyId}/collectionExercises`)
-    const collexJson = await response.json()
+    const response = await fetch(
+      `/surveys/${this.props.surveyId}/collectionExercises`
+    );
+    const collexJson = await response.json();
 
-    this.setState({collectionExercises: collexJson._embedded.collectionExercises})
-  }
+    this.setState({
+      collectionExercises: collexJson._embedded.collectionExercises,
+    });
+  };
 
   onSearchExecuteAndPopulateList = async (
     searchUrl,
