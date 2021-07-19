@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import '@fontsource/roboto';
-import {Button, Dialog, DialogContent, FormControl, InputLabel, MenuItem, Select} from '@material-ui/core';
-import {getAllPrintTemplates, getFulfilmentPrintTemplates} from "./Utils";
+import { Button, Dialog, DialogContent, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { getFulfilmentPrintTemplates } from "./Utils";
 
 class PrintFulfilment extends Component {
   state = {
@@ -28,7 +28,7 @@ class PrintFulfilment extends Component {
   }
 
   onPrintTemplateChange = (event) => {
-    this.setState({packCode: event.target.value})
+    this.setState({ packCode: event.target.value })
   }
 
   onCreate = async () => {
@@ -46,7 +46,7 @@ class PrintFulfilment extends Component {
 
     const response = await fetch(`/cases/${this.props.caseId}/action/fulfilment`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(printFulfilment)
     })
 
@@ -54,15 +54,15 @@ class PrintFulfilment extends Component {
       this.closeDialog()
     }
   }
-  
+
 
   // TODO: Need to handle errors from Promises
   refreshDataFromBackend = async () => {
 
     const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(this.props.surveyId)
-        .then((fulfilmentTemplates) => {
-          return fulfilmentTemplates
-        })
+      .then((fulfilmentTemplates) => {
+        return fulfilmentTemplates
+      })
 
     this.setState({
       allowableFulfilmentPrintTemplates: fulfilmentPrintTemplates
@@ -71,42 +71,42 @@ class PrintFulfilment extends Component {
 
   render() {
     const fulfilmentPrintTemplateMenuItems = this.state.allowableFulfilmentPrintTemplates.map(packCode =>
-        <MenuItem key={packCode} value={packCode}>{packCode}</MenuItem>
+      <MenuItem key={packCode} value={packCode}>{packCode}</MenuItem>
     )
 
     return (
-        <div>
-          <Button
-              onClick={this.openDialog}
-              variant="contained">
-            Request paper fulfilment
-          </Button>
-          <Dialog open={this.state.showDialog}>
-            <DialogContent style={{padding: 30}}>
-              <div>
-                <FormControl
-                    required
-                    fullWidth={true}>
-                  <InputLabel>Print Template</InputLabel>
-                  <Select
-                      onChange={this.onPrintTemplateChange}
-                      value={this.state.packCode}
-                      error={this.state.packCodeValidationError}>
-                    {fulfilmentPrintTemplateMenuItems}
-                  </Select>
-                </FormControl>
-              </div>
-              <div style={{marginTop: 10}}>
-                <Button onClick={this.onCreate} variant="contained" style={{margin: 10}}>
-                  Request paper fulfilment
-                </Button>
-                <Button onClick={this.closeDialog} variant="contained" style={{margin: 10}}>
-                  Cancel
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+      <div>
+        <Button
+          onClick={this.openDialog}
+          variant="contained">
+          Request paper fulfilment
+        </Button>
+        <Dialog open={this.state.showDialog}>
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <FormControl
+                required
+                fullWidth={true}>
+                <InputLabel>Print Template</InputLabel>
+                <Select
+                  onChange={this.onPrintTemplateChange}
+                  value={this.state.packCode}
+                  error={this.state.packCodeValidationError}>
+                  {fulfilmentPrintTemplateMenuItems}
+                </Select>
+              </FormControl>
+            </div>
+            <div style={{ marginTop: 10 }}>
+              <Button onClick={this.onCreate} variant="contained" style={{ margin: 10 }}>
+                Request paper fulfilment
+              </Button>
+              <Button onClick={this.closeDialog} variant="contained" style={{ margin: 10 }}>
+                Cancel
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     )
   }
 }

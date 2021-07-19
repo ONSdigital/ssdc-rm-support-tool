@@ -20,7 +20,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { uuidv4 } from './common'
 import SampleUpload from "./SampleUpload";
-import {getActionRulePrintTemplates} from "./Utils";
+import { getActionRulePrintTemplates } from "./Utils";
 
 
 class CollectionExerciseDetails extends Component {
@@ -221,9 +221,6 @@ class CollectionExerciseDetails extends Component {
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Collection Exercise: {this.props.collectionExerciseName}
         </Typography>
-        <div>
-          <Button variant="contained" onClick={this.props.onOpenCaseSearch}>Search Cases</Button>
-        </div>
         <div style={{ marginTop: 20 }}>
           <Button variant="contained" onClick={this.openDialog}>Create Action Rule</Button>
         </div>

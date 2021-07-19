@@ -65,6 +65,7 @@ class SurveyDetails extends Component {
     this.setState({ authorisedActivities: authJson })
   }
 
+
   refreshDataFromBackend = async () => {
     this.getCollectionExercises()
 
@@ -105,10 +106,10 @@ class SurveyDetails extends Component {
   }
 
   getCollectionExercises = async () => {
-    const response = await fetch('/surveys/' + this.props.surveyId + '/collectionExercises')
+    const response = await fetch(`/surveys/${this.props.surveyId}/collectionExercises`)
     const collexJson = await response.json()
 
-    this.setState({ collectionExercises: collexJson._embedded.collectionExercises })
+    this.setState({collectionExercises: collexJson._embedded.collectionExercises})
   }
 
   openDialog = () => {
@@ -234,6 +235,7 @@ class SurveyDetails extends Component {
     this.setState({ printTemplateToAllow: event.target.value })
   }
 
+
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(collex => (
       <TableRow key={collex.name}>
@@ -280,6 +282,12 @@ class SurveyDetails extends Component {
           Survey: {this.props.surveyName}
         </Typography>
         <Button variant="contained" onClick={this.openDialog}>Create Collection Exercise</Button>
+        {this.state.authorisedActivities.includes('SEARCH_CASES') &&
+          <Button variant="contained" onClick={() => this.props.onOpenSurveyCaseSearch(this.props.surveyId)}
+            style={{ marginLeft: 20 }}>
+            Search Cases
+          </Button>
+        }
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>
