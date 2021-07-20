@@ -38,8 +38,8 @@ class LandingPage extends Component {
     packCodeValidationError: false,
     templateValidationError: false,
     newSurveyHeaderRow: true,
-    newSurveySampleSeparator: ','
-  }
+    newSurveySampleSeparator: ",",
+  };
 
   componentDidMount() {
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
@@ -108,9 +108,9 @@ class LandingPage extends Component {
       newSurveyValidationRules: "",
       createSurveyDialogDisplayed: true,
       newSurveyHeaderRow: true,
-      newSurveySampleSeparator: ','
-    })
-  }
+      newSurveySampleSeparator: ",",
+    });
+  };
 
   openPrintTemplateDialog = () => {
     this.setState({
@@ -149,12 +149,12 @@ class LandingPage extends Component {
   };
 
   onNewSurveyHeaderRowChange = (event) => {
-    this.setState({ newSurveyHeaderRow: event.target.value })
-  }
+    this.setState({ newSurveyHeaderRow: event.target.value });
+  };
 
   onNewSurveySampleSeparatorChange = (event) => {
-    this.setState({ newSurveySampleSeparator: event.target.value })
-  }
+    this.setState({ newSurveySampleSeparator: event.target.value });
+  };
 
   onCreateSurvey = async () => {
     let validationFailed = false;
@@ -189,8 +189,8 @@ class LandingPage extends Component {
       name: this.state.newSurveyName,
       sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules),
       sampleWithHeaderRow: this.state.newSurveyHeaderRow,
-      sampleSeparator: this.state.newSurveySampleSeparator
-    }
+      sampleSeparator: this.state.newSurveySampleSeparator,
+    };
 
     await fetch("/surveys", {
       method: "POST",
@@ -386,15 +386,18 @@ class LandingPage extends Component {
                   id="standard-required"
                   label="Survey name"
                   onChange={this.onNewSurveyNameChange}
-                  value={this.state.newSurveyName} />
+                  value={this.state.newSurveyName}
+                />
                 <FormControl
                   style={{ marginTop: 10 }}
                   required
-                  fullWidth={true}>
+                  fullWidth={true}
+                >
                   <InputLabel>Sample Has Header Row</InputLabel>
                   <Select
                     onChange={this.onNewSurveyHeaderRowChange}
-                    value={this.state.newSurveyHeaderRow}>
+                    value={this.state.newSurveyHeaderRow}
+                  >
                     <MenuItem value={true}>True</MenuItem>
                     <MenuItem value={false}>False</MenuItem>
                   </Select>
@@ -402,13 +405,15 @@ class LandingPage extends Component {
                 <FormControl
                   style={{ marginTop: 10 }}
                   required
-                  fullWidth={true}>
+                  fullWidth={true}
+                >
                   <InputLabel>Sample File Separator</InputLabel>
                   <Select
                     onChange={this.onNewSurveySampleSeparatorChange}
-                    value={this.state.newSurveySampleSeparator}>
-                    <MenuItem value={','}>Comma</MenuItem>
-                    <MenuItem value={':'}>Colon</MenuItem>
+                    value={this.state.newSurveySampleSeparator}
+                  >
+                    <MenuItem value={","}>Comma</MenuItem>
+                    <MenuItem value={":"}>Colon</MenuItem>
                   </Select>
                 </FormControl>
                 <TextField
