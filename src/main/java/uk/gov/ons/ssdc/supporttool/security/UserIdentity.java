@@ -21,12 +21,15 @@ public class UserIdentity {
 
   private final UserRepository userRepository;
   private final String iapAudience;
+  private final String dummyUserIdentity;
 
   private TokenVerifier tokenVerifier = null;
 
-  public UserIdentity(UserRepository userRepository, @Value("${iapaudience}") String iapAudience) {
+  public UserIdentity(UserRepository userRepository, @Value("${iapaudience}") String iapAudience,
+      @Value("${dummyuseridentity}") String dummyUserIdentity) {
     this.userRepository = userRepository;
     this.iapAudience = iapAudience;
+    this.dummyUserIdentity = dummyUserIdentity;
   }
 
   public void checkUserPermission(
@@ -107,7 +110,7 @@ public class UserIdentity {
       // This should throw an exception if we're running in GCP
       // We are faking the email address so that we can test locally
       // TODO: remove this before releasing to production!
-      return "dummy@fake-email.com";
+      return dummyUserIdentity;
     } else {
       return verifyJwtAndGetEmail(jwtToken);
     }
