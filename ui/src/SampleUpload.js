@@ -12,7 +12,7 @@ import {
   Paper,
   Snackbar,
   SnackbarContent,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
@@ -20,110 +20,111 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import JobDetails from "./JobDetails";
 
-
 class SampleUpload extends Component {
   state = {
     jobs: [],
-    fileProgress: 0,  // Percentage of the file uploaded
+    fileProgress: 0, // Percentage of the file uploaded
     fileUploadSuccess: false, // Flag to flash the snackbar message on the screen, when file uploads successfully
     uploadInProgress: false, // Flag to display the file upload progress modal dialog
-    showDetails: false // Flag to display the job details dialog
-  }
+    showDetails: false, // Flag to display the job details dialog
+  };
 
   componentDidMount() {
-    this.getJobs()
+    this.getJobs();
 
-    this.interval = setInterval(
-      () => this.getJobs(),
-      1000
-    )
+    this.interval = setInterval(() => this.getJobs(), 1000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval)
+    clearInterval(this.interval);
   }
 
   handleUpload = (e) => {
     if (e.target.files.length === 0) {
-      return
+      return;
     }
 
     // Display the progress modal dialog
     this.setState({
       uploadInProgress: true,
-    })
+    });
 
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
-    formData.append("bulkProcess", 'SAMPLE')
-    formData.append("collectionExerciseId", this.props.collectionExerciseId)
+    formData.append("bulkProcess", "SAMPLE");
+    formData.append("collectionExerciseId", this.props.collectionExerciseId);
 
     // Reset the file
     e.target.value = null;
 
     // Send the file data to the backend
-    axios.request({
-      method: "post",
-      url: "/upload",
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      onUploadProgress: (p) => {
-        console.log(p);
+    axios
+      .request({
+        method: "post",
+        url: "/upload",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (p) => {
+          console.log(p);
 
-        // Update file upload progress
-        this.setState({
-          fileProgress: p.loaded / p.total
-        })
-      }
-
-    }).then(data => {
-      // Hide the progress dialog and flash the snackbar message
-      this.setState({
-        fileProgress: 1.0,
-        fileUploadSuccess: true,
-        uploadInProgress: false,
+          // Update file upload progress
+          this.setState({
+            fileProgress: p.loaded / p.total,
+          });
+        },
       })
+      .then((data) => {
+        // Hide the progress dialog and flash the snackbar message
+        this.setState({
+          fileProgress: 1.0,
+          fileUploadSuccess: true,
+          uploadInProgress: false,
+        });
 
-      this.getJobs()
-    })
-  }
+        this.getJobs();
+      });
+  };
 
   handleClose = (event, reason) => {
     // Ignore clickaways so that the dialog is modal
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
     this.setState({
       fileUploadSuccess: false,
-    })
-  }
+    });
+  };
 
   getJobs = async () => {
-    const response = await fetch('/job?collectionExercise=' + this.props.collectionExerciseId)
+    const response = await fetch(
+      "/job?collectionExercise=" + this.props.collectionExerciseId
+    );
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
-      return
+      return;
     }
 
-    const jobsJson = await response.json()
+    const jobsJson = await response.json();
 
-    this.setState({ jobs: jobsJson })
-  }
+    this.setState({ jobs: jobsJson });
+  };
 
   handleOpenDetails = (job) => {
-    this.setState({ showDetails: true, selectedJob: job.id })
-  }
+    this.setState({ showDetails: true, selectedJob: job.id });
+  };
 
   handleClosedDetails = () => {
-    this.setState({ showDetails: false })
-  }
+    this.setState({ showDetails: false });
+  };
 
   render() {
-    const selectedJob = this.state.jobs.find(job => job.id === this.state.selectedJob)
+    const selectedJob = this.state.jobs.find(
+      (job) => job.id === this.state.selectedJob
+    );
 
     const jobTableRows = this.state.jobs.map((job, index) => (
       <TableRow key={job.createdAt}>
@@ -134,23 +135,26 @@ class SampleUpload extends Component {
         <TableCell align="right">
           <Button
             onClick={() => this.handleOpenDetails(job)}
-            variant="contained">
-            {convertStatusText(job.jobStatus)} {!job.jobStatus.startsWith('PROCESSED') &&
-              <CircularProgress size={15} style={{ marginLeft: 10 }} />}
+            variant="contained"
+          >
+            {convertStatusText(job.jobStatus)}{" "}
+            {!job.jobStatus.startsWith("PROCESSED") && (
+              <CircularProgress size={15} style={{ marginLeft: 10 }} />
+            )}
           </Button>
         </TableCell>
       </TableRow>
-    ))
+    ));
 
     return (
       <div style={{ marginTop: 20 }}>
         <input
           accept=".csv"
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           id="contained-button-file"
           type="file"
           onChange={(e) => {
-            this.handleUpload(e)
+            this.handleUpload(e);
           }}
         />
         <label htmlFor="contained-button-file">
@@ -167,9 +171,7 @@ class SampleUpload extends Component {
                 <TableCell align="right">Status</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {jobTableRows}
-            </TableBody>
+            <TableBody>{jobTableRows}</TableBody>
           </Table>
         </TableContainer>
         <Dialog open={this.state.uploadInProgress}>
@@ -180,7 +182,8 @@ class SampleUpload extends Component {
             <LinearProgress
               variant="determinate"
               value={this.state.fileProgress * 100}
-              style={{ marginTop: 20, marginBottom: 20, width: 400 }} />
+              style={{ marginTop: 20, marginBottom: 20, width: 400 }}
+            />
             <Typography variant="h6" color="inherit">
               {Math.round(this.state.fileProgress * 100)}%
             </Typography>
@@ -191,20 +194,25 @@ class SampleUpload extends Component {
           autoHideDuration={6000}
           onClose={this.handleClose}
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}>
-          <SnackbarContent style={{ backgroundColor: '#4caf50' }}
-            message={'File upload successful!'}
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          <SnackbarContent
+            style={{ backgroundColor: "#4caf50" }}
+            message={"File upload successful!"}
           />
         </Snackbar>
-        <JobDetails jobTitle={'Sample'} job={selectedJob} showDetails={this.state.showDetails}
-          handleClosedDetails={this.handleClosedDetails} onClickAway={this.handleClosedDetails}>
-        </JobDetails>
+        <JobDetails
+          jobTitle={"Sample"}
+          job={selectedJob}
+          showDetails={this.state.showDetails}
+          handleClosedDetails={this.handleClosedDetails}
+          onClickAway={this.handleClosedDetails}
+        ></JobDetails>
       </div>
-    )
+    );
   }
 }
 
-
-export default SampleUpload
+export default SampleUpload;

@@ -56,12 +56,7 @@ logging:
 management:
   endpoints:
     enabled-by-default: false
-    web:
-      exposure:
-        include: info, health
   endpoint:
-    info:
-      enabled: true
     health:
       enabled: true
   metrics:
