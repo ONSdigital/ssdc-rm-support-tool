@@ -27,34 +27,45 @@ public class FileStager {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.FILE_UPLOADED);
 
     for (Job job : jobs) {
+
       JobStatus jobStatus = JobStatus.STAGING_IN_PROGRESS;
 
-      try (Reader reader = Files.newBufferedReader(Path.of("/tmp/" + job.getFileId()));
-          CSVReader csvReader = new CSVReader(reader)) {
+      if (job.getCollectionExercise().getSurvey().isSampleWithHeaderRow()) {
+        jobStatus = checkHeaderRow(job);
+      }
 
-        // Validate the header row has the right number of columns
-        String[] headerRow = csvReader.readNext();
-        String[] expectedColumns = SampleColumnHelper.getExpectedColumns(job);
-        if (headerRow.length != expectedColumns.length) {
-          // The header row doesn't have enough columns
-          jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
-          job.setFatalErrorDescription("Header row does not have expected number of columns");
-        } else {
-          // Validate that the header rows are correct
-          for (int index = 0; index < headerRow.length; index++) {
-            if (!headerRow[index].equals(expectedColumns[index])) {
-              // The header row doesn't match what we expected
-              jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
-              job.setFatalErrorDescription("Header row does not match expected columns");
-            }
+      job.setJobStatus(jobStatus);
+      jobRepository.saveAndFlush(job);
+    }
+  }
+
+  private JobStatus checkHeaderRow(Job job) {
+    try (Reader reader = Files.newBufferedReader(Path.of("/tmp/" + job.getFileId()));
+        CSVReader csvReader =
+            new CSVReader(reader, job.getCollectionExercise().getSurvey().getSampleSeparator())) {
+      JobStatus jobStatus = JobStatus.STAGING_IN_PROGRESS;
+
+      // Validate the header row has the right number of columns
+      String[] headerRow = csvReader.readNext();
+      String[] expectedColumns = SampleColumnHelper.getExpectedColumns(job);
+      if (headerRow.length != expectedColumns.length) {
+        // The header row doesn't have enough columns
+        jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
+        job.setFatalErrorDescription("Header row does not have expected number of columns");
+      } else {
+        // Validate that the header rows are correct
+        for (int index = 0; index < headerRow.length; index++) {
+          if (!headerRow[index].equals(expectedColumns[index])) {
+            // The header row doesn't match what we expected
+            jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
+            job.setFatalErrorDescription("Header row does not match expected columns");
           }
         }
-
-        job.setJobStatus(jobStatus);
-        jobRepository.saveAndFlush(job);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
       }
+
+      return jobStatus;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 }

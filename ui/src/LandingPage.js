@@ -37,6 +37,8 @@ class LandingPage extends Component {
     printSupplierValidationError: false,
     packCodeValidationError: false,
     templateValidationError: false,
+    newSurveyHeaderRow: true,
+    newSurveySampleSeparator: ",",
   };
 
   componentDidMount() {
@@ -105,6 +107,8 @@ class LandingPage extends Component {
       validationRulesValidationError: false,
       newSurveyValidationRules: "",
       createSurveyDialogDisplayed: true,
+      newSurveyHeaderRow: true,
+      newSurveySampleSeparator: ",",
     });
   };
 
@@ -144,6 +148,14 @@ class LandingPage extends Component {
     });
   };
 
+  onNewSurveyHeaderRowChange = (event) => {
+    this.setState({ newSurveyHeaderRow: event.target.value });
+  };
+
+  onNewSurveySampleSeparatorChange = (event) => {
+    this.setState({ newSurveySampleSeparator: event.target.value });
+  };
+
   onCreateSurvey = async () => {
     let validationFailed = false;
 
@@ -176,6 +188,8 @@ class LandingPage extends Component {
       id: uuidv4(),
       name: this.state.newSurveyName,
       sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules),
+      sampleWithHeaderRow: this.state.newSurveyHeaderRow,
+      sampleSeparator: this.state.newSurveySampleSeparator,
     };
 
     await fetch("/surveys", {
@@ -374,7 +388,36 @@ class LandingPage extends Component {
                   onChange={this.onNewSurveyNameChange}
                   value={this.state.newSurveyName}
                 />
+                <FormControl
+                  style={{ marginTop: 10 }}
+                  required
+                  fullWidth={true}
+                >
+                  <InputLabel>Sample Has Header Row</InputLabel>
+                  <Select
+                    onChange={this.onNewSurveyHeaderRowChange}
+                    value={this.state.newSurveyHeaderRow}
+                  >
+                    <MenuItem value={true}>True</MenuItem>
+                    <MenuItem value={false}>False</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl
+                  style={{ marginTop: 10 }}
+                  required
+                  fullWidth={true}
+                >
+                  <InputLabel>Sample File Separator</InputLabel>
+                  <Select
+                    onChange={this.onNewSurveySampleSeparatorChange}
+                    value={this.state.newSurveySampleSeparator}
+                  >
+                    <MenuItem value={","}>Comma</MenuItem>
+                    <MenuItem value={":"}>Colon</MenuItem>
+                  </Select>
+                </FormControl>
                 <TextField
+                  style={{ marginTop: 10 }}
                   required
                   multiline
                   fullWidth={true}
