@@ -25,7 +25,9 @@ public class UserIdentity {
 
   private TokenVerifier tokenVerifier = null;
 
-  public UserIdentity(UserRepository userRepository, @Value("${iapaudience}") String iapAudience,
+  public UserIdentity(
+      UserRepository userRepository,
+      @Value("${iapaudience}") String iapAudience,
       @Value("${dummyuseridentity}") String dummyUserIdentity) {
     this.userRepository = userRepository;
     this.iapAudience = iapAudience;
