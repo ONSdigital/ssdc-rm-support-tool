@@ -234,7 +234,7 @@ class CollectionExerciseDetails extends Component {
 
     return (
       <div style={{ padding: 20 }}>
-        <Link to={`/survey/?surveyId=${this.props.surveyId}`}>
+        <Link to={`/survey?surveyId=${this.props.surveyId}`}>
           ← Back to survey
         </Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>

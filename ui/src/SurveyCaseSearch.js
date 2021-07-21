@@ -137,7 +137,7 @@ class SurveyCaseSearch extends Component {
 
     const searchFragment = (
       <div>
-        <Link to={`/survey/?surveyId=${this.props.surveyId}`}>
+        <Link to={`/survey?surveyId=${this.props.surveyId}`}>
           ← Back to survey
         </Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 10 }}>

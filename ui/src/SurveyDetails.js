@@ -251,7 +251,7 @@ class SurveyDetails extends Component {
           <TableRow key={collex.name}>
             <TableCell component="th" scope="row">
               <Link
-                to={`/collex/?surveyId=${this.props.surveyId}&collexId=${collexId}`}
+                to={`/collex?surveyId=${this.props.surveyId}&collexId=${collexId}`}
               >
                 {collex.name}
               </Link>
@@ -301,7 +301,7 @@ class SurveyDetails extends Component {
         </Typography>
         {this.state.authorisedActivities.includes("SEARCH_CASES") && (
           <div style={{ marginBottom: 20 }}>
-            <Link to={`/search/?surveyId=${this.props.surveyId}`}>
+            <Link to={`/search?surveyId=${this.props.surveyId}`}>
               Search cases
             </Link>
           </div>

@@ -304,7 +304,7 @@ class LandingPage extends Component {
       return (
         <TableRow key={survey.name}>
           <TableCell component="th" scope="row">
-            <Link to={`/survey/?surveyId=${surveyId}`}>{survey.name}</Link>
+            <Link to={`/survey?surveyId=${surveyId}`}>{survey.name}</Link>
           </TableCell>
         </TableRow>
       );
