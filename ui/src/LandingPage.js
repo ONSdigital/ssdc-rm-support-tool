@@ -18,6 +18,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { uuidv4 } from "./common";
+import { Link } from "react-router-dom";
 
 class LandingPage extends Component {
   state = {
@@ -297,21 +298,17 @@ class LandingPage extends Component {
   };
 
   render() {
-    const surveyTableRows = this.state.surveys.map((survey) => (
-      <TableRow key={survey.name}>
-        <TableCell component="th" scope="row">
-          {survey.name}
-        </TableCell>
-        <TableCell align="right">
-          <Button
-            onClick={() => this.props.onOpenSurveyDetails(survey)}
-            variant="contained"
-          >
-            Open
-          </Button>
-        </TableCell>
-      </TableRow>
-    ));
+    const surveyTableRows = this.state.surveys.map((survey) => {
+      const surveyId = survey._links.self.href.split("/")[4];
+
+      return (
+        <TableRow key={survey.name}>
+          <TableCell component="th" scope="row">
+            <Link to={`/survey/?surveyId=${surveyId}`}>{survey.name}</Link>
+          </TableCell>
+        </TableRow>
+      );
+    });
 
     const printTemplateRows = this.state.printTemplates.map((printTemplate) => {
       const packCode = printTemplate._links.self.href.split("/")[4];
@@ -347,7 +344,6 @@ class LandingPage extends Component {
             <TableHead>
               <TableRow>
                 <TableCell>Survey Name</TableCell>
-                <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>{surveyTableRows}</TableBody>

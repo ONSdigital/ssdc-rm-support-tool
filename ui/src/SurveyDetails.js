@@ -24,6 +24,7 @@ import {
   getAllPrintTemplates,
   getFulfilmentPrintTemplates,
 } from "./Utils";
+import { Link } from "react-router-dom";
 
 class SurveyDetails extends Component {
   state = {
@@ -243,21 +244,21 @@ class SurveyDetails extends Component {
 
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(
-      (collex) => (
-        <TableRow key={collex.name}>
-          <TableCell component="th" scope="row">
-            {collex.name}
-          </TableCell>
-          <TableCell align="right">
-            <Button
-              onClick={() => this.props.onOpenCollectionExercise(collex)}
-              variant="contained"
-            >
-              Open
-            </Button>
-          </TableCell>
-        </TableRow>
-      )
+      (collex) => {
+        const collexId = collex._links.self.href.split("/")[4];
+
+        return (
+          <TableRow key={collex.name}>
+            <TableCell component="th" scope="row">
+              <Link
+                to={`/collex/?surveyId=${this.props.surveyId}&collexId=${collexId}`}
+              >
+                {collex.name}
+              </Link>
+            </TableCell>
+          </TableRow>
+        );
+      }
     );
 
     const actionRulePrintTemplateTableRows =
@@ -294,29 +295,25 @@ class SurveyDetails extends Component {
 
     return (
       <div style={{ padding: 20 }}>
+        <Link to="/">← Back to home</Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Survey: {this.props.surveyName}
+          Survey Details
         </Typography>
+        {this.state.authorisedActivities.includes("SEARCH_CASES") && (
+          <div style={{ marginBottom: 20 }}>
+            <Link to={`/search/?surveyId=${this.props.surveyId}`}>
+              Search cases
+            </Link>
+          </div>
+        )}
         <Button variant="contained" onClick={this.openDialog}>
           Create Collection Exercise
         </Button>
-        {this.state.authorisedActivities.includes("SEARCH_CASES") && (
-          <Button
-            variant="contained"
-            onClick={() =>
-              this.props.onOpenSurveyCaseSearch(this.props.surveyId)
-            }
-            style={{ marginLeft: 20 }}
-          >
-            Search Cases
-          </Button>
-        )}
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>Collection Exercise Name</TableCell>
-                <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>{collectionExerciseTableRows}</TableBody>
