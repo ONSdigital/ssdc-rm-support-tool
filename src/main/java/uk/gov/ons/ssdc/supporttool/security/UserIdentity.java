@@ -108,7 +108,7 @@ public class UserIdentity {
   }
 
   public String getUserEmail(String jwtToken) {
-    if (StringUtils.isEmpty(jwtToken)) {
+    if (!StringUtils.hasText(jwtToken)) {
       // This should throw an exception if we're running in GCP
       // We are faking the email address so that we can test locally
       // TODO: remove this before releasing to production!
