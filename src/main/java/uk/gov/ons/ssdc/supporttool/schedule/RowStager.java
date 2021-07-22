@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,9 @@ public class RowStager {
   private final JobRepository jobRepository;
   private final RowChunkStager rowChunkStager;
 
+  @Value("${file-upload-storage-path}")
+  private String fileUploadStoragePath;
+
   public RowStager(JobRepository jobRepository, RowChunkStager rowChunkStager) {
     this.jobRepository = jobRepository;
     this.rowChunkStager = rowChunkStager;
@@ -30,7 +34,8 @@ public class RowStager {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS);
 
     for (Job job : jobs) {
-      try (Reader reader = Files.newBufferedReader(Path.of("/tmp/" + job.getFileId()));
+      try (Reader reader =
+              Files.newBufferedReader(Path.of(fileUploadStoragePath + job.getFileId()));
           CSVReader csvReader =
               new CSVReader(reader, job.getCollectionExercise().getSurvey().getSampleSeparator())) {
 

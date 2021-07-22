@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,9 @@ public class FileUploadEndpoint {
   private final JobRepository jobRepository;
   private final UserIdentity userIdentity;
   private final CollectionExerciseRepository collectionExerciseRepository;
+
+  @Value("${file-upload-storage-path}")
+  private String fileUploadStoragePath;
 
   public FileUploadEndpoint(
       JobRepository jobRepository,
@@ -57,7 +61,7 @@ public class FileUploadEndpoint {
 
     UUID fileId = UUID.randomUUID();
 
-    try (FileOutputStream fos = new FileOutputStream("/tmp/" + fileId);
+    try (FileOutputStream fos = new FileOutputStream(fileUploadStoragePath + fileId);
         BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
       Job job = new Job();
       job.setId(UUID.randomUUID());
