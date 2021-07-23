@@ -21,6 +21,7 @@ import TableRow from "@material-ui/core/TableRow";
 import { uuidv4 } from "./common";
 import SampleUpload from "./SampleUpload";
 import { getActionRulePrintTemplates } from "./Utils";
+import { Link } from "react-router-dom";
 
 class CollectionExerciseDetails extends Component {
   state = {
@@ -233,8 +234,11 @@ class CollectionExerciseDetails extends Component {
 
     return (
       <div style={{ padding: 20 }}>
+        <Link to={`/survey?surveyId=${this.props.surveyId}`}>
+          ← Back to survey
+        </Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Collection Exercise: {this.props.collectionExerciseName}
+          Collection Exercise Details
         </Typography>
         <div style={{ marginTop: 20 }}>
           <Button variant="contained" onClick={this.openDialog}>

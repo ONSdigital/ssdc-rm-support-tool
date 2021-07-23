@@ -1,6 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
 import com.opencsv.CSVReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
@@ -62,6 +65,17 @@ public class RowStager {
 
         job.setJobStatus(jobStatus);
         jobRepository.saveAndFlush(job);
+
+        // The file is now fully staged, or we got a fatal error, so we can delete the file
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+          TransactionSynchronizationManager.registerSynchronization(
+              new TransactionSynchronization() {
+                @Override
+                public void afterCompletion(int status) {
+                  new File("/tmp/" + job.getFileId()).delete();
+                }
+              });
+        }
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
