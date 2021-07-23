@@ -72,8 +72,8 @@ public class UserIdentity {
         String.format("User not authorised for activity %s", activity.name()));
   }
 
-  public void checkGlobalUserPermission(String jwtToken, UserGroupAuthorisedActivityType activity) {
-    String userEmail = getUserEmail(jwtToken);
+  public void checkGlobalUserPermission(
+      String userEmail, UserGroupAuthorisedActivityType activity) {
 
     // TODO: Remove this before releasing to production!
     if (userEmail.equals("dummy@fake-email.com")) {
