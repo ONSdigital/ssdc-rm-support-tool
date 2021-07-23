@@ -54,7 +54,7 @@ class LandingPage extends Component {
   }
 
   getAuthorisedActivities = async () => {
-    const authResponse = await fetch("/auth");
+    const authResponse = await fetch("/api/auth");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!authResponse.ok) {
@@ -64,7 +64,7 @@ class LandingPage extends Component {
     const authorisedActivities = await authResponse.json();
 
     if (authorisedActivities.includes("CREATE_PRINT_TEMPLATE")) {
-      const supplierResponse = await fetch("/printsuppliers");
+      const supplierResponse = await fetch("/api/printsuppliers");
 
       // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
       if (!supplierResponse.ok) {
@@ -88,14 +88,14 @@ class LandingPage extends Component {
   };
 
   getSurveys = async () => {
-    const response = await fetch("/surveys");
+    const response = await fetch("/api/surveys");
     const surveyJson = await response.json();
 
     this.setState({ surveys: surveyJson._embedded.surveys });
   };
 
   getPrintTemplates = async () => {
-    const response = await fetch("/printTemplates");
+    const response = await fetch("/api/printTemplates");
     const templateJson = await response.json();
 
     this.setState({ printTemplates: templateJson._embedded.printTemplates });
@@ -193,7 +193,7 @@ class LandingPage extends Component {
       sampleSeparator: this.state.newSurveySampleSeparator,
     };
 
-    await fetch("/surveys", {
+    await fetch("/api/surveys", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSurvey),
@@ -288,7 +288,7 @@ class LandingPage extends Component {
       template: JSON.parse(this.state.template),
     };
 
-    await fetch("/printTemplates", {
+    await fetch("/api/printTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newPrintTemplate),
@@ -299,7 +299,7 @@ class LandingPage extends Component {
 
   render() {
     const surveyTableRows = this.state.surveys.map((survey) => {
-      const surveyId = survey._links.self.href.split("/")[4];
+      const surveyId = survey._links.self.href.split("/").pop();
 
       return (
         <TableRow key={survey.name}>
@@ -311,7 +311,7 @@ class LandingPage extends Component {
     });
 
     const printTemplateRows = this.state.printTemplates.map((printTemplate) => {
-      const packCode = printTemplate._links.self.href.split("/")[4];
+      const packCode = printTemplate._links.self.href.split("/").pop();
 
       return (
         <TableRow key={packCode}>

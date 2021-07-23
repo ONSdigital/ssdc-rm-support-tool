@@ -31,7 +31,7 @@ class SurveySampleSearch extends Component {
   }
 
   getRefusalTypes = async () => {
-    const response = await fetch("/refusals/types");
+    const response = await fetch("/api/refusals/types");
     let refusalJson = await response.json();
 
     this.setState({ refusalTypes: refusalJson });
@@ -49,7 +49,7 @@ class SurveySampleSearch extends Component {
       return;
     }
     this.setState({ searchTermFailedValidation: false });
-    let searchUrl = `/surveyCases/${this.props.surveyId}?searchTerm=${this.state.searchTerm}`;
+    let searchUrl = `/api/surveyCases/${this.props.surveyId}?searchTerm=${this.state.searchTerm}`;
 
     if (this.state.selectedCollectionExercise) {
       searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
@@ -119,7 +119,7 @@ class SurveySampleSearch extends Component {
       this.props.collectionExercises.map((collex) => (
         <MenuItem
           key={collex.name}
-          value={collex._links.self.href.split("/")[4]}
+          value={collex._links.self.href.split("/").pop()}
         >
           {collex.name}
         </MenuItem>

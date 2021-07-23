@@ -21,7 +21,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
 @RestController
-@RequestMapping(value = "/auth")
+@RequestMapping(value = "/api/auth")
 public class Authorisation {
   private final UserIdentity userIdentity;
   private final UserRepository userRepository;

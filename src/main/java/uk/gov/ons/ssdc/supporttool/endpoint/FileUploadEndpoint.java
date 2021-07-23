@@ -38,7 +38,7 @@ public class FileUploadEndpoint {
     this.collectionExerciseRepository = collectionExerciseRepository;
   }
 
-  @PostMapping("/upload")
+  @PostMapping("/api/upload")
   public ResponseEntity<?> handleFileUpload(
       @RequestParam("file") MultipartFile file,
       @RequestParam(value = "collectionExerciseId") UUID collectionExerciseId,

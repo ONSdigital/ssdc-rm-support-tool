@@ -61,7 +61,7 @@ class SampleUpload extends Component {
     axios
       .request({
         method: "post",
-        url: "/upload",
+        url: "/api/upload",
         data: formData,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -100,7 +100,7 @@ class SampleUpload extends Component {
 
   getJobs = async () => {
     const response = await fetch(
-      "/job?collectionExercise=" + this.props.collectionExerciseId
+      `/api/job?collectionExercise=${this.props.collectionExerciseId}`
     );
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily

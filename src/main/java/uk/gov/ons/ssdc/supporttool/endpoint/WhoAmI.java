@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
 @RestController
-@RequestMapping(value = "/whoami")
+@RequestMapping(value = "/api/whoami")
 public class WhoAmI {
   private final UserIdentity userIdentity;
 

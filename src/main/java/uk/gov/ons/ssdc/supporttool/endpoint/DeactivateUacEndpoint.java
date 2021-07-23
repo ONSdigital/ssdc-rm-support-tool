@@ -23,7 +23,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 
 @RestController
-@RequestMapping(value = "/deactivateUac")
+@RequestMapping(value = "/api/deactivateUac")
 public class DeactivateUacEndpoint {
 
   private final RabbitTemplate rabbitTemplate;

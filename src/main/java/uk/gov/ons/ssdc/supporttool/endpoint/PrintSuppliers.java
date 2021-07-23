@@ -16,7 +16,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
-@RequestMapping(value = "/printsuppliers")
+@RequestMapping(value = "/api/printsuppliers")
 public class PrintSuppliers {
 
   public static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
