@@ -72,7 +72,7 @@ public class RowStager {
               new TransactionSynchronization() {
                 @Override
                 public void afterCompletion(int status) {
-                  new File("/tmp/" + job.getFileId()).delete();
+                  new File(fileUploadStoragePath + job.getFileId()).delete();
                 }
               });
         }
