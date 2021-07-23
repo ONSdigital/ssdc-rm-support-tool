@@ -10,6 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Refusal from "./Refusal";
 import InvalidAddress from "./InvalidAddress";
 import PrintFulfilment from "./PrintFulfilment";
+import { Link } from "react-router-dom";
 
 class CaseDetails extends Component {
   state = {
@@ -120,7 +121,10 @@ class CaseDetails extends Component {
     ));
 
     return (
-      <div style={{ padding: 20 }}>
+      <div>
+        <Link to={`/search?surveyId=${this.props.surveyId}`}>
+          ← Back to Search
+        </Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Case Details
         </Typography>
