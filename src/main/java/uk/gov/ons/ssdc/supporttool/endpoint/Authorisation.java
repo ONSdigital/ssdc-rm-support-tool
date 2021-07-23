@@ -18,7 +18,6 @@ import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupMember;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
 @RestController
 @RequestMapping(value = "/api/auth")
