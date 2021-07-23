@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -48,7 +47,7 @@ public class DeactivateUacEndpoint {
   @GetMapping(value = "/{qid}")
   public void deactivateUac(
       @PathVariable("qid") String qid,
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Optional<UacQidLink> uacQidLinkOpt = qidLinkRepository.findByQid(qid);
     if (!uacQidLinkOpt.isPresent()) {
       throw new ResponseStatusException(
@@ -56,7 +55,7 @@ public class DeactivateUacEndpoint {
     }
 
     userIdentity.checkUserPermission(
-        jwtToken,
+        userEmail,
         uacQidLinkOpt.get().getCaze().getCollectionExercise().getSurvey(),
         CREATE_PRINT_TEMPLATE);
 
