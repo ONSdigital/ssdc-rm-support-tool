@@ -5,8 +5,9 @@ export const getAllPrintTemplates = async () => {
   let templates = [];
 
   for (let i = 0; i < templateJson._embedded.printTemplates.length; i++) {
-    const packCode =
-      templateJson._embedded.printTemplates[i]._links.self.href.split("/").pop();
+    const packCode = templateJson._embedded.printTemplates[i]._links.self.href
+      .split("/")
+      .pop();
     templates.push(packCode);
   }
 

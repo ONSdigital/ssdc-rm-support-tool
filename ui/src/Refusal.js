@@ -68,11 +68,14 @@ class Refusal extends Component {
       callId: this.state.callId,
     };
 
-    const response = await fetch(`/api/cases/${this.props.caseId}/action/refusal`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newRefusal),
-    });
+    const response = await fetch(
+      `/api/cases/${this.props.caseId}/action/refusal`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newRefusal),
+      }
+    );
 
     if (response.ok) {
       this.closeDialog();
