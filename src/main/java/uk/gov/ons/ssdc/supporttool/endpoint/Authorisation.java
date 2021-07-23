@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +33,8 @@ public class Authorisation {
 
   @GetMapping
   public Set<UserGroupAuthorisedActivityType> getAuthorisedActivities(
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken,
-      @RequestParam(required = false, value = "surveyId") Optional<UUID> surveyId) {
-    String userEmail = userIdentity.getUserEmail(jwtToken);
+      @RequestParam(required = false, value = "surveyId") Optional<UUID> surveyId,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
     // TODO: Remove this before releasing to production!
     if (userEmail.equals("dummy@fake-email.com")) {
