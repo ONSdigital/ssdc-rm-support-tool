@@ -1,12 +1,6 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import {
-  Box,
-  CircularProgress,
-  Link,
-  Paper,
-  Typography,
-} from "@material-ui/core";
+import { Box, CircularProgress, Paper, Typography } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -15,6 +9,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import SurveySimpleSearchInput from "./SurveySimpleSearchInput";
 import SurveySampleSearch from "./SurveySampleSearch";
+import CaseDetails from "./CaseDetails";
+import { Link } from "react-router-dom";
 
 class SurveyCaseSearch extends Component {
   state = {
@@ -22,6 +18,8 @@ class SurveyCaseSearch extends Component {
     caseSearchResults: [],
     collectionExercises: [],
     isWaitingForResults: false,
+    caseSearchTerm: "",
+    caseSearchDesc: "",
   };
 
   componentDidMount() {
@@ -57,7 +55,12 @@ class SurveyCaseSearch extends Component {
     }
 
     const matchedCasesJson = await response.json();
-    this.props.onCaseSearchResults(matchedCasesJson, searchTerm, searchDesc);
+
+    this.setState({
+      caseSearchResults: matchedCasesJson,
+      caseSearchTerm: searchTerm,
+      caseSearchDesc: searchDesc,
+    });
   };
 
   checkWhitespace = (valueToValidate) => {
@@ -87,7 +90,7 @@ class SurveyCaseSearch extends Component {
     let caseCells = [];
     caseCells.push(
       <TableCell key={0}>
-        <Link onClick={() => this.props.onOpenCaseDetails(caseId)}>
+        <Link to={`/search?surveyId=${this.props.surveyId}&caseId=${caseId}`}>
           {caze.caseRef}
         </Link>
       </TableCell>
@@ -122,7 +125,7 @@ class SurveyCaseSearch extends Component {
   render() {
     const tableHeaderRows = this.getTableHeaderRows();
 
-    const caseTableRows = this.props.caseSearchResults.map((caze, index) => (
+    const caseTableRows = this.state.caseSearchResults.map((caze, index) => (
       <TableRow key={index}>{this.getCaseCells(caze)}</TableRow>
     ));
 
@@ -132,10 +135,13 @@ class SurveyCaseSearch extends Component {
       paddingBottom: "10px",
     };
 
-    return (
-      <div style={{ padding: 20 }}>
+    const searchFragment = (
+      <div>
+        <Link to={`/survey?surveyId=${this.props.surveyId}`}>
+          ← Back to survey
+        </Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 10 }}>
-          Survey: {this.props.surveyName}
+          Search Cases
         </Typography>
 
         <div style={borderStyles}>
@@ -182,17 +188,17 @@ class SurveyCaseSearch extends Component {
             <CircularProgress color="inherit" />
           </Box>
         )}
-        {this.props.caseSearchTerm && !this.state.isWaitingForResults && (
+        {this.state.caseSearchTerm && !this.state.isWaitingForResults && (
           <Typography
             variant="h5"
             color="inherit"
             style={{ marginTop: 30, marginBottom: 10 }}
           >
-            Results for {this.props.caseSearchDesc} "{this.props.caseSearchTerm}
+            Results for {this.state.caseSearchDesc} "{this.state.caseSearchTerm}
             ":
           </Typography>
         )}
-        {!this.props.caseSearchTerm && !this.state.isWaitingForResults && (
+        {!this.state.caseSearchTerm && !this.state.isWaitingForResults && (
           <Typography
             variant="h5"
             color="inherit"
@@ -201,9 +207,9 @@ class SurveyCaseSearch extends Component {
             Make a search
           </Typography>
         )}
-        {this.props.caseSearchTerm &&
+        {this.state.caseSearchTerm &&
           !this.state.isWaitingForResults &&
-          this.props.caseSearchResults.length > 0 && (
+          this.state.caseSearchResults.length > 0 && (
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
               <Table>
                 <TableHead>
@@ -213,9 +219,21 @@ class SurveyCaseSearch extends Component {
               </Table>
             </TableContainer>
           )}
-        {this.props.caseSearchTerm &&
+        {this.state.caseSearchTerm &&
           !this.state.isWaitingForResults &&
-          !this.props.caseSearchResults.length > 0 && <p>No cases found</p>}
+          !this.state.caseSearchResults.length > 0 && <p>No cases found</p>}
+      </div>
+    );
+
+    return (
+      <div style={{ padding: 20 }}>
+        {this.props.caseId && (
+          <CaseDetails
+            surveyId={this.props.surveyId}
+            caseId={this.props.caseId}
+          />
+        )}
+        {!this.props.caseId && searchFragment}
       </div>
     );
   }
