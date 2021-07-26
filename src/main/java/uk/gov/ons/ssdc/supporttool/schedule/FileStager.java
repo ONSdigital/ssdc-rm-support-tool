@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -20,6 +21,9 @@ import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 public class FileStager {
 
   private final JobRepository jobRepository;
+
+  @Value("${file-upload-storage-path}")
+  private String fileUploadStoragePath;
 
   public FileStager(JobRepository jobRepository) {
     this.jobRepository = jobRepository;
@@ -43,7 +47,7 @@ public class FileStager {
   }
 
   private JobStatus checkHeaderRow(Job job) {
-    try (Reader reader = Files.newBufferedReader(Path.of("/tmp/" + job.getFileId()));
+    try (Reader reader = Files.newBufferedReader(Path.of(fileUploadStoragePath + job.getFileId()));
         CSVReader csvReader =
             new CSVReader(reader, job.getCollectionExercise().getSurvey().getSampleSeparator())) {
       JobStatus jobStatus = JobStatus.STAGING_IN_PROGRESS;
@@ -73,7 +77,7 @@ public class FileStager {
             new TransactionSynchronization() {
               @Override
               public void afterCompletion(int status) {
-                new File("/tmp/" + job.getFileId()).delete();
+                new File(fileUploadStoragePath + job.getFileId()).delete();
               }
             });
       }
