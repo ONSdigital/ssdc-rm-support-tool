@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +54,7 @@ public class SurveyCasesEndpoint {
   @GetMapping(value = "/{surveyId}")
   @ResponseBody
   public List<CaseSearchResult> searchCasesBySampleData(
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail,
       @PathVariable(value = "surveyId") UUID surveyId,
       @RequestParam(value = "searchTerm") String searchTerm,
       @RequestParam(value = "collexId", required = false) Optional<UUID> collexId,
@@ -63,7 +64,7 @@ public class SurveyCasesEndpoint {
       @RequestParam(value = "refusal", required = false)
           Optional<UIRefusalTypeDTO> refusalReceived) {
 
-    checkSurveySearchCasesPermission(jwt, surveyId);
+    checkSurveySearchCasesPermission(userEmail, surveyId);
 
     String likeSearchTerm = String.format("%%%s%%", searchTerm);
     StringBuilder queryStringBuilder = new StringBuilder(searchCasesInSurveyPartialQuery);
@@ -145,12 +146,12 @@ public class SurveyCasesEndpoint {
     return namedParameterJdbcTemplate.query(query, namedParameters, caseRowMapper);
   }
 
-  private void checkSurveySearchCasesPermission(String jwt, UUID surveyId) {
+  private void checkSurveySearchCasesPermission(String userEmail, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
       throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Survey not found");
     }
     userIdentity.checkUserPermission(
-        jwt, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
+        userEmail, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
   }
 }

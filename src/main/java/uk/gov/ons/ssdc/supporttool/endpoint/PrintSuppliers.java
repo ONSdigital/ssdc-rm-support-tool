@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
@@ -34,8 +33,8 @@ public class PrintSuppliers {
 
   @GetMapping
   public List<String> getPrintSuppliers(
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
-    userIdentity.checkGlobalUserPermission(jwtToken, CREATE_PRINT_TEMPLATE);
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    userIdentity.checkGlobalUserPermission(userEmail, CREATE_PRINT_TEMPLATE);
 
     if (printSuppliers != null) {
       return printSuppliers;

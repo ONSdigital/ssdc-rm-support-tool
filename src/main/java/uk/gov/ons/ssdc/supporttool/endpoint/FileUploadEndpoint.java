@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -46,7 +45,7 @@ public class FileUploadEndpoint {
   public ResponseEntity<?> handleFileUpload(
       @RequestParam("file") MultipartFile file,
       @RequestParam(value = "collectionExerciseId") UUID collectionExerciseId,
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
     // Check that collex exists
     Optional<CollectionExercise> collexOpt =
@@ -57,7 +56,7 @@ public class FileUploadEndpoint {
 
     // Check user is authorised to upload sample for this survey
     userIdentity.checkUserPermission(
-        jwtToken, collexOpt.get().getSurvey(), UserGroupAuthorisedActivityType.LOAD_SAMPLE);
+        userEmail, collexOpt.get().getSurvey(), UserGroupAuthorisedActivityType.LOAD_SAMPLE);
 
     UUID fileId = UUID.randomUUID();
 
@@ -69,7 +68,7 @@ public class FileUploadEndpoint {
       job.setFileName(file.getOriginalFilename());
       job.setFileId(fileId);
       job.setJobStatus(JobStatus.FILE_UPLOADED);
-      job.setCreatedBy(userIdentity.getUserEmail(jwtToken));
+      job.setCreatedBy(userEmail);
       job.setCollectionExercise(collexOpt.get());
 
       int rowCount = 0;
