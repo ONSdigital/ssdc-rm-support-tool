@@ -25,7 +25,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
 @RestController
-@RequestMapping(value = "/surveyCases")
+@RequestMapping(value = "/api/surveyCases")
 public class SurveyCasesEndpoint {
 
   private final SurveyRepository surveyRepository;

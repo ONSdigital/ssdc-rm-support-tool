@@ -19,7 +19,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
 
 @Controller
-@RequestMapping(value = "/cases")
+@RequestMapping(value = "/api/cases")
 public class CaseEndpoint {
 
   private final CaseService caseService;

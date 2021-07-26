@@ -51,7 +51,7 @@ class InvalidAddress extends Component {
     };
 
     const response = await fetch(
-      `/cases/${this.props.caseId}/action/invalid-address`,
+      `/api/cases/${this.props.caseId}/action/invalid-address`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

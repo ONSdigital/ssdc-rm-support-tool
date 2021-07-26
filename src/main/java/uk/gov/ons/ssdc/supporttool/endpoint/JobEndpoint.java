@@ -34,7 +34,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 
 @RestController
-@RequestMapping(value = "/job")
+@RequestMapping(value = "/api/job")
 public class JobEndpoint {
 
   private final JobRepository jobRepository;

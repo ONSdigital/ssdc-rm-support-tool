@@ -32,7 +32,7 @@ class CaseDetails extends Component {
   }
 
   getAuthorisedActivities = async () => {
-    const response = await fetch("/auth?surveyId=" + this.props.surveyId);
+    const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
@@ -45,14 +45,14 @@ class CaseDetails extends Component {
   };
 
   getAllBackendData = async () => {
-    const response = await fetch("/cases/" + this.props.caseId);
+    const response = await fetch(`/api/cases/${this.props.caseId}`);
     const caseJson = await response.json();
 
     if (response.ok) {
       this.setState({ case: caseJson });
 
       const uacQidLinksResponse = await fetch(
-        "/cases/" + this.props.caseId + "/uacQidLinks"
+        `/api/cases/${this.props.caseId}/uacQidLinks`
       );
       const uacQidLinksJson = await uacQidLinksResponse.json();
 
@@ -74,7 +74,7 @@ class CaseDetails extends Component {
   };
 
   onDeactivate = (qid) => {
-    fetch("/deactivateUac/" + qid);
+    fetch(`/api/deactivateUac/${qid}`);
   };
 
   render() {

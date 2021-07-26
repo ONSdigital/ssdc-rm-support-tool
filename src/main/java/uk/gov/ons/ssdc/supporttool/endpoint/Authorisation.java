@@ -18,16 +18,13 @@ import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupMember;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
 @RestController
-@RequestMapping(value = "/auth")
+@RequestMapping(value = "/api/auth")
 public class Authorisation {
-  private final UserIdentity userIdentity;
   private final UserRepository userRepository;
 
-  public Authorisation(UserIdentity userIdentity, UserRepository userRepository) {
-    this.userIdentity = userIdentity;
+  public Authorisation(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 

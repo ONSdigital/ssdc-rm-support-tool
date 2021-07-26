@@ -55,7 +55,7 @@ class SurveyDetails extends Component {
   }
 
   getAuthorisedActivities = async () => {
-    const response = await fetch("/auth?surveyId=" + this.props.surveyId);
+    const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
@@ -110,7 +110,7 @@ class SurveyDetails extends Component {
 
   getCollectionExercises = async () => {
     const response = await fetch(
-      `/surveys/${this.props.surveyId}/collectionExercises`
+      `/api/surveys/${this.props.surveyId}/collectionExercises`
     );
     const collexJson = await response.json();
 
@@ -151,7 +151,7 @@ class SurveyDetails extends Component {
       survey: "surveys/" + this.props.surveyId,
     };
 
-    const response = await fetch("/collectionExercises", {
+    const response = await fetch("/api/collectionExercises", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newCollectionExercise),
@@ -193,7 +193,7 @@ class SurveyDetails extends Component {
       printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
     };
 
-    const response = await fetch("/actionRuleSurveyPrintTemplates", {
+    const response = await fetch("/api/actionRuleSurveyPrintTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newAllowPrintTemplate),
@@ -219,7 +219,7 @@ class SurveyDetails extends Component {
       printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
     };
 
-    const response = await fetch("/fulfilmentSurveyPrintTemplates", {
+    const response = await fetch("/api/fulfilmentSurveyPrintTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newAllowPrintTemplate),
@@ -245,7 +245,7 @@ class SurveyDetails extends Component {
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(
       (collex) => {
-        const collexId = collex._links.self.href.split("/")[4];
+        const collexId = collex._links.self.href.split("/").pop();
 
         return (
           <TableRow key={collex.name}>
