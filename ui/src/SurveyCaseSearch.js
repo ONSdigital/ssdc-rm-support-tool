@@ -29,7 +29,7 @@ class SurveyCaseSearch extends Component {
 
   getCollectionExercises = async () => {
     const response = await fetch(
-      `/surveys/${this.props.surveyId}/collectionExercises`
+      `/api/surveys/${this.props.surveyId}/collectionExercises`
     );
     const collexJson = await response.json();
 
@@ -72,7 +72,7 @@ class SurveyCaseSearch extends Component {
   };
 
   getSampleColumns = async () => {
-    const response = await fetch(`/surveys/${this.props.surveyId}`);
+    const response = await fetch(`/api/surveys/${this.props.surveyId}`);
     if (!response.ok) {
       return;
     }

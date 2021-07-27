@@ -11,10 +11,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,7 +34,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 
 @RestController
-@RequestMapping(value = "/job")
+@RequestMapping(value = "/api/job")
 public class JobEndpoint {
 
   private final JobRepository jobRepository;
@@ -56,7 +56,7 @@ public class JobEndpoint {
   @GetMapping
   public List<JobDto> findCollexJobs(
       @RequestParam(value = "collectionExercise") UUID collectionExerciseId,
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Optional<CollectionExercise> collexOpt =
         collectionExerciseRepository.findById(collectionExerciseId);
 
@@ -66,7 +66,7 @@ public class JobEndpoint {
 
     CollectionExercise collx = collexOpt.get();
 
-    userIdentity.checkUserPermission(jwtToken, collx.getSurvey(), VIEW_SAMPLE_LOAD_PROGRESS);
+    userIdentity.checkUserPermission(userEmail, collx.getSurvey(), VIEW_SAMPLE_LOAD_PROGRESS);
 
     return jobRepository.findByCollectionExerciseOrderByCreatedAtDesc(collx).stream()
         .map(this::mapJob)
@@ -76,10 +76,10 @@ public class JobEndpoint {
   @GetMapping(value = "/{id}")
   public JobDto findJob(
       @PathVariable("id") UUID id,
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
     userIdentity.checkUserPermission(
-        jwtToken, job.getCollectionExercise().getSurvey(), VIEW_SAMPLE_LOAD_PROGRESS);
+        userEmail, job.getCollectionExercise().getSurvey(), VIEW_SAMPLE_LOAD_PROGRESS);
 
     return mapJob(jobRepository.findById(id).get());
   }
@@ -88,11 +88,11 @@ public class JobEndpoint {
   @ResponseBody
   public String getErrorCsv(
       @PathVariable("id") UUID id,
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail,
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
     userIdentity.checkUserPermission(
-        jwtToken, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
+        userEmail, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -128,11 +128,11 @@ public class JobEndpoint {
   @ResponseBody
   public String getErrorDetailCsv(
       @PathVariable("id") UUID id,
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail,
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
     userIdentity.checkUserPermission(
-        jwtToken, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
+        userEmail, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(

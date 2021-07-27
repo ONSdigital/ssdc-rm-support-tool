@@ -50,7 +50,7 @@ class CollectionExerciseDetails extends Component {
   }
 
   getAuthorisedActivities = async () => {
-    const response = await fetch("/auth?surveyId=" + this.props.surveyId);
+    const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
@@ -64,7 +64,7 @@ class CollectionExerciseDetails extends Component {
 
   getActionRules = async () => {
     const response = await fetch(
-      "/collectionExercises/" + this.props.collectionExerciseId + "/actionRules"
+      `/api/collectionExercises/${this.props.collectionExerciseId}/actionRules`
     );
     const actionRuleJson = await response.json();
     const actionRules = actionRuleJson._embedded.actionRules;
@@ -78,7 +78,7 @@ class CollectionExerciseDetails extends Component {
         );
         const printTemplateResponse = await fetch(printTemplateUrl.pathname);
         const printTemplateJson = await printTemplateResponse.json();
-        const packCode = printTemplateJson._links.self.href.split("/")[4];
+        const packCode = printTemplateJson._links.self.href.split("/").pop();
 
         printTemplateHrefToPackCodeMap.set(
           actionRules[i]._links.printTemplate.href,
@@ -176,7 +176,7 @@ class CollectionExerciseDetails extends Component {
         "collectionExercises/" + this.props.collectionExerciseId,
     };
 
-    const response = await fetch("/actionRules", {
+    const response = await fetch("/api/actionRules", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newActionRule),

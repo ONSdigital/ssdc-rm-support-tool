@@ -23,7 +23,7 @@ class SurveySimpleSearchInput extends Component {
     }
     this.setState({ failedValidation: false });
     this.props.onSearchExecuteAndPopulateList(
-      `/surveyCases/${this.props.surveyId}/${this.props.urlpathName}/${this.state.searchTerm}`,
+      `/api/surveyCases/${this.props.surveyId}/${this.props.urlpathName}/${this.state.searchTerm}`,
       this.state.searchTerm,
       this.props.searchDesc
     );

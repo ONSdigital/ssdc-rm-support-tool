@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UIRefusalTypeDTO;
 
 @RestController
-@RequestMapping(value = "/refusals")
+@RequestMapping(value = "/api/refusals")
 public class RefusalsEndpoint {
 
   @GetMapping(value = "/types")
