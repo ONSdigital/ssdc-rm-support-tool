@@ -83,5 +83,6 @@ queueconfig:
   deactivate-uac-routing-key: events.deactivateUac
   refusal-event-routing-key: events.refusal
   invalid-address-event-routing-key: events.invalidAddress
+  update-sample-sensitive-routing-key: events.updateSampleSensitive
 
 file-upload-storage-path: /tmp/

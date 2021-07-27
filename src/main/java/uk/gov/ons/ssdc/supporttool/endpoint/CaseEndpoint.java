@@ -1,5 +1,8 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,10 +13,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventTypeDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.ResponseManagementEvent;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Fulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidAddress;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
+import uk.gov.ons.ssdc.supporttool.model.entity.Event;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
@@ -30,6 +39,22 @@ public class CaseEndpoint {
     this.userIdentity = userIdentity;
     this.caseService = caseService;
   }
+
+  @PostMapping("{caseId}/updateSensitiveField/")
+  public ResponseEntity<?> updateSensitiveField(@PathVariable(value = "caseId") UUID caseId,
+                                               @RequestParam(value = "fieldToUpdate") String fieldToUpdate,
+                                               @RequestParam(value = "newValue") String newValue ) {
+
+    UpdateSampleSensitive updateSampleSensitive = new UpdateSampleSensitive();
+    updateSampleSensitive.setCaseId(caseId);
+    updateSampleSensitive.setSampleSensitive(Collections.singletonMap(fieldToUpdate, newValue));
+
+    caseService.buildAndSendUpdateSensitiveSampleEvent(updateSampleSensitive);
+
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+
 
   @PostMapping(value = "/{caseId}/action/refusal")
   public ResponseEntity<?> handleRefusal(

@@ -11,4 +11,5 @@ public class PayloadDTO {
   private RefusalDTO refusal;
   private InvalidAddressDTO invalidAddress;
   private FulfilmentDTO fulfilment;
+  private UpdateSampleSensitive updateSampleSensitive;
 }
