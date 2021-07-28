@@ -232,10 +232,8 @@ class CollectionExerciseDetails extends Component {
       </MenuItem>
     ));
 
-    let allowedActionRulesToCreate = [];
     let allowedActionRuleTypeMenuItems = [];
     if (this.state.authorisedActivities.includes("CREATE_PRINT_ACTION_RULE")) {
-      allowedActionRulesToCreate.push("CREATE_PRINT_ACTION_RULE");
       allowedActionRuleTypeMenuItems.push(
         <MenuItem value={"PRINT"}>Print</MenuItem>
       );
@@ -245,7 +243,6 @@ class CollectionExerciseDetails extends Component {
         "CREATE_FACE_TO_FACE_ACTION_RULE"
       )
     ) {
-      allowedActionRulesToCreate.push("CREATE_FACE_TO_FACE_ACTION_RULE");
       allowedActionRuleTypeMenuItems.push(
         <MenuItem value={"FACE_TO_FACE"}>Face to face</MenuItem>
       );
@@ -255,7 +252,6 @@ class CollectionExerciseDetails extends Component {
         "CREATE_OUTBOUND_PHONE_ACTION_RULE"
       )
     ) {
-      allowedActionRulesToCreate.push("CREATE_OUTBOUND_PHONE_ACTION_RULE");
       allowedActionRuleTypeMenuItems.push(
         <MenuItem value={"OUTBOUND_PHONE"}>Outbound phone</MenuItem>
       );
@@ -265,7 +261,6 @@ class CollectionExerciseDetails extends Component {
         "CREATE_DEACTIVATE_UAC_ACTION_RULE"
       )
     ) {
-      allowedActionRulesToCreate.push("CREATE_DEACTIVATE_UAC_ACTION_RULE");
       allowedActionRuleTypeMenuItems.push(
         <MenuItem value={"DEACTIVATE_UAC"}>Deactivate UAC</MenuItem>
       );
@@ -279,7 +274,7 @@ class CollectionExerciseDetails extends Component {
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Collection Exercise Details
         </Typography>
-        {allowedActionRulesToCreate.length > 0 && (
+        {allowedActionRuleTypeMenuItems.length > 0 && (
           <div style={{ marginTop: 20 }}>
             <Button variant="contained" onClick={this.openDialog}>
               Create Action Rule
