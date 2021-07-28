@@ -79,7 +79,6 @@ public class CaseService {
   }
 
   public void buildAndSendUpdateSensitiveSampleEvent(UpdateSampleSensitive updateSampleSensitive) {
-
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setUpdateSampleSensitive(updateSampleSensitive);
 
