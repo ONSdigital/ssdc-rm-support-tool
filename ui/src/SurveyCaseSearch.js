@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 
 class SurveyCaseSearch extends Component {
   state = {
+    authorisedActivities: [],
     sampleColumns: [],
     caseSearchResults: [],
     collectionExercises: [],
@@ -23,9 +24,23 @@ class SurveyCaseSearch extends Component {
   };
 
   componentDidMount() {
+    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getSampleColumns();
     this.getCollectionExercises();
   }
+
+  getAuthorisedActivities = async () => {
+    const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return;
+    }
+
+    const authJson = await response.json();
+
+    this.setState({ authorisedActivities: authJson });
+  };
 
   getCollectionExercises = async () => {
     const response = await fetch(
@@ -90,9 +105,14 @@ class SurveyCaseSearch extends Component {
     let caseCells = [];
     caseCells.push(
       <TableCell key={0}>
-        <Link to={`/search?surveyId=${this.props.surveyId}&caseId=${caseId}`}>
-          {caze.caseRef}
-        </Link>
+        {this.state.authorisedActivities.includes("VIEW_CASE_DETAILS") && (
+          <Link to={`/search?surveyId=${this.props.surveyId}&caseId=${caseId}`}>
+            {caze.caseRef}
+          </Link>
+        )}
+        {!this.state.authorisedActivities.includes("VIEW_CASE_DETAILS") && (
+          <>{caze.caseRef}</>
+        )}
       </TableCell>
     );
     caseCells.push(

@@ -232,6 +232,45 @@ class CollectionExerciseDetails extends Component {
       </MenuItem>
     ));
 
+    let allowedActionRulesToCreate = [];
+    let allowedActionRuleTypeMenuItems = [];
+    if (this.state.authorisedActivities.includes("CREATE_PRINT_ACTION_RULE")) {
+      allowedActionRulesToCreate.push("CREATE_PRINT_ACTION_RULE");
+      allowedActionRuleTypeMenuItems.push(
+        <MenuItem value={"PRINT"}>Print</MenuItem>
+      );
+    }
+    if (
+      this.state.authorisedActivities.includes(
+        "CREATE_FACE_TO_FACE_ACTION_RULE"
+      )
+    ) {
+      allowedActionRulesToCreate.push("CREATE_FACE_TO_FACE_ACTION_RULE");
+      allowedActionRuleTypeMenuItems.push(
+        <MenuItem value={"FACE_TO_FACE"}>Face to face</MenuItem>
+      );
+    }
+    if (
+      this.state.authorisedActivities.includes(
+        "CREATE_OUTBOUND_PHONE_ACTION_RULE"
+      )
+    ) {
+      allowedActionRulesToCreate.push("CREATE_OUTBOUND_PHONE_ACTION_RULE");
+      allowedActionRuleTypeMenuItems.push(
+        <MenuItem value={"OUTBOUND_PHONE"}>Outbound phone</MenuItem>
+      );
+    }
+    if (
+      this.state.authorisedActivities.includes(
+        "CREATE_DEACTIVATE_UAC_ACTION_RULE"
+      )
+    ) {
+      allowedActionRulesToCreate.push("CREATE_DEACTIVATE_UAC_ACTION_RULE");
+      allowedActionRuleTypeMenuItems.push(
+        <MenuItem value={"DEACTIVATE_UAC"}>Deactivate UAC</MenuItem>
+      );
+    }
+
     return (
       <div style={{ padding: 20 }}>
         <Link to={`/survey?surveyId=${this.props.surveyId}`}>
@@ -240,11 +279,13 @@ class CollectionExerciseDetails extends Component {
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Collection Exercise Details
         </Typography>
-        <div style={{ marginTop: 20 }}>
-          <Button variant="contained" onClick={this.openDialog}>
-            Create Action Rule
-          </Button>
-        </div>
+        {allowedActionRulesToCreate.length > 0 && (
+          <div style={{ marginTop: 20 }}>
+            <Button variant="contained" onClick={this.openDialog}>
+              Create Action Rule
+            </Button>
+          </div>
+        )}
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>
             <TableHead>
@@ -278,10 +319,7 @@ class CollectionExerciseDetails extends Component {
                     value={this.state.newActionRuleType}
                     error={this.state.actionRuleTypeValidationError}
                   >
-                    <MenuItem value={"PRINT"}>PRINT</MenuItem>
-                    <MenuItem value={"FACE_TO_FACE"}>FACE-TO-FACE</MenuItem>
-                    <MenuItem value={"OUTBOUND_PHONE"}>OUTBOUND PHONE</MenuItem>
-                    <MenuItem value={"DEACTIVATE_UAC"}>DEACTIVATE UAC</MenuItem>
+                    {allowedActionRuleTypeMenuItems}
                   </Select>
                 </FormControl>
                 {this.state.newActionRuleType === "PRINT" && (
