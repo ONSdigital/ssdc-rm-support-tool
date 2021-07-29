@@ -127,7 +127,7 @@ class SensitiveData extends Component {
               <TextField
                 required
                 style={{ minWidth: 200 }}
-                label="new value"
+                label="new value, blank is valid"
                 onChange={this.onChangeValue}
                 value={this.state.newValue}
               />
