@@ -2,9 +2,9 @@ package uk.gov.ons.ssdc.supporttool.service;
 
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.ons.ssdc.supporttool.messaging.MessageSender;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventTypeDTO;
@@ -24,23 +24,20 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 public class CaseService {
 
   private final CaseRepository caseRepository;
-  private final RabbitTemplate rabbitTemplate;
+  private final MessageSender messageSender;
 
-  @Value("${queueconfig.case-event-exchange}")
-  private String eventsExchange;
+  @Value("${queueconfig.refusal-event-topic}")
+  private String refusalEventTopic;
 
-  @Value("${queueconfig.refusal-event-routing-key}")
-  private String refusalEventRoutingKey;
+  @Value("${queueconfig.invalid-address-event-topic}")
+  private String invalidAddressEventTopic;
 
-  @Value("${queueconfig.invalid-address-event-routing-key}")
-  private String invalidAddressEventRoutingKey;
+  @Value("${queueconfig.fulfilment-topic}")
+  private String fulfilmentTopic;
 
-  @Value("${queueconfig.fulfilment-routing-key}")
-  private String fulfilmentRoutingKey;
-
-  public CaseService(CaseRepository caseRepository, RabbitTemplate rabbitTemplate) {
+  public CaseService(CaseRepository caseRepository, MessageSender messageSender) {
     this.caseRepository = caseRepository;
-    this.rabbitTemplate = rabbitTemplate;
+    this.messageSender = messageSender;
   }
 
   public Case getCaseByCaseId(UUID caseId) {
@@ -71,7 +68,7 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(eventsExchange, refusalEventRoutingKey, responseManagementEvent);
+    messageSender.sendMessage(refusalEventTopic, responseManagementEvent);
   }
 
   public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {
@@ -89,8 +86,7 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(
-        eventsExchange, invalidAddressEventRoutingKey, responseManagementEvent);
+    messageSender.sendMessage(invalidAddressEventTopic, responseManagementEvent);
   }
 
   public void buildAndSendFulfilmentCaseEvent(Fulfilment fulfilment, Case caze) {
@@ -108,6 +104,6 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(eventsExchange, fulfilmentRoutingKey, responseManagementEvent);
+    messageSender.sendMessage(fulfilmentTopic, responseManagementEvent);
   }
 }

@@ -37,12 +37,11 @@ spring:
           lob:
             non_contextual_creation: true
 
-  rabbitmq:
-    username: guest
-    password: guest
-    host: localhost
-    port: 6672
-    virtualhost: /
+  cloud:
+    gcp:
+      pubsub:
+        emulator-host: localhost:8538
+        project-id: project
 
   task:
     scheduling:
@@ -63,15 +62,6 @@ management:
   endpoint:
     health:
       enabled: true
-  metrics:
-    tags:
-      application: Support Tool
-      pod: ${HOSTNAME}
-    export:
-      stackdriver:
-        project-id: dummy-project-id
-        enabled: false
-        step: PT1M
 
 iapaudience: DUMMY
 
@@ -81,11 +71,11 @@ dummyuseridentity: dummy@fake-email.com
 printsupplierconfig: '{"SUPPLIER_A":{"sftpDirectory":"foo","encryptionKeyFilename": "bar"},"SUPPLIER_B":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"}}'
 
 queueconfig:
-  case-event-exchange: events
-  sample-queue: supportTool.caseProcessor.sample
-  fulfilment-routing-key: events.fulfilment
-  deactivate-uac-routing-key: events.deactivateUac
-  refusal-event-routing-key: events.refusal
-  invalid-address-event-routing-key: events.invalidAddress
+  sample-topic: supportTool.caseProcessor.sample.topic
+  fulfilment-topic: events.caseProcessor.fulfilment.topic
+  deactivate-uac-topic: events.caseProcessor.deactivateUac.topic
+  refusal-event-topic: events.caseProcessor.refusal.topic
+  invalid-address-event-topic: events.caseProcessor.invalidAddress.topic
+  publishtimeout: 30  # In seconds
 
 file-upload-storage-path: /tmp/

@@ -3,11 +3,11 @@ package uk.gov.ons.ssdc.supporttool.schedule;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.ons.ssdc.supporttool.messaging.MessageSender;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
@@ -21,14 +21,14 @@ public class RowChunkProcessor {
   private static final Transformer TRANSFORMER = new SampleTransformer();
 
   private final JobRowRepository jobRowRepository;
-  private final RabbitTemplate rabbitTemplate;
+  private final MessageSender messageSender;
 
-  @Value("${queueconfig.sample-queue}")
-  private String sampleQueue;
+  @Value("${queueconfig.sample-topic}")
+  private String sampleTopic;
 
-  public RowChunkProcessor(JobRowRepository jobRowRepository, RabbitTemplate rabbitTemplate) {
+  public RowChunkProcessor(JobRowRepository jobRowRepository, MessageSender messageSender) {
     this.jobRowRepository = jobRowRepository;
-    this.rabbitTemplate = rabbitTemplate;
+    this.messageSender = messageSender;
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -54,10 +54,8 @@ public class RowChunkProcessor {
       }
 
       if (rowValidationErrors.size() == 0) {
-        rabbitTemplate.convertAndSend(
-            "", // default exchange (i.e. direct to queue)
-            sampleQueue,
-            TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators));
+        messageSender.sendMessage(
+            sampleTopic, TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators));
       }
 
       jobRow.setValidationErrorDescriptions(String.join(", ", rowValidationErrors));
