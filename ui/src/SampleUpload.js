@@ -148,32 +148,40 @@ class SampleUpload extends Component {
 
     return (
       <div style={{ marginTop: 20 }}>
-        <input
-          accept=".csv"
-          style={{ display: "none" }}
-          id="contained-button-file"
-          type="file"
-          onChange={(e) => {
-            this.handleUpload(e);
-          }}
-        />
-        <label htmlFor="contained-button-file">
-          <Button variant="contained" component="span">
-            Upload Sample File
-          </Button>
-        </label>
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>File Name</TableCell>
-                <TableCell>Date Uploaded</TableCell>
-                <TableCell align="right">Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{jobTableRows}</TableBody>
-          </Table>
-        </TableContainer>
+        {this.state.authorisedActivities.includes("LOAD_SAMPLE") && (
+          <>
+            <input
+              accept=".csv"
+              style={{ display: "none" }}
+              id="contained-button-file"
+              type="file"
+              onChange={(e) => {
+                this.handleUpload(e);
+              }}
+            />
+            <label htmlFor="contained-button-file">
+              <Button variant="contained" component="span">
+                Upload Sample File
+              </Button>
+            </label>
+          </>
+        )}
+        {this.state.authorisedActivities.includes(
+          "VIEW_SAMPLE_LOAD_PROGRESS"
+        ) && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>File Name</TableCell>
+                  <TableCell>Date Uploaded</TableCell>
+                  <TableCell align="right">Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{jobTableRows}</TableBody>
+            </Table>
+          </TableContainer>
+        )}
         <Dialog open={this.state.uploadInProgress}>
           <DialogContent style={{ padding: 30 }}>
             <Typography variant="h6" color="inherit">
