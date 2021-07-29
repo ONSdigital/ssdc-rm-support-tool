@@ -1,9 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,25 +14,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventTypeDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.ResponseManagementEvent;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Fulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidAddress;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
-import uk.gov.ons.ssdc.supporttool.model.entity.Event;
-import uk.gov.ons.ssdc.supporttool.model.entity.Job;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
 import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
-import uk.gov.ons.ssdc.supporttool.validation.Rule;
 
 @Controller
 @RequestMapping(value = "/api/cases")
@@ -51,12 +38,11 @@ public class CaseEndpoint {
     this.caseService = caseService;
   }
 
-  @PostMapping("{caseId}/updateSensitiveField/")
+  @PostMapping("{caseId}/action/updateSensitiveField")
   public ResponseEntity<?> updateSensitiveField(
       @PathVariable(value = "caseId") UUID caseId,
       @RequestBody UpdateSampleSensitive updateSampleSensitive,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-
 
     Case caze = caseService.getCaseByCaseId(caseId);
 
@@ -65,11 +51,14 @@ public class CaseEndpoint {
         caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.UPDATE_SENSITIVE_SAMPLE);
 
-    Optional<List<String>> validationErrorsOpt = validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive());
+    Optional<List<String>> validationErrorsOpt =
+        validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive());
 
+    if (validationErrorsOpt.isPresent()) {
+      String validatationErrorStr = String.join("|", validationErrorsOpt.get());
+      Map<String, String> body = Map.of("errors", validatationErrorStr);
 
-    if(validationErrorsOpt.isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.join("|", validationErrorsOpt.get()));
+      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     caseService.buildAndSendUpdateSensitiveSampleEvent(updateSampleSensitive);
@@ -77,7 +66,8 @@ public class CaseEndpoint {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  private Optional<List<String>> validateFieldToUpdate(Case caze, Map<String, String> fieldAndValueToValidate) {
+  private Optional<List<String>> validateFieldToUpdate(
+      Case caze, Map<String, String> fieldAndValueToValidate) {
     ColumnValidator[] columnValidators =
         caze.getCollectionExercise().getSurvey().getSampleValidationRules();
     List<String> allValidationErrors = new LinkedList<>();
@@ -95,7 +85,7 @@ public class CaseEndpoint {
       }
     }
 
-    if(allValidationErrors.size() == 0 ) {
+    if (allValidationErrors.size() == 0) {
       return Optional.empty();
     }
 

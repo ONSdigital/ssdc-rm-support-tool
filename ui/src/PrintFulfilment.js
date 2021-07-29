@@ -64,6 +64,7 @@ class PrintFulfilment extends Component {
     if (response.ok) {
       this.closeDialog();
     }
+
   };
 
   // TODO: Need to handle errors from Promises
@@ -89,7 +90,7 @@ class PrintFulfilment extends Component {
 
     return (
       <div>
-        <Button onClick={this.openDialog} variant="contained">
+        <Button style={{ marginTop: 10 }} onClick={this.openDialog} variant="contained">
           Request paper fulfilment
         </Button>
         <Dialog open={this.state.showDialog}>

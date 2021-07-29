@@ -39,7 +39,7 @@ public class CaseService {
   @Value("${queueconfig.fulfilment-routing-key}")
   private String fulfilmentRoutingKey;
 
-  @Value("${queueconfig.update-sample-sensitive-routing-key")
+  @Value("${queueconfig.update-sample-sensitive-routing-key}")
   private String updateSampleSenstiveRoutingKey;
 
   public CaseService(CaseRepository caseRepository, RabbitTemplate rabbitTemplate) {
@@ -88,9 +88,8 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(eventsExchange, refusalEventRoutingKey, responseManagementEvent);
+    rabbitTemplate.convertAndSend(eventsExchange, updateSampleSenstiveRoutingKey, responseManagementEvent);
   }
-
 
   public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {
     InvalidAddressDTO invalidAddressDTO = new InvalidAddressDTO();

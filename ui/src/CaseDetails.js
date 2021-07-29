@@ -10,6 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Refusal from "./Refusal";
 import InvalidAddress from "./InvalidAddress";
 import PrintFulfilment from "./PrintFulfilment";
+import SensitiveData from "./SensitiveData"
 import { Link } from "react-router-dom";
 
 class CaseDetails extends Component {
@@ -165,22 +166,30 @@ class CaseDetails extends Component {
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_REFUSAL"
                     ) && (
-                      <Refusal
-                        caseId={this.props.caseId}
-                        case={this.state.case}
-                      />
-                    )}
+                        <Refusal
+                          caseId={this.props.caseId}
+                          case={this.state.case}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_INVALID_ADDRESS"
                     ) && <InvalidAddress caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_FULFILMENT"
                     ) && (
-                      <PrintFulfilment
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <PrintFulfilment
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
+                    {this.state.authorisedActivities.includes(
+                      "UPDATE_SENSITIVE_SAMPLE"
+                    ) && (
+                        <SensitiveData
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                   </TableCell>
                 </TableBody>
               </Table>
