@@ -68,17 +68,6 @@ class SensitiveData extends Component {
     });
   };
 
-  // refreshDataFromBackend = async () => {
-  //   const sensitiveDataColumns = await this.getSensitiveSampleColumns(this.props.surveyId
-  //   ).then((sensitiveColumns) => {
-  //     return sensitiveColumns;
-  //   });
-
-  //   this.setState({
-  //     allowableSensitiveDataColumns: sensitiveDataColumns,
-  //   });
-  // };
-
   onUpdateSensitiveData = async () => {
     const updateSampleSensitive = {
       caseId: this.props.caseId,
