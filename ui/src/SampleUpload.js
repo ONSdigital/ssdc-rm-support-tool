@@ -148,7 +148,7 @@ class SampleUpload extends Component {
 
     return (
       <div style={{ marginTop: 20 }}>
-        {this.state.authorisedActivities.includes("LOAD_SAMPLE") && (
+        {this.props.authorisedActivities.includes("LOAD_SAMPLE") && (
           <>
             <input
               accept=".csv"
@@ -166,7 +166,7 @@ class SampleUpload extends Component {
             </label>
           </>
         )}
-        {this.state.authorisedActivities.includes(
+        {this.props.authorisedActivities.includes(
           "VIEW_SAMPLE_LOAD_PROGRESS"
         ) && (
           <TableContainer component={Paper} style={{ marginTop: 20 }}>
