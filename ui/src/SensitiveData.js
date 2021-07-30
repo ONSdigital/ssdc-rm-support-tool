@@ -26,10 +26,7 @@ class SensitiveData extends Component {
       (sensitiveColumns) => {
         this.setState({
           allowableSensitiveDataColumns: sensitiveColumns,
-        });
-
-        this.setState({
-          showDialog: true,
+          showDialog: true
         });
       }
     );
@@ -90,8 +87,10 @@ class SensitiveData extends Component {
     }
 
     const data = await response.json();
-    this.setState({ newValueValidationError: data.errors });
-    this.setState({ validationError: true });
+    this.setState({
+      newValueValidationError: data.errors,
+      validationError: true
+    });
   };
 
   render() {
