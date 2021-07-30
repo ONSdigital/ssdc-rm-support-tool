@@ -18,15 +18,21 @@ class SensitiveData extends Component {
     newValue: "",
     newValueValidationError: "",
     showDialog: false,
-    allowableSensitiveDataColumns: []
+    allowableSensitiveDataColumns: [],
+    validationError: false
   };
 
   openDialog = () => {
-    this.refreshDataFromBackend()
-    this.setState({
-      showDialog: true,
-    });
-  };
+    this.getSensitiveSampleColumns(this.props.surveyId).then((sensitiveColumns) => {
+      this.setState({
+        allowableSensitiveDataColumns: sensitiveColumns,
+      });
+
+      this.setState({
+        showDialog: true,
+      });
+    })
+  }
 
   closeDialog = () => {
     this.setState({
@@ -34,6 +40,7 @@ class SensitiveData extends Component {
       newValue: "",
       newValueValidationError: "",
       showDialog: false,
+      validationError: false
     });
   };
 
@@ -61,18 +68,18 @@ class SensitiveData extends Component {
     });
   };
 
-  refreshDataFromBackend = async () => {
-    const sensitiveDataColumns = await this.getSensitiveSampleColumns(this.props.surveyId
-    ).then((sensitiveColumns) => {
-      return sensitiveColumns;
-    });
+  // refreshDataFromBackend = async () => {
+  //   const sensitiveDataColumns = await this.getSensitiveSampleColumns(this.props.surveyId
+  //   ).then((sensitiveColumns) => {
+  //     return sensitiveColumns;
+  //   });
 
-    this.setState({
-      allowableSensitiveDataColumns: sensitiveDataColumns,
-    });
-  };
+  //   this.setState({
+  //     allowableSensitiveDataColumns: sensitiveDataColumns,
+  //   });
+  // };
 
-  onCreate = async () => {
+  onUpdateSensitiveData = async () => {
     const updateSampleSensitive = {
       caseId: this.props.caseId,
       sampleSensitive: { [this.state.columnToUpdate]: this.state.newValue }
@@ -88,13 +95,13 @@ class SensitiveData extends Component {
     );
 
     if (response.ok) {
-      alert('Update msg sent successfully')
       this.closeDialog();
       return;
     }
 
     const data = await response.json();
     this.setState({ newValueValidationError: data.errors });
+    this.setState({ validationError: true });
   };
 
   render() {
@@ -115,7 +122,7 @@ class SensitiveData extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <FormControl required fullWidth={true}>
-                <InputLabel>Sensitive Data Columns</InputLabel>
+                <InputLabel>Sensitive Data Column</InputLabel>
                 <Select
                   onChange={this.onSensitiveDataColumnChange}
                   value={this.state.columnToUpdate}
@@ -126,18 +133,20 @@ class SensitiveData extends Component {
               </FormControl>
               <TextField
                 required
+                error={this.state.validationError}
                 style={{ minWidth: 200 }}
                 label="new value, blank is valid"
                 onChange={this.onChangeValue}
                 value={this.state.newValue}
+                helperText={this.state.newValueValidationError}
               />
             </div>
             <div>
-              {this.state.newValueValidationError}
+
             </div>
             <div style={{ marginTop: 10 }}>
               <Button
-                onClick={this.onCreate}
+                onClick={this.onUpdateSensitiveData}
                 variant="contained"
                 style={{ margin: 10 }}
               >

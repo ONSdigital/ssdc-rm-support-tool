@@ -48,7 +48,7 @@ public class CaseEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         caze.getCollectionExercise().getSurvey(),
-        UserGroupAuthorisedActivityType.UPDATE_SENSITIVE_SAMPLE);
+        UserGroupAuthorisedActivityType.UPDATE_SAMPLE_SENSITIVE);
 
     List<String> validationErrors =
         validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive());
