@@ -300,7 +300,6 @@ class CollectionExerciseDetails extends Component {
             "VIEW_SAMPLE_LOAD_PROGRESS"
           )) && (
           <SampleUpload
-          
             authorisedActivities={this.state.authorisedActivities}
             collectionExerciseId={this.props.collectionExerciseId}
           />
