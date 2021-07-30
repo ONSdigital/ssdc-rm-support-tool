@@ -50,11 +50,11 @@ public class CaseEndpoint {
         caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.UPDATE_SENSITIVE_SAMPLE);
 
-    Optional<List<String>> validationErrorsOpt =
+    List<String> validationErrors =
         validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive());
 
-    if (validationErrorsOpt.isPresent()) {
-      String validatationErrorStr = String.join("|", validationErrorsOpt.get());
+    if (validationErrors.size() > 0) {
+      String validatationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validatationErrorStr);
 
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
@@ -65,7 +65,7 @@ public class CaseEndpoint {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  private Optional<List<String>> validateFieldToUpdate(
+  private List<String> validateFieldToUpdate(
       Case caze, Map<String, String> fieldAndValueToValidate) {
     ColumnValidator[] columnValidators =
         caze.getCollectionExercise().getSurvey().getSampleValidationRules();
@@ -84,11 +84,7 @@ public class CaseEndpoint {
       }
     }
 
-    if (allValidationErrors.size() == 0) {
-      return Optional.empty();
-    }
-
-    return Optional.of(allValidationErrors);
+    return allValidationErrors;
   }
 
   @PostMapping(value = "/{caseId}/action/refusal")
