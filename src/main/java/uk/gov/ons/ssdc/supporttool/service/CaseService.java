@@ -3,8 +3,8 @@ package uk.gov.ons.ssdc.supporttool.service;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Service;
-import uk.gov.ons.ssdc.supporttool.messaging.MessageSender;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventTypeDTO;
@@ -24,7 +24,7 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 public class CaseService {
 
   private final CaseRepository caseRepository;
-  private final MessageSender messageSender;
+  private final PubSubTemplate pubSubTemplate;
 
   @Value("${queueconfig.refusal-event-topic}")
   private String refusalEventTopic;
@@ -35,9 +35,9 @@ public class CaseService {
   @Value("${queueconfig.fulfilment-topic}")
   private String fulfilmentTopic;
 
-  public CaseService(CaseRepository caseRepository, MessageSender messageSender) {
+  public CaseService(CaseRepository caseRepository, PubSubTemplate pubSubTemplate) {
     this.caseRepository = caseRepository;
-    this.messageSender = messageSender;
+    this.pubSubTemplate = pubSubTemplate;
   }
 
   public Case getCaseByCaseId(UUID caseId) {
@@ -68,7 +68,7 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    messageSender.sendMessage(refusalEventTopic, responseManagementEvent);
+    pubSubTemplate.publish(refusalEventTopic, responseManagementEvent);
   }
 
   public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {
@@ -86,7 +86,7 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    messageSender.sendMessage(invalidAddressEventTopic, responseManagementEvent);
+    pubSubTemplate.publish(invalidAddressEventTopic, responseManagementEvent);
   }
 
   public void buildAndSendFulfilmentCaseEvent(Fulfilment fulfilment, Case caze) {
@@ -104,6 +104,6 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    messageSender.sendMessage(fulfilmentTopic, responseManagementEvent);
+    pubSubTemplate.publish(fulfilmentTopic, responseManagementEvent);
   }
 }

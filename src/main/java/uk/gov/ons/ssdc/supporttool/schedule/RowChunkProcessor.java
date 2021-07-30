@@ -1,13 +1,15 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.gov.ons.ssdc.supporttool.messaging.MessageSender;
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
@@ -18,17 +20,18 @@ import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
 @Component
 public class RowChunkProcessor {
+  private static final Logger log = LoggerFactory.getLogger(RowChunkProcessor.class);
   private static final Transformer TRANSFORMER = new SampleTransformer();
 
   private final JobRowRepository jobRowRepository;
-  private final MessageSender messageSender;
+  private final PubSubTemplate pubSubTemplate;
 
   @Value("${queueconfig.sample-topic}")
   private String sampleTopic;
 
-  public RowChunkProcessor(JobRowRepository jobRowRepository, MessageSender messageSender) {
+  public RowChunkProcessor(JobRowRepository jobRowRepository, PubSubTemplate pubSubTemplate) {
     this.jobRowRepository = jobRowRepository;
-    this.messageSender = messageSender;
+    this.pubSubTemplate = pubSubTemplate;
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -53,13 +56,25 @@ public class RowChunkProcessor {
         }
       }
 
+      boolean retryBecausePubsubFailed = false;
+
       if (rowValidationErrors.size() == 0) {
-        messageSender.sendMessage(
-            sampleTopic, TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators));
+        try {
+          pubSubTemplate.publish(
+              sampleTopic, TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators));
+        } catch (Exception e) {
+          retryBecausePubsubFailed = true;
+
+          log.with(jobRow).error("Failed to send message to pubsub", e);
+        }
       }
 
-      jobRow.setValidationErrorDescriptions(String.join(", ", rowValidationErrors));
-      jobRow.setJobRowStatus(rowStatus);
+      // If we had a problem with pubsub, don't bother changing the status of the row, so that we
+      // will keep retrying to send it, indefinitely
+      if (!retryBecausePubsubFailed) {
+        jobRow.setValidationErrorDescriptions(String.join(", ", rowValidationErrors));
+        jobRow.setJobRowStatus(rowStatus);
+      }
     }
 
     jobRowRepository.saveAll(jobRows);

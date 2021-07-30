@@ -37,6 +37,12 @@ spring:
           lob:
             non_contextual_creation: true
 
+  cloud:
+    gcp:
+      pubsub:
+        emulator-host: localhost:8538
+        project-id: project
+
   task:
     scheduling:
       pool:

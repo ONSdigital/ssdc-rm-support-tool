@@ -4,13 +4,13 @@ import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivi
 
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import uk.gov.ons.ssdc.supporttool.messaging.MessageSender;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.DeactivateUacDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventTypeDTO;
@@ -27,7 +27,7 @@ public class DeactivateUacEndpoint {
 
   private final UserIdentity userIdentity;
   private final UacQidLinkRepository qidLinkRepository;
-  private final MessageSender messageSender;
+  private final PubSubTemplate pubSubTemplate;
 
   @Value("${queueconfig.deactivate-uac-topic}")
   private String deactivateUacTopic;
@@ -35,10 +35,10 @@ public class DeactivateUacEndpoint {
   public DeactivateUacEndpoint(
       UserIdentity userIdentity,
       UacQidLinkRepository qidLinkRepository,
-      MessageSender messageSender) {
-    this.messageSender = messageSender;
+      PubSubTemplate pubSubTemplate) {
     this.userIdentity = userIdentity;
     this.qidLinkRepository = qidLinkRepository;
+    this.pubSubTemplate = pubSubTemplate;
   }
 
   @GetMapping(value = "/{qid}")
@@ -67,6 +67,6 @@ public class DeactivateUacEndpoint {
     payload.setDeactivateUac(deactivateUac);
     rme.setPayload(payload);
 
-    messageSender.sendMessage(deactivateUacTopic, rme);
+    pubSubTemplate.publish(deactivateUacTopic, rme);
   }
 }
