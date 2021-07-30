@@ -11,7 +11,6 @@ import {
   TextField,
 } from "@material-ui/core";
 
-
 class SensitiveData extends Component {
   state = {
     columnToUpdate: "",
@@ -19,20 +18,22 @@ class SensitiveData extends Component {
     newValueValidationError: "",
     showDialog: false,
     allowableSensitiveDataColumns: [],
-    validationError: false
+    validationError: false,
   };
 
   openDialog = () => {
-    this.getSensitiveSampleColumns(this.props.surveyId).then((sensitiveColumns) => {
-      this.setState({
-        allowableSensitiveDataColumns: sensitiveColumns,
-      });
+    this.getSensitiveSampleColumns(this.props.surveyId).then(
+      (sensitiveColumns) => {
+        this.setState({
+          allowableSensitiveDataColumns: sensitiveColumns,
+        });
 
-      this.setState({
-        showDialog: true,
-      });
-    })
-  }
+        this.setState({
+          showDialog: true,
+        });
+      }
+    );
+  };
 
   closeDialog = () => {
     this.setState({
@@ -40,7 +41,7 @@ class SensitiveData extends Component {
       newValue: "",
       newValueValidationError: "",
       showDialog: false,
-      validationError: false
+      validationError: false,
     });
   };
 
@@ -71,8 +72,8 @@ class SensitiveData extends Component {
   onUpdateSensitiveData = async () => {
     const updateSampleSensitive = {
       caseId: this.props.caseId,
-      sampleSensitive: { [this.state.columnToUpdate]: this.state.newValue }
-    }
+      sampleSensitive: { [this.state.columnToUpdate]: this.state.newValue },
+    };
 
     const response = await fetch(
       `/api/cases/${this.props.caseId}/action/updateSensitiveField`,
@@ -94,7 +95,6 @@ class SensitiveData extends Component {
   };
 
   render() {
-
     const sensitiveDataColumnMenuItems =
       this.state.allowableSensitiveDataColumns.map((columnName) => (
         <MenuItem key={columnName} value={columnName}>
@@ -104,7 +104,11 @@ class SensitiveData extends Component {
 
     return (
       <div>
-        <Button onClick={this.openDialog} variant="contained" style={{ marginTop: 10 }}>
+        <Button
+          onClick={this.openDialog}
+          variant="contained"
+          style={{ marginTop: 10 }}
+        >
           Modify Sensitive Data
         </Button>
         <Dialog open={this.state.showDialog}>
@@ -130,9 +134,7 @@ class SensitiveData extends Component {
                 helperText={this.state.newValueValidationError}
               />
             </div>
-            <div>
-
-            </div>
+            <div></div>
             <div style={{ marginTop: 10 }}>
               <Button
                 onClick={this.onUpdateSensitiveData}
