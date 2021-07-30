@@ -336,19 +336,23 @@ class LandingPage extends Component {
 
     return (
       <div style={{ padding: 20 }}>
-        <Button variant="contained" onClick={this.openDialog}>
-          Create Survey
-        </Button>
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Survey Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{surveyTableRows}</TableBody>
-          </Table>
-        </TableContainer>
+        {this.state.authorisedActivities.includes("CREATE_SURVEY") && (
+          <Button variant="contained" onClick={this.openDialog}>
+            Create Survey
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes("LIST_SURVEYS") && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Survey Name</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{surveyTableRows}</TableBody>
+            </Table>
+          </TableContainer>
+        )}
         {this.state.authorisedActivities.includes("CREATE_PRINT_TEMPLATE") && (
           <div>
             <Button
