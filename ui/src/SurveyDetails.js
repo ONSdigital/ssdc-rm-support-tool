@@ -306,19 +306,27 @@ class SurveyDetails extends Component {
             </Link>
           </div>
         )}
-        <Button variant="contained" onClick={this.openDialog}>
-          Create Collection Exercise
-        </Button>
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Collection Exercise Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{collectionExerciseTableRows}</TableBody>
-          </Table>
-        </TableContainer>
+        {this.state.authorisedActivities.includes(
+          "CREATE_COLLECTION_EXERCISE"
+        ) && (
+          <Button variant="contained" onClick={this.openDialog}>
+            Create Collection Exercise
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes(
+          "LIST_COLLECTION_EXERCISES"
+        ) && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Collection Exercise Name</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{collectionExerciseTableRows}</TableBody>
+            </Table>
+          </TableContainer>
+        )}
         {this.state.authorisedActivities.includes(
           "ALLOW_PRINT_TEMPLATE_ON_ACTION_RULE"
         ) && (
