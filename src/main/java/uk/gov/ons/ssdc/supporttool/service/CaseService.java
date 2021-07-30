@@ -88,7 +88,8 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(eventsExchange, updateSampleSenstiveRoutingKey, responseManagementEvent);
+    rabbitTemplate.convertAndSend(
+        eventsExchange, updateSampleSenstiveRoutingKey, responseManagementEvent);
   }
 
   public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {
