@@ -48,7 +48,6 @@ class LandingPage extends Component {
   componentDidMount() {
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend();
-    this.getFulfilmentTrigger();
 
     this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
   }
@@ -136,6 +135,7 @@ class LandingPage extends Component {
   };
 
   openFulfilmentTriggerDialog = () => {
+    this.getFulfilmentTrigger();
     this.setState({
       configureNextTriggerDisplayed: true,
     });
