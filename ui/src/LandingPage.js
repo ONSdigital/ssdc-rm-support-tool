@@ -99,7 +99,7 @@ class LandingPage extends Component {
 
   getFulfilmentTrigger = async () => {
     const response = await fetch(
-      "/api/fulfilmentNextTriggers/" + this.state.triggerID
+      `/api/fulfilmentNextTriggers/${this.state.triggerID}`
     );
 
     if (!response.ok) {
