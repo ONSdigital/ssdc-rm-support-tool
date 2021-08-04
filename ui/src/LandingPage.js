@@ -40,6 +40,9 @@ class LandingPage extends Component {
     templateValidationError: false,
     newSurveyHeaderRow: true,
     newSurveySampleSeparator: ",",
+    triggerID: "366ce7da-f885-493d-b933-a3b74d583a06",
+    nextFulfilmentTriggerDateTime: "1970-01-01T00:00:00.000Z",
+    configureNextTriggerDisplayed: false,
   };
 
   componentDidMount() {
@@ -94,6 +97,24 @@ class LandingPage extends Component {
     this.setState({ surveys: surveyJson._embedded.surveys });
   };
 
+  getFulfilmentTrigger = async () => {
+    const response = await fetch(
+      `/api/fulfilmentNextTriggers/${this.state.triggerID}`
+    );
+
+    if (!response.ok) {
+      var dateNow = new Date();
+      dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
+      this.setState({ nextFulfilmentTriggerDateTime: dateNow.toJSON() });
+    } else {
+      const fulfilmentNextTriggerJson = await response.json();
+      this.setState({
+        nextFulfilmentTriggerDateTime:
+          fulfilmentNextTriggerJson.triggerDateTime,
+      });
+    }
+  };
+
   getPrintTemplates = async () => {
     const response = await fetch("/api/printTemplates");
     const templateJson = await response.json();
@@ -113,6 +134,13 @@ class LandingPage extends Component {
     });
   };
 
+  openFulfilmentTriggerDialog = () => {
+    this.getFulfilmentTrigger();
+    this.setState({
+      configureNextTriggerDisplayed: true,
+    });
+  };
+
   openPrintTemplateDialog = () => {
     this.setState({
       printSupplier: "",
@@ -127,6 +155,10 @@ class LandingPage extends Component {
 
   closeDialog = () => {
     this.setState({ createSurveyDialogDisplayed: false });
+  };
+
+  closeNextTriggerDialog = () => {
+    this.setState({ configureNextTriggerDisplayed: false });
   };
 
   closePrintTemplateDialog = () => {
@@ -200,6 +232,29 @@ class LandingPage extends Component {
     });
 
     this.setState({ createSurveyDialogDisplayed: false });
+  };
+
+  onFulfilmentTriggerDateChange = (event) => {
+    this.setState({ nextFulfilmentTriggerDateTime: event.target.value });
+  };
+
+  onUpdateFulfilmentTriggerDateTime = async () => {
+    const updatedTriggerDateTime = {
+      id: this.state.triggerID,
+      triggerDateTime: new Date(
+        this.state.nextFulfilmentTriggerDateTime
+      ).toISOString(),
+    };
+
+    const response = await fetch("/api/fulfilmentNextTriggers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedTriggerDateTime),
+    });
+
+    if (response.ok) {
+      this.setState({ configureNextTriggerDisplayed: false });
+    }
   };
 
   onPrintSupplierChange = (event) => {
@@ -336,19 +391,23 @@ class LandingPage extends Component {
 
     return (
       <div style={{ padding: 20 }}>
-        <Button variant="contained" onClick={this.openDialog}>
-          Create Survey
-        </Button>
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Survey Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{surveyTableRows}</TableBody>
-          </Table>
-        </TableContainer>
+        {this.state.authorisedActivities.includes("CREATE_SURVEY") && (
+          <Button variant="contained" onClick={this.openDialog}>
+            Create Survey
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes("LIST_SURVEYS") && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Survey Name</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{surveyTableRows}</TableBody>
+            </Table>
+          </TableContainer>
+        )}
         {this.state.authorisedActivities.includes("CREATE_PRINT_TEMPLATE") && (
           <div>
             <Button
@@ -372,6 +431,15 @@ class LandingPage extends Component {
             </TableContainer>
           </div>
         )}
+        <div>
+          <Button
+            variant="contained"
+            onClick={this.openFulfilmentTriggerDialog}
+            style={{ marginTop: 20 }}
+          >
+            Configure fulfilment trigger
+          </Button>
+        </div>
         <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>
@@ -434,6 +502,43 @@ class LandingPage extends Component {
                 </Button>
                 <Button
                   onClick={this.closeDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={this.state.configureNextTriggerDisplayed}
+          fullWidth={true}
+        >
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <div>
+                <TextField
+                  label="Trigger Date"
+                  type="datetime-local"
+                  value={this.state.nextFulfilmentTriggerDateTime.slice(0, 16)}
+                  onChange={this.onFulfilmentTriggerDateChange}
+                  style={{ marginTop: 20 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                  onClick={this.onUpdateFulfilmentTriggerDateTime}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Update fulfilment trigger
+                </Button>
+                <Button
+                  onClick={this.closeNextTriggerDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
