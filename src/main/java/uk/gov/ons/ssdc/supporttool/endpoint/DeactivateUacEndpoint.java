@@ -3,8 +3,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
 
 import java.util.Optional;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,23 +25,20 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 @RequestMapping(value = "/api/deactivateUac")
 public class DeactivateUacEndpoint {
 
-  private final RabbitTemplate rabbitTemplate;
   private final UserIdentity userIdentity;
   private final UacQidLinkRepository qidLinkRepository;
+  private final PubSubTemplate pubSubTemplate;
 
-  @Value("${queueconfig.case-event-exchange}")
-  private String outboundExchange;
-
-  @Value("${queueconfig.deactivate-uac-routing-key}")
-  private String deactivateUacRoutingKey;
+  @Value("${queueconfig.deactivate-uac-topic}")
+  private String deactivateUacTopic;
 
   public DeactivateUacEndpoint(
-      RabbitTemplate rabbitTemplate,
       UserIdentity userIdentity,
-      UacQidLinkRepository qidLinkRepository) {
-    this.rabbitTemplate = rabbitTemplate;
+      UacQidLinkRepository qidLinkRepository,
+      PubSubTemplate pubSubTemplate) {
     this.userIdentity = userIdentity;
     this.qidLinkRepository = qidLinkRepository;
+    this.pubSubTemplate = pubSubTemplate;
   }
 
   @GetMapping(value = "/{qid}")
@@ -70,6 +67,6 @@ public class DeactivateUacEndpoint {
     payload.setDeactivateUac(deactivateUac);
     rme.setPayload(payload);
 
-    rabbitTemplate.convertAndSend(outboundExchange, deactivateUacRoutingKey, rme);
+    pubSubTemplate.publish(deactivateUacTopic, rme);
   }
 }
