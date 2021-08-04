@@ -2,7 +2,7 @@ package uk.gov.ons.ssdc.supporttool;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileInputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
