@@ -2,8 +2,9 @@ package uk.gov.ons.ssdc.supporttool.service;
 
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
@@ -25,26 +26,23 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 public class CaseService {
 
   private final CaseRepository caseRepository;
-  private final RabbitTemplate rabbitTemplate;
+  private final PubSubTemplate pubSubTemplate;
 
-  @Value("${queueconfig.case-event-exchange}")
-  private String eventsExchange;
+  @Value("${queueconfig.refusal-event-topic}")
+  private String refusalEventTopic;
 
-  @Value("${queueconfig.refusal-event-routing-key}")
-  private String refusalEventRoutingKey;
+  @Value("${queueconfig.invalid-address-event-topic}")
+  private String invalidAddressEventTopic;
 
-  @Value("${queueconfig.invalid-address-event-routing-key}")
-  private String invalidAddressEventRoutingKey;
+  @Value("${queueconfig.fulfilment-topic}")
+  private String fulfilmentTopic;
 
-  @Value("${queueconfig.fulfilment-routing-key}")
-  private String fulfilmentRoutingKey;
+  @Value("${queueconfig.update-sample-sensitive-topic}")
+  private String updateSampleSenstiveTopic;
 
-  @Value("${queueconfig.update-sample-sensitive-routing-key}")
-  private String updateSampleSenstiveRoutingKey;
-
-  public CaseService(CaseRepository caseRepository, RabbitTemplate rabbitTemplate) {
+  public CaseService(CaseRepository caseRepository, PubSubTemplate pubSubTemplate) {
     this.caseRepository = caseRepository;
-    this.rabbitTemplate = rabbitTemplate;
+    this.pubSubTemplate = pubSubTemplate;
   }
 
   public Case getCaseByCaseId(UUID caseId) {
@@ -75,7 +73,7 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(eventsExchange, refusalEventRoutingKey, responseManagementEvent);
+    pubSubTemplate.publish(refusalEventTopic, responseManagementEvent);
   }
 
   public void buildAndSendUpdateSensitiveSampleEvent(UpdateSampleSensitive updateSampleSensitive) {
@@ -88,8 +86,7 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(
-        eventsExchange, updateSampleSenstiveRoutingKey, responseManagementEvent);
+    pubSubTemplate.publish(updateSampleSenstiveTopic, responseManagementEvent);
   }
 
   public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {
@@ -107,8 +104,7 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(
-        eventsExchange, invalidAddressEventRoutingKey, responseManagementEvent);
+    pubSubTemplate.publish(invalidAddressEventTopic, responseManagementEvent);
   }
 
   public void buildAndSendFulfilmentCaseEvent(Fulfilment fulfilment, Case caze) {
@@ -126,6 +122,6 @@ public class CaseService {
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    rabbitTemplate.convertAndSend(eventsExchange, fulfilmentRoutingKey, responseManagementEvent);
+    pubSubTemplate.publish(fulfilmentTopic, responseManagementEvent);
   }
 }
