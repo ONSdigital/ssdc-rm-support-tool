@@ -2,7 +2,6 @@ package uk.gov.ons.ssdc.supporttool.service;
 
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Service;
