@@ -67,6 +67,13 @@ class SensitiveData extends Component {
   };
 
   onUpdateSensitiveData = async () => {
+    if (!this.state.columnToUpdate) {
+      this.setState({
+        newValueValidationError: "You must select a column to update",
+        validationError: true,
+      });
+      return;
+    }
     const updateSampleSensitive = {
       caseId: this.props.caseId,
       sampleSensitive: { [this.state.columnToUpdate]: this.state.newValue },
