@@ -13,6 +13,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.messaging.InvalidAddressDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.ResponseManagementEvent;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Fulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidAddress;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
@@ -34,6 +35,9 @@ public class CaseService {
 
   @Value("${queueconfig.fulfilment-topic}")
   private String fulfilmentTopic;
+
+  @Value("${queueconfig.update-sample-sensitive-topic}")
+  private String updateSampleSenstiveTopic;
 
   public CaseService(CaseRepository caseRepository, PubSubTemplate pubSubTemplate) {
     this.caseRepository = caseRepository;
@@ -69,6 +73,19 @@ public class CaseService {
     responseManagementEvent.setPayload(payloadDTO);
 
     pubSubTemplate.publish(refusalEventTopic, responseManagementEvent);
+  }
+
+  public void buildAndSendUpdateSensitiveSampleEvent(UpdateSampleSensitive updateSampleSensitive) {
+    PayloadDTO payloadDTO = new PayloadDTO();
+    payloadDTO.setUpdateSampleSensitive(updateSampleSensitive);
+
+    ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
+
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.UPDATE_SAMPLE_SENSITIVE);
+    responseManagementEvent.setEvent(eventDTO);
+    responseManagementEvent.setPayload(payloadDTO);
+
+    pubSubTemplate.publish(updateSampleSenstiveTopic, responseManagementEvent);
   }
 
   public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {

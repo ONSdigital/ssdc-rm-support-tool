@@ -10,6 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Refusal from "./Refusal";
 import InvalidAddress from "./InvalidAddress";
 import PrintFulfilment from "./PrintFulfilment";
+import SensitiveData from "./SensitiveData";
 import { Link } from "react-router-dom";
 
 class CaseDetails extends Component {
@@ -177,6 +178,14 @@ class CaseDetails extends Component {
                       "CREATE_CASE_FULFILMENT"
                     ) && (
                       <PrintFulfilment
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                      />
+                    )}
+                    {this.state.authorisedActivities.includes(
+                      "UPDATE_SAMPLE_SENSITIVE"
+                    ) && (
+                      <SensitiveData
                         caseId={this.props.caseId}
                         surveyId={this.props.surveyId}
                       />
