@@ -60,7 +60,7 @@ public class CaseEndpoint {
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    caseService.buildAndSendUpdateSensitiveSampleEvent(updateSampleSensitive);
+    caseService.buildAndSendUpdateSensitiveSampleEvent(updateSampleSensitive, userEmail);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -101,7 +101,7 @@ public class CaseEndpoint {
         caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_REFUSAL);
 
-    caseService.buildAndSendRefusalEvent(refusal, caze);
+    caseService.buildAndSendRefusalEvent(refusal, caze, userEmail);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -120,7 +120,7 @@ public class CaseEndpoint {
         caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_FULFILMENT);
 
-    caseService.buildAndSendFulfilmentCaseEvent(fulfilment, caze);
+    caseService.buildAndSendFulfilmentCaseEvent(fulfilment, caze, userEmail);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -139,7 +139,7 @@ public class CaseEndpoint {
         caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_INVALID_ADDRESS);
 
-    caseService.buildAndSendInvalidAddressCaseEvent(invalidAddress, caze);
+    caseService.buildAndSendInvalidAddressCaseEvent(invalidAddress, caze, userEmail);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
