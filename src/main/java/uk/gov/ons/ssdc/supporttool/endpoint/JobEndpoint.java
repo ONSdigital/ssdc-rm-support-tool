@@ -180,7 +180,7 @@ public class JobEndpoint {
 
   @PostMapping
   public ResponseEntity<?> submitUploadJob(
-      @RequestParam(value = "fileId") String fileId,
+      @RequestParam(value = "fileId") UUID fileId,
       @RequestParam(value = "fileName") String fileName,
       @RequestParam(value = "collectionExerciseId") UUID collectionExerciseId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
@@ -209,7 +209,7 @@ public class JobEndpoint {
     job.setId(UUID.randomUUID());
 
     job.setFileName(fileName);
-    job.setFileId(UUID.fromString(fileId));
+    job.setFileId(fileId);
     job.setJobStatus(JobStatus.FILE_UPLOADED);
     job.setCreatedBy(userEmail);
     job.setCollectionExercise(collexOpt.get());

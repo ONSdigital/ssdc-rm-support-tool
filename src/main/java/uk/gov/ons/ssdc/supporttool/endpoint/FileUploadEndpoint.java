@@ -43,10 +43,8 @@ public class FileUploadEndpoint {
     try (FileOutputStream fos = new FileOutputStream(fileUploadStoragePath + fileId);
         BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
 
-      int rowCount = 0;
       while (reader.ready()) {
         String line = reader.readLine();
-        rowCount++;
         fos.write(line.getBytes());
         fos.write("\n".getBytes());
       }

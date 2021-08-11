@@ -78,17 +78,14 @@ class SampleUpload extends Component {
       .then((data) => {
         // send the job details
         const fileId = data.data;
-        const formData = new FormData();
-        formData.append("fileId", data.data);
-        formData.append("fileName", fileName);
-        formData.append(
-          "collectionExerciseId",
-          this.props.collectionExerciseId
-        );
+        const jobData = new FormData();
+        jobData.append("fileId", data.data);
+        jobData.append("fileName", fileName);
+        jobData.append("collectionExerciseId", this.props.collectionExerciseId);
 
         const response = fetch(`/api/job`, {
           method: "POST",
-          body: formData,
+          body: jobData,
         });
 
         // Hide the progress dialog and flash the snackbar message
