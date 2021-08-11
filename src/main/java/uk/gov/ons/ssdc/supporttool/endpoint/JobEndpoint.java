@@ -4,17 +4,23 @@ import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivi
 import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.VIEW_SAMPLE_LOAD_PROGRESS;
 
 import com.opencsv.CSVWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +33,7 @@ import uk.gov.ons.ssdc.supporttool.model.entity.Job;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
+import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
@@ -41,6 +48,9 @@ public class JobEndpoint {
   private final JobRowRepository jobRowRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final UserIdentity userIdentity;
+
+  @Value("${file-upload-storage-path}")
+  private String fileUploadStoragePath;
 
   public JobEndpoint(
       JobRepository jobRepository,
@@ -166,6 +176,48 @@ public class JobEndpoint {
     }
 
     return csvContent;
+  }
+
+  @PostMapping
+  public ResponseEntity<?> submitUploadJob(
+      @RequestParam(value = "fileId") String fileId,
+      @RequestParam(value = "fileName") String fileName,
+      @RequestParam(value = "collectionExerciseId") UUID collectionExerciseId,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    // Check that collex exists
+    Optional<CollectionExercise> collexOpt =
+        collectionExerciseRepository.findById(collectionExerciseId);
+    if (!collexOpt.isPresent()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
+    }
+
+    // Check user is authorised to submit job for this survey
+    userIdentity.checkUserPermission(
+        userEmail, collexOpt.get().getSurvey(), UserGroupAuthorisedActivityType.LOAD_SAMPLE);
+
+    File file = new File(fileUploadStoragePath + fileId);
+    long count;
+    try (Stream<String> stream = Files.lines(file.toPath(), StandardCharsets.UTF_8)) {
+      count = stream.count();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    int rowCount = (int) count;
+
+    Job job = new Job();
+    job.setId(UUID.randomUUID());
+
+    job.setFileName(fileName);
+    job.setFileId(UUID.fromString(fileId));
+    job.setJobStatus(JobStatus.FILE_UPLOADED);
+    job.setCreatedBy(userEmail);
+    job.setCollectionExercise(collexOpt.get());
+    job.setFileRowCount(rowCount);
+
+    jobRepository.saveAndFlush(job);
+
+    return new ResponseEntity<>(null, HttpStatus.CREATED);
   }
 
   private JobDto mapJob(Job job) {
