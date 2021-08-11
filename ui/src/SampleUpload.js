@@ -51,7 +51,6 @@ class SampleUpload extends Component {
 
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
-    formData.append("bulkProcess", "SAMPLE");
 
     const fileName = e.target.files[0].name;
     // Reset the file

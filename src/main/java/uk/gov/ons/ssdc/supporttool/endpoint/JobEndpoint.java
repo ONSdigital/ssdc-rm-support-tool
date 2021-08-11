@@ -197,13 +197,12 @@ public class JobEndpoint {
         userEmail, collexOpt.get().getSurvey(), UserGroupAuthorisedActivityType.LOAD_SAMPLE);
 
     File file = new File(fileUploadStoragePath + fileId);
-    long count;
+    int rowCount;
     try (Stream<String> stream = Files.lines(file.toPath(), StandardCharsets.UTF_8)) {
-      count = stream.count();
+      rowCount = (int) stream.count();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    int rowCount = (int) count;
 
     Job job = new Job();
     job.setId(UUID.randomUUID());
