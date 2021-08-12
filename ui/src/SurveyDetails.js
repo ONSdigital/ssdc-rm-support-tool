@@ -221,9 +221,8 @@ class SurveyDetails extends Component {
     }
 
     const newAllowPrintTemplate = {
-      id: uuidv4(),
-      survey: "/surveys/" + this.props.surveyId,
-      printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
+      surveyId: this.props.surveyId,
+      packCode: this.state.printTemplateToAllow,
     };
 
     const response = await fetch("/api/fulfilmentSurveyPrintTemplates", {
@@ -234,6 +233,11 @@ class SurveyDetails extends Component {
 
     if (response.ok) {
       this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false });
+    } else {
+      const errorMessage = await response.text();
+      this.setState({
+        allowPrintTemplateError: errorMessage,
+      });
     }
   };
 
@@ -473,6 +477,13 @@ class SurveyDetails extends Component {
                   </Select>
                 </FormControl>
               </div>
+              {this.state.allowPrintTemplateError && (
+                <div>
+                  <p style={{ color: "red" }}>
+                    {this.state.allowPrintTemplateError}
+                  </p>
+                </div>
+              )}
               <div style={{ marginTop: 10 }}>
                 <Button
                   onClick={this.onAllowFulfilmentPrintTemplate}

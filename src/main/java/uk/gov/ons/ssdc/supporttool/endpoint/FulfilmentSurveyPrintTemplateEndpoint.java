@@ -12,31 +12,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.AllowPrintTemplateOnSurvey;
-import uk.gov.ons.ssdc.supporttool.model.entity.ActionRuleSurveyPrintTemplate;
+import uk.gov.ons.ssdc.supporttool.model.entity.FulfilmentSurveyPrintTemplate;
 import uk.gov.ons.ssdc.supporttool.model.entity.PrintTemplate;
 import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
-import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleSurveyPrintTemplateRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveyPrintTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.PrintTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 
 @Controller
-@RequestMapping(value = "/api/actionRuleSurveyPrintTemplates")
-public class ActionRuleSurveyPrintTemplateEndpoint {
-  private final ActionRuleSurveyPrintTemplateRepository actionRuleSurveyPrintTemplateRepository;
+@RequestMapping(value = "/api/fulfilmentSurveyPrintTemplates")
+public class FulfilmentSurveyPrintTemplateEndpoint {
+  private final FulfilmentSurveyPrintTemplateRepository fulfilmentSurveyPrintTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final PrintTemplateRepository printTemplateRepository;
 
-  public ActionRuleSurveyPrintTemplateEndpoint(
-      ActionRuleSurveyPrintTemplateRepository actionRuleSurveyPrintTemplateRepository,
+  public FulfilmentSurveyPrintTemplateEndpoint(
+      FulfilmentSurveyPrintTemplateRepository fulfilmentSurveyPrintTemplateRepository,
       SurveyRepository surveyRepository,
       PrintTemplateRepository printTemplateRepository) {
-    this.actionRuleSurveyPrintTemplateRepository = actionRuleSurveyPrintTemplateRepository;
+    this.fulfilmentSurveyPrintTemplateRepository = fulfilmentSurveyPrintTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.printTemplateRepository = printTemplateRepository;
   }
 
   @PostMapping
-  public ResponseEntity<String> createActionRuleSurveyPrintTemplate(
+  public ResponseEntity<String> createFulfilmentSurveyPrintTemplate(
       @RequestBody AllowPrintTemplateOnSurvey allowPrintTemplateOnSurvey) {
     Survey survey =
         surveyRepository
@@ -57,13 +57,13 @@ public class ActionRuleSurveyPrintTemplateEndpoint {
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 
-    ActionRuleSurveyPrintTemplate actionRuleSurveyPrintTemplate =
-        new ActionRuleSurveyPrintTemplate();
-    actionRuleSurveyPrintTemplate.setId(UUID.randomUUID());
-    actionRuleSurveyPrintTemplate.setSurvey(survey);
-    actionRuleSurveyPrintTemplate.setPrintTemplate(printTemplate);
+    FulfilmentSurveyPrintTemplate fulfilmentSurveyPrintTemplate =
+        new FulfilmentSurveyPrintTemplate();
+    fulfilmentSurveyPrintTemplate.setId(UUID.randomUUID());
+    fulfilmentSurveyPrintTemplate.setSurvey(survey);
+    fulfilmentSurveyPrintTemplate.setPrintTemplate(printTemplate);
 
-    actionRuleSurveyPrintTemplateRepository.save(actionRuleSurveyPrintTemplate);
+    fulfilmentSurveyPrintTemplateRepository.save(fulfilmentSurveyPrintTemplate);
 
     return new ResponseEntity<>("OK", HttpStatus.CREATED);
   }

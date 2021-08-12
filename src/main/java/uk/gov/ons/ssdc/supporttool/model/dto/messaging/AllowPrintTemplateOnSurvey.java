@@ -4,7 +4,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class ActionRuleSurveyPrintTemplateDTO {
+public class AllowPrintTemplateOnSurvey {
   private UUID surveyId;
   private String packCode;
 }
