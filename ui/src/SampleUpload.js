@@ -51,9 +51,8 @@ class SampleUpload extends Component {
 
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
-    formData.append("bulkProcess", "SAMPLE");
-    formData.append("collectionExerciseId", this.props.collectionExerciseId);
 
+    const fileName = e.target.files[0].name;
     // Reset the file
     e.target.value = null;
 
@@ -76,6 +75,18 @@ class SampleUpload extends Component {
         },
       })
       .then((data) => {
+        // send the job details
+        const fileId = data.data;
+        const jobData = new FormData();
+        jobData.append("fileId", data.data);
+        jobData.append("fileName", fileName);
+        jobData.append("collectionExerciseId", this.props.collectionExerciseId);
+
+        const response = fetch(`/api/job`, {
+          method: "POST",
+          body: jobData,
+        });
+
         // Hide the progress dialog and flash the snackbar message
         this.setState({
           fileProgress: 1.0,

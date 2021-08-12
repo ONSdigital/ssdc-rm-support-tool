@@ -13,6 +13,10 @@ public class UserIdentityInterceptor implements HandlerInterceptor {
 
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
       throws Exception {
+    if (request.getRequestURI().equals("/api/upload")) {
+      // Don't bother with identity for file uploads because the JWT claim expires after 10 mins
+      return true;
+    }
     String jwtToken = request.getHeader("x-goog-iap-jwt-assertion");
     String userEmail = userIdentity.getUserEmail(jwtToken);
     request.setAttribute("userEmail", userEmail);
