@@ -15,7 +15,7 @@ public class EventHelper {
   }
 
   public static EventDTO createEventDTO(
-      EventTypeDTO eventType, String eventChannel, String eventSource) {
+      EventTypeDTO eventType, String eventChannel, String eventSource, String userEmail) {
     EventDTO eventDTO = new EventDTO();
 
     eventDTO.setChannel(eventChannel);
@@ -23,11 +23,12 @@ public class EventHelper {
     eventDTO.setDateTime(OffsetDateTime.now());
     eventDTO.setTransactionId(UUID.randomUUID());
     eventDTO.setType(eventType);
+    eventDTO.setOriginatingUser(userEmail);
 
     return eventDTO;
   }
 
-  public static EventDTO createEventDTO(EventTypeDTO eventType) {
-    return createEventDTO(eventType, EVENT_CHANNEL, EVENT_SOURCE);
+  public static EventDTO createEventDTO(EventTypeDTO eventType, String userEmail) {
+    return createEventDTO(eventType, EVENT_CHANNEL, EVENT_SOURCE, userEmail);
   }
 }

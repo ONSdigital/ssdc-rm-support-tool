@@ -58,7 +58,7 @@ public class DeactivateUacEndpoint {
 
     ResponseManagementEvent rme = new ResponseManagementEvent();
 
-    EventDTO event = EventHelper.createEventDTO(EventTypeDTO.DEACTIVATE_UAC);
+    EventDTO event = EventHelper.createEventDTO(EventTypeDTO.DEACTIVATE_UAC, userEmail);
     rme.setEvent(event);
 
     PayloadDTO payload = new PayloadDTO();
