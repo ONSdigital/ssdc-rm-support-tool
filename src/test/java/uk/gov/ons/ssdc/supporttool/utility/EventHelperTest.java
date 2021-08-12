@@ -12,7 +12,7 @@ public class EventHelperTest {
 
   @Test
   public void testCreateEventDTOWithEventType() {
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.DEACTIVATE_UAC);
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.DEACTIVATE_UAC, "Test_user");
 
     assertThat(eventDTO.getChannel()).isEqualTo("RM");
     assertThat(eventDTO.getSource()).isEqualTo("SUPPORT_TOOL");
@@ -24,7 +24,7 @@ public class EventHelperTest {
   @Test
   public void testCreateEventDTOWithEventTypeChannelAndSource() {
     EventDTO eventDTO =
-        EventHelper.createEventDTO(EventTypeDTO.DEACTIVATE_UAC, "CHANNEL", "SOURCE");
+        EventHelper.createEventDTO(EventTypeDTO.DEACTIVATE_UAC, "CHANNEL", "SOURCE", "Test_user");
 
     assertThat(eventDTO.getChannel()).isEqualTo("CHANNEL");
     assertThat(eventDTO.getSource()).isEqualTo("SOURCE");

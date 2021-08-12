@@ -53,7 +53,7 @@ public class CaseService {
     return cazeResult.get();
   }
 
-  public void buildAndSendRefusalEvent(Refusal refusal, Case caze) {
+  public void buildAndSendRefusalEvent(Refusal refusal, Case caze, String userEmail) {
     CollectionCase collectionCase = new CollectionCase();
     collectionCase.setCaseId(caze.getId());
 
@@ -68,27 +68,29 @@ public class CaseService {
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.REFUSAL_RECEIVED);
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.REFUSAL_RECEIVED, userEmail);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
     pubSubTemplate.publish(refusalEventTopic, responseManagementEvent);
   }
 
-  public void buildAndSendUpdateSensitiveSampleEvent(UpdateSampleSensitive updateSampleSensitive) {
+  public void buildAndSendUpdateSensitiveSampleEvent(
+      UpdateSampleSensitive updateSampleSensitive, String userEmail) {
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setUpdateSampleSensitive(updateSampleSensitive);
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.UPDATE_SAMPLE_SENSITIVE);
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.UPDATE_SAMPLE_SENSITIVE, userEmail);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
     pubSubTemplate.publish(updateSampleSenstiveTopic, responseManagementEvent);
   }
 
-  public void buildAndSendInvalidAddressCaseEvent(InvalidAddress invalidAddress, Case caze) {
+  public void buildAndSendInvalidAddressCaseEvent(
+      InvalidAddress invalidAddress, Case caze, String userEmail) {
     InvalidAddressDTO invalidAddressDTO = new InvalidAddressDTO();
     invalidAddressDTO.setCaseId(caze.getId());
     invalidAddressDTO.setReason(invalidAddress.getReason());
@@ -99,14 +101,14 @@ public class CaseService {
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.ADDRESS_NOT_VALID);
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.ADDRESS_NOT_VALID, userEmail);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
     pubSubTemplate.publish(invalidAddressEventTopic, responseManagementEvent);
   }
 
-  public void buildAndSendFulfilmentCaseEvent(Fulfilment fulfilment, Case caze) {
+  public void buildAndSendFulfilmentCaseEvent(Fulfilment fulfilment, Case caze, String userEmail) {
 
     FulfilmentDTO fulfilmentDTO = new FulfilmentDTO();
     fulfilmentDTO.setCaseId(caze.getId());
@@ -117,7 +119,7 @@ public class CaseService {
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.FULFILMENT);
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.FULFILMENT, userEmail);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
