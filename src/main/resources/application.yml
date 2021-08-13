@@ -66,7 +66,7 @@ printsupplierconfig: '{"SUPPLIER_A":{"sftpDirectory":"foo","encryptionKeyFilenam
 
 queueconfig:
   sample-topic: rm-internal-sample
-  fulfilment-topic: event_paper-fulfilment
+  print-fulfilment-topic: event_print-fulfilment
   deactivate-uac-topic: event_deactivate-uac
   refusal-event-topic: event_refusal
   invalid-case-event-topic: event_invalid-case

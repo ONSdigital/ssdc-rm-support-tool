@@ -7,12 +7,11 @@ import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventTypeDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.InvalidCaseDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PrintFulfilmentDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.ResponseManagementEvent;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
@@ -33,8 +32,8 @@ public class CaseService {
   @Value("${queueconfig.invalid-case-event-topic}")
   private String invalidCaseEventTopic;
 
-  @Value("${queueconfig.fulfilment-topic}")
-  private String fulfilmentTopic;
+  @Value("${queueconfig.print-fulfilment-topic}")
+  private String printFulfilmentTopic;
 
   @Value("${queueconfig.update-sample-sensitive-topic}")
   private String updateSampleSenstiveTopic;
@@ -66,13 +65,13 @@ public class CaseService {
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setRefusal(refusalDTO);
 
-    ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
+    EventDTO event = new EventDTO();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.REFUSAL, userEmail);
-    responseManagementEvent.setEvent(eventDTO);
-    responseManagementEvent.setPayload(payloadDTO);
+    EventHeaderDTO eventHeader = EventHelper.createEventDTO(refusalEventTopic, userEmail);
+    event.setHeader(eventHeader);
+    event.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(refusalEventTopic, responseManagementEvent);
+    pubSubTemplate.publish(refusalEventTopic, event);
   }
 
   public void buildAndSendUpdateSensitiveSampleEvent(
@@ -80,13 +79,13 @@ public class CaseService {
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setUpdateSampleSensitive(updateSampleSensitive);
 
-    ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
+    EventDTO event = new EventDTO();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.UPDATE_SAMPLE_SENSITIVE, userEmail);
-    responseManagementEvent.setEvent(eventDTO);
-    responseManagementEvent.setPayload(payloadDTO);
+    EventHeaderDTO eventHeader = EventHelper.createEventDTO(updateSampleSenstiveTopic, userEmail);
+    event.setHeader(eventHeader);
+    event.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(updateSampleSenstiveTopic, responseManagementEvent);
+    pubSubTemplate.publish(updateSampleSenstiveTopic, event);
   }
 
   public void buildAndSendInvalidAddressCaseEvent(
@@ -98,13 +97,13 @@ public class CaseService {
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setInvalidCase(invalidCaseDTO);
 
-    ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
+    EventDTO event = new EventDTO();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.INVALID_CASE, userEmail);
-    responseManagementEvent.setEvent(eventDTO);
-    responseManagementEvent.setPayload(payloadDTO);
+    EventHeaderDTO eventHeader = EventHelper.createEventDTO(invalidCaseEventTopic, userEmail);
+    event.setHeader(eventHeader);
+    event.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(invalidCaseEventTopic, responseManagementEvent);
+    pubSubTemplate.publish(invalidCaseEventTopic, event);
   }
 
   public void buildAndSendPrintFulfilmentCaseEvent(
@@ -117,12 +116,12 @@ public class CaseService {
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setPrintFulfilment(printFulfilmentDTO);
 
-    ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
+    EventDTO event = new EventDTO();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.PRINT_FULFILMENT, userEmail);
-    responseManagementEvent.setEvent(eventDTO);
-    responseManagementEvent.setPayload(payloadDTO);
+    EventHeaderDTO eventHeader = EventHelper.createEventDTO(printFulfilmentTopic, userEmail);
+    event.setHeader(eventHeader);
+    event.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(fulfilmentTopic, responseManagementEvent);
+    pubSubTemplate.publish(printFulfilmentTopic, event);
   }
 }

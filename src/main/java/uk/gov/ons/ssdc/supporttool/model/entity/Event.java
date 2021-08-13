@@ -1,6 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -25,33 +24,30 @@ import org.hibernate.annotations.TypeDefs;
 public class Event {
   @Id private UUID id;
 
-  @JsonIgnore // Required to avoid stack overflow when using Spring auto-generated CRUD REST API
-  @ManyToOne
-  private UacQidLink uacQidLink;
+  @ManyToOne private UacQidLink uacQidLink;
 
-  @JsonIgnore // Required to avoid stack overflow when using Spring auto-generated CRUD REST API
-  @ManyToOne
-  private Case caze;
+  @ManyToOne private Case caze;
 
   @Column(columnDefinition = "timestamp with time zone")
-  private OffsetDateTime eventDate;
+  private OffsetDateTime dateTime;
 
-  @Column private String eventDescription;
+  @Column private String description;
 
-  @Column(name = "rm_event_processed", columnDefinition = "timestamp with time zone")
-  private OffsetDateTime rmEventProcessed;
+  @Column(columnDefinition = "timestamp with time zone")
+  private OffsetDateTime processedAt;
 
-  @Column(name = "event_type")
   @Enumerated(EnumType.STRING)
-  private EventType eventType;
+  @Column
+  private EventType type;
 
-  @Column private String eventChannel;
-  @Column private String eventSource;
-  @Column private UUID eventTransactionId;
+  @Column private String channel;
+  @Column private String source;
+  @Column private UUID messageId;
+  @Column private UUID correlationId;
 
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
-  private String eventPayload;
+  private String payload;
 
   @Column(columnDefinition = "Timestamp with time zone")
   private OffsetDateTime messageTimestamp;
