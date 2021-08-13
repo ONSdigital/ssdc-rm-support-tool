@@ -69,7 +69,7 @@ queueconfig:
   fulfilment-topic: event_paper-fulfilment
   deactivate-uac-topic: event_deactivate-uac
   refusal-event-topic: event_refusal
-  invalid-address-event-topic: event_invalid
+  invalid-case-event-topic: event_invalid-case
   update-sample-sensitive-topic: event_update-sample-sensitive
   publishtimeout: 30  # In seconds
 

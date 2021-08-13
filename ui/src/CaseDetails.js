@@ -8,7 +8,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Refusal from "./Refusal";
-import InvalidAddress from "./InvalidAddress";
+import InvalidCase from "./InvalidCase";
 import PrintFulfilment from "./PrintFulfilment";
 import SensitiveData from "./SensitiveData";
 import { Link } from "react-router-dom";
@@ -172,8 +172,8 @@ class CaseDetails extends Component {
                       />
                     )}
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_INVALID_ADDRESS"
-                    ) && <InvalidAddress caseId={this.props.caseId} />}
+                      "CREATE_CASE_INVALID_CASE"
+                    ) && <InvalidCase caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_FULFILMENT"
                     ) && (

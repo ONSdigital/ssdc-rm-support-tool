@@ -9,7 +9,7 @@ import lombok.Data;
 public class PayloadDTO {
   private DeactivateUacDTO deactivateUac;
   private RefusalDTO refusal;
-  private InvalidAddressDTO invalidAddress;
-  private FulfilmentDTO fulfilment;
+  private InvalidCaseDTO invalidCase;
+  private PrintFulfilmentDTO printFulfilment;
   private UpdateSampleSensitive updateSampleSensitive;
 }

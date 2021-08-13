@@ -53,7 +53,7 @@ class PrintFulfilment extends Component {
     };
 
     const response = await fetch(
-      `/api/cases/${this.props.caseId}/action/fulfilment`,
+      `/api/cases/${this.props.caseId}/action/print-fulfilment`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

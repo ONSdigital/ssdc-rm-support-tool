@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventTypeDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.FulfilmentDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.InvalidAddressDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.InvalidCaseDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PrintFulfilmentDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.ResponseManagementEvent;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
-import uk.gov.ons.ssdc.supporttool.model.dto.ui.Fulfilment;
-import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidAddress;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
@@ -30,8 +30,8 @@ public class CaseService {
   @Value("${queueconfig.refusal-event-topic}")
   private String refusalEventTopic;
 
-  @Value("${queueconfig.invalid-address-event-topic}")
-  private String invalidAddressEventTopic;
+  @Value("${queueconfig.invalid-case-event-topic}")
+  private String invalidCaseEventTopic;
 
   @Value("${queueconfig.fulfilment-topic}")
   private String fulfilmentTopic;
@@ -68,7 +68,7 @@ public class CaseService {
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.REFUSAL_RECEIVED, userEmail);
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.REFUSAL, userEmail);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
@@ -90,36 +90,36 @@ public class CaseService {
   }
 
   public void buildAndSendInvalidAddressCaseEvent(
-      InvalidAddress invalidAddress, Case caze, String userEmail) {
-    InvalidAddressDTO invalidAddressDTO = new InvalidAddressDTO();
-    invalidAddressDTO.setCaseId(caze.getId());
-    invalidAddressDTO.setReason(invalidAddress.getReason());
-    invalidAddressDTO.setNotes(invalidAddress.getNotes());
+      InvalidCase invalidCase, Case caze, String userEmail) {
+    InvalidCaseDTO invalidCaseDTO = new InvalidCaseDTO();
+    invalidCaseDTO.setCaseId(caze.getId());
+    invalidCaseDTO.setReason(invalidCase.getReason());
 
     PayloadDTO payloadDTO = new PayloadDTO();
-    payloadDTO.setInvalidAddress(invalidAddressDTO);
+    payloadDTO.setInvalidCase(invalidCaseDTO);
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.ADDRESS_NOT_VALID, userEmail);
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.INVALID_CASE, userEmail);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(invalidAddressEventTopic, responseManagementEvent);
+    pubSubTemplate.publish(invalidCaseEventTopic, responseManagementEvent);
   }
 
-  public void buildAndSendFulfilmentCaseEvent(Fulfilment fulfilment, Case caze, String userEmail) {
+  public void buildAndSendPrintFulfilmentCaseEvent(
+      PrintFulfilment printFulfilment, Case caze, String userEmail) {
 
-    FulfilmentDTO fulfilmentDTO = new FulfilmentDTO();
-    fulfilmentDTO.setCaseId(caze.getId());
-    fulfilmentDTO.setPackCode(fulfilment.getPackCode());
+    PrintFulfilmentDTO printFulfilmentDTO = new PrintFulfilmentDTO();
+    printFulfilmentDTO.setCaseId(caze.getId());
+    printFulfilmentDTO.setPackCode(printFulfilment.getPackCode());
 
     PayloadDTO payloadDTO = new PayloadDTO();
-    payloadDTO.setFulfilment(fulfilmentDTO);
+    payloadDTO.setPrintFulfilment(printFulfilmentDTO);
 
     ResponseManagementEvent responseManagementEvent = new ResponseManagementEvent();
 
-    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.FULFILMENT, userEmail);
+    EventDTO eventDTO = EventHelper.createEventDTO(EventTypeDTO.PRINT_FULFILMENT, userEmail);
     responseManagementEvent.setEvent(eventDTO);
     responseManagementEvent.setPayload(payloadDTO);
 
