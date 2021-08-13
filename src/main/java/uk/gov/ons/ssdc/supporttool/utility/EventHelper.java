@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
+import static uk.gov.ons.ssdc.supporttool.utility.Constants.EVENT_SCHEMA_VERSION;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
@@ -17,6 +19,7 @@ public class EventHelper {
       String topic, String eventChannel, String eventSource, String userEmail) {
     EventHeaderDTO eventHeader = new EventHeaderDTO();
 
+    eventHeader.setVersion(EVENT_SCHEMA_VERSION);
     eventHeader.setChannel(eventChannel);
     eventHeader.setSource(eventSource);
     eventHeader.setDateTime(OffsetDateTime.now());
