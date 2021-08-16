@@ -32,6 +32,7 @@ class CollectionExerciseDetails extends Component {
     createActionRulesDialogDisplayed: false,
     packCodeValidationError: false,
     actionRuleTypeValidationError: false,
+    collectionExerciseName: "",
     newActionRulePackCode: "",
     newActionRuleClassifiers: "",
     newActionRuleType: "",
@@ -39,6 +40,7 @@ class CollectionExerciseDetails extends Component {
 
   componentDidMount() {
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCollectionExerciseName();
     this.getActionRules();
     this.getPrintTemplates();
 
@@ -60,6 +62,19 @@ class CollectionExerciseDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+  };
+
+  getCollectionExerciseName = async () => {
+    const response = await fetch(`api/collectionExercises/${this.props.collectionExerciseId}`);
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return;
+    }
+
+    const collectionExerciseJson = await response.json();
+
+    this.setState({ collectionExerciseName: collectionExerciseJson.name });
   };
 
   getActionRules = async () => {
@@ -272,7 +287,7 @@ class CollectionExerciseDetails extends Component {
           ← Back to survey
         </Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Collection Exercise Details
+          Collection Exercise Details - {this.state.collectionExerciseName}
         </Typography>
         {allowedActionRuleTypeMenuItems.length > 0 && (
           <div style={{ marginTop: 20 }}>
