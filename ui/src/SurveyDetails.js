@@ -41,6 +41,7 @@ class SurveyDetails extends Component {
     allowableFulfilmentPrintTemplates: [],
     printTemplateToAllow: "",
     printTemplateValidationError: false,
+    allowPrintTemplateError: "",
   };
 
   componentDidMount() {
@@ -167,6 +168,7 @@ class SurveyDetails extends Component {
       allowActionRulePrintTemplateDialogDisplayed: true,
       printTemplateToAllow: "",
       printTemplateValidationError: false,
+      allowPrintTemplateError: "",
     });
   };
 
@@ -175,6 +177,7 @@ class SurveyDetails extends Component {
       allowFulfilmentPrintTemplateDialogDisplayed: true,
       printTemplateToAllow: "",
       printTemplateValidationError: false,
+      allowPrintTemplateError: "",
     });
   };
 
@@ -188,9 +191,8 @@ class SurveyDetails extends Component {
     }
 
     const newAllowPrintTemplate = {
-      id: uuidv4(),
-      survey: "/surveys/" + this.props.surveyId,
-      printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
+      surveyId: this.props.surveyId,
+      packCode: this.state.printTemplateToAllow,
     };
 
     const response = await fetch("/api/actionRuleSurveyPrintTemplates", {
@@ -201,6 +203,11 @@ class SurveyDetails extends Component {
 
     if (response.ok) {
       this.setState({ allowActionRulePrintTemplateDialogDisplayed: false });
+    } else {
+      const errorMessage = await response.text();
+      this.setState({
+        allowPrintTemplateError: errorMessage,
+      });
     }
   };
 
@@ -214,9 +221,8 @@ class SurveyDetails extends Component {
     }
 
     const newAllowPrintTemplate = {
-      id: uuidv4(),
-      survey: "/surveys/" + this.props.surveyId,
-      printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
+      surveyId: this.props.surveyId,
+      packCode: this.state.printTemplateToAllow,
     };
 
     const response = await fetch("/api/fulfilmentSurveyPrintTemplates", {
@@ -227,6 +233,11 @@ class SurveyDetails extends Component {
 
     if (response.ok) {
       this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false });
+    } else {
+      const errorMessage = await response.text();
+      this.setState({
+        allowPrintTemplateError: errorMessage,
+      });
     }
   };
 
@@ -425,6 +436,13 @@ class SurveyDetails extends Component {
                   </Select>
                 </FormControl>
               </div>
+              {this.state.allowPrintTemplateError && (
+                <div>
+                  <p style={{ color: "red" }}>
+                    {this.state.allowPrintTemplateError}
+                  </p>
+                </div>
+              )}
               <div style={{ marginTop: 10 }}>
                 <Button
                   onClick={this.onAllowActionRulePrintTemplate}
@@ -459,6 +477,13 @@ class SurveyDetails extends Component {
                   </Select>
                 </FormControl>
               </div>
+              {this.state.allowPrintTemplateError && (
+                <div>
+                  <p style={{ color: "red" }}>
+                    {this.state.allowPrintTemplateError}
+                  </p>
+                </div>
+              )}
               <div style={{ marginTop: 10 }}>
                 <Button
                   onClick={this.onAllowFulfilmentPrintTemplate}
