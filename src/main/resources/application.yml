@@ -66,10 +66,10 @@ printsupplierconfig: '{"SUPPLIER_A":{"sftpDirectory":"foo","encryptionKeyFilenam
 
 queueconfig:
   sample-topic: rm-internal-sample
-  fulfilment-topic: event_paper-fulfilment
+  print-fulfilment-topic: event_print-fulfilment
   deactivate-uac-topic: event_deactivate-uac
   refusal-event-topic: event_refusal
-  invalid-address-event-topic: event_invalid
+  invalid-case-event-topic: event_invalid-case
   update-sample-sensitive-topic: event_update-sample-sensitive
   publishtimeout: 30  # In seconds
 
