@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.DeactivateUacDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventTypeDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.ResponseManagementEvent;
 import uk.gov.ons.ssdc.supporttool.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.supporttool.model.repository.UacQidLinkRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
@@ -56,17 +55,17 @@ public class DeactivateUacEndpoint {
         uacQidLinkOpt.get().getCaze().getCollectionExercise().getSurvey(),
         CREATE_PRINT_TEMPLATE);
 
-    ResponseManagementEvent rme = new ResponseManagementEvent();
+    EventDTO event = new EventDTO();
 
-    EventDTO event = EventHelper.createEventDTO(EventTypeDTO.DEACTIVATE_UAC, userEmail);
-    rme.setEvent(event);
+    EventHeaderDTO header = EventHelper.createEventDTO(deactivateUacTopic, userEmail);
+    event.setHeader(header);
 
     PayloadDTO payload = new PayloadDTO();
     DeactivateUacDTO deactivateUac = new DeactivateUacDTO();
     deactivateUac.setQid(qid);
     payload.setDeactivateUac(deactivateUac);
-    rme.setPayload(payload);
+    event.setPayload(payload);
 
-    pubSubTemplate.publish(deactivateUacTopic, rme);
+    pubSubTemplate.publish(deactivateUacTopic, event);
   }
 }
