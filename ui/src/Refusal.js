@@ -8,14 +8,11 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
 } from "@material-ui/core";
 
 class Refusal extends Component {
   state = {
     type: "",
-    agentId: "",
-    callId: "",
     typeValidationError: false,
     showDialog: false,
   };
@@ -29,8 +26,6 @@ class Refusal extends Component {
   closeDialog = () => {
     this.setState({
       type: "",
-      agentId: "",
-      callId: "",
       typeValidationError: false,
       showDialog: false,
     });
@@ -43,18 +38,6 @@ class Refusal extends Component {
     });
   };
 
-  onAgentIdChange = (event) => {
-    this.setState({
-      agentId: event.target.value,
-    });
-  };
-
-  onCallIdChange = (event) => {
-    this.setState({
-      callId: event.target.value,
-    });
-  };
-
   onCreate = async () => {
     if (!this.state.type) {
       this.setState({ typeValidationError: true });
@@ -64,8 +47,6 @@ class Refusal extends Component {
 
     const newRefusal = {
       type: this.state.type,
-      agentId: this.state.agentId,
-      callId: this.state.callId,
     };
 
     const response = await fetch(
@@ -104,20 +85,6 @@ class Refusal extends Component {
                   <MenuItem value={"HARD_REFUSAL"}>HARD REFUSAL</MenuItem>
                 </Select>
               </FormControl>
-              <TextField
-                fullWidth={true}
-                style={{ marginTop: 20 }}
-                label="Agent ID"
-                onChange={this.onAgentIdChange}
-                value={this.state.agentId}
-              />
-              <TextField
-                fullWidth={true}
-                style={{ marginTop: 20 }}
-                label="Call ID"
-                onChange={this.onCallIdChange}
-                value={this.state.callId}
-              />
             </div>
             <div style={{ marginTop: 20 }}>
               <Button
