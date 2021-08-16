@@ -55,17 +55,17 @@ public class DeactivateUacEndpoint {
         uacQidLinkOpt.get().getCaze().getCollectionExercise().getSurvey(),
         CREATE_PRINT_TEMPLATE);
 
-    EventDTO rme = new EventDTO();
+    EventDTO event = new EventDTO();
 
-    EventHeaderDTO event = EventHelper.createEventDTO(deactivateUacTopic, userEmail);
-    rme.setHeader(event);
+    EventHeaderDTO header = EventHelper.createEventDTO(deactivateUacTopic, userEmail);
+    event.setHeader(header);
 
     PayloadDTO payload = new PayloadDTO();
     DeactivateUacDTO deactivateUac = new DeactivateUacDTO();
     deactivateUac.setQid(qid);
     payload.setDeactivateUac(deactivateUac);
-    rme.setPayload(payload);
+    event.setPayload(payload);
 
-    pubSubTemplate.publish(deactivateUacTopic, rme);
+    pubSubTemplate.publish(deactivateUacTopic, event);
   }
 }
