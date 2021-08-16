@@ -57,10 +57,8 @@ public class CaseService {
     collectionCase.setCaseId(caze.getId());
 
     RefusalDTO refusalDTO = new RefusalDTO();
-    refusalDTO.setCollectionCase(collectionCase);
+    refusalDTO.setCaseId(caze.getId());
     refusalDTO.setType(refusal.getType());
-    refusalDTO.setAgentId(refusal.getAgentId());
-    refusalDTO.setCallId(refusal.getCallId());
 
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setRefusal(refusalDTO);

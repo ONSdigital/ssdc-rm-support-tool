@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class InvalidCaseDTO {
-  private String reason;
   private UUID caseId;
+  private String reason;
 }
