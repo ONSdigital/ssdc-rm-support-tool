@@ -2,10 +2,9 @@ import React, { Component } from "react";
 import "@fontsource/roboto";
 import { Button, Dialog, DialogContent, TextField } from "@material-ui/core";
 
-class InvalidAddress extends Component {
+class InvalidCase extends Component {
   state = {
     reason: "",
-    notes: "",
     reasonValidationError: false,
     showDialog: false,
   };
@@ -19,7 +18,6 @@ class InvalidAddress extends Component {
   closeDialog = () => {
     this.setState({
       reason: "",
-      notes: "",
       reasonValidationError: false,
       showDialog: false,
     });
@@ -32,12 +30,6 @@ class InvalidAddress extends Component {
     });
   };
 
-  onNotesChange = (event) => {
-    this.setState({
-      notes: event.target.value,
-    });
-  };
-
   onCreate = async () => {
     if (!this.state.reason) {
       this.setState({ reasonValidationError: true });
@@ -45,17 +37,16 @@ class InvalidAddress extends Component {
       return;
     }
 
-    const invalidAddress = {
+    const invalidCase = {
       reason: this.state.reason,
-      notes: this.state.notes,
     };
 
     const response = await fetch(
-      `/api/cases/${this.props.caseId}/action/invalid-address`,
+      `/api/cases/${this.props.caseId}/action/invalid-case`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(invalidAddress),
+        body: JSON.stringify(invalidCase),
       }
     );
 
@@ -86,13 +77,6 @@ class InvalidAddress extends Component {
                 error={this.state.reasonValidationError}
                 value={this.state.reason}
               />
-              <TextField
-                fullWidth={true}
-                style={{ marginTop: 20 }}
-                label="Notes"
-                onChange={this.onNotesChange}
-                value={this.state.notes}
-              />
             </div>
             <div style={{ marginTop: 10 }}>
               <Button
@@ -117,4 +101,4 @@ class InvalidAddress extends Component {
   }
 }
 
-export default InvalidAddress;
+export default InvalidCase;

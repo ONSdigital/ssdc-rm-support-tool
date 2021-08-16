@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
-import uk.gov.ons.ssdc.supporttool.model.dto.ui.Fulfilment;
-import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidAddress;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
@@ -106,10 +106,10 @@ public class CaseEndpoint {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PostMapping(value = "/{caseId}/action/fulfilment")
-  public ResponseEntity<?> handleFulfilment(
+  @PostMapping(value = "/{caseId}/action/print-fulfilment")
+  public ResponseEntity<?> handlePrintFulfilment(
       @PathVariable("caseId") UUID caseId,
-      @RequestBody Fulfilment fulfilment,
+      @RequestBody PrintFulfilment printFulfilment,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
     Case caze = caseService.getCaseByCaseId(caseId);
@@ -118,17 +118,17 @@ public class CaseEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         caze.getCollectionExercise().getSurvey(),
-        UserGroupAuthorisedActivityType.CREATE_CASE_FULFILMENT);
+        UserGroupAuthorisedActivityType.CREATE_CASE_PRINT_FULFILMENT);
 
-    caseService.buildAndSendFulfilmentCaseEvent(fulfilment, caze, userEmail);
+    caseService.buildAndSendPrintFulfilmentCaseEvent(printFulfilment, caze, userEmail);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PostMapping(value = "/{caseId}/action/invalid-address")
-  public ResponseEntity<?> handleInvalidAddress(
+  @PostMapping(value = "/{caseId}/action/invalid-case")
+  public ResponseEntity<?> handleInvalidCase(
       @PathVariable("caseId") UUID caseId,
-      @RequestBody InvalidAddress invalidAddress,
+      @RequestBody InvalidCase invalidCase,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
     Case caze = caseService.getCaseByCaseId(caseId);
@@ -137,9 +137,9 @@ public class CaseEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         caze.getCollectionExercise().getSurvey(),
-        UserGroupAuthorisedActivityType.CREATE_CASE_INVALID_ADDRESS);
+        UserGroupAuthorisedActivityType.CREATE_CASE_INVALID_CASE);
 
-    caseService.buildAndSendInvalidAddressCaseEvent(invalidAddress, caze, userEmail);
+    caseService.buildAndSendInvalidAddressCaseEvent(invalidCase, caze, userEmail);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
