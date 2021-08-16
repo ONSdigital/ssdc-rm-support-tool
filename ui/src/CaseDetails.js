@@ -82,13 +82,13 @@ class CaseDetails extends Component {
     const caseEvents = this.state.events.map((event, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
-          {event.eventDate}
+          {event.dateTime}
         </TableCell>
         <TableCell component="th" scope="row">
-          {event.eventDescription}
+          {event.description}
         </TableCell>
         <TableCell component="th" scope="row">
-          {event.eventSource}
+          {event.source}
         </TableCell>
       </TableRow>
     ));
