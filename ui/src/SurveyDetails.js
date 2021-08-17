@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 class SurveyDetails extends Component {
   state = {
     authorisedActivities: [],
+    surveyName: "",
     collectionExercises: [],
     createCollectionExerciseDialogDisplayed: false,
     validationError: false,
@@ -46,6 +47,7 @@ class SurveyDetails extends Component {
 
   componentDidMount() {
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend();
 
     this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
@@ -66,6 +68,14 @@ class SurveyDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+  };
+
+  getSurveyName = async () => {
+    const response = await fetch(`/api/surveys/${this.props.surveyId}`);
+
+    const surveyJson = await response.json();
+
+    this.setState({ surveyName: surveyJson.name });
   };
 
   refreshDataFromBackend = async () => {
@@ -308,7 +318,7 @@ class SurveyDetails extends Component {
       <div style={{ padding: 20 }}>
         <Link to="/">← Back to home</Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Survey Details
+          Survey: {this.state.surveyName}
         </Typography>
         {this.state.authorisedActivities.includes("SEARCH_CASES") && (
           <div style={{ marginBottom: 20 }}>
