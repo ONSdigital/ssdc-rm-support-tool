@@ -1,12 +1,16 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
 import uk.gov.ons.ssdc.supporttool.model.entity.Job;
+import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
 public class SampleColumnHelper {
   public static String[] getExpectedColumns(Job job) {
-    ColumnValidator[] sampleValidationRules =
-        job.getCollectionExercise().getSurvey().getSampleValidationRules();
+    return getExpectedColumns(job.getCollectionExercise().getSurvey());
+  }
+
+  public static String[] getExpectedColumns(Survey survey) {
+    ColumnValidator[] sampleValidationRules = survey.getSampleValidationRules();
 
     String[] expectedColumns = new String[sampleValidationRules.length];
 

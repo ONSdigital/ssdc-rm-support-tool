@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 class SurveyDetails extends Component {
   state = {
     authorisedActivities: [],
+    surveyName: "",
     collectionExercises: [],
     createCollectionExerciseDialogDisplayed: false,
     validationError: false,
@@ -41,10 +42,12 @@ class SurveyDetails extends Component {
     allowableFulfilmentPrintTemplates: [],
     printTemplateToAllow: "",
     printTemplateValidationError: false,
+    allowPrintTemplateError: "",
   };
 
   componentDidMount() {
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend();
 
     this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
@@ -65,6 +68,14 @@ class SurveyDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+  };
+
+  getSurveyName = async () => {
+    const response = await fetch(`/api/surveys/${this.props.surveyId}`);
+
+    const surveyJson = await response.json();
+
+    this.setState({ surveyName: surveyJson.name });
   };
 
   refreshDataFromBackend = async () => {
@@ -167,6 +178,7 @@ class SurveyDetails extends Component {
       allowActionRulePrintTemplateDialogDisplayed: true,
       printTemplateToAllow: "",
       printTemplateValidationError: false,
+      allowPrintTemplateError: "",
     });
   };
 
@@ -175,6 +187,7 @@ class SurveyDetails extends Component {
       allowFulfilmentPrintTemplateDialogDisplayed: true,
       printTemplateToAllow: "",
       printTemplateValidationError: false,
+      allowPrintTemplateError: "",
     });
   };
 
@@ -188,9 +201,8 @@ class SurveyDetails extends Component {
     }
 
     const newAllowPrintTemplate = {
-      id: uuidv4(),
-      survey: "/surveys/" + this.props.surveyId,
-      printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
+      surveyId: this.props.surveyId,
+      packCode: this.state.printTemplateToAllow,
     };
 
     const response = await fetch("/api/actionRuleSurveyPrintTemplates", {
@@ -201,6 +213,11 @@ class SurveyDetails extends Component {
 
     if (response.ok) {
       this.setState({ allowActionRulePrintTemplateDialogDisplayed: false });
+    } else {
+      const errorMessage = await response.text();
+      this.setState({
+        allowPrintTemplateError: errorMessage,
+      });
     }
   };
 
@@ -214,9 +231,8 @@ class SurveyDetails extends Component {
     }
 
     const newAllowPrintTemplate = {
-      id: uuidv4(),
-      survey: "/surveys/" + this.props.surveyId,
-      printTemplate: "/printTemplates/" + this.state.printTemplateToAllow,
+      surveyId: this.props.surveyId,
+      packCode: this.state.printTemplateToAllow,
     };
 
     const response = await fetch("/api/fulfilmentSurveyPrintTemplates", {
@@ -227,6 +243,11 @@ class SurveyDetails extends Component {
 
     if (response.ok) {
       this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false });
+    } else {
+      const errorMessage = await response.text();
+      this.setState({
+        allowPrintTemplateError: errorMessage,
+      });
     }
   };
 
@@ -297,7 +318,7 @@ class SurveyDetails extends Component {
       <div style={{ padding: 20 }}>
         <Link to="/">← Back to home</Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Survey Details
+          Survey: {this.state.surveyName}
         </Typography>
         {this.state.authorisedActivities.includes("SEARCH_CASES") && (
           <div style={{ marginBottom: 20 }}>
@@ -425,6 +446,13 @@ class SurveyDetails extends Component {
                   </Select>
                 </FormControl>
               </div>
+              {this.state.allowPrintTemplateError && (
+                <div>
+                  <p style={{ color: "red" }}>
+                    {this.state.allowPrintTemplateError}
+                  </p>
+                </div>
+              )}
               <div style={{ marginTop: 10 }}>
                 <Button
                   onClick={this.onAllowActionRulePrintTemplate}
@@ -459,6 +487,13 @@ class SurveyDetails extends Component {
                   </Select>
                 </FormControl>
               </div>
+              {this.state.allowPrintTemplateError && (
+                <div>
+                  <p style={{ color: "red" }}>
+                    {this.state.allowPrintTemplateError}
+                  </p>
+                </div>
+              )}
               <div style={{ marginTop: 10 }}>
                 <Button
                   onClick={this.onAllowFulfilmentPrintTemplate}

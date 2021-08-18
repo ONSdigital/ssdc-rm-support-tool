@@ -306,26 +306,9 @@ class LandingPage extends Component {
     } else {
       try {
         const parsedJson = JSON.parse(this.state.template);
-        if (!Array.isArray(parsedJson)) {
+        if (!Array.isArray(parsedJson) || parsedJson.length === 0) {
           this.setState({ templateValidationError: true });
           failedValidation = true;
-        } else {
-          const validTemplateItems = [
-            "ADDRESS_LINE1",
-            "ADDRESS_LINE2",
-            "ADDRESS_LINE3",
-            "TOWN_NAME",
-            "POSTCODE",
-            "__uac__",
-            "__qid__",
-            "__caseref__",
-          ];
-          parsedJson.forEach((item) => {
-            if (!validTemplateItems.includes(item)) {
-              this.setState({ templateValidationError: true });
-              failedValidation = true;
-            }
-          });
         }
       } catch (err) {
         this.setState({ templateValidationError: true });
