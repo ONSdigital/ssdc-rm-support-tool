@@ -3,6 +3,7 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
 
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class DeactivateUacEndpoint {
   public DeactivateUacEndpoint(
       UserIdentity userIdentity,
       UacQidLinkRepository qidLinkRepository,
-      PubSubTemplate pubSubTemplate) {
+      @Qualifier("sharedProjectPubSubTemplate") PubSubTemplate pubSubTemplate) {
     this.userIdentity = userIdentity;
     this.qidLinkRepository = qidLinkRepository;
     this.pubSubTemplate = pubSubTemplate;

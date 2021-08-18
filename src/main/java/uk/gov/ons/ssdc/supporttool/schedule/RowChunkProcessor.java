@@ -5,6 +5,7 @@ import com.godaddy.logging.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,9 @@ public class RowChunkProcessor {
   @Value("${queueconfig.sample-topic}")
   private String sampleTopic;
 
-  public RowChunkProcessor(JobRowRepository jobRowRepository, PubSubTemplate pubSubTemplate) {
+  public RowChunkProcessor(
+      JobRowRepository jobRowRepository,
+      @Qualifier("ourProjectPubSubTemplate") PubSubTemplate pubSubTemplate) {
     this.jobRowRepository = jobRowRepository;
     this.pubSubTemplate = pubSubTemplate;
   }
