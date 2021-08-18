@@ -37,6 +37,11 @@ spring:
           lob:
             non_contextual_creation: true
 
+  cloud:
+    gcp:
+      pubsub:
+        emulator-host: false
+
   task:
     scheduling:
       pool:
