@@ -2,6 +2,7 @@ package uk.gov.ons.ssdc.supporttool.service;
 
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,9 @@ public class CaseService {
   @Value("${queueconfig.update-sample-sensitive-topic}")
   private String updateSampleSenstiveTopic;
 
-  public CaseService(CaseRepository caseRepository, PubSubTemplate pubSubTemplate) {
+  public CaseService(
+      CaseRepository caseRepository,
+      @Qualifier("sharedProjectPubSubTemplate") PubSubTemplate pubSubTemplate) {
     this.caseRepository = caseRepository;
     this.pubSubTemplate = pubSubTemplate;
   }
