@@ -1,8 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.service;
 
+import static org.springframework.cloud.gcp.pubsub.support.PubSubTopicUtils.toProjectTopicName;
+
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Service;
@@ -39,9 +40,10 @@ public class CaseService {
   @Value("${queueconfig.update-sample-sensitive-topic}")
   private String updateSampleSenstiveTopic;
 
-  public CaseService(
-      CaseRepository caseRepository,
-      @Qualifier("sharedProjectPubSubTemplate") PubSubTemplate pubSubTemplate) {
+  @Value("${queueconfig.shared-pubsub-project}")
+  private String sharedPubsubProject;
+
+  public CaseService(CaseRepository caseRepository, PubSubTemplate pubSubTemplate) {
     this.caseRepository = caseRepository;
     this.pubSubTemplate = pubSubTemplate;
   }
@@ -72,7 +74,8 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(refusalEventTopic, event);
+    String topic = toProjectTopicName(refusalEventTopic, sharedPubsubProject).toString();
+    pubSubTemplate.publish(topic, event);
   }
 
   public void buildAndSendUpdateSensitiveSampleEvent(
@@ -86,7 +89,8 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(updateSampleSenstiveTopic, event);
+    String topic = toProjectTopicName(updateSampleSenstiveTopic, sharedPubsubProject).toString();
+    pubSubTemplate.publish(topic, event);
   }
 
   public void buildAndSendInvalidAddressCaseEvent(
@@ -104,7 +108,8 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(invalidCaseEventTopic, event);
+    String topic = toProjectTopicName(invalidCaseEventTopic, sharedPubsubProject).toString();
+    pubSubTemplate.publish(topic, event);
   }
 
   public void buildAndSendPrintFulfilmentCaseEvent(
@@ -123,6 +128,7 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    pubSubTemplate.publish(printFulfilmentTopic, event);
+    String topic = toProjectTopicName(printFulfilmentTopic, sharedPubsubProject).toString();
+    pubSubTemplate.publish(topic, event);
   }
 }

@@ -1,9 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import static org.springframework.cloud.gcp.pubsub.support.PubSubTopicUtils.toProjectTopicName;
 import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
 
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.http.HttpStatus;
@@ -32,10 +32,13 @@ public class DeactivateUacEndpoint {
   @Value("${queueconfig.deactivate-uac-topic}")
   private String deactivateUacTopic;
 
+  @Value("${queueconfig.shared-pubsub-project}")
+  private String sharedPubsubProject;
+
   public DeactivateUacEndpoint(
       UserIdentity userIdentity,
       UacQidLinkRepository qidLinkRepository,
-      @Qualifier("sharedProjectPubSubTemplate") PubSubTemplate pubSubTemplate) {
+      PubSubTemplate pubSubTemplate) {
     this.userIdentity = userIdentity;
     this.qidLinkRepository = qidLinkRepository;
     this.pubSubTemplate = pubSubTemplate;
@@ -67,6 +70,7 @@ public class DeactivateUacEndpoint {
     payload.setDeactivateUac(deactivateUac);
     event.setPayload(payload);
 
-    pubSubTemplate.publish(deactivateUacTopic, event);
+    String topic = toProjectTopicName(deactivateUacTopic, sharedPubsubProject).toString();
+    pubSubTemplate.publish(topic, event);
   }
 }
