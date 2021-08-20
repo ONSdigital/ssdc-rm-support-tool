@@ -40,7 +40,7 @@ spring:
     gcp:
       pubsub:
         emulator-host: localhost:8538
-        project-id: our-projeect
+        project-id: our-project
 
   task:
     scheduling:

@@ -1,18 +1,33 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Paper } from "@material-ui/core";
+import {
+  Typography,
+  Paper,
+  Button,
+  Dialog,
+  DialogContent,
+  TextField,
+} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { uuidv4 } from "./common";
 
 class UserAdmin extends Component {
   state = {
     authorisedActivities: [],
+    isLoading: true,
     users: [],
     groups: [],
+    showUserDialog: false,
+    email: "",
+    emailValidationError: false,
+    showGroupDialog: false,
+    groupName: "",
+    groupNameValidationError: false,
   };
 
   componentDidMount() {
@@ -32,9 +47,9 @@ class UserAdmin extends Component {
   };
 
   getUsers = async () => {
-    const authResponse = await fetch("/api/users");
+    const usersResponse = await fetch("/api/users");
 
-    const usersJson = await authResponse.json();
+    const usersJson = await usersResponse.json();
 
     this.setState({
       users: usersJson._embedded.users,
@@ -42,9 +57,9 @@ class UserAdmin extends Component {
   };
 
   getGroups = async () => {
-    const authResponse = await fetch("/api/userGroups");
+    const groupsResponse = await fetch("/api/userGroups");
 
-    const groupsJson = await authResponse.json();
+    const groupsJson = await groupsResponse.json();
 
     this.setState({
       groups: groupsJson._embedded.userGroups,
@@ -62,7 +77,88 @@ class UserAdmin extends Component {
     const authorisedActivities = await authResponse.json();
     this.setState({
       authorisedActivities: authorisedActivities,
+      isLoading: false,
     });
+  };
+
+  openCreateUserDialog = () => {
+    this.setState({
+      email: "",
+      emailValidationError: false,
+      showUserDialog: true,
+    });
+  };
+
+  closeUserDialog = () => {
+    this.setState({
+      showUserDialog: false,
+    });
+  };
+
+  onEmailChange = (event) => {
+    this.setState({
+      email: event.target.value,
+    });
+  };
+
+  onCreateUser = async () => {
+    if (!this.state.email.trim()) {
+      this.setState({ emailValidationError: true });
+      return;
+    }
+
+    const newUser = {
+      id: uuidv4(),
+      email: this.state.email,
+    };
+
+    await fetch("/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newUser),
+    });
+
+    this.setState({ showUserDialog: false });
+  };
+
+  openCreateGroupDialog = () => {
+    this.setState({
+      groupName: "",
+      groupNameValidationError: false,
+      showGroupDialog: true,
+    });
+  };
+
+  closeGroupDialog = () => {
+    this.setState({
+      showGroupDialog: false,
+    });
+  };
+
+  onGroupNameChange = (event) => {
+    this.setState({
+      groupName: event.target.value,
+    });
+  };
+
+  onCreateGroup = async () => {
+    if (!this.state.groupName.trim()) {
+      this.setState({ groupNameValidationError: true });
+      return;
+    }
+
+    const newGroup = {
+      id: uuidv4(),
+      name: this.state.groupName,
+    };
+
+    await fetch("/api/userGroups", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newGroup),
+    });
+
+    this.setState({ showGroupDialog: false });
   };
 
   render() {
@@ -72,7 +168,7 @@ class UserAdmin extends Component {
       return (
         <TableRow key={user.email}>
           <TableCell component="th" scope="row">
-            <Link to={`/misterFlibbles`}>{user.email}</Link>
+            <Link to={`/userDetails?userId=${userId}`}>{user.email}</Link>
           </TableCell>
         </TableRow>
       );
@@ -84,7 +180,7 @@ class UserAdmin extends Component {
       return (
         <TableRow key={groupId}>
           <TableCell component="th" scope="row">
-            <Link to={`/misterFlibbles`}>{group.name}</Link>
+            <Link to={`/groupDetails?groupId=${groupId}`}>{group.name}</Link>
           </TableCell>
         </TableRow>
       );
@@ -93,13 +189,23 @@ class UserAdmin extends Component {
     return (
       <div style={{ padding: 20 }}>
         <Link to="/">← Back to home</Link>
-        <h1>User Admin</h1>
-        {!this.state.authorisedActivities.includes("SUPER_USER") && (
-          <h1 style={{ color: "red" }}>YOU ARE NOT AUTHORISED</h1>
-        )}
+        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
+          User Admin
+        </Typography>
+        {!this.state.authorisedActivities.includes("SUPER_USER") &&
+          !this.state.isLoading && (
+            <h1 style={{ color: "red" }}>YOU ARE NOT AUTHORISED</h1>
+          )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
             <>
+              <Button
+                variant="contained"
+                onClick={this.openCreateUserDialog}
+                style={{ marginTop: 20 }}
+              >
+                Create User
+              </Button>
               <TableContainer component={Paper} style={{ marginTop: 20 }}>
                 <Table>
                   <TableHead>
@@ -112,6 +218,13 @@ class UserAdmin extends Component {
               </TableContainer>
             </>
             <>
+              <Button
+                variant="contained"
+                onClick={this.openCreateGroupDialog}
+                style={{ marginTop: 20 }}
+              >
+                Create Group
+              </Button>
               <TableContainer component={Paper} style={{ marginTop: 20 }}>
                 <Table>
                   <TableHead>
@@ -125,6 +238,70 @@ class UserAdmin extends Component {
             </>
           </>
         )}
+        <Dialog open={this.state.showUserDialog}>
+          <DialogContent
+            style={{ paddingLeft: 30, paddingRight: 30, paddingBottom: 10 }}
+          >
+            <div>
+              <TextField
+                required
+                fullWidth={true}
+                label="Email"
+                onChange={this.onEmailChange}
+                error={this.state.emailValidationError}
+                value={this.state.email}
+              />
+            </div>
+            <div style={{ marginTop: 10 }}>
+              <Button
+                onClick={this.onCreateUser}
+                variant="contained"
+                style={{ margin: 10 }}
+              >
+                Create User
+              </Button>
+              <Button
+                onClick={this.closeUserDialog}
+                variant="contained"
+                style={{ margin: 10 }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={this.state.showGroupDialog}>
+          <DialogContent
+            style={{ paddingLeft: 30, paddingRight: 30, paddingBottom: 10 }}
+          >
+            <div>
+              <TextField
+                required
+                fullWidth={true}
+                label="Group name"
+                onChange={this.onGroupNameChange}
+                error={this.state.groupNameValidationError}
+                value={this.state.groupName}
+              />
+            </div>
+            <div style={{ marginTop: 10 }}>
+              <Button
+                onClick={this.onCreateGroup}
+                variant="contained"
+                style={{ margin: 10 }}
+              >
+                Create Group
+              </Button>
+              <Button
+                onClick={this.closeGroupDialog}
+                variant="contained"
+                style={{ margin: 10 }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
