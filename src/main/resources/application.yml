@@ -36,6 +36,11 @@ spring:
           order_inserts: true
           lob:
             non_contextual_creation: true
+  cloud:
+    gcp:
+      pubsub:
+        emulator-host: localhost:8538
+        project-id: our-projeect
 
   task:
     scheduling:
@@ -56,6 +61,9 @@ management:
   endpoint:
     health:
       enabled: true
+  health:
+    pubsub:
+      enabled: false
 
 iapaudience: DUMMY
 

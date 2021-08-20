@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import uk.gov.ons.ssdc.supporttool.model.entity.User;
+import uk.gov.ons.ssdc.supporttool.model.entity.UserGroup;
 
 @RepositoryRestResource
-public interface UserRepository extends JpaRepository<User, UUID> {
-  Optional<User> findByEmail(String email);
+public interface UserGroupRepository extends JpaRepository<UserGroup, UUID> {
 }

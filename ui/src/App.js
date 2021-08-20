@@ -4,6 +4,7 @@ import LandingPage from "./LandingPage";
 import SurveyDetails from "./SurveyDetails";
 import CollectionExerciseDetails from "./CollectionExerciseDetails";
 import SurveyCaseSearch from "./SurveyCaseSearch";
+import UserAdmin from "./UserAdmin";
 import {
   BrowserRouter as Router,
   Switch,
@@ -57,6 +58,9 @@ function QueryRouting() {
           surveyId={query.get("surveyId")}
           collectionExerciseId={query.get("collexId")}
         />
+      </Route>
+      <Route path="/userAdmin">
+        <UserAdmin />
       </Route>
     </Switch>
   );
