@@ -72,7 +72,6 @@ queueconfig:
   invalid-case-event-topic: event_invalid-case
   update-sample-sensitive-topic: event_update-sample-sensitive
   publishtimeout: 30  # In seconds
-  our-pubsub-project: our-project
-  shared-pubsub-project: shared-project
+  shared-pubsub-project: REPLACEME
 
 file-upload-storage-path: /tmp/
