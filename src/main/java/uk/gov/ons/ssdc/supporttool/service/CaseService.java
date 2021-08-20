@@ -1,11 +1,11 @@
 package uk.gov.ons.ssdc.supporttool.service;
 
-import static org.springframework.cloud.gcp.pubsub.support.PubSubTopicUtils.toProjectTopicName;
+import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
 
+import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
