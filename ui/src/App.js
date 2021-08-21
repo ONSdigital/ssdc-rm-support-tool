@@ -6,6 +6,7 @@ import CollectionExerciseDetails from "./CollectionExerciseDetails";
 import SurveyCaseSearch from "./SurveyCaseSearch";
 import UserAdmin from "./UserAdmin";
 import UserDetails from "./UserDetails";
+import GroupDetails from "./GroupDetails";
 import {
   BrowserRouter as Router,
   Switch,
@@ -65,6 +66,9 @@ function QueryRouting() {
       </Route>
       <Route path="/userDetails">
         <UserDetails userId={query.get("userId")} />
+      </Route>
+      <Route path="/groupDetails">
+        <GroupDetails groupId={query.get("groupId")} />
       </Route>
     </Switch>
   );

@@ -1,6 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.Id;
