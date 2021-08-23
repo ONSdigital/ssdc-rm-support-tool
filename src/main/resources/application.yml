@@ -36,7 +36,6 @@ spring:
           order_inserts: true
           lob:
             non_contextual_creation: true
-
   task:
     scheduling:
       pool:
