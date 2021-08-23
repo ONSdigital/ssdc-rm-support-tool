@@ -56,6 +56,9 @@ management:
   endpoint:
     health:
       enabled: true
+  health:
+    pubsub:
+      enabled: false
 
 iapaudience: DUMMY
 
@@ -72,5 +75,6 @@ queueconfig:
   invalid-case-event-topic: event_invalid-case
   update-sample-sensitive-topic: event_update-sample-sensitive
   publishtimeout: 30  # In seconds
+  shared-pubsub-project: REPLACEME
 
 file-upload-storage-path: /tmp/
