@@ -172,7 +172,9 @@ class UserDetails extends Component {
         return (
           <TableRow key={memberOfGroup.groupId}>
             <TableCell component="th" scope="row">
-              <Link to={`/groupDetails?groupId=${memberOfGroup.groupId}`}>{memberOfGroup.name}</Link>
+              <Link to={`/groupDetails?groupId=${memberOfGroup.groupId}`}>
+                {memberOfGroup.name}
+              </Link>
             </TableCell>
           </TableRow>
         );
