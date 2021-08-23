@@ -31,7 +31,6 @@ class GroupDetails extends Component {
     activity: null,
     activityValidationError: false,
     surveyId: null,
-    surveyValidationError: false,
   };
 
   componentDidMount() {
@@ -148,7 +147,6 @@ class GroupDetails extends Component {
       activity: null,
       activityValidationError: false,
       surveyId: null,
-      surveyValidationError: false,
       showAllowDialog: true,
     });
   };
@@ -285,12 +283,11 @@ class GroupDetails extends Component {
                       {activityMenuItems}
                     </Select>
                   </FormControl>
-                  <FormControl required fullWidth={true}>
+                  <FormControl fullWidth={true}>
                     <InputLabel>Survey</InputLabel>
                     <Select
                       onChange={this.onSurveyChange}
                       value={this.state.surveyId}
-                      error={this.state.surveyValidationError}
                     >
                       {surveyMenuItems}
                     </Select>
