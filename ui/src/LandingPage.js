@@ -423,6 +423,11 @@ class LandingPage extends Component {
             Configure fulfilment trigger
           </Button>
         </div>
+        {this.state.authorisedActivities.includes("SUPER_USER") && (
+          <div style={{ marginTop: 20 }}>
+            <Link to="/userAdmin">User and Groups Admin</Link>
+          </div>
+        )}
         <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>
