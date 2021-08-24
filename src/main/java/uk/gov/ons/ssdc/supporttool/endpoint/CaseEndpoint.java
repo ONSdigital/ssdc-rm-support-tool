@@ -14,10 +14,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import uk.gov.ons.ssdc.supporttool.client.NotifyServiceClient;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
+import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestHeaderDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestPayloadDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.rest.SmsFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsFulfilmentAction;
 import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
@@ -28,11 +34,14 @@ import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 @RequestMapping(value = "/api/cases")
 public class CaseEndpoint {
 
+  private final NotifyServiceClient notifyServiceClient;
   private final CaseService caseService;
   private final UserIdentity userIdentity;
 
   @Autowired
-  public CaseEndpoint(UserIdentity userIdentity, CaseService caseService) {
+  public CaseEndpoint(
+      NotifyServiceClient notifyServiceClient, UserIdentity userIdentity, CaseService caseService) {
+    this.notifyServiceClient = notifyServiceClient;
     this.userIdentity = userIdentity;
     this.caseService = caseService;
   }
@@ -140,6 +149,42 @@ public class CaseEndpoint {
         UserGroupAuthorisedActivityType.CREATE_CASE_INVALID_CASE);
 
     caseService.buildAndSendInvalidAddressCaseEvent(invalidCase, caze, userEmail);
+
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping(value = "/{caseId}/action/sms-fulfilment")
+  public ResponseEntity<?> handlePrintFulfilment(
+      @PathVariable("caseId") UUID caseId,
+      @RequestBody SmsFulfilmentAction smsFulfilmentAction,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    Case caze = caseService.getCaseByCaseId(caseId);
+
+    // Check user is authorised to request a fulfilment on a case for this survey
+    userIdentity.checkUserPermission(
+        userEmail,
+        caze.getCollectionExercise().getSurvey(),
+        UserGroupAuthorisedActivityType.CREATE_CASE_SMS_FULFILMENT);
+
+    RequestDTO smsFulfilmentRequest = new RequestDTO();
+    RequestHeaderDTO header = new RequestHeaderDTO();
+    header.setSource("SUPPORT_TOOL");
+    header.setChannel("RM");
+    header.setCorrelationId(UUID.randomUUID());
+    header.setOriginatingUser(userEmail);
+
+    RequestPayloadDTO payload = new RequestPayloadDTO();
+    SmsFulfilment smsFulfilment = new SmsFulfilment();
+    smsFulfilment.setCaseId(caze.getId());
+    smsFulfilment.setPackCode(smsFulfilmentAction.getPackCode());
+    smsFulfilment.setPhoneNumber(smsFulfilment.getPhoneNumber());
+
+    smsFulfilmentRequest.setHeader(header);
+    payload.setSmsFulfilment(smsFulfilment);
+    smsFulfilmentRequest.setPayload(payload);
+
+    notifyServiceClient.requestSmsFulfilment(smsFulfilmentRequest);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
