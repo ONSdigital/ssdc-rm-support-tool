@@ -23,6 +23,8 @@ import {
   getActionRulePrintTemplates,
   getAllPrintTemplates,
   getFulfilmentPrintTemplates,
+  getSmsPrintTemplates,
+  getAllSmsTemplates
 } from "./Utils";
 import { Link } from "react-router-dom";
 
@@ -36,11 +38,15 @@ class SurveyDetails extends Component {
     newCollectionExerciseName: "",
     allowActionRulePrintTemplateDialogDisplayed: false,
     allowFulfilmentPrintTemplateDialogDisplayed: false,
+    allowSmsPrintTemplateDialogDisplayed: false,
     actionRulePrintTemplates: [],
     fulfilmentPrintTemplates: [],
+    smsPrintTemplates: [],
     allowableActionRulePrintTemplates: [],
     allowableFulfilmentPrintTemplates: [],
+    allowableSmsPrintTemplates: [],
     printTemplateToAllow: "",
+    smsTemplateToAllow: "",
     printTemplateValidationError: false,
     allowPrintTemplateError: "",
   };
@@ -86,6 +92,12 @@ class SurveyDetails extends Component {
         return templates;
       }
     );
+    const allSmsFulfilmentTemplates = await getAllSmsTemplates().then(
+        (templates) => {
+          return templates;
+        }
+    );
+
 
     const actionRulePrintTemplates = await getActionRulePrintTemplates(
       this.props.surveyId
@@ -98,9 +110,15 @@ class SurveyDetails extends Component {
     ).then((fulfilmentTemplates) => {
       return fulfilmentTemplates;
     });
+    const smsPrintTemplates = await getSmsPrintTemplates(
+        this.props.surveyId
+    ).then((smsTemplates) => {
+      return smsTemplates;
+    });
 
     let allowableActionRulePrintTemplates = [];
     let allowableFulfilmentPrintTemplates = [];
+    let allowableSmsPrintTemplates = [];
     allPrintFulfilmentTemplates.forEach((packCode) => {
       if (!actionRulePrintTemplates.includes(packCode)) {
         allowableActionRulePrintTemplates.push(packCode);
@@ -110,12 +128,19 @@ class SurveyDetails extends Component {
         allowableFulfilmentPrintTemplates.push(packCode);
       }
     });
+    allSmsFulfilmentTemplates.forEach((packCode) => {
+      if (!smsPrintTemplates.includes(packCode)) {
+        allowableSmsPrintTemplates.push(packCode);
+      }
+    })
 
     this.setState({
       actionRulePrintTemplates: actionRulePrintTemplates,
       fulfilmentPrintTemplates: fulfilmentPrintTemplates,
+      smsPrintTemplates: smsPrintTemplates,
       allowableActionRulePrintTemplates: allowableActionRulePrintTemplates,
       allowableFulfilmentPrintTemplates: allowableFulfilmentPrintTemplates,
+      allowableSmsPrintTemplates: allowableSmsPrintTemplates,
     });
   };
 
@@ -190,7 +215,14 @@ class SurveyDetails extends Component {
       allowPrintTemplateError: "",
     });
   };
-
+  openSmsPrintTemplateDialog = () => {
+    this.setState({
+      allowSmsPrintTemplateDialogDisplayed: true,
+      smsTemplateToAllow: "",
+      printTemplateValidationError: false,
+      allowPrintTemplateError: "",
+    });
+  };
   onAllowActionRulePrintTemplate = async () => {
     if (!this.state.printTemplateToAllow) {
       this.setState({
@@ -250,6 +282,36 @@ class SurveyDetails extends Component {
       });
     }
   };
+  onAllowSmsPrintTemplate = async () => {
+    if (!this.state.smsTemplateToAllow) {
+      this.setState({
+        printTemplateValidationError: true,
+      });
+
+      return;
+    }
+
+    const newAllowSmsTemplate = {
+      id: uuidv4(),
+      survey: "surveys/" +this.props.surveyId,
+      smsTemplate: "smsTemplates/" + this.state.smsTemplateToAllow,
+    };
+
+    const response = await fetch("/api/fulfilmentSurveySmsTemplates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newAllowSmsTemplate),
+    });
+
+    if (response.ok) {
+      this.setState({ allowSmsPrintTemplateDialogDisplayed: false });
+    } else {
+      const errorMessage = await response.text();
+      this.setState({
+        allowPrintTemplateError: errorMessage,
+      });
+    }
+  };
 
   closeAllowActionRulePrintTemplateDialog = () => {
     this.setState({ allowActionRulePrintTemplateDialogDisplayed: false });
@@ -258,9 +320,15 @@ class SurveyDetails extends Component {
   closeAllowFulfilmentPrintTemplateDialog = () => {
     this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false });
   };
+  closeAllowSmsPrintTemplateDialog = () => {
+    this.setState({ allowSmsPrintTemplateDialogDisplayed: false });
+  };
 
   onPrintTemplateChange = (event) => {
     this.setState({ printTemplateToAllow: event.target.value });
+  };
+  onSmsTemplateChange = (event) => {
+    this.setState({ smsTemplateToAllow: event.target.value });
   };
 
   render() {
@@ -299,7 +367,14 @@ class SurveyDetails extends Component {
           </TableCell>
         </TableRow>
       ));
-
+    const smsPrintTemplateTableRows =
+        this.state.smsPrintTemplates.map((printTemplate) => (
+            <TableRow key={printTemplate}>
+              <TableCell component="th" scope="row">
+                {printTemplate}
+              </TableCell>
+            </TableRow>
+        ));
     const actionRulePrintTemplateMenuItems =
       this.state.allowableActionRulePrintTemplates.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
@@ -313,6 +388,12 @@ class SurveyDetails extends Component {
           {packCode}
         </MenuItem>
       ));
+    const smsPrintTemplateMenuItems =
+        this.state.allowableSmsPrintTemplates.map((packCode) => (
+            <MenuItem key={packCode} value={packCode}>
+              {packCode}
+            </MenuItem>
+        ));
 
     return (
       <div style={{ padding: 20 }}>
@@ -397,6 +478,31 @@ class SurveyDetails extends Component {
               <TableBody>{fulfilmentPrintTemplateTableRows}</TableBody>
             </Table>
           </TableContainer>
+        )}
+        {this.state.authorisedActivities.includes(
+            "ALLOW_SMS_TEMPLATE_ON_FULFILMENT"
+        ) && (
+            <Button
+                variant="contained"
+                onClick={this.openSmsPrintTemplateDialog}
+                style={{ marginTop: 20 }}
+            >
+              Allow Print Template on SMS
+            </Button>
+        )}
+        {this.state.authorisedActivities.includes(
+            "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
+        ) && (
+            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{smsPrintTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
         )}
         <Dialog open={this.state.createCollectionExerciseDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
@@ -506,6 +612,47 @@ class SurveyDetails extends Component {
                   onClick={this.closeAllowFulfilmentPrintTemplateDialog}
                   variant="contained"
                   style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={this.state.allowSmsPrintTemplateDialogDisplayed}>
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <div>
+                <FormControl required fullWidth={true}>
+                  <InputLabel>SMS Template</InputLabel>
+                  <Select
+                      onChange={this.onSmsTemplateChange}
+                      value={this.state.smsTemplateToAllow}
+                      error={this.state.printTemplateValidationError}
+                  >
+                    {smsPrintTemplateMenuItems}
+                  </Select>
+                </FormControl>
+              </div>
+              {this.state.allowPrintTemplateError && (
+                  <div>
+                    <p style={{ color: "red" }}>
+                      {this.state.allowPrintTemplateError}
+                    </p>
+                  </div>
+              )}
+              <div style={{ marginTop: 10 }}>
+                <Button
+                    onClick={this.onAllowSmsPrintTemplate}
+                    variant="contained"
+                    style={{ margin: 10 }}
+                >
+                  Allow
+                </Button>
+                <Button
+                    onClick={this.closeAllowSmsPrintTemplateDialog}
+                    variant="contained"
+                    style={{ margin: 10 }}
                 >
                   Cancel
                 </Button>

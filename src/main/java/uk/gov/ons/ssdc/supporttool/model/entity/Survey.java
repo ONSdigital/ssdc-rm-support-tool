@@ -39,4 +39,7 @@ public class Survey {
 
   @OneToMany(mappedBy = "survey")
   private List<FulfilmentSurveyPrintTemplate> fulfilmentPrintTemplates;
+
+  @OneToMany(mappedBy = "survey")
+  private List<FulfilmentSurveySmsTemplate> smsTemplates;
 }
