@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.supporttool.client.NotifyServiceClient;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestDTO;
@@ -154,7 +156,7 @@ public class CaseEndpoint {
   }
 
   @PostMapping(value = "/{caseId}/action/sms-fulfilment")
-  public ResponseEntity<?> handlePrintFulfilment(
+  public void handleSmsFulfilment(
       @PathVariable("caseId") UUID caseId,
       @RequestBody SmsFulfilmentAction smsFulfilmentAction,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
@@ -184,8 +186,14 @@ public class CaseEndpoint {
     payload.setSmsFulfilment(smsFulfilment);
     smsFulfilmentRequest.setPayload(payload);
 
-    notifyServiceClient.requestSmsFulfilment(smsFulfilmentRequest);
+    requestSmsFulfiment(smsFulfilmentRequest);
+  }
 
-    return new ResponseEntity<>(HttpStatus.OK);
+  private void requestSmsFulfiment(RequestDTO smsFulfilmentRequest) {
+    try {
+      notifyServiceClient.requestSmsFulfilment(smsFulfilmentRequest);
+    } catch (HttpClientErrorException e) {
+      throw new ResponseStatusException(e.getStatusCode(), e.getResponseBodyAsString(), e);
+    }
   }
 }
