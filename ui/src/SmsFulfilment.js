@@ -9,7 +9,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSmsPrintTemplates } from "./Utils";
+import { getSmsFulfilmentTemplates } from "./Utils";
 
 class SmsFulfilment extends Component {
   state = {
@@ -48,7 +48,7 @@ class SmsFulfilment extends Component {
     });
   };
   refreshDataFromBackend = async () => {
-    const fulfilmentPrintTemplates = await getSmsPrintTemplates(
+    const fulfilmentPrintTemplates = await getSmsFulfilmentTemplates(
       this.props.surveyId
     ).then((smsTemplates) => {
       return smsTemplates;
@@ -95,7 +95,7 @@ class SmsFulfilment extends Component {
     }
     const data = await response.json();
     this.setState({
-      newValueValidationError: data.errors,
+      newValueValidationError: data.error,
       validationError: true,
     });
   };

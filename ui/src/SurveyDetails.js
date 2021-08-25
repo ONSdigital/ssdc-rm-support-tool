@@ -23,7 +23,7 @@ import {
   getActionRulePrintTemplates,
   getAllPrintTemplates,
   getFulfilmentPrintTemplates,
-  getSmsPrintTemplates,
+  getSmsFulfilmentTemplates,
   getAllSmsTemplates,
 } from "./Utils";
 import { Link } from "react-router-dom";
@@ -109,7 +109,7 @@ class SurveyDetails extends Component {
     ).then((fulfilmentTemplates) => {
       return fulfilmentTemplates;
     });
-    const smsPrintTemplates = await getSmsPrintTemplates(
+    const smsPrintTemplates = await getSmsFulfilmentTemplates(
       this.props.surveyId
     ).then((smsTemplates) => {
       return smsTemplates;

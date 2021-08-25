@@ -37,9 +37,11 @@ class LandingPage extends Component {
     printSupplier: "",
     packCode: "",
     template: "",
+    notifyTemplateId: "",
     printSupplierValidationError: false,
     packCodeValidationError: false,
     templateValidationError: false,
+    notifyTemplateIdValidationError: false,
     newSurveyHeaderRow: true,
     newSurveySampleSeparator: ",",
     triggerID: "366ce7da-f885-493d-b933-a3b74d583a06",
@@ -166,6 +168,7 @@ class LandingPage extends Component {
     this.setState({
       packCode: "",
       template: "",
+      notifyTemplateId: "",
       packCodeValidationError: false,
       templateValidationError: false,
       createSmsTemplateDialogDisplayed: true,
@@ -304,6 +307,15 @@ class LandingPage extends Component {
     });
   };
 
+  onNotifyTemplateIdChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+
+    this.setState({
+      notifyTemplateId: event.target.value,
+      notifyTemplateIdValidationError: resetValidation,
+    });
+  };
+
   onCreatePrintTemplate = async () => {
     var failedValidation = false;
 
@@ -364,13 +376,19 @@ class LandingPage extends Component {
       this.setState({ packCodeValidationError: true });
       failedValidation = true;
     }
+    if (!this.state.notifyTemplateId){
+      this.setState({
+        notifyTemplateIdValidationError: true
+      });
+      failedValidation = true;
+    }
 
     if (failedValidation) {
       return;
     }
 
     const newSmsTemplate = {
-      notifyTemplateId: uuidv4(),
+      notifyTemplateId: this.state.notifyTemplateId,
       packCode: this.state.packCode,
       template: JSON.parse(this.state.template),
     };
@@ -692,6 +710,15 @@ class LandingPage extends Component {
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
                   value={this.state.packCode}
+                />
+                <TextField
+                    required
+                    fullWidth={true}
+                    style={{ marginTop: 20 }}
+                    error={this.state.notifyTemplateIdValidationError}
+                    label="Notify Template ID "
+                    onChange={this.onNotifyTemplateIdChange}
+                    value={this.state.notifyTemplateId}
                 />
                 <TextField
                   fullWidth={true}
