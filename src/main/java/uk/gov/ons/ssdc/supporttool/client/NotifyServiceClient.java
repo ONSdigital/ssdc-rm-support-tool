@@ -37,7 +37,7 @@ public class NotifyServiceClient {
       throw new RuntimeException("Error mapping SMS fulfilment request object to JSON", e);
     }
     HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-    restTemplate.postForEntity(createUri(), request, String.class);
+    restTemplate.postForEntity(createUri() + "/sms-fulfilment", request, String.class);
   }
 
   private URI createUri() {

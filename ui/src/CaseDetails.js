@@ -12,6 +12,7 @@ import InvalidCase from "./InvalidCase";
 import PrintFulfilment from "./PrintFulfilment";
 import SensitiveData from "./SensitiveData";
 import { Link } from "react-router-dom";
+import SmsFulfilment from "./SmsFulfilment";
 
 class CaseDetails extends Component {
   state = {
@@ -190,6 +191,14 @@ class CaseDetails extends Component {
                         surveyId={this.props.surveyId}
                       />
                     )}
+                      {this.state.authorisedActivities.includes(
+                          "CREATE_CASE_SMS_FULFILMENT"
+                      ) && (
+                          <SmsFulfilment
+                              caseId={this.props.caseId}
+                              surveyId={this.props.surveyId}
+                          />
+                      )}
                   </TableCell>
                 </TableBody>
               </Table>

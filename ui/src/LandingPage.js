@@ -365,22 +365,6 @@ class LandingPage extends Component {
       failedValidation = true;
     }
 
-    if (!this.state.template.trim()) {
-      this.setState({ templateValidationError: true });
-      failedValidation = true;
-    } else {
-      try {
-        const parsedJson = JSON.parse(this.state.template);
-        if (!Array.isArray(parsedJson) || parsedJson.length === 0) {
-          this.setState({ templateValidationError: true });
-          failedValidation = true;
-        }
-      } catch (err) {
-        this.setState({ templateValidationError: true });
-        failedValidation = true;
-      }
-    }
-
     if (failedValidation) {
       return;
     }
@@ -710,7 +694,6 @@ class LandingPage extends Component {
                   value={this.state.packCode}
               />
               <TextField
-                  required
                   fullWidth={true}
                   style={{ marginTop: 20 }}
                   error={this.state.templateValidationError}

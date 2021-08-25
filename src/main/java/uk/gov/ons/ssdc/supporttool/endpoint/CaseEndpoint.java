@@ -178,7 +178,7 @@ public class CaseEndpoint {
     SmsFulfilment smsFulfilment = new SmsFulfilment();
     smsFulfilment.setCaseId(caze.getId());
     smsFulfilment.setPackCode(smsFulfilmentAction.getPackCode());
-    smsFulfilment.setPhoneNumber(smsFulfilment.getPhoneNumber());
+    smsFulfilment.setPhoneNumber(smsFulfilmentAction.getPhoneNumber());
 
     smsFulfilmentRequest.setHeader(header);
     payload.setSmsFulfilment(smsFulfilment);
