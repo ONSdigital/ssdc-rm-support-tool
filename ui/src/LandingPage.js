@@ -33,6 +33,7 @@ class LandingPage extends Component {
     smsTemplates: [],
     createPrintTemplateDialogDisplayed: false,
     createSmsTemplateDialogDisplayed: false,
+    createSmsTemplateError: "",
     printSuppliers: [],
     printSupplier: "",
     packCode: "",
@@ -187,7 +188,8 @@ class LandingPage extends Component {
     this.setState({ createPrintTemplateDialogDisplayed: false });
   };
   closeSmsTemplateDialog = () => {
-    this.setState({ createSmsTemplateDialogDisplayed: false });
+    this.setState({ createSmsTemplateDialogDisplayed: false,
+                          createSmsTemplateError: ""});
   };
 
   onNewSurveyNameChange = (event) => {
@@ -393,11 +395,15 @@ class LandingPage extends Component {
       template: JSON.parse(this.state.template),
     };
 
-    await fetch("/api/smsTemplates", {
+    const response = await fetch("/api/smsTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSmsTemplate),
-    });
+    })
+    if (!response.ok){
+      this.setState({createSmsTemplateError: response.statusText})
+      return
+    }
 
     this.setState({ createSmsTemplateDialogDisplayed: false });
   };
@@ -700,6 +706,11 @@ class LandingPage extends Component {
           fullWidth={true}
         >
           <DialogContent style={{ padding: 30 }}>
+            {this.state.createSmsTemplateError &&
+                <div style={{ color: 'red' }}>
+                  {this.state.createSmsTemplateError}
+                </div>
+            }
             <div>
               <div>
                 <TextField
@@ -716,7 +727,7 @@ class LandingPage extends Component {
                     fullWidth={true}
                     style={{ marginTop: 20 }}
                     error={this.state.notifyTemplateIdValidationError}
-                    label="Notify Template ID "
+                    label="Notify Template ID (UUID)"
                     onChange={this.onNotifyTemplateIdChange}
                     value={this.state.notifyTemplateId}
                 />
