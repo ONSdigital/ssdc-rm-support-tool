@@ -20,8 +20,8 @@ export const getAllSmsTemplates = async () => {
   let templates = [];
   for (let i = 0; i < templateJson._embedded.smsTemplates.length; i++) {
     const packCode = templateJson._embedded.smsTemplates[i]._links.self.href
-        .split("/")
-        .pop();
+      .split("/")
+      .pop();
     templates.push(packCode);
   }
 
@@ -54,19 +54,15 @@ export const getFulfilmentPrintTemplates = async (surveyId) => {
 };
 
 export const getSmsPrintTemplates = async (surveyId) => {
-  const response = await fetch(
-      `/api/surveys/${surveyId}/smsTemplates`
-  );
+  const response = await fetch(`/api/surveys/${surveyId}/smsTemplates`);
   const printTemplatesJson = await response.json();
   const printTemplates =
-      printTemplatesJson._embedded.fulfilmentSurveySmsTemplates;
+    printTemplatesJson._embedded.fulfilmentSurveySmsTemplates;
 
   let templates = [];
 
   for (let i = 0; i < printTemplates.length; i++) {
-    const printTemplateUrl = new URL(
-        printTemplates[i]._links.smsTemplate.href
-    );
+    const printTemplateUrl = new URL(printTemplates[i]._links.smsTemplate.href);
 
     const printTemplateResponse = await fetch(printTemplateUrl.pathname);
     const printTemplateJson = await printTemplateResponse.json();

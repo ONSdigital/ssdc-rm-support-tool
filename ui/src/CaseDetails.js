@@ -191,14 +191,14 @@ class CaseDetails extends Component {
                         surveyId={this.props.surveyId}
                       />
                     )}
-                      {this.state.authorisedActivities.includes(
-                          "CREATE_CASE_SMS_FULFILMENT"
-                      ) && (
-                          <SmsFulfilment
-                              caseId={this.props.caseId}
-                              surveyId={this.props.surveyId}
-                          />
-                      )}
+                    {this.state.authorisedActivities.includes(
+                      "CREATE_CASE_SMS_FULFILMENT"
+                    ) && (
+                      <SmsFulfilment
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                      />
+                    )}
                   </TableCell>
                 </TableBody>
               </Table>

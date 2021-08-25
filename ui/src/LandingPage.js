@@ -418,14 +418,14 @@ class LandingPage extends Component {
       const packCode = smsTemplate._links.self.href.split("/").pop();
 
       return (
-          <TableRow key={packCode}>
-            <TableCell component="th" scope="row">
-              {packCode}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {JSON.stringify(smsTemplate.template)}
-            </TableCell>
-          </TableRow>
+        <TableRow key={packCode}>
+          <TableCell component="th" scope="row">
+            {packCode}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(smsTemplate.template)}
+          </TableCell>
+        </TableRow>
       );
     });
 
@@ -479,26 +479,26 @@ class LandingPage extends Component {
         )}
 
         {this.state.authorisedActivities.includes("CREATE_SMS_TEMPLATE") && (
-            <div>
-              <Button
-                  variant="contained"
-                  onClick={this.openSmsTemplateDialog}
-                  style={{ marginTop: 20 }}
-              >
-                Create sms Template
-              </Button>
-              <TableContainer component={Paper} style={{ marginTop: 20 }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Pack Code</TableCell>
-                      <TableCell>Template</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{smsTemplateRows }</TableBody>
-                </Table>
-              </TableContainer>
-            </div>
+          <div>
+            <Button
+              variant="contained"
+              onClick={this.openSmsTemplateDialog}
+              style={{ marginTop: 20 }}
+            >
+              Create sms Template
+            </Button>
+            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                    <TableCell>Template</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{smsTemplateRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </div>
         )}
         <div>
           <Button
@@ -680,11 +680,11 @@ class LandingPage extends Component {
         <Dialog
           open={this.state.createSmsTemplateDialogDisplayed}
           fullWidth={true}
-      >
-        <DialogContent style={{ padding: 30 }}>
-          <div>
+        >
+          <DialogContent style={{ padding: 30 }}>
             <div>
-              <TextField
+              <div>
+                <TextField
                   required
                   fullWidth={true}
                   style={{ marginTop: 20 }}
@@ -692,35 +692,35 @@ class LandingPage extends Component {
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
                   value={this.state.packCode}
-              />
-              <TextField
+                />
+                <TextField
                   fullWidth={true}
                   style={{ marginTop: 20 }}
                   error={this.state.templateValidationError}
                   label="Template"
                   onChange={this.onTemplateChange}
                   value={this.state.template}
-              />
-            </div>
-            <div style={{ marginTop: 10 }}>
-              <Button
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
                   onClick={this.onCreateSmsTemplate}
                   variant="contained"
                   style={{ margin: 10 }}
-              >
-                Create print template
-              </Button>
-              <Button
+                >
+                  Create SMS template
+                </Button>
+                <Button
                   onClick={this.closeSmsTemplateDialog}
                   variant="contained"
                   style={{ margin: 10 }}
-              >
-                Cancel
-              </Button>
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }

@@ -24,7 +24,7 @@ import {
   getAllPrintTemplates,
   getFulfilmentPrintTemplates,
   getSmsPrintTemplates,
-  getAllSmsTemplates
+  getAllSmsTemplates,
 } from "./Utils";
 import { Link } from "react-router-dom";
 
@@ -93,11 +93,10 @@ class SurveyDetails extends Component {
       }
     );
     const allSmsFulfilmentTemplates = await getAllSmsTemplates().then(
-        (templates) => {
-          return templates;
-        }
+      (templates) => {
+        return templates;
+      }
     );
-
 
     const actionRulePrintTemplates = await getActionRulePrintTemplates(
       this.props.surveyId
@@ -111,7 +110,7 @@ class SurveyDetails extends Component {
       return fulfilmentTemplates;
     });
     const smsPrintTemplates = await getSmsPrintTemplates(
-        this.props.surveyId
+      this.props.surveyId
     ).then((smsTemplates) => {
       return smsTemplates;
     });
@@ -132,7 +131,7 @@ class SurveyDetails extends Component {
       if (!smsPrintTemplates.includes(packCode)) {
         allowableSmsPrintTemplates.push(packCode);
       }
-    })
+    });
 
     this.setState({
       actionRulePrintTemplates: actionRulePrintTemplates,
@@ -293,7 +292,7 @@ class SurveyDetails extends Component {
 
     const newAllowSmsTemplate = {
       id: uuidv4(),
-      survey: "surveys/" +this.props.surveyId,
+      survey: "surveys/" + this.props.surveyId,
       smsTemplate: "smsTemplates/" + this.state.smsTemplateToAllow,
     };
 
@@ -367,14 +366,15 @@ class SurveyDetails extends Component {
           </TableCell>
         </TableRow>
       ));
-    const smsPrintTemplateTableRows =
-        this.state.smsPrintTemplates.map((printTemplate) => (
-            <TableRow key={printTemplate}>
-              <TableCell component="th" scope="row">
-                {printTemplate}
-              </TableCell>
-            </TableRow>
-        ));
+    const smsPrintTemplateTableRows = this.state.smsPrintTemplates.map(
+      (printTemplate) => (
+        <TableRow key={printTemplate}>
+          <TableCell component="th" scope="row">
+            {printTemplate}
+          </TableCell>
+        </TableRow>
+      )
+    );
     const actionRulePrintTemplateMenuItems =
       this.state.allowableActionRulePrintTemplates.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
@@ -388,12 +388,13 @@ class SurveyDetails extends Component {
           {packCode}
         </MenuItem>
       ));
-    const smsPrintTemplateMenuItems =
-        this.state.allowableSmsPrintTemplates.map((packCode) => (
-            <MenuItem key={packCode} value={packCode}>
-              {packCode}
-            </MenuItem>
-        ));
+    const smsPrintTemplateMenuItems = this.state.allowableSmsPrintTemplates.map(
+      (packCode) => (
+        <MenuItem key={packCode} value={packCode}>
+          {packCode}
+        </MenuItem>
+      )
+    );
 
     return (
       <div style={{ padding: 20 }}>
@@ -480,29 +481,29 @@ class SurveyDetails extends Component {
           </TableContainer>
         )}
         {this.state.authorisedActivities.includes(
-            "ALLOW_SMS_TEMPLATE_ON_FULFILMENT"
+          "ALLOW_SMS_TEMPLATE_ON_FULFILMENT"
         ) && (
-            <Button
-                variant="contained"
-                onClick={this.openSmsPrintTemplateDialog}
-                style={{ marginTop: 20 }}
-            >
-              Allow Print Template on SMS
-            </Button>
+          <Button
+            variant="contained"
+            onClick={this.openSmsPrintTemplateDialog}
+            style={{ marginTop: 20 }}
+          >
+            Allow Print Template on SMS
+          </Button>
         )}
         {this.state.authorisedActivities.includes(
-            "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
+          "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
         ) && (
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{smsPrintTemplateTableRows}</TableBody>
-              </Table>
-            </TableContainer>
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pack Code</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{smsPrintTemplateTableRows}</TableBody>
+            </Table>
+          </TableContainer>
         )}
         <Dialog open={this.state.createCollectionExerciseDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
@@ -626,33 +627,33 @@ class SurveyDetails extends Component {
                 <FormControl required fullWidth={true}>
                   <InputLabel>SMS Template</InputLabel>
                   <Select
-                      onChange={this.onSmsTemplateChange}
-                      value={this.state.smsTemplateToAllow}
-                      error={this.state.printTemplateValidationError}
+                    onChange={this.onSmsTemplateChange}
+                    value={this.state.smsTemplateToAllow}
+                    error={this.state.printTemplateValidationError}
                   >
                     {smsPrintTemplateMenuItems}
                   </Select>
                 </FormControl>
               </div>
               {this.state.allowPrintTemplateError && (
-                  <div>
-                    <p style={{ color: "red" }}>
-                      {this.state.allowPrintTemplateError}
-                    </p>
-                  </div>
+                <div>
+                  <p style={{ color: "red" }}>
+                    {this.state.allowPrintTemplateError}
+                  </p>
+                </div>
               )}
               <div style={{ marginTop: 10 }}>
                 <Button
-                    onClick={this.onAllowSmsPrintTemplate}
-                    variant="contained"
-                    style={{ margin: 10 }}
+                  onClick={this.onAllowSmsPrintTemplate}
+                  variant="contained"
+                  style={{ margin: 10 }}
                 >
                   Allow
                 </Button>
                 <Button
-                    onClick={this.closeAllowSmsPrintTemplateDialog}
-                    variant="contained"
-                    style={{ margin: 10 }}
+                  onClick={this.closeAllowSmsPrintTemplateDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
                 >
                   Cancel
                 </Button>
