@@ -149,7 +149,7 @@ class JobDetails extends Component {
         <Grid container spacing={1}>
           <Button
             target="_blank"
-            href={fileDownloadHost + "/job/" + this.props.job.id + "/error"}
+            href={fileDownloadHost + "/api/job/" + this.props.job.id + "/error"}
             variant="contained"
             style={{ margin: 10 }}
           >
@@ -158,7 +158,7 @@ class JobDetails extends Component {
           <Button
             target="_blank"
             href={
-              fileDownloadHost + "/job/" + this.props.job.id + "/errorDetail"
+              fileDownloadHost + "/api/job/" + this.props.job.id + "/errorDetail"
             }
             variant="contained"
             style={{ margin: 10 }}
