@@ -1,0 +1,10 @@
+{
+  "SUPPLIER_A": {
+    "sftpDirectory": "foo",
+    "encryptionKeyFilename": "bar"
+  },
+  "SUPPLIER_B": {
+    "sftpDirectory": "foo",
+    "encryptionKeyFilename": "bar"
+  }
+}
