@@ -158,7 +158,10 @@ class JobDetails extends Component {
           <Button
             target="_blank"
             href={
-              fileDownloadHost + "/api/job/" + this.props.job.id + "/errorDetail"
+              fileDownloadHost +
+              "/api/job/" +
+              this.props.job.id +
+              "/errorDetail"
             }
             variant="contained"
             style={{ margin: 10 }}
