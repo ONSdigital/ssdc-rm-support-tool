@@ -57,16 +57,23 @@ export const getSmsFulfilmentTemplates = async (surveyId) => {
   const response = await fetch(`/api/surveys/${surveyId}/smsTemplates`);
   const smsFulfilmentTemplatesJson = await response.json();
   const smsFulfilmentTemplates =
-      smsFulfilmentTemplatesJson._embedded.fulfilmentSurveySmsTemplates;
+    smsFulfilmentTemplatesJson._embedded.fulfilmentSurveySmsTemplates;
 
   let templates = [];
 
   for (let i = 0; i < smsFulfilmentTemplates.length; i++) {
-    const smsFulfilmentTemplateUrl = new URL(smsFulfilmentTemplates[i]._links.smsTemplate.href);
+    const smsFulfilmentTemplateUrl = new URL(
+      smsFulfilmentTemplates[i]._links.smsTemplate.href
+    );
 
-    const smsFulfilmentTemplateResponse = await fetch(smsFulfilmentTemplateUrl.pathname);
-    const smsFulfilmentTemplateJson = await smsFulfilmentTemplateResponse.json();
-    const packCode = smsFulfilmentTemplateJson._links.self.href.split("/").pop();
+    const smsFulfilmentTemplateResponse = await fetch(
+      smsFulfilmentTemplateUrl.pathname
+    );
+    const smsFulfilmentTemplateJson =
+      await smsFulfilmentTemplateResponse.json();
+    const packCode = smsFulfilmentTemplateJson._links.self.href
+      .split("/")
+      .pop();
 
     templates.push(packCode);
   }

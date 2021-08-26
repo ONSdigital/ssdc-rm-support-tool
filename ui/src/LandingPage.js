@@ -173,7 +173,7 @@ class LandingPage extends Component {
       packCodeValidationError: false,
       templateValidationError: false,
       createSmsTemplateDialogDisplayed: true,
-      createSmsTemplateError: ""
+      createSmsTemplateError: "",
     });
   };
 
@@ -189,8 +189,10 @@ class LandingPage extends Component {
     this.setState({ createPrintTemplateDialogDisplayed: false });
   };
   closeSmsTemplateDialog = () => {
-    this.setState({ createSmsTemplateDialogDisplayed: false,
-                          createSmsTemplateError: ""});
+    this.setState({
+      createSmsTemplateDialogDisplayed: false,
+      createSmsTemplateError: "",
+    });
   };
 
   onNewSurveyNameChange = (event) => {
@@ -379,9 +381,9 @@ class LandingPage extends Component {
       this.setState({ packCodeValidationError: true });
       failedValidation = true;
     }
-    if (!this.state.notifyTemplateId){
+    if (!this.state.notifyTemplateId) {
       this.setState({
-        notifyTemplateIdValidationError: true
+        notifyTemplateIdValidationError: true,
       });
       failedValidation = true;
     }
@@ -395,10 +397,7 @@ class LandingPage extends Component {
           this.setState({ templateValidationError: true });
           failedValidation = true;
         } else {
-          const validTemplateItems = [
-            "__uac__",
-            "__qid__",
-          ];
+          const validTemplateItems = ["__uac__", "__qid__"];
           parsedJson.forEach((item) => {
             if (!validTemplateItems.includes(item)) {
               this.setState({ templateValidationError: true });
@@ -426,13 +425,16 @@ class LandingPage extends Component {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSmsTemplate),
-    })
-    if (!response.ok){
-      this.setState({createSmsTemplateError: response.statusText,
-                            notifyTemplateIdValidationError: true,
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      this.setState({
+        createSmsTemplateError: errorMessage,
+        notifyTemplateIdValidationError: true,
         templateValidationError: true,
-        packCodeValidationError: true})
-      return
+        packCodeValidationError: true,
+      });
+      return;
     }
 
     this.setState({ createSmsTemplateDialogDisplayed: false });
@@ -736,11 +738,11 @@ class LandingPage extends Component {
           fullWidth={true}
         >
           <DialogContent style={{ padding: 30 }}>
-            {this.state.createSmsTemplateError &&
-                <div style={{ color: 'red' }}>
-                  {this.state.createSmsTemplateError}
-                </div>
-            }
+            {this.state.createSmsTemplateError && (
+              <div style={{ color: "red" }}>
+                {this.state.createSmsTemplateError}
+              </div>
+            )}
             <div>
               <div>
                 <TextField
@@ -753,13 +755,13 @@ class LandingPage extends Component {
                   value={this.state.packCode}
                 />
                 <TextField
-                    required
-                    fullWidth={true}
-                    style={{ marginTop: 20 }}
-                    error={this.state.notifyTemplateIdValidationError}
-                    label="Notify Template ID (UUID)"
-                    onChange={this.onNotifyTemplateIdChange}
-                    value={this.state.notifyTemplateId}
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.notifyTemplateIdValidationError}
+                  label="Notify Template ID (UUID)"
+                  onChange={this.onNotifyTemplateIdChange}
+                  value={this.state.notifyTemplateId}
                 />
                 <TextField
                   fullWidth={true}

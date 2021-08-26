@@ -366,15 +366,14 @@ class SurveyDetails extends Component {
           </TableCell>
         </TableRow>
       ));
-    const smsFulfilmentTemplateTableRows = this.state.smsFulfilmentTemplates.map(
-      (printTemplate) => (
+    const smsFulfilmentTemplateTableRows =
+      this.state.smsFulfilmentTemplates.map((printTemplate) => (
         <TableRow key={printTemplate}>
           <TableCell component="th" scope="row">
             {printTemplate}
           </TableCell>
         </TableRow>
-      )
-    );
+      ));
     const actionRulePrintTemplateMenuItems =
       this.state.allowableActionRulePrintTemplates.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
@@ -388,13 +387,12 @@ class SurveyDetails extends Component {
           {packCode}
         </MenuItem>
       ));
-    const smsFulfilmentTemplateMenuItems = this.state.allowableSmsFulfilmentTemplates.map(
-      (packCode) => (
+    const smsFulfilmentTemplateMenuItems =
+      this.state.allowableSmsFulfilmentTemplates.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>
-      )
-    );
+      ));
 
     return (
       <div style={{ padding: 20 }}>
