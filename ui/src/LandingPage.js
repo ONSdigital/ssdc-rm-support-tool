@@ -173,6 +173,7 @@ class LandingPage extends Component {
       packCodeValidationError: false,
       templateValidationError: false,
       createSmsTemplateDialogDisplayed: true,
+      createSmsTemplateError: ""
     });
   };
 
@@ -384,6 +385,32 @@ class LandingPage extends Component {
       });
       failedValidation = true;
     }
+    if (!this.state.template.trim()) {
+      this.setState({ templateValidationError: true });
+      failedValidation = true;
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.template);
+        if (!Array.isArray(parsedJson)) {
+          this.setState({ templateValidationError: true });
+          failedValidation = true;
+        } else {
+          const validTemplateItems = [
+            "__uac__",
+            "__qid__",
+          ];
+          parsedJson.forEach((item) => {
+            if (!validTemplateItems.includes(item)) {
+              this.setState({ templateValidationError: true });
+              failedValidation = true;
+            }
+          });
+        }
+      } catch (err) {
+        this.setState({ templateValidationError: true });
+        failedValidation = true;
+      }
+    }
 
     if (failedValidation) {
       return;
@@ -401,7 +428,10 @@ class LandingPage extends Component {
       body: JSON.stringify(newSmsTemplate),
     })
     if (!response.ok){
-      this.setState({createSmsTemplateError: response.statusText})
+      this.setState({createSmsTemplateError: response.statusText,
+                            notifyTemplateIdValidationError: true,
+        templateValidationError: true,
+        packCodeValidationError: true})
       return
     }
 
