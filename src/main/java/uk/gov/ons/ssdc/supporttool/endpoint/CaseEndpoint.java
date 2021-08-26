@@ -156,7 +156,7 @@ public class CaseEndpoint {
   }
 
   @PostMapping(value = "/{caseId}/action/sms-fulfilment")
-  public void handleSmsFulfilment(
+  public ResponseEntity<?> handleSmsFulfilment(
       @PathVariable("caseId") UUID caseId,
       @RequestBody SmsFulfilmentAction smsFulfilmentAction,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
@@ -187,6 +187,7 @@ public class CaseEndpoint {
     smsFulfilmentRequest.setPayload(payload);
 
     requestSmsFulfiment(smsFulfilmentRequest);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   private void requestSmsFulfiment(RequestDTO smsFulfilmentRequest) {
