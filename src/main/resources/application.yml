@@ -70,7 +70,7 @@ iapaudience: DUMMY
 # TODO: Remove this before releasing to prod
 dummyuseridentity: dummy@fake-email.com
 
-printsupplierconfig: '{"SUPPLIER_A":{"sftpDirectory":"foo","encryptionKeyFilename": "bar"},"SUPPLIER_B":{"sftpDirectory":"foo","encryptionKeyFilename":"bar"}}'
+printsupplierconfigfile: dummy-print-supplier-config.json
 
 queueconfig:
   sample-topic: rm-internal-sample
