@@ -486,7 +486,7 @@ class SurveyDetails extends Component {
             onClick={this.openSmsFulfilmentTemplateDialog}
             style={{ marginTop: 20 }}
           >
-            Allow Print Template on SMS
+            Allow SMS Template on Fulfilment
           </Button>
         )}
         {this.state.authorisedActivities.includes(
