@@ -140,7 +140,6 @@ class SmsFulfilment extends Component {
                 helperText={this.state.newValueValidationError}
               />
             </div>
-            <div></div>
             <div style={{ marginTop: 10 }}>
               <Button
                 onClick={this.onCreate}

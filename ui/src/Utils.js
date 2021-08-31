@@ -18,8 +18,8 @@ export const getAllSmsTemplates = async () => {
   const templateJson = await response.json();
 
   let templates = [];
-  for (let i = 0; i < templateJson._embedded.smsTemplates.length; i++) {
-    const packCode = templateJson._embedded.smsTemplates[i]._links.self.href
+  for (const smsTemplate of templateJson._embedded.smsTemplates) {
+    const packCode = smsTemplate._links.self.href
       .split("/")
       .pop();
     templates.push(packCode);
@@ -61,9 +61,9 @@ export const getSmsFulfilmentTemplates = async (surveyId) => {
 
   let templates = [];
 
-  for (let i = 0; i < smsFulfilmentTemplates.length; i++) {
+  for (const smsTemplate of smsFulfilmentTemplates) {
     const smsFulfilmentTemplateUrl = new URL(
-      smsFulfilmentTemplates[i]._links.smsTemplate.href
+      smsTemplate._links.smsTemplate.href
     );
 
     const smsFulfilmentTemplateResponse = await fetch(

@@ -43,6 +43,7 @@ class LandingPage extends Component {
     packCodeValidationError: false,
     templateValidationError: false,
     notifyTemplateIdValidationError: false,
+    notifyTemplateIdErrorMessage: "",
     newSurveyHeaderRow: true,
     newSurveySampleSeparator: ",",
     triggerID: "366ce7da-f885-493d-b933-a3b74d583a06",
@@ -174,6 +175,7 @@ class LandingPage extends Component {
       templateValidationError: false,
       createSmsTemplateDialogDisplayed: true,
       createSmsTemplateError: "",
+      notifyTemplateIdErrorMessage: ""
     });
   };
 
@@ -191,7 +193,6 @@ class LandingPage extends Component {
   closeSmsTemplateDialog = () => {
     this.setState({
       createSmsTemplateDialogDisplayed: false,
-      createSmsTemplateError: "",
     });
   };
 
@@ -386,6 +387,16 @@ class LandingPage extends Component {
         notifyTemplateIdValidationError: true,
       });
       failedValidation = true;
+    } else {
+      const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+      if(!regexExp.test(this.state.notifyTemplateId)) {
+        this.setState({
+          notifyTemplateIdValidationError: true,
+          notifyTemplateIdErrorMessage: "Not a valid UUID"
+        });
+        failedValidation = true;
+
+      }
     }
     if (!this.state.template.trim()) {
       this.setState({ templateValidationError: true });
@@ -762,6 +773,7 @@ class LandingPage extends Component {
                   label="Notify Template ID (UUID)"
                   onChange={this.onNotifyTemplateIdChange}
                   value={this.state.notifyTemplateId}
+                  helperText={this.state.notifyTemplateIdErrorMessage}
                 />
                 <TextField
                   fullWidth={true}
