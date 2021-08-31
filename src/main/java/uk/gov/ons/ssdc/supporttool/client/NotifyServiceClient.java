@@ -21,7 +21,8 @@ public class NotifyServiceClient {
 
   public void requestSmsFulfilment(RequestDTO smsFulfilmentRequest) {
     RestTemplate restTemplate = new RestTemplate();
-    restTemplate.postForObject(createUri("/sms-fulfilment"), smsFulfilmentRequest, String.class);
+    restTemplate.postForObject(
+        createUri("/sms-fulfilment"), smsFulfilmentRequest, RequestDTO.class);
   }
 
   private URI createUri(String path) {
