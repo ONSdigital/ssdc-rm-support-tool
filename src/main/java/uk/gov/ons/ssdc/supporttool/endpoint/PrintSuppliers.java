@@ -4,9 +4,12 @@ import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivi
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,17 +25,17 @@ public class PrintSuppliers {
 
   private final UserIdentity userIdentity;
 
-  @Value("${printsupplierconfig}")
-  private String printSupplierConfig;
+  @Value("${printsupplierconfigfile}")
+  private String configFile;
 
-  private List<String> printSuppliers = null;
+  private Set<String> printSuppliers = null;
 
   public PrintSuppliers(UserIdentity userIdentity) {
     this.userIdentity = userIdentity;
   }
 
   @GetMapping
-  public List<String> getPrintSuppliers(
+  public Set<String> getPrintSuppliers(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     userIdentity.checkGlobalUserPermission(userEmail, CREATE_PRINT_TEMPLATE);
 
@@ -40,11 +43,13 @@ public class PrintSuppliers {
       return printSuppliers;
     }
 
-    try {
-      Map map = OBJECT_MAPPER.readValue(printSupplierConfig, Map.class);
-      printSuppliers = new ArrayList<>(map.keySet());
+    try (InputStream configFileStream = new FileInputStream(configFile)) {
+      Map map = OBJECT_MAPPER.readValue(configFileStream, Map.class);
+      printSuppliers = map.keySet();
       return printSuppliers;
-    } catch (JsonProcessingException e) {
+    } catch (JsonProcessingException | FileNotFoundException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
