@@ -6,6 +6,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  CircularProgress,
 } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -19,6 +20,8 @@ class ExceptionManager extends Component {
     authorisedActivities: [],
     exceptions: [],
     exceptionDetails: null,
+    showPeekDialog: false,
+    peekResult: "",
   };
 
   componentDidMount() {
@@ -67,8 +70,43 @@ class ExceptionManager extends Component {
     this.setState({ exceptionDetails: null });
   };
 
+  onPeek = () => {
+    this.setState({ peekResult: "", showPeekDialog: true });
+
+    this.peekMessage(
+      this.state.exceptionDetails[0].exceptionReport.messageHash
+    );
+  };
+
+  peekMessage = async (messageHash) => {
+    const response = await fetch(
+      `/api/exceptionManager/peekMessage/${messageHash}`
+    );
+    const peekText = await response.text();
+
+    this.setState({ peekResult: peekText });
+  };
+
+  closePeekDialog = () => {
+    this.setState({ showPeekDialog: false });
+  };
+
+  onQuarantine = async () => {
+    const response = await fetch(
+      `/api/exceptionManager/skipMessage/${this.state.exceptionDetails[0].exceptionReport.messageHash}`
+    );
+
+    if (response.ok) {
+      this.setState({ exceptionDetails: null });
+    }
+  };
+
   render() {
-    const exceptionTableRows = this.state.exceptions.map((exception) => (
+    const activeExceptions = this.state.exceptions.filter(
+      (exception) => !exception.quarantined
+    );
+
+    const exceptionTableRows = activeExceptions.map((exception) => (
       <TableRow key={exception.messageHash}>
         <TableCell component="th" scope="row">
           {exception.firstSeen}
@@ -96,13 +134,20 @@ class ExceptionManager extends Component {
     var exceptionDetailsSections;
 
     if (this.state.exceptionDetails) {
-      exceptionDetailsSections = this.state.exceptionDetails.map((exceptionDetail) => (
-        <>
+      exceptionDetailsSections = this.state.exceptionDetails.map(
+        (exceptionDetail, index) => (
+          <div style={{ marginTop: 10, marginBottom: 10 }}>
+            <div>Index: {index}</div>
             <div>Class: {exceptionDetail.exceptionReport.exceptionClass}</div>
-            <div>Message: {exceptionDetail.exceptionReport.exceptionMessage}</div>
-            <div>Root cause: {exceptionDetail.exceptionReport.exceptionRootCause}</div>
-        </>
-      ));
+            <div>
+              Message: {exceptionDetail.exceptionReport.exceptionMessage}
+            </div>
+            <div>
+              Root cause: {exceptionDetail.exceptionReport.exceptionRootCause}
+            </div>
+          </div>
+        )
+      );
     }
 
     return (
@@ -128,16 +173,45 @@ class ExceptionManager extends Component {
         {this.state.exceptionDetails && (
           <Dialog open={true} maxWidth={300}>
             <DialogContent style={{ padding: 30 }}>
-            <div>
-            {exceptionDetailsSections}
-            </div>
+              <div>{exceptionDetailsSections}</div>
               <div>
+                <Button
+                  onClick={this.onPeek}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Peek
+                </Button>
+                <Button
+                  onClick={this.onQuarantine}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Quarantine
+                </Button>
                 <Button
                   onClick={this.closeDetailsDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
-                  Cancel
+                  Close
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+        {this.state.showPeekDialog && (
+          <Dialog open={true} maxWidth={300}>
+            <DialogContent style={{ padding: 30 }}>
+              {!this.state.peekResult && <CircularProgress color="inherit" />}
+              {this.state.peekResult && <p>{this.state.peekResult}</p>}
+              <div>
+                <Button
+                  onClick={this.closePeekDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Close
                 </Button>
               </div>
             </DialogContent>

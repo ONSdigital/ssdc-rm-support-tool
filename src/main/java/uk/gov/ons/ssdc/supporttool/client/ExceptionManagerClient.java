@@ -23,8 +23,7 @@ public class ExceptionManagerClient {
     RestTemplate restTemplate = new RestTemplate();
     UriComponents uriComponents = createUriComponents("/badmessages/summary");
 
-    String result = restTemplate.getForObject(
-        uriComponents.toUri(), String.class);
+    String result = restTemplate.getForObject(uriComponents.toUri(), String.class);
 
     return result;
   }
@@ -34,10 +33,29 @@ public class ExceptionManagerClient {
     RestTemplate restTemplate = new RestTemplate();
     UriComponents uriComponents = createUriComponents(String.format("/badmessage/%s", messageHash));
 
-    String result = restTemplate.getForObject(
-        uriComponents.toUri(), String.class);
+    String result = restTemplate.getForObject(uriComponents.toUri(), String.class);
 
     return result;
+  }
+
+  public String peekMessage(String messageHash) {
+
+    RestTemplate restTemplate = new RestTemplate();
+    UriComponents uriComponents =
+        createUriComponents(String.format("/peekmessage/%s", messageHash));
+
+    String result = restTemplate.getForObject(uriComponents.toUri(), String.class);
+
+    return result;
+  }
+
+  public void skipMessage(String messageHash) {
+
+    RestTemplate restTemplate = new RestTemplate();
+    UriComponents uriComponents =
+        createUriComponents(String.format("/skipmessage/%s", messageHash));
+
+    restTemplate.getForObject(uriComponents.toUri(), String.class);
   }
 
   private UriComponents createUriComponents(String path) {
