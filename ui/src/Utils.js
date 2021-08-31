@@ -19,9 +19,7 @@ export const getAllSmsTemplates = async () => {
 
   let templates = [];
   for (const smsTemplate of templateJson._embedded.smsTemplates) {
-    const packCode = smsTemplate._links.self.href
-      .split("/")
-      .pop();
+    const packCode = smsTemplate._links.self.href.split("/").pop();
     templates.push(packCode);
   }
 

@@ -175,7 +175,7 @@ class LandingPage extends Component {
       templateValidationError: false,
       createSmsTemplateDialogDisplayed: true,
       createSmsTemplateError: "",
-      notifyTemplateIdErrorMessage: ""
+      notifyTemplateIdErrorMessage: "",
     });
   };
 
@@ -388,14 +388,14 @@ class LandingPage extends Component {
       });
       failedValidation = true;
     } else {
-      const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-      if(!regexExp.test(this.state.notifyTemplateId)) {
+      const regexExp =
+        /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+      if (!regexExp.test(this.state.notifyTemplateId)) {
         this.setState({
           notifyTemplateIdValidationError: true,
-          notifyTemplateIdErrorMessage: "Not a valid UUID"
+          notifyTemplateIdErrorMessage: "Not a valid UUID",
         });
         failedValidation = true;
-
       }
     }
     if (!this.state.template.trim()) {

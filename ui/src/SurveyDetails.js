@@ -634,9 +634,9 @@ class SurveyDetails extends Component {
                 </FormControl>
               </div>
               {this.state.allowPrintTemplateError && (
-                  <p style={{ color: "red" }}>
-                    {this.state.allowPrintTemplateError}
-                  </p>
+                <p style={{ color: "red" }}>
+                  {this.state.allowPrintTemplateError}
+                </p>
               )}
               <div style={{ marginTop: 10 }}>
                 <Button
