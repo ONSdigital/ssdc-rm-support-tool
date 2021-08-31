@@ -77,3 +77,9 @@ queueconfig:
   shared-pubsub-project: REPLACEME
 
 file-upload-storage-path: /tmp/
+
+exceptionmanager:
+  connection:
+    scheme: http
+    host: localhost
+    port: 8666
