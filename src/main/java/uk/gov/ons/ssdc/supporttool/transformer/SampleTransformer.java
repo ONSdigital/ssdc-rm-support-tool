@@ -31,6 +31,9 @@ public class SampleTransformer implements Transformer {
 
     sample.setSample(nonSensitiveSampleData);
     sample.setSampleSensitive(sensitiveSampleData);
+
+    sample.setJobId(job.getId());
+    sample.setOriginatingUser(job.getCreatedBy());
     return sample;
   }
 }
