@@ -106,7 +106,10 @@ class ExceptionManager extends Component {
       (exception) => !exception.quarantined
     );
 
-    const exceptionTableRows = activeExceptions.map((exception) => (
+    var sortedExceptions = activeExceptions.sort((firstEx, secondEx) => firstEx.firstSeen.localeCompare(secondEx.firstSeen))
+    sortedExceptions.reverse()
+
+    const exceptionTableRows = sortedExceptions.map((exception) => (
       <TableRow key={exception.messageHash}>
         <TableCell component="th" scope="row">
           {exception.firstSeen}
