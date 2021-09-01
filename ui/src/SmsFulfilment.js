@@ -92,12 +92,12 @@ class SmsFulfilment extends Component {
 
     if (response.ok) {
       this.closeDialog();
+    } else {
+      const errorMessage = await response.text();
+      this.setState({
+        newValueValidationError: errorMessage,
+      });
     }
-    const data = await response.json();
-    this.setState({
-      newValueValidationError: data.error,
-      validationError: true,
-    });
   };
 
   render() {
@@ -146,7 +146,7 @@ class SmsFulfilment extends Component {
                 variant="contained"
                 style={{ margin: 10 }}
               >
-                Request paper fulfilment
+                Request SMS fulfilment
               </Button>
               <Button
                 onClick={this.closeDialog}

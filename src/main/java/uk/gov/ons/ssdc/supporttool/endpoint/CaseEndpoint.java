@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.supporttool.client.NotifyServiceClient;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestDTO;
@@ -186,15 +185,19 @@ public class CaseEndpoint {
     payload.setSmsFulfilment(smsFulfilment);
     smsFulfilmentRequest.setPayload(payload);
 
-    requestSmsFulfiment(smsFulfilmentRequest);
+    Optional<String> errorOpt = requestSmsFulfiment(smsFulfilmentRequest);
+    if (errorOpt.isPresent()) {
+      return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
+    }
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  private void requestSmsFulfiment(RequestDTO smsFulfilmentRequest) {
+  private Optional<String> requestSmsFulfiment(RequestDTO smsFulfilmentRequest) {
     try {
       notifyServiceClient.requestSmsFulfilment(smsFulfilmentRequest);
     } catch (HttpClientErrorException e) {
-      throw new ResponseStatusException(e.getStatusCode(), e.getResponseBodyAsString(), e);
+      return Optional.of(e.getResponseBodyAsString());
     }
+    return Optional.empty();
   }
 }
