@@ -30,14 +30,20 @@ class LandingPage extends Component {
     validationRulesValidationError: false,
     newSurveyValidationRules: "",
     printTemplates: [],
+    smsTemplates: [],
     createPrintTemplateDialogDisplayed: false,
+    createSmsTemplateDialogDisplayed: false,
+    createSmsTemplateError: "",
     printSuppliers: [],
     printSupplier: "",
     packCode: "",
     template: "",
+    notifyTemplateId: "",
     printSupplierValidationError: false,
     packCodeValidationError: false,
     templateValidationError: false,
+    notifyTemplateIdValidationError: false,
+    notifyTemplateIdErrorMessage: "",
     newSurveyHeaderRow: true,
     newSurveySampleSeparator: ",",
     triggerID: "366ce7da-f885-493d-b933-a3b74d583a06",
@@ -88,6 +94,7 @@ class LandingPage extends Component {
   refreshDataFromBackend = () => {
     this.getSurveys();
     this.getPrintTemplates();
+    this.getSmsTemplates();
   };
 
   getSurveys = async () => {
@@ -121,6 +128,12 @@ class LandingPage extends Component {
 
     this.setState({ printTemplates: templateJson._embedded.printTemplates });
   };
+  getSmsTemplates = async () => {
+    const response = await fetch("/api/smsTemplates");
+    const templateJson = await response.json();
+
+    this.setState({ smsTemplates: templateJson._embedded.smsTemplates });
+  };
 
   openDialog = () => {
     this.setState({
@@ -153,6 +166,19 @@ class LandingPage extends Component {
     });
   };
 
+  openSmsTemplateDialog = () => {
+    this.setState({
+      packCode: "",
+      template: "",
+      notifyTemplateId: "",
+      packCodeValidationError: false,
+      templateValidationError: false,
+      createSmsTemplateDialogDisplayed: true,
+      createSmsTemplateError: "",
+      notifyTemplateIdErrorMessage: "",
+    });
+  };
+
   closeDialog = () => {
     this.setState({ createSurveyDialogDisplayed: false });
   };
@@ -163,6 +189,11 @@ class LandingPage extends Component {
 
   closePrintTemplateDialog = () => {
     this.setState({ createPrintTemplateDialogDisplayed: false });
+  };
+  closeSmsTemplateDialog = () => {
+    this.setState({
+      createSmsTemplateDialogDisplayed: false,
+    });
   };
 
   onNewSurveyNameChange = (event) => {
@@ -282,6 +313,15 @@ class LandingPage extends Component {
     });
   };
 
+  onNotifyTemplateIdChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+
+    this.setState({
+      notifyTemplateId: event.target.value,
+      notifyTemplateIdValidationError: resetValidation,
+    });
+  };
+
   onCreatePrintTemplate = async () => {
     var failedValidation = false;
 
@@ -335,6 +375,82 @@ class LandingPage extends Component {
     this.setState({ createPrintTemplateDialogDisplayed: false });
   };
 
+  onCreateSmsTemplate = async () => {
+    var failedValidation = false;
+
+    if (!this.state.packCode.trim()) {
+      this.setState({ packCodeValidationError: true });
+      failedValidation = true;
+    }
+    if (!this.state.notifyTemplateId) {
+      this.setState({
+        notifyTemplateIdValidationError: true,
+      });
+      failedValidation = true;
+    } else {
+      const regexExp =
+        /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+      if (!regexExp.test(this.state.notifyTemplateId)) {
+        this.setState({
+          notifyTemplateIdValidationError: true,
+          notifyTemplateIdErrorMessage: "Not a valid UUID",
+        });
+        failedValidation = true;
+      }
+    }
+    if (!this.state.template.trim()) {
+      this.setState({ templateValidationError: true });
+      failedValidation = true;
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.template);
+        if (!Array.isArray(parsedJson)) {
+          this.setState({ templateValidationError: true });
+          failedValidation = true;
+        } else {
+          const validTemplateItems = ["__uac__", "__qid__"];
+          parsedJson.forEach((item) => {
+            if (!validTemplateItems.includes(item)) {
+              this.setState({ templateValidationError: true });
+              failedValidation = true;
+            }
+          });
+        }
+      } catch (err) {
+        this.setState({ templateValidationError: true });
+        failedValidation = true;
+      }
+    }
+
+    if (failedValidation) {
+      return;
+    }
+
+    const newSmsTemplate = {
+      notifyTemplateId: this.state.notifyTemplateId,
+      packCode: this.state.packCode,
+      template: JSON.parse(this.state.template),
+    };
+
+    const response = await fetch("/api/smsTemplates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newSmsTemplate),
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      this.setState({
+        createSmsTemplateError: errorMessage,
+        notifyTemplateIdValidationError: true,
+        templateValidationError: true,
+        packCodeValidationError: true,
+      });
+      return;
+    }
+
+    this.setState({ createSmsTemplateDialogDisplayed: false });
+  };
+
   render() {
     const surveyTableRows = this.state.surveys.map((survey) => {
       const surveyId = survey._links.self.href.split("/").pop();
@@ -361,6 +477,20 @@ class LandingPage extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             {JSON.stringify(printTemplate.template)}
+          </TableCell>
+        </TableRow>
+      );
+    });
+    const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) => {
+      const packCode = smsTemplate._links.self.href.split("/").pop();
+
+      return (
+        <TableRow key={packCode}>
+          <TableCell component="th" scope="row">
+            {packCode}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(smsTemplate.template)}
           </TableCell>
         </TableRow>
       );
@@ -410,6 +540,29 @@ class LandingPage extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>{printTemplateRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        )}
+
+        {this.state.authorisedActivities.includes("CREATE_SMS_TEMPLATE") && (
+          <div>
+            <Button
+              variant="contained"
+              onClick={this.openSmsTemplateDialog}
+              style={{ marginTop: 20 }}
+            >
+              Create sms Template
+            </Button>
+            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                    <TableCell>Template</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{smsTemplateRows}</TableBody>
               </Table>
             </TableContainer>
           </div>
@@ -587,6 +740,65 @@ class LandingPage extends Component {
                 </Button>
                 <Button
                   onClick={this.closePrintTemplateDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={this.state.createSmsTemplateDialogDisplayed}
+          fullWidth={true}
+        >
+          <DialogContent style={{ padding: 30 }}>
+            {this.state.createSmsTemplateError && (
+              <div style={{ color: "red" }}>
+                {this.state.createSmsTemplateError}
+              </div>
+            )}
+            <div>
+              <div>
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.packCodeValidationError}
+                  label="Pack Code"
+                  onChange={this.onPackCodeChange}
+                  value={this.state.packCode}
+                />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.notifyTemplateIdValidationError}
+                  label="Notify Template ID (UUID)"
+                  onChange={this.onNotifyTemplateIdChange}
+                  value={this.state.notifyTemplateId}
+                  helperText={this.state.notifyTemplateIdErrorMessage}
+                />
+                <TextField
+                  fullWidth={true}
+                  style={{ marginTop: 20 }}
+                  error={this.state.templateValidationError}
+                  label="Template"
+                  onChange={this.onTemplateChange}
+                  value={this.state.template}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                  onClick={this.onCreateSmsTemplate}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Create SMS template
+                </Button>
+                <Button
+                  onClick={this.closeSmsTemplateDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
