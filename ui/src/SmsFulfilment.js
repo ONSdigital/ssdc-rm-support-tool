@@ -96,6 +96,7 @@ class SmsFulfilment extends Component {
       const errorMessage = await response.text();
       this.setState({
         newValueValidationError: errorMessage,
+        validationError: true,
       });
     }
   };
