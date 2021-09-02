@@ -13,6 +13,18 @@ export const getAllPrintTemplates = async () => {
 
   return templates;
 };
+export const getAllSmsTemplates = async () => {
+  const response = await fetch("/api/smsTemplates");
+  const templateJson = await response.json();
+
+  let templates = [];
+  for (const smsTemplate of templateJson._embedded.smsTemplates) {
+    const packCode = smsTemplate._links.self.href.split("/").pop();
+    templates.push(packCode);
+  }
+
+  return templates;
+};
 
 export const getFulfilmentPrintTemplates = async (surveyId) => {
   const response = await fetch(
@@ -32,6 +44,34 @@ export const getFulfilmentPrintTemplates = async (surveyId) => {
     const printTemplateResponse = await fetch(printTemplateUrl.pathname);
     const printTemplateJson = await printTemplateResponse.json();
     const packCode = printTemplateJson._links.self.href.split("/").pop();
+
+    templates.push(packCode);
+  }
+
+  return templates;
+};
+
+export const getSmsFulfilmentTemplates = async (surveyId) => {
+  const response = await fetch(`/api/surveys/${surveyId}/smsTemplates`);
+  const smsFulfilmentTemplatesJson = await response.json();
+  const smsFulfilmentTemplates =
+    smsFulfilmentTemplatesJson._embedded.fulfilmentSurveySmsTemplates;
+
+  let templates = [];
+
+  for (const smsTemplate of smsFulfilmentTemplates) {
+    const smsFulfilmentTemplateUrl = new URL(
+      smsTemplate._links.smsTemplate.href
+    );
+
+    const smsFulfilmentTemplateResponse = await fetch(
+      smsFulfilmentTemplateUrl.pathname
+    );
+    const smsFulfilmentTemplateJson =
+      await smsFulfilmentTemplateResponse.json();
+    const packCode = smsFulfilmentTemplateJson._links.self.href
+      .split("/")
+      .pop();
 
     templates.push(packCode);
   }

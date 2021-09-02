@@ -58,6 +58,12 @@ management:
   health:
     pubsub:
       enabled: false
+      
+notifyservice:
+  connection:
+    scheme: http
+    host: localhost
+    port: 8162
 
 iapaudience: DUMMY
 
