@@ -1,7 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.LOAD_SAMPLE;
-import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.VIEW_SAMPLE_LOAD_PROGRESS;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LOAD_SAMPLE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.VIEW_SAMPLE_LOAD_PROGRESS;
 
 import com.opencsv.CSVWriter;
 import java.io.File;
@@ -26,14 +26,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
+import uk.gov.ons.ssdc.common.model.entity.Job;
+import uk.gov.ons.ssdc.common.model.entity.JobRow;
+import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
+import uk.gov.ons.ssdc.common.model.entity.JobStatus;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobStatusDto;
-import uk.gov.ons.ssdc.supporttool.model.entity.CollectionExercise;
-import uk.gov.ons.ssdc.supporttool.model.entity.Job;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;

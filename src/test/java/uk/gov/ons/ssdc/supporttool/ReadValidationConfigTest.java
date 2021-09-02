@@ -3,8 +3,8 @@ package uk.gov.ons.ssdc.supporttool;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileInputStream;
 import org.junit.jupiter.api.Test;
+import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
-import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
 public class ReadValidationConfigTest {
   ObjectMapper objectMapper = ObjectMapperFactory.objectMapper();

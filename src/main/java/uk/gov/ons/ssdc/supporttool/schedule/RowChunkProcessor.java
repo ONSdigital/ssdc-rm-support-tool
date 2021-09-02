@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.gov.ons.ssdc.supporttool.model.entity.Job;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
+import uk.gov.ons.ssdc.common.model.entity.Job;
+import uk.gov.ons.ssdc.common.model.entity.JobRow;
+import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
+import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.transformer.SampleTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
-import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
 @Component
 public class RowChunkProcessor {
