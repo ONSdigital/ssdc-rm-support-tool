@@ -7,6 +7,7 @@ import SurveyCaseSearch from "./SurveyCaseSearch";
 import UserAdmin from "./UserAdmin";
 import UserDetails from "./UserDetails";
 import GroupDetails from "./GroupDetails";
+import ExceptionManager from "./ExceptionManager";
 import {
   BrowserRouter as Router,
   Switch,
@@ -69,6 +70,9 @@ function QueryRouting() {
       </Route>
       <Route path="/groupDetails">
         <GroupDetails groupId={query.get("groupId")} />
+      </Route>
+      <Route path="/exceptionManager">
+        <ExceptionManager />
       </Route>
     </Switch>
   );
