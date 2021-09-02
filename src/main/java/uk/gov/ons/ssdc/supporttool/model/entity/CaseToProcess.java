@@ -15,14 +15,16 @@ public class CaseToProcess {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(columnDefinition = "serial")
   private long id;
 
-  @ManyToOne private Case caze;
+  @ManyToOne(optional = false)
+  private Case caze;
 
-  @ManyToOne private ActionRule actionRule;
+  @ManyToOne(optional = false)
+  private ActionRule actionRule;
 
-  @Column private UUID batchId;
+  @Column(nullable = false)
+  private UUID batchId;
 
   @Column(nullable = false)
   private int batchQuantity;
