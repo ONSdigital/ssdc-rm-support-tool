@@ -21,15 +21,18 @@ import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 public class Survey {
   @Id private UUID id;
 
-  @Column private String name;
+  @Column(nullable = false)
+  private String name;
 
   @Type(type = "jsonb")
-  @Column(columnDefinition = "jsonb")
+  @Column(nullable = false, columnDefinition = "jsonb")
   private ColumnValidator[] sampleValidationRules;
 
-  @Column private boolean sampleWithHeaderRow;
+  @Column(nullable = false)
+  private boolean sampleWithHeaderRow;
 
-  @Column private char sampleSeparator;
+  @Column(nullable = false)
+  private char sampleSeparator;
 
   @OneToMany(mappedBy = "survey")
   private List<CollectionExercise> collectionExercises;
