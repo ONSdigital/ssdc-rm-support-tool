@@ -1,8 +1,8 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
-import uk.gov.ons.ssdc.supporttool.model.entity.Job;
-import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
-import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
+import uk.gov.ons.ssdc.common.model.entity.Job;
+import uk.gov.ons.ssdc.common.model.entity.Survey;
+import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 
 public class SampleColumnHelper {
   public static String[] getExpectedColumns(Job job) {
