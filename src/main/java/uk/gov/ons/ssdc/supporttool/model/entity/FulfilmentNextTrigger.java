@@ -12,6 +12,6 @@ import lombok.Data;
 public class FulfilmentNextTrigger {
   @Id private UUID id;
 
-  @Column(columnDefinition = "timestamp with time zone")
+  @Column(nullable = false, columnDefinition = "timestamp with time zone")
   private OffsetDateTime triggerDateTime;
 }

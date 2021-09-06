@@ -14,13 +14,14 @@ import lombok.Data;
 public class FulfilmentToProcess {
 
   @Id
-  @Column(columnDefinition = "serial")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @ManyToOne private PrintTemplate printTemplate;
+  @ManyToOne(optional = false)
+  private PrintTemplate printTemplate;
 
-  @ManyToOne private Case caze;
+  @ManyToOne(optional = false)
+  private Case caze;
 
   @Column private Integer batchQuantity;
 
