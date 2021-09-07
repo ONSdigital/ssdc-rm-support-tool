@@ -5,8 +5,8 @@ import static uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper.getExpected
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import uk.gov.ons.ssdc.supporttool.model.entity.PrintTemplate;
-import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
+import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
+import uk.gov.ons.ssdc.common.model.entity.Survey;
 
 public class AllowPrintTemplateOnSurveyValidator {
   private static final Set<String> OTHER_ALLOWABLE_COLUMNS =

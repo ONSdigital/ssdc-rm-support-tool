@@ -1,6 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.SUPER_USER;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.SUPER_USER;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import uk.gov.ons.ssdc.supporttool.model.entity.User;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupMember;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupPermission;
+import uk.gov.ons.ssdc.common.model.entity.User;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupMember;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @RestController

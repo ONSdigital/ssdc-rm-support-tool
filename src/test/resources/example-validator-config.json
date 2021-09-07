@@ -3,10 +3,10 @@
     "columnName": "ADDRESS_LINE1",
     "rules": [
       {
-        "className": "uk.gov.ons.ssdc.supporttool.validation.MandatoryRule"
+        "className": "uk.gov.ons.ssdc.common.validation.MandatoryRule"
       },
       {
-        "className": "uk.gov.ons.ssdc.supporttool.validation.LengthRule",
+        "className": "uk.gov.ons.ssdc.common.validation.LengthRule",
         "maxLength": 60
       }
     ]
@@ -15,7 +15,7 @@
     "columnName": "ADDRESS_LINE2",
     "rules": [
       {
-        "className": "uk.gov.ons.ssdc.supporttool.validation.LengthRule",
+        "className": "uk.gov.ons.ssdc.common.validation.LengthRule",
         "maxLength": 60
       }
     ]
@@ -24,7 +24,7 @@
     "columnName": "ADDRESS_LINE3",
     "rules": [
       {
-        "className": "uk.gov.ons.ssdc.supporttool.validation.LengthRule",
+        "className": "uk.gov.ons.ssdc.common.validation.LengthRule",
         "maxLength": 60
       }
     ]
@@ -33,7 +33,7 @@
     "columnName": "TOWN_NAME",
     "rules": [
       {
-        "className": "uk.gov.ons.ssdc.supporttool.validation.MandatoryRule"
+        "className": "uk.gov.ons.ssdc.common.validation.MandatoryRule"
       }
     ]
   },
@@ -41,10 +41,7 @@
     "columnName": "POSTCODE",
     "rules": [
       {
-        "className": "uk.gov.ons.ssdc.supporttool.validation.MandatoryRule"
-      },
-      {
-        "className": "uk.gov.ons.ssdc.supporttool.validation.AlphanumericRule"
+        "className": "uk.gov.ons.ssdc.common.validation.MandatoryRule"
       }
     ]
   },

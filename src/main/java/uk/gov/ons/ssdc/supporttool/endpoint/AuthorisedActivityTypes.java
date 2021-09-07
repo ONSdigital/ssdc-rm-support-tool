@@ -4,7 +4,7 @@ import java.util.Set;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 
 @RestController
 @RequestMapping(value = "/api/authorisedActivityTypes")

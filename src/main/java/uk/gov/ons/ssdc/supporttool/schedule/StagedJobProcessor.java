@@ -4,9 +4,9 @@ import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import uk.gov.ons.ssdc.supporttool.model.entity.Job;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobStatus;
+import uk.gov.ons.ssdc.common.model.entity.Job;
+import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
+import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 
