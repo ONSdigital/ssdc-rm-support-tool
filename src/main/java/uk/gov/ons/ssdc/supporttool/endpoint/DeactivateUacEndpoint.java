@@ -1,7 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
-import static uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
 
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.Optional;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import uk.gov.ons.ssdc.common.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.DeactivateUacDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
-import uk.gov.ons.ssdc.supporttool.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.supporttool.model.repository.UacQidLinkRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.EventHelper;

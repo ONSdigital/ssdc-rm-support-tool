@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.ons.ssdc.common.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
@@ -18,7 +19,6 @@ import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
-import uk.gov.ons.ssdc.supporttool.model.entity.Case;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 

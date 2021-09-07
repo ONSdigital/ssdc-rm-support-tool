@@ -9,6 +9,8 @@ jobs:
 
       before_install:
         - make format-check-mvn
+        - echo "$GOOGLE_SERVICE_ACCOUNT_KEY" > ~/google-service-account-key.json
+        - export GOOGLE_APPLICATION_CREDENTIALS=~/google-service-account-key.json
 
       install: echo "SKIPPING DEFAULT INSTALL" # Travis has a default maven install. Don't build twice!
 

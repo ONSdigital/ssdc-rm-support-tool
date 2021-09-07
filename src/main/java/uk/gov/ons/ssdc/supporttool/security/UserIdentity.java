@@ -8,11 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
-import uk.gov.ons.ssdc.supporttool.model.entity.Survey;
-import uk.gov.ons.ssdc.supporttool.model.entity.User;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupMember;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupPermission;
+import uk.gov.ons.ssdc.common.model.entity.Survey;
+import uk.gov.ons.ssdc.common.model.entity.User;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupMember;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component

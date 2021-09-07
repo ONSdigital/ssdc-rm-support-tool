@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.HttpClientErrorException;
+import uk.gov.ons.ssdc.common.model.entity.Case;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.client.NotifyServiceClient;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestDTO;
@@ -25,11 +28,8 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsFulfilmentAction;
-import uk.gov.ons.ssdc.supporttool.model.entity.Case;
-import uk.gov.ons.ssdc.supporttool.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
-import uk.gov.ons.ssdc.supporttool.validation.ColumnValidator;
 
 @Controller
 @RequestMapping(value = "/api/cases")
