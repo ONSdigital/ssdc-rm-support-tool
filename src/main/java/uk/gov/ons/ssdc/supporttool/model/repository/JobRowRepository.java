@@ -3,9 +3,9 @@ package uk.gov.ons.ssdc.supporttool.model.repository;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
-import uk.gov.ons.ssdc.supporttool.model.entity.Job;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRow;
-import uk.gov.ons.ssdc.supporttool.model.entity.JobRowStatus;
+import uk.gov.ons.ssdc.common.model.entity.Job;
+import uk.gov.ons.ssdc.common.model.entity.JobRow;
+import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 
 public interface JobRowRepository extends JpaRepository<JobRow, UUID> {
   int countByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
