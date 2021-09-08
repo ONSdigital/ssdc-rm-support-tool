@@ -104,20 +104,28 @@ class LandingPage extends Component {
     this.setState({ surveys: surveyJson._embedded.surveys });
   };
 
+  getDateTimeForDateTimePicker = (date) => {
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return date.toJSON().slice(0, 16);
+  };
+
   getFulfilmentTrigger = async () => {
     const response = await fetch(
       `/api/fulfilmentNextTriggers/${this.state.triggerID}`
     );
 
     if (!response.ok) {
-      var dateNow = new Date();
-      dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
-      this.setState({ nextFulfilmentTriggerDateTime: dateNow.toJSON() });
+      this.setState({
+        nextFulfilmentTriggerDateTime: this.getDateTimeForDateTimePicker(
+          new Date()
+        ),
+      });
     } else {
       const fulfilmentNextTriggerJson = await response.json();
+      var dateOfTrigger = new Date(fulfilmentNextTriggerJson.triggerDateTime);
       this.setState({
         nextFulfilmentTriggerDateTime:
-          fulfilmentNextTriggerJson.triggerDateTime,
+          this.getDateTimeForDateTimePicker(dateOfTrigger),
       });
     }
   };
