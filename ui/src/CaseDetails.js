@@ -156,7 +156,7 @@ class CaseDetails extends Component {
                         : "No"}
                     </div>
                     <div>
-                      Invalid: {this.state.case.addressInvalid ? "Yes" : "No"}
+                      Invalid: {this.state.case.caseInvalid ? "Yes" : "No"}
                     </div>
                     <div>
                       Launched EQ:{" "}
