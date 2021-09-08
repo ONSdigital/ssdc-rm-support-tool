@@ -20,9 +20,13 @@ class CaseDetails extends Component {
     case: null,
     events: [],
     uacQidLinks: [],
+    surveyName: "",
+    collectionExerciseName: "",
   };
 
   componentDidMount() {
+    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCollectionExerciseName();
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getAllBackendData();
 
@@ -32,6 +36,27 @@ class CaseDetails extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getSurveyName = async () => {
+    const response = await fetch(`/api/surveys/${this.props.surveyId}`);
+
+    const surveyJson = await response.json();
+
+    this.setState({ surveyName: surveyJson.name });
+  };
+
+  getCollectionExerciseName = async () => {
+    const response = await fetch(
+        `api/collectionExercises/${this.props.collectionExerciseId}`);
+
+    if (!response.ok) {
+      return;
+    }
+
+    const collectionExerciseJson = await response.json();
+
+    this.setState({ collectionExerciseName: collectionExerciseJson.name });
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -143,6 +168,8 @@ class CaseDetails extends Component {
                 <TableBody>
                   <TableCell component="th" scope="row">
                     <div>Case ref: {this.state.case.caseRef}</div>
+                    <div>Survey name: {this.state.surveyName}</div>
+                    <div>Collection Exercise name: {this.state.collectionExerciseName}</div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>
