@@ -304,18 +304,18 @@ class CaseDetails extends Component {
               </div>
               <div>
                 <Typography
-                    variant="inherit"
-                    color="inherit"
-                    style={{ margin: 10, padding: 10 }}
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
                 >
                   Correlation ID: {this.state.eventToShow.correlationId}
                 </Typography>
               </div>
               <div>
                 <Typography
-                    variant="inherit"
-                    color="inherit"
-                    style={{ margin: 10, padding: 10 }}
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
                 >
                   Message ID: {this.state.eventToShow.messageId}
                 </Typography>
