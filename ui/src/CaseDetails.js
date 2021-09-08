@@ -95,7 +95,6 @@ class CaseDetails extends Component {
 
   closeEventDialog = () => {
     this.setState({ eventToShow: null });
-    // this.setState({ eventToShow: {type : null }});
   };
 
   render() {
@@ -301,6 +300,24 @@ class CaseDetails extends Component {
                   style={{ margin: 10, padding: 10 }}
                 >
                   Event channel: {this.state.eventToShow.channel}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                    variant="inherit"
+                    color="inherit"
+                    style={{ margin: 10, padding: 10 }}
+                >
+                  Correlation ID: {this.state.eventToShow.correlationId}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                    variant="inherit"
+                    color="inherit"
+                    style={{ margin: 10, padding: 10 }}
+                >
+                  Message ID: {this.state.eventToShow.messageId}
                 </Typography>
               </div>
               <div>
