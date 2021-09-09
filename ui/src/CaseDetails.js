@@ -155,9 +155,7 @@ class CaseDetails extends Component {
                         ? this.state.case.refusalReceived
                         : "No"}
                     </div>
-                    <div>
-                      Invalid: {this.state.case.invalid ? "Yes" : "No"}
-                    </div>
+                    <div>Invalid: {this.state.case.invalid ? "Yes" : "No"}</div>
                     <div>
                       Launched EQ:{" "}
                       {this.state.case.surveyLaunched ? "Yes" : "No"}
