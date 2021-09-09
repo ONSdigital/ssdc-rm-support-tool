@@ -93,9 +93,9 @@ class SmsFulfilment extends Component {
     if (response.ok) {
       this.closeDialog();
     } else {
-      const errorMessage = await response.text();
+      const errorMessageJson = await response.json();
       this.setState({
-        newValueValidationError: errorMessage,
+        newValueValidationError: errorMessageJson.error,
         validationError: true,
       });
     }
