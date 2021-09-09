@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.SkipMessageRequest;
 
 @Component
 public class ExceptionManagerClient {
@@ -49,13 +50,12 @@ public class ExceptionManagerClient {
     return result;
   }
 
-  public void skipMessage(String messageHash) {
+  public void skipMessage(SkipMessageRequest skipMessageRequest) {
 
     RestTemplate restTemplate = new RestTemplate();
-    UriComponents uriComponents =
-        createUriComponents(String.format("/skipmessage/%s", messageHash));
+    UriComponents uriComponents = createUriComponents("/skipmessage");
 
-    restTemplate.getForObject(uriComponents.toUri(), String.class);
+    restTemplate.postForObject(uriComponents.toUri(), skipMessageRequest, Void.class);
   }
 
   private UriComponents createUriComponents(String path) {
