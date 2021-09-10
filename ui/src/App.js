@@ -54,7 +54,6 @@ function QueryRouting() {
         <SurveyCaseSearch
           surveyId={query.get("surveyId")}
           caseId={query.get("caseId")}
-          collexName={query.get("collexName")}
         />
       </Route>
       <Route path="/collex">

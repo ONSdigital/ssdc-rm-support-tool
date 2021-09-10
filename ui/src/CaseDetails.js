@@ -21,10 +21,12 @@ class CaseDetails extends Component {
     events: [],
     uacQidLinks: [],
     surveyName: "",
+    collexName: "",
   };
 
   componentDidMount() {
     this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCollexName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCasesAndQidData();
 
@@ -41,6 +43,18 @@ class CaseDetails extends Component {
     const surveyJson = await response.json();
 
     this.setState({ surveyName: surveyJson.name });
+  };
+
+  getCollexName = async () => {
+    const collexResponse = await fetch(
+      `/api/cases/${this.props.caseId}/collectionExercise`
+    );
+
+    const collexJson = await collexResponse.json();
+
+    this.setState({
+      collexName: collexJson.name,
+    });
   };
 
   getAuthorisedActivities = async () => {
@@ -154,7 +168,7 @@ class CaseDetails extends Component {
                   <TableCell component="th" scope="row">
                     <div>Case ref: {this.state.case.caseRef}</div>
                     <div>Survey name: {this.state.surveyName}</div>
-                    <div>Collection Exercise name: {this.props.collexName}</div>
+                    <div>Collection Exercise name: {this.state.collexName}</div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>
