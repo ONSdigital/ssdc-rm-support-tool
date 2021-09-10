@@ -21,16 +21,14 @@ class CaseDetails extends Component {
     events: [],
     uacQidLinks: [],
     surveyName: "",
-    collectionExerciseName: "",
   };
 
   componentDidMount() {
     this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCollectionExerciseName();
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getAllBackendData();
+    this.getCasesAndQidData();
 
-    this.interval = setInterval(() => this.getAllBackendData(), 1000);
+    this.interval = setInterval(() => this.getCasesAndQidData(), 1000);
   }
 
   componentWillUnmount() {
@@ -43,19 +41,6 @@ class CaseDetails extends Component {
     const surveyJson = await response.json();
 
     this.setState({ surveyName: surveyJson.name });
-  };
-
-  getCollectionExerciseName = async () => {
-    const response = await fetch(
-        `api/collectionExercises/${this.props.collectionExerciseId}`);
-
-    if (!response.ok) {
-      return;
-    }
-
-    const collectionExerciseJson = await response.json();
-
-    this.setState({ collectionExerciseName: collectionExerciseJson.name });
   };
 
   getAuthorisedActivities = async () => {
@@ -71,7 +56,7 @@ class CaseDetails extends Component {
     this.setState({ authorisedActivities: authJson });
   };
 
-  getAllBackendData = async () => {
+  getCasesAndQidData = async () => {
     const response = await fetch(`/api/cases/${this.props.caseId}`);
     const caseJson = await response.json();
 
@@ -169,7 +154,7 @@ class CaseDetails extends Component {
                   <TableCell component="th" scope="row">
                     <div>Case ref: {this.state.case.caseRef}</div>
                     <div>Survey name: {this.state.surveyName}</div>
-                    <div>Collection Exercise name: {this.state.collectionExerciseName}</div>
+                    <div>Collection Exercise name: {this.props.collexName}</div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>

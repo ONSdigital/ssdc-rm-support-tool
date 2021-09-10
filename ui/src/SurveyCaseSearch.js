@@ -106,7 +106,9 @@ class SurveyCaseSearch extends Component {
     caseCells.push(
       <TableCell key={0}>
         {this.state.authorisedActivities.includes("VIEW_CASE_DETAILS") && (
-          <Link to={`/search?surveyId=${this.props.surveyId}&caseId=${caseId}`}>
+          <Link
+            to={`/search?surveyId=${this.props.surveyId}&caseId=${caseId}&collexName=${caze.collectionExerciseName}`}
+          >
             {caze.caseRef}
           </Link>
         )}
@@ -251,6 +253,7 @@ class SurveyCaseSearch extends Component {
           <CaseDetails
             surveyId={this.props.surveyId}
             caseId={this.props.caseId}
+            collexName={this.props.collexName}
           />
         )}
         {!this.props.caseId && searchFragment}
