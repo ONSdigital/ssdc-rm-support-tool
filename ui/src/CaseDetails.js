@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import { Typography, Paper, Button } from "@material-ui/core";
+import {
+  Typography,
+  Paper,
+  Button,
+  Dialog,
+  DialogContent,
+} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -13,6 +19,7 @@ import PrintFulfilment from "./PrintFulfilment";
 import SensitiveData from "./SensitiveData";
 import { Link } from "react-router-dom";
 import SmsFulfilment from "./SmsFulfilment";
+import JSONPretty from "react-json-pretty";
 
 class CaseDetails extends Component {
   state = {
@@ -20,18 +27,43 @@ class CaseDetails extends Component {
     case: null,
     events: [],
     uacQidLinks: [],
+    eventToShow: null,
+    surveyName: "",
+    collexName: "",
   };
 
   componentDidMount() {
+    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCollexName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getAllBackendData();
+    this.getCasesAndQidData();
 
-    this.interval = setInterval(() => this.getAllBackendData(), 1000);
+    this.interval = setInterval(() => this.getCasesAndQidData(), 1000);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getSurveyName = async () => {
+    const response = await fetch(`/api/surveys/${this.props.surveyId}`);
+
+    const surveyJson = await response.json();
+
+    this.setState({ surveyName: surveyJson.name });
+  };
+
+  getCollexName = async () => {
+    const collexResponse = await fetch(
+      `/api/cases/${this.props.caseId}/collectionExercise`
+    );
+
+    const collexJson = await collexResponse.json();
+
+    this.setState({
+      collexName: collexJson.name,
+    });
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -46,7 +78,7 @@ class CaseDetails extends Component {
     this.setState({ authorisedActivities: authJson });
   };
 
-  getAllBackendData = async () => {
+  getCasesAndQidData = async () => {
     const response = await fetch(`/api/cases/${this.props.caseId}`);
     const caseJson = await response.json();
 
@@ -79,8 +111,23 @@ class CaseDetails extends Component {
     fetch(`/api/deactivateUac/${qid}`);
   };
 
+  openEventPayloadDialog = (event) => {
+    this.setState({
+      eventToShow: event,
+    });
+  };
+
+  closeEventDialog = () => {
+    this.setState({ eventToShow: null });
+  };
+
   render() {
-    const caseEvents = this.state.events.map((event, index) => (
+    const sortedCaseEvents = this.state.events.sort((first, second) =>
+      first.dateTime.localeCompare(second.dateTime)
+    );
+    sortedCaseEvents.reverse();
+
+    const caseEvents = sortedCaseEvents.map((event, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
           {event.dateTime}
@@ -90,6 +137,14 @@ class CaseDetails extends Component {
         </TableCell>
         <TableCell component="th" scope="row">
           {event.source}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          <Button
+            onClick={() => this.openEventPayloadDialog(event)}
+            variant="contained"
+          >
+            {event.type}
+          </Button>
         </TableCell>
       </TableRow>
     ));
@@ -143,6 +198,8 @@ class CaseDetails extends Component {
                 <TableBody>
                   <TableCell component="th" scope="row">
                     <div>Case ref: {this.state.case.caseRef}</div>
+                    <div>Survey name: {this.state.surveyName}</div>
+                    <div>Collection Exercise name: {this.state.collexName}</div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>
@@ -208,6 +265,7 @@ class CaseDetails extends Component {
                     <TableCell>Date</TableCell>
                     <TableCell>Description</TableCell>
                     <TableCell>Source</TableCell>
+                    <TableCell>Event Type</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{caseEvents}</TableBody>
@@ -228,6 +286,87 @@ class CaseDetails extends Component {
               </Table>
             </TableContainer>
           </div>
+        )}
+        {this.state.eventToShow && (
+          <Dialog open={true}>
+            <DialogContent style={{ padding: 30 }}>
+              <div>
+                <Typography
+                  variant="h5"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Event Type: {this.state.eventToShow.type}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Time of event: {this.state.eventToShow.dateTime}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Event source: {this.state.eventToShow.source}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Event channel: {this.state.eventToShow.channel}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Correlation ID: {this.state.eventToShow.correlationId}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Message ID: {this.state.eventToShow.messageId}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Event payload:
+                  <JSONPretty
+                    id="json-pretty"
+                    data={this.state.eventToShow.payload}
+                    style={{ margin: 10, padding: 10 }}
+                  ></JSONPretty>
+                </Typography>
+              </div>
+              <Button
+                onClick={this.closeEventDialog}
+                variant="contained"
+                style={{ margin: 10 }}
+              >
+                Cancel
+              </Button>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     );

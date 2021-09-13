@@ -1,5 +1,20 @@
 # ssdc-rm-support-tool
 
+## Basic running
+
+1st apply security as below
+
+Locally if you bring up your docker dev you should navigate to: http://localhost:9999/ and see surveys, 
+print templates etc. Running a few AT tests is a great way to populate this data.
+
+For testing/debugging it's advised you use VSCode and have Babel Javascript installed, this does cunning things
+and allows you to debug.  
+
+Then run 'make run-dev-ui'.  This will run the node server in the background.
+You can then edit the UI code in VSCode and run it, a new browser pointing to localhost:3000 should appear.
+The code can be edited in VSCode without restarting the backend 'make run-dev-ui'
+
+
 ## Security
 Not seeing the features you want or need? Try adding yourself as a super user, like this:
 
