@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import { Typography, Paper, Button } from "@material-ui/core";
+import {
+  Typography,
+  Paper,
+  Button,
+  Dialog,
+  DialogContent,
+} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -13,6 +19,7 @@ import PrintFulfilment from "./PrintFulfilment";
 import SensitiveData from "./SensitiveData";
 import { Link } from "react-router-dom";
 import SmsFulfilment from "./SmsFulfilment";
+import JSONPretty from "react-json-pretty";
 
 class CaseDetails extends Component {
   state = {
@@ -20,6 +27,7 @@ class CaseDetails extends Component {
     case: null,
     events: [],
     uacQidLinks: [],
+    eventToShow: null,
     surveyName: "",
     collexName: "",
   };
@@ -103,8 +111,23 @@ class CaseDetails extends Component {
     fetch(`/api/deactivateUac/${qid}`);
   };
 
+  openEventPayloadDialog = (event) => {
+    this.setState({
+      eventToShow: event,
+    });
+  };
+
+  closeEventDialog = () => {
+    this.setState({ eventToShow: null });
+  };
+
   render() {
-    const caseEvents = this.state.events.map((event, index) => (
+    const sortedCaseEvents = this.state.events.sort((first, second) =>
+      first.dateTime.localeCompare(second.dateTime)
+    );
+    sortedCaseEvents.reverse();
+
+    const caseEvents = sortedCaseEvents.map((event, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
           {event.dateTime}
@@ -114,6 +137,14 @@ class CaseDetails extends Component {
         </TableCell>
         <TableCell component="th" scope="row">
           {event.source}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          <Button
+            onClick={() => this.openEventPayloadDialog(event)}
+            variant="contained"
+          >
+            {event.type}
+          </Button>
         </TableCell>
       </TableRow>
     ));
@@ -234,6 +265,7 @@ class CaseDetails extends Component {
                     <TableCell>Date</TableCell>
                     <TableCell>Description</TableCell>
                     <TableCell>Source</TableCell>
+                    <TableCell>Event Type</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{caseEvents}</TableBody>
@@ -254,6 +286,87 @@ class CaseDetails extends Component {
               </Table>
             </TableContainer>
           </div>
+        )}
+        {this.state.eventToShow && (
+          <Dialog open={true}>
+            <DialogContent style={{ padding: 30 }}>
+              <div>
+                <Typography
+                  variant="h5"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Event Type: {this.state.eventToShow.type}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Time of event: {this.state.eventToShow.dateTime}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Event source: {this.state.eventToShow.source}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Event channel: {this.state.eventToShow.channel}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Correlation ID: {this.state.eventToShow.correlationId}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Message ID: {this.state.eventToShow.messageId}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Event payload:
+                  <JSONPretty
+                    id="json-pretty"
+                    data={this.state.eventToShow.payload}
+                    style={{ margin: 10, padding: 10 }}
+                  ></JSONPretty>
+                </Typography>
+              </div>
+              <Button
+                onClick={this.closeEventDialog}
+                variant="contained"
+                style={{ margin: 10 }}
+              >
+                Cancel
+              </Button>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     );
