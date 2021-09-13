@@ -65,7 +65,12 @@ public class FileStager {
           if (!headerRow[index].equals(expectedColumns[index])) {
             // The header row doesn't match what we expected
             jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
-            job.setFatalErrorDescription("Header row does not match expected columns");
+            job.setFatalErrorDescription(
+                "Header row does not match expected columns, received: ["
+                    + headerRow[index]
+                    + "] expected: ["
+                    + expectedColumns[index]
+                    + "]");
           }
         }
       }

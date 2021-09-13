@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.client.ExceptionManagerClient;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.SkipMessageRequest;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
 @Controller
@@ -56,7 +57,10 @@ public class ExceptionManager {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
-    exceptionManagerClient.skipMessage(messageHash);
+    SkipMessageRequest skipMessageRequest = new SkipMessageRequest();
+    skipMessageRequest.setMessageHash(messageHash);
+    skipMessageRequest.setSkippingUser(userEmail);
+    exceptionManagerClient.skipMessage(skipMessageRequest);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }
