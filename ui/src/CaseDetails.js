@@ -20,18 +20,42 @@ class CaseDetails extends Component {
     case: null,
     events: [],
     uacQidLinks: [],
+    surveyName: "",
+    collexName: "",
   };
 
   componentDidMount() {
+    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCollexName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getAllBackendData();
+    this.getCasesAndQidData();
 
-    this.interval = setInterval(() => this.getAllBackendData(), 1000);
+    this.interval = setInterval(() => this.getCasesAndQidData(), 1000);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getSurveyName = async () => {
+    const response = await fetch(`/api/surveys/${this.props.surveyId}`);
+
+    const surveyJson = await response.json();
+
+    this.setState({ surveyName: surveyJson.name });
+  };
+
+  getCollexName = async () => {
+    const collexResponse = await fetch(
+      `/api/cases/${this.props.caseId}/collectionExercise`
+    );
+
+    const collexJson = await collexResponse.json();
+
+    this.setState({
+      collexName: collexJson.name,
+    });
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -46,7 +70,7 @@ class CaseDetails extends Component {
     this.setState({ authorisedActivities: authJson });
   };
 
-  getAllBackendData = async () => {
+  getCasesAndQidData = async () => {
     const response = await fetch(`/api/cases/${this.props.caseId}`);
     const caseJson = await response.json();
 
@@ -143,6 +167,8 @@ class CaseDetails extends Component {
                 <TableBody>
                   <TableCell component="th" scope="row">
                     <div>Case ref: {this.state.case.caseRef}</div>
+                    <div>Survey name: {this.state.surveyName}</div>
+                    <div>Collection Exercise name: {this.state.collexName}</div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>
