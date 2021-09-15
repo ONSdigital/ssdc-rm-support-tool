@@ -214,8 +214,7 @@ class CaseDetails extends Component {
                     </div>
                     <div>Invalid: {this.state.case.invalid ? "Yes" : "No"}</div>
                     <div>
-                      Launched EQ:{" "}
-                      {this.state.case.surveyLaunched ? "Yes" : "No"}
+                      Launched EQ: {this.state.case.eqLaunched ? "Yes" : "No"}
                     </div>
                   </TableCell>
                   <TableCell align="right">

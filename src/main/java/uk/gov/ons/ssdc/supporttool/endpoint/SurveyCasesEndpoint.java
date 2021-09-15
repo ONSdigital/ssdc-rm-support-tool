@@ -59,7 +59,7 @@ public class SurveyCasesEndpoint {
       @RequestParam(value = "collexId", required = false) Optional<UUID> collexId,
       @RequestParam(value = "receipted", required = false) Optional<Boolean> receiptReceived,
       @RequestParam(value = "invalid", required = false) Optional<Boolean> addressInvalid,
-      @RequestParam(value = "launched", required = false) Optional<Boolean> surveyLaunched,
+      @RequestParam(value = "launched", required = false) Optional<Boolean> eqLaunched,
       @RequestParam(value = "refusal", required = false)
           Optional<UIRefusalTypeDTO> refusalReceived) {
 
@@ -91,9 +91,9 @@ public class SurveyCasesEndpoint {
       namedParameters.put("addressInvalid", addressInvalid.get());
     }
 
-    if (surveyLaunched.isPresent()) {
-      queryStringBuilder.append(" AND c.survey_launched = :surveyLaunched");
-      namedParameters.put("surveyLaunched", surveyLaunched.get());
+    if (eqLaunched.isPresent()) {
+      queryStringBuilder.append(" AND c.eq_launched = :eqLaunched");
+      namedParameters.put("eqLaunched", eqLaunched.get());
     }
 
     if (refusalReceived.isPresent()) {
