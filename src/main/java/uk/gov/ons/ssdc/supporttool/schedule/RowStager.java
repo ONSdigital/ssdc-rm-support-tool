@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import uk.gov.ons.ssdc.common.model.entity.Job;
-import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
@@ -71,8 +70,7 @@ public class RowStager {
         }
 
         if (jobStatus == JobStatus.VALIDATED_TOTAL_FAILURE) {
-          List<JobRow> allJobRows = jobRowRepository.findByJob(job);
-          jobRowRepository.deleteAllInBatch(allJobRows);
+          jobRowRepository.deleteByJob(job);
         }
 
         job.setJobStatus(jobStatus);

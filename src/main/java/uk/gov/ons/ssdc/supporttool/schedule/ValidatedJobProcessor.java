@@ -37,7 +37,9 @@ public class ValidatedJobProcessor {
       }
 
       job.setJobStatus(JobStatus.PROCESSED);
-      jobRepository.saveAndFlush(job);
+      jobRepository.save(job);
+
+      jobRowRepository.deleteByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED);
     }
   }
 }

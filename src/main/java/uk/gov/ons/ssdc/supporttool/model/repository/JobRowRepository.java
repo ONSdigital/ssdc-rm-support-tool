@@ -15,9 +15,9 @@ public interface JobRowRepository extends JpaRepository<JobRow, UUID> {
   List<JobRow> findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
       Job job, JobRowStatus jobRowStatus);
 
-  List<JobRow> findByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
+  void deleteByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 
-  List<JobRow> findByJob(Job job);
+  void deleteByJob(Job job);
 
   List<JobRow> findTop500ByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 }

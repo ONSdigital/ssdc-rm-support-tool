@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -179,6 +180,7 @@ public class JobEndpoint {
   }
 
   @PostMapping(value = "/{id}/process")
+  @Transactional
   public void processJob(
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
@@ -197,6 +199,7 @@ public class JobEndpoint {
   }
 
   @PostMapping(value = "/{id}/cancel")
+  @Transactional
   public void cancelJob(
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
@@ -209,9 +212,7 @@ public class JobEndpoint {
       job.setJobStatus(JobStatus.CANCELLED);
       jobRepository.saveAndFlush(job);
 
-      List<JobRow> jobRowsValidatedOk =
-          jobRowRepository.findByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
-      jobRowRepository.deleteAllInBatch(jobRowsValidatedOk);
+      jobRowRepository.deleteByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
     } else {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't cancel a job which isn't validated");
