@@ -57,14 +57,14 @@ public class FileStager {
       String[] expectedColumns = SampleColumnHelper.getExpectedColumns(job);
       if (headerRow.length != expectedColumns.length) {
         // The header row doesn't have enough columns
-        jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
+        jobStatus = JobStatus.VALIDATED_TOTAL_FAILURE;
         job.setFatalErrorDescription("Header row does not have expected number of columns");
       } else {
         // Validate that the header rows are correct
         for (int index = 0; index < headerRow.length; index++) {
           if (!headerRow[index].equals(expectedColumns[index])) {
             // The header row doesn't match what we expected
-            jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
+            jobStatus = JobStatus.VALIDATED_TOTAL_FAILURE;
             job.setFatalErrorDescription(
                 "Header row does not match expected columns, received: ["
                     + headerRow[index]

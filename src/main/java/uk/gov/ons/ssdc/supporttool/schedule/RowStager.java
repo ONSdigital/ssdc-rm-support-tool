@@ -14,20 +14,27 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import uk.gov.ons.ssdc.common.model.entity.Job;
+import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 
 @Component
 public class RowStager {
   private final JobRepository jobRepository;
+  private final JobRowRepository jobRowRepository;
   private final RowChunkStager rowChunkStager;
 
   @Value("${file-upload-storage-path}")
   private String fileUploadStoragePath;
 
-  public RowStager(JobRepository jobRepository, RowChunkStager rowChunkStager) {
+  public RowStager(
+      JobRepository jobRepository,
+      JobRowRepository jobRowRepository,
+      RowChunkStager rowChunkStager) {
     this.jobRepository = jobRepository;
+    this.jobRowRepository = jobRowRepository;
     this.rowChunkStager = rowChunkStager;
   }
 
@@ -55,12 +62,17 @@ public class RowStager {
         }
 
         // Stage all the rows
-        JobStatus jobStatus = JobStatus.PROCESSING_IN_PROGRESS;
+        JobStatus jobStatus = JobStatus.VALIDATION_IN_PROGRESS;
         while (job.getStagingRowNumber() < job.getFileRowCount() - 1) {
           jobStatus = rowChunkStager.stageChunk(job, headerRow, csvReader);
-          if (jobStatus == JobStatus.PROCESSED_TOTAL_FAILURE) {
+          if (jobStatus == JobStatus.VALIDATED_TOTAL_FAILURE) {
             break;
           }
+        }
+
+        if (jobStatus == JobStatus.VALIDATED_TOTAL_FAILURE) {
+          List<JobRow> allJobRows = jobRowRepository.findByJob(job);
+          jobRowRepository.deleteAllInBatch(allJobRows);
         }
 
         job.setJobStatus(jobStatus);

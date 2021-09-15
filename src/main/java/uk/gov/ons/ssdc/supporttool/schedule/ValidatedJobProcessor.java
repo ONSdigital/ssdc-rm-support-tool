@@ -11,13 +11,13 @@ import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 
 @Component
-public class StagedJobProcessor {
+public class ValidatedJobProcessor {
 
   private final JobRepository jobRepository;
   private final JobRowRepository jobRowRepository;
   private final RowChunkProcessor rowChunkProcessor;
 
-  public StagedJobProcessor(
+  public ValidatedJobProcessor(
       JobRepository jobRepository,
       JobRowRepository jobRowRepository,
       RowChunkProcessor rowChunkProcessor) {
@@ -32,15 +32,11 @@ public class StagedJobProcessor {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.PROCESSING_IN_PROGRESS);
 
     for (Job job : jobs) {
-      JobStatus jobStatus = JobStatus.PROCESSED_OK;
-
-      while (jobRowRepository.existsByJobAndAndJobRowStatus(job, JobRowStatus.STAGED)) {
-        if (rowChunkProcessor.processChunk(job)) {
-          jobStatus = JobStatus.PROCESSED_WITH_ERRORS;
-        }
+      while (jobRowRepository.existsByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK)) {
+        rowChunkProcessor.processChunk(job);
       }
 
-      job.setJobStatus(jobStatus);
+      job.setJobStatus(JobStatus.PROCESSED);
       jobRepository.saveAndFlush(job);
     }
   }

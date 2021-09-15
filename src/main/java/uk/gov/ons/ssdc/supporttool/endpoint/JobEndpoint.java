@@ -106,7 +106,7 @@ public class JobEndpoint {
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
-            job, JobRowStatus.PROCESSED_ERROR);
+            job, JobRowStatus.VALIDATED_ERROR);
 
     String csvFileName = "ERROR_" + job.getFileName();
 
@@ -146,7 +146,7 @@ public class JobEndpoint {
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
-            job, JobRowStatus.PROCESSED_ERROR);
+            job, JobRowStatus.VALIDATED_ERROR);
 
     String csvFileName = "ERROR_DETAIL_" + job.getFileName();
 
@@ -178,8 +178,48 @@ public class JobEndpoint {
     return csvContent;
   }
 
+  @PostMapping(value = "/{id}/process")
+  public void processJob(
+      @PathVariable("id") UUID id,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    Job job = jobRepository.findById(id).get();
+    userIdentity.checkUserPermission(
+        userEmail, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
+
+    if (job.getJobStatus() == JobStatus.VALIDATED_OK
+        || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
+      job.setJobStatus(JobStatus.PROCESSING_IN_PROGRESS);
+      jobRepository.saveAndFlush(job);
+    } else {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Can't process a job which isn't validated");
+    }
+  }
+
+  @PostMapping(value = "/{id}/cancel")
+  public void cancelJob(
+      @PathVariable("id") UUID id,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    Job job = jobRepository.findById(id).get();
+    userIdentity.checkUserPermission(
+        userEmail, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
+
+    if (job.getJobStatus() == JobStatus.VALIDATED_OK
+        || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
+      job.setJobStatus(JobStatus.CANCELLED);
+      jobRepository.saveAndFlush(job);
+
+      List<JobRow> jobRowsValidatedOk =
+          jobRowRepository.findByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
+      jobRowRepository.deleteAllInBatch(jobRowsValidatedOk);
+    } else {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Can't process a job which isn't validated");
+    }
+  }
+
   @PostMapping
-  public ResponseEntity<?> submitUploadJob(
+  public ResponseEntity<UUID> submitJob(
       @RequestParam(value = "fileId") UUID fileId,
       @RequestParam(value = "fileName") String fileName,
       @RequestParam(value = "collectionExerciseId") UUID collectionExerciseId,
@@ -204,9 +244,10 @@ public class JobEndpoint {
       throw new RuntimeException(e);
     }
 
-    Job job = new Job();
-    job.setId(UUID.randomUUID());
+    UUID jobId = UUID.randomUUID();
 
+    Job job = new Job();
+    job.setId(jobId);
     job.setFileName(fileName);
     job.setFileId(fileId);
     job.setJobStatus(JobStatus.FILE_UPLOADED);
@@ -216,7 +257,7 @@ public class JobEndpoint {
 
     jobRepository.saveAndFlush(job);
 
-    return new ResponseEntity<>(null, HttpStatus.CREATED);
+    return new ResponseEntity<>(jobId, HttpStatus.CREATED);
   }
 
   private JobDto mapJob(Job job) {
@@ -228,20 +269,10 @@ public class JobEndpoint {
     jobDto.setFileName(job.getFileName());
     jobDto.setFileRowCount(job.getFileRowCount());
     jobDto.setJobStatus(JobStatusDto.valueOf(job.getJobStatus().name()));
-
-    if (job.getJobStatus() == JobStatus.FILE_UPLOADED) {
-      jobDto.setStagedRowCount(0);
-    } else {
-      jobDto.setStagedRowCount(job.getStagingRowNumber());
-
-      if (job.getJobStatus() != JobStatus.STAGING_IN_PROGRESS) {
-        jobDto.setProcessedRowCount(
-            jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_OK));
-        jobDto.setRowErrorCount(
-            jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_ERROR));
-      }
-    }
-
+    jobDto.setStagedRowCount(job.getStagingRowNumber());
+    jobDto.setValidatedRowCount(job.getValidatingRowNumber());
+    jobDto.setProcessedRowCount(job.getProcessingRowNumber());
+    jobDto.setRowErrorCount(job.getErrorRowCount());
     jobDto.setFatalErrorDescription(job.getFatalErrorDescription());
     return jobDto;
   }
