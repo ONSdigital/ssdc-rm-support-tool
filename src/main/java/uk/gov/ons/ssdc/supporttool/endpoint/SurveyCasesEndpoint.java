@@ -59,7 +59,7 @@ public class SurveyCasesEndpoint {
       @RequestParam(value = "collexId", required = false) Optional<UUID> collexId,
       @RequestParam(value = "receipted", required = false) Optional<Boolean> receiptReceived,
       @RequestParam(value = "invalid", required = false) Optional<Boolean> addressInvalid,
-      @RequestParam(value = "eqLaunched", required = false) Optional<Boolean> eqLaunched,
+      @RequestParam(value = "launched", required = false) Optional<Boolean> eqLaunched,
       @RequestParam(value = "refusal", required = false)
           Optional<UIRefusalTypeDTO> refusalReceived) {
 
