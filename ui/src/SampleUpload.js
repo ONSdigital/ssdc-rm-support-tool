@@ -78,7 +78,7 @@ class SampleUpload extends Component {
         // send the job details
         const fileId = data.data;
         const jobData = new FormData();
-        jobData.append("fileId", data.data);
+        jobData.append("fileId", fileId);
         jobData.append("fileName", fileName);
         jobData.append("collectionExerciseId", this.props.collectionExerciseId);
 
@@ -132,6 +132,18 @@ class SampleUpload extends Component {
     this.setState({ showDetails: false });
   };
 
+  onProcessJob = () => {
+    fetch(`/api/job/${this.state.selectedJob}/process`, {
+      method: "POST",
+    });
+  };
+
+  onCancelJob = () => {
+    fetch(`/api/job/${this.state.selectedJob}/cancel`, {
+      method: "POST",
+    });
+  };
+
   render() {
     const selectedJob = this.state.jobs.find(
       (job) => job.id === this.state.selectedJob
@@ -149,7 +161,11 @@ class SampleUpload extends Component {
             variant="contained"
           >
             {convertStatusText(job.jobStatus)}{" "}
-            {!job.jobStatus.startsWith("PROCESSED") && (
+            {[
+              "STAGING_IN_PROGRESS",
+              "VALIDATION_IN_PROGRESS",
+              "PROCESSING_IN_PROGRESS",
+            ].includes(job.jobStatus) && (
               <CircularProgress size={15} style={{ marginLeft: 10 }} />
             )}
           </Button>
@@ -228,6 +244,8 @@ class SampleUpload extends Component {
           showDetails={this.state.showDetails}
           handleClosedDetails={this.handleClosedDetails}
           onClickAway={this.handleClosedDetails}
+          onProcessJob={this.onProcessJob}
+          onCancelJob={this.onCancelJob}
         ></JobDetails>
       </div>
     );

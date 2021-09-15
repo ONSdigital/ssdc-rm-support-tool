@@ -78,14 +78,33 @@ class JobDetails extends Component {
                   color="inherit"
                   style={{ margin: 10, padding: 10 }}
                 >
+                  Rows validated:
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={Math.round(
+                    (this.props.job.validatedRowCount /
+                      (this.props.job.fileRowCount - 1)) *
+                      100
+                  )}
+                  style={{ marginTop: 20, marginBottom: 20, width: 300 }}
+                />
+              </Grid>
+              <Grid container item xs={12} spacing={3}>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
                   Rows processed:
                 </Typography>
                 <LinearProgress
                   variant="determinate"
                   value={Math.round(
-                    ((this.props.job.processedRowCount +
-                      this.props.job.rowErrorCount) /
-                      (this.props.job.fileRowCount - 1)) *
+                    (this.props.job.processedRowCount /
+                      (this.props.job.fileRowCount -
+                        1 -
+                        this.props.job.rowErrorCount)) *
                       100
                   )}
                   style={{ marginTop: 20, marginBottom: 20, width: 300 }}
@@ -143,7 +162,13 @@ class JobDetails extends Component {
     var buttonFragment;
     if (
       this.props.job &&
-      this.props.job.jobStatus === "PROCESSED_WITH_ERRORS"
+      [
+        "VALIDATED_WITH_ERRORS",
+        "PROCESSING_IN_PROGRESS",
+        "PROCESSED",
+        "CANCELLED",
+      ].includes(this.props.job.jobStatus) &&
+      this.props.job.rowErrorCount > 0
     ) {
       buttonFragment = (
         <Grid container spacing={1}>
@@ -178,6 +203,27 @@ class JobDetails extends Component {
           <Grid container spacing={1}>
             {jobDetailsFragment}
             {buttonFragment}
+            {this.props.job &&
+              ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
+                this.props.job.jobStatus
+              ) && (
+                <>
+                  <Button
+                    onClick={this.props.onProcessJob}
+                    variant="contained"
+                    style={{ margin: 10 }}
+                  >
+                    Process
+                  </Button>
+                  <Button
+                    onClick={this.props.onCancelJob}
+                    variant="contained"
+                    style={{ margin: 10 }}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
             <Button
               onClick={this.props.handleClosedDetails}
               variant="contained"
