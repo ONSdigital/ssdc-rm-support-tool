@@ -30,7 +30,7 @@ public class RowChunkStager {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public JobStatus stageChunk(Job job, String[] headerRow, CSVReader csvReader) {
-    JobStatus jobStatus = JobStatus.PROCESSING_IN_PROGRESS;
+    JobStatus jobStatus = JobStatus.VALIDATION_IN_PROGRESS;
 
     try {
       List<JobRow> jobRows = new LinkedList<>();
@@ -42,7 +42,7 @@ public class RowChunkStager {
         }
 
         if (line.length != headerRow.length) {
-          jobStatus = JobStatus.PROCESSED_TOTAL_FAILURE;
+          jobStatus = JobStatus.VALIDATED_TOTAL_FAILURE;
           job.setFatalErrorDescription("CSV corrupt: row data does not match columns");
           break;
         }
