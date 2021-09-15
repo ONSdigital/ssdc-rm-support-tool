@@ -10,6 +10,9 @@ import {
   FormControl,
   InputLabel,
   Select,
+  DialogTitle,
+  DialogContentText,
+  DialogActions,
 } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -28,9 +31,12 @@ class GroupDetails extends Component {
     allActivities: [],
     allSurveys: [],
     showAllowDialog: false,
+    showRemoveDialog: false,
     activity: null,
     activityValidationError: false,
     surveyId: null,
+    surveyName: null,
+    userGroupPermissionId: null,
   };
 
   componentDidMount() {
@@ -103,6 +109,7 @@ class GroupDetails extends Component {
       groupActivities.push({
         activity: activity,
         surveyName: surveyName,
+        userGroupPermissionId: userGroupPermissionId,
       });
     }
 
@@ -155,6 +162,31 @@ class GroupDetails extends Component {
     this.setState({
       showAllowDialog: false,
     });
+  };
+
+  openRemoveDialog = (activity, surveyName, userGroupPermissionId) => {
+    this.setState({
+      showRemoveDialog: true,
+      activity: activity,
+      surveyName: surveyName,
+      userGroupPermissionId: userGroupPermissionId,
+    });
+  };
+
+  closeRemoveDialog = () => {
+    this.setState({
+      showRemoveDialog: false,
+    });
+  };
+
+  removeActivityPermission = async () => {
+    await fetch(
+      `/api/userGroupPermissions/${this.state.userGroupPermissionId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    this.closeRemoveDialog();
   };
 
   onActivityChange = (event) => {
@@ -215,6 +247,20 @@ class GroupDetails extends Component {
             <TableCell component="th" scope="row">
               {groupActivity.surveyName}
             </TableCell>
+            <TableCell component="th" scope="row">
+              <Button
+                variant="contained"
+                onClick={() =>
+                  this.openRemoveDialog(
+                    groupActivity.activity,
+                    groupActivity.surveyName,
+                    groupActivity.userGroupPermissionId
+                  )
+                }
+              >
+                Remove
+              </Button>
+            </TableCell>
           </TableRow>
         );
       }
@@ -263,6 +309,7 @@ class GroupDetails extends Component {
                   <TableRow>
                     <TableCell>Activity</TableCell>
                     <TableCell>Survey</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{groupActivitiesTableRows}</TableBody>
@@ -310,6 +357,29 @@ class GroupDetails extends Component {
                   </Button>
                 </div>
               </DialogContent>
+            </Dialog>
+            <Dialog open={this.state.showRemoveDialog}>
+              <DialogTitle id="alert-dialog-title">
+                {"Confirm remove?"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you wish to remove activity: "
+                  {this.state.activity}" for survey: "{this.state.surveyName}"?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.removeActivityPermission} color="primary">
+                  Yes
+                </Button>
+                <Button
+                  onClick={this.closeRemoveDialog}
+                  color="primary"
+                  autoFocus
+                >
+                  No
+                </Button>
+              </DialogActions>
             </Dialog>
           </>
         )}
