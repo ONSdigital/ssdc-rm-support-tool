@@ -62,7 +62,9 @@ public class RowChunkProcessor {
         job.setProcessingRowNumber(job.getProcessingRowNumber() + 1);
       } catch (Exception e) {
         // The message sending will be retried...
-        log.with(jobRow).error("Failed to send message to pubsub", e);
+        log.with("job ID", job.getId())
+            .with("row ID", jobRow.getId())
+            .error("Failed to send message to pubsub", e);
       }
     }
 
