@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -113,10 +112,10 @@ public class SurveyCasesEndpoint {
   @GetMapping(value = "/{surveyId}/caseRef/{caseRef}")
   @ResponseBody
   public List<CaseSearchResult> getCaseByCaseRef(
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
       @PathVariable(value = "surveyId") UUID surveyId,
-      @PathVariable(value = "caseRef") long caseRef) {
-    checkSurveySearchCasesPermission(jwt, surveyId);
+      @PathVariable(value = "caseRef") long caseRef,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    checkSurveySearchCasesPermission(userEmail, surveyId);
 
     String query = searchCasesInSurveyPartialQuery + " AND c.case_ref = :caseRef";
 
@@ -129,10 +128,10 @@ public class SurveyCasesEndpoint {
   @GetMapping(value = "/{surveyId}/qid/{qid}")
   @ResponseBody
   public List<CaseSearchResult> getCaseByQid(
-      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwt,
       @PathVariable(value = "surveyId") UUID surveyId,
-      @PathVariable(value = "qid") String qid) {
-    checkSurveySearchCasesPermission(jwt, surveyId);
+      @PathVariable(value = "qid") String qid,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    checkSurveySearchCasesPermission(userEmail, surveyId);
 
     String query =
         searchCasesPartialQuery
