@@ -10,6 +10,9 @@ import {
   FormControl,
   InputLabel,
   Select,
+  DialogTitle,
+  DialogContentText,
+  DialogActions,
 } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -29,6 +32,9 @@ class UserDetails extends Component {
     showGroupDialog: false,
     groupId: null,
     groupValidationError: false,
+    showRemoveDialog: false,
+    groupName: null,
+    userGroupMemberId: null,
   };
 
   componentDidMount() {
@@ -102,6 +108,7 @@ class UserDetails extends Component {
       groupMemberships.push({
         groupId: groupId,
         name: group.name,
+        userGroupMemberId: userGroupMemberId,
       });
     }
 
@@ -134,6 +141,27 @@ class UserDetails extends Component {
     this.setState({
       showGroupDialog: false,
     });
+  };
+
+  openRemoveDialog = (groupName, userGroupMemberId) => {
+    this.setState({
+      showRemoveDialog: true,
+      groupName: groupName,
+      userGroupMemberId: userGroupMemberId,
+    });
+  };
+
+  closeRemoveDialog = () => {
+    this.setState({
+      showRemoveDialog: false,
+    });
+  };
+
+  removeGroup = async () => {
+    await fetch(`/api/userGroupMembers/${this.state.userGroupMemberId}`, {
+      method: "DELETE",
+    });
+    this.closeRemoveDialog();
   };
 
   onGroupChange = (event) => {
@@ -176,6 +204,19 @@ class UserDetails extends Component {
                 {memberOfGroup.name}
               </Link>
             </TableCell>
+            <TableCell component="th" scope="row">
+              <Button
+                variant="contained"
+                onClick={() =>
+                  this.openRemoveDialog(
+                    memberOfGroup.name,
+                    memberOfGroup.userGroupMemberId
+                  )
+                }
+              >
+                Remove
+              </Button>
+            </TableCell>
           </TableRow>
         );
       }
@@ -215,6 +256,7 @@ class UserDetails extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Group Name</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{memberOfGroupTableRows}</TableBody>
@@ -253,6 +295,29 @@ class UserDetails extends Component {
                   </Button>
                 </div>
               </DialogContent>
+            </Dialog>
+            <Dialog open={this.state.showRemoveDialog}>
+              <DialogTitle id="alert-dialog-title">
+                {"Confirm remove?"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you wish to remove group: "{this.state.groupName}
+                  " from this user?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.removeGroup} color="primary">
+                  Yes
+                </Button>
+                <Button
+                  onClick={this.closeRemoveDialog}
+                  color="primary"
+                  autoFocus
+                >
+                  No
+                </Button>
+              </DialogActions>
             </Dialog>
           </>
         )}
