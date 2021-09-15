@@ -214,7 +214,7 @@ public class JobEndpoint {
       jobRowRepository.deleteAllInBatch(jobRowsValidatedOk);
     } else {
       throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Can't process a job which isn't validated");
+          HttpStatus.BAD_REQUEST, "Can't cancel a job which isn't validated");
     }
   }
 
