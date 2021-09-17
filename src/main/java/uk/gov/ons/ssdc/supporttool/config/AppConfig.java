@@ -6,14 +6,20 @@ import com.google.cloud.spring.pubsub.support.SubscriberFactory;
 import com.google.cloud.spring.pubsub.support.converter.JacksonPubSubMessageConverter;
 import java.util.TimeZone;
 import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @Configuration
 @EnableScheduling
 public class AppConfig {
+  @Value("${spring.task.scheduling.pool.size}")
+  private int schedulingPoolSize;
+
   @Bean
   public PubSubTemplate pubSubTemplate(
       PublisherFactory publisherFactory,
@@ -27,6 +33,13 @@ public class AppConfig {
   @Bean
   public JacksonPubSubMessageConverter messageConverter() {
     return new JacksonPubSubMessageConverter(ObjectMapperFactory.objectMapper());
+  }
+
+  @Bean
+  public TaskScheduler taskScheduler() {
+    ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+    taskScheduler.setPoolSize(schedulingPoolSize);
+    return taskScheduler;
   }
 
   @PostConstruct
