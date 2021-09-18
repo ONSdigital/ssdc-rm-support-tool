@@ -65,7 +65,7 @@ class SurveyCaseSearch extends Component {
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
-      alert(`Error: ${response.state}`);
+      alert(`Error: ${response.statusText}`);
       return;
     }
 

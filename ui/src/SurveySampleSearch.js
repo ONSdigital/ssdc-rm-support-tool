@@ -43,12 +43,26 @@ class SurveySampleSearch extends Component {
     });
   };
 
-  onSearch = async () => {
-    if (!this.props.searchTermValidator(this.state.searchTerm)) {
-      this.setState({ searchTermFailedValidation: true });
+  stripWhiteSpaceAndValidate = () => {
+
+    this.setState({ searchTerm: this.state.searchTerm.trim() })
+
+    if (/^[ A-Za-z0-9_@.&-]*$/.test(this.state.searchTerm)) {
+      this.setState({ searchTermFailedValidation: false });
       return;
     }
-    this.setState({ searchTermFailedValidation: false });
+
+    alert('Failed validation, allowed chars = x, y & z');
+    this.setState({ searchTermFailedValidation: true });
+
+  };
+
+
+  onSearch = async () => {
+
+    this.stripWhiteSpaceAndValidate();
+
+
     let searchUrl = `/api/surveyCases/${this.props.surveyId}?searchTerm=${this.state.searchTerm}`;
 
     if (this.state.selectedCollectionExercise) {

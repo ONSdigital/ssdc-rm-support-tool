@@ -8,7 +8,7 @@ class SurveySimpleSearchInput extends Component {
     failedValidation: false,
   };
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   onChange = (event) => {
     this.setState({
@@ -17,6 +17,7 @@ class SurveySimpleSearchInput extends Component {
   };
 
   onSearch = async () => {
+
     if (!this.props.searchTermValidator(this.state.searchTerm)) {
       this.setState({ failedValidation: true });
       return;
