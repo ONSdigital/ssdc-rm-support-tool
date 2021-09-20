@@ -64,8 +64,8 @@ public class CaseEndpoint {
         validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive());
 
     if (validationErrors.size() > 0) {
-      String validatationErrorStr = String.join(", ", validationErrors);
-      Map<String, String> body = Map.of("errors", validatationErrorStr);
+      String validationErrorStr = String.join(", ", validationErrors);
+      Map<String, String> body = Map.of("errors", validationErrorStr);
 
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -185,14 +185,14 @@ public class CaseEndpoint {
     payload.setSmsFulfilment(smsFulfilment);
     smsFulfilmentRequest.setPayload(payload);
 
-    Optional<String> errorOpt = requestSmsFulfiment(smsFulfilmentRequest);
+    Optional<String> errorOpt = requestSmsFulfilment(smsFulfilmentRequest);
     if (errorOpt.isPresent()) {
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  private Optional<String> requestSmsFulfiment(RequestDTO smsFulfilmentRequest) {
+  private Optional<String> requestSmsFulfilment(RequestDTO smsFulfilmentRequest) {
     try {
       notifyServiceClient.requestSmsFulfilment(smsFulfilmentRequest);
     } catch (HttpClientErrorException e) {

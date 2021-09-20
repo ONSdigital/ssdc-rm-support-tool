@@ -175,22 +175,14 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
-    let printTemplate = null;
-    if (this.state.newActionRuleType === "PRINT") {
-      printTemplate = "printTemplates/" + this.state.newActionRulePackCode;
-    }
-
     const newActionRule = {
-      id: uuidv4(),
       type: this.state.newActionRuleType,
       triggerDateTime: new Date(
         this.state.newActionRuleTriggerDate
       ).toISOString(),
-      hasTriggered: false,
       classifiers: this.state.newActionRuleClassifiers,
-      printTemplate: printTemplate,
-      collectionExercise:
-        "collectionExercises/" + this.props.collectionExerciseId,
+      packCode: this.state.newActionRulePackCode,
+      collectionExerciseId: this.props.collectionExerciseId,
     };
 
     const response = await fetch("/api/actionRules", {
