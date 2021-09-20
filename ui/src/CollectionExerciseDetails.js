@@ -175,6 +175,11 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
+    let printTemplate = null;
+    if (this.state.newActionRuleType === "PRINT") {
+      printTemplate = "printTemplates/" + this.state.newActionRulePackCode;
+    }
+
     const newActionRule = {
       type: this.state.newActionRuleType,
       triggerDateTime: new Date(
@@ -182,6 +187,7 @@ class CollectionExerciseDetails extends Component {
       ).toISOString(),
       classifiers: this.state.newActionRuleClassifiers,
       packCode: this.state.newActionRulePackCode,
+      printTemplate: printTemplate,
       collectionExerciseId: this.props.collectionExerciseId,
     };
 

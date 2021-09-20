@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,7 +43,7 @@ public class ActionRuleEndpoint {
 
   @PostMapping
   @Transactional
-  public void insertActionRules(
+  public ResponseEntity<UUID> insertActionRules(
       @RequestBody() ActionRuleDTO actionRuleDTO,
       @Value("#{request.getAttribute('userEmail')}") String createdBy) {
 
@@ -75,6 +76,8 @@ public class ActionRuleEndpoint {
     actionRule.setTriggerDateTime(actionRuleDTO.getTriggerDateTime());
     actionRule.setCreatedBy(createdBy);
 
-    actionRuleRepository.save(actionRule);
+    actionRuleRepository.saveAndFlush(actionRule);
+
+    return new ResponseEntity<>(actionRule.getId(), HttpStatus.CREATED);
   }
 }
