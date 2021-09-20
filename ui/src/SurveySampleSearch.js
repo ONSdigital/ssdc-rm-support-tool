@@ -26,7 +26,7 @@ class SurveySampleSearch extends Component {
     selectedInvalidFilter: "",
     selectedLaunchedFilter: "",
     searchTerm: "",
-    searchTermFailedValidation: false
+    searchTermFailedValidation: false,
   };
 
   componentDidMount() {
@@ -47,7 +47,7 @@ class SurveySampleSearch extends Component {
   };
 
   onSearch = async () => {
-    this.setState({ searchTerm: this.state.searchTerm.trim() })
+    this.setState({ searchTerm: this.state.searchTerm.trim() });
 
     if (!/^[ A-Za-z0-9@.'-£$!]*$/.test(this.state.searchTerm)) {
       this.setState({ searchTermFailedValidation: true });
@@ -116,7 +116,7 @@ class SurveySampleSearch extends Component {
 
   closeInvalideSearchDialog = () => {
     this.setState({ searchTermFailedValidation: false });
-  }
+  };
 
   render() {
     const noFilterMenuItem = (
@@ -245,7 +245,6 @@ class SurveySampleSearch extends Component {
         {this.state.searchTermFailedValidation && (
           <Dialog open={true} maxWidth={300}>
             <DialogContent style={{ padding: 30 }}>
-
               <p>Only Letters numbers and @'-.!£$ can be searched for</p>
               <div>
                 <Button
