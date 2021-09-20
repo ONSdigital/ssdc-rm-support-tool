@@ -49,7 +49,7 @@ class SurveySampleSearch extends Component {
   onSearch = async () => {
     this.setState({ searchTerm: this.state.searchTerm.trim() })
 
-    if (!/^[ A-Za-z0-9@.'-]*$/.test(this.state.searchTerm)) {
+    if (!/^[ A-Za-z0-9@.'-£$!]*$/.test(this.state.searchTerm)) {
       this.setState({ searchTermFailedValidation: true });
       return;
     }
@@ -246,7 +246,7 @@ class SurveySampleSearch extends Component {
           <Dialog open={true} maxWidth={300}>
             <DialogContent style={{ padding: 30 }}>
 
-              <p>Only Letters numbers and @'-. can be searched for</p>
+              <p>Only Letters numbers and @'-.!£$ can be searched for</p>
               <div>
                 <Button
                   onClick={this.closeInvalideSearchDialog}
