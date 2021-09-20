@@ -70,7 +70,7 @@ public class RowStager {
         }
 
         if (jobStatus == JobStatus.VALIDATED_TOTAL_FAILURE) {
-          jobRowRepository.deleteByJob(job);
+          jobRowRepository.deleteByJobId(job.getId());
         }
 
         job.setJobStatus(jobStatus);

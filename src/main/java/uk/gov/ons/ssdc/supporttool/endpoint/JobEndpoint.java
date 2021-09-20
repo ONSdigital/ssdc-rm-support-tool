@@ -212,7 +212,7 @@ public class JobEndpoint {
       job.setJobStatus(JobStatus.CANCELLED);
       jobRepository.saveAndFlush(job);
 
-      jobRowRepository.deleteByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
+      jobRowRepository.deleteByJobIdAndAndJobRowStatus(job.getId(), JobRowStatus.VALIDATED_OK);
     } else {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't cancel a job which isn't validated");
