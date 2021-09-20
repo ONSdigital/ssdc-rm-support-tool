@@ -47,8 +47,7 @@ public class ActionRuleEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String createdBy) {
 
     Optional<CollectionExercise> collexExercise =
-        collectionExerciseRepository.findById(
-            UUID.fromString(actionRuleDTO.getCollectionExerciseId()));
+        collectionExerciseRepository.findById(actionRuleDTO.getCollectionExerciseId());
 
     if (!collexExercise.isPresent()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
