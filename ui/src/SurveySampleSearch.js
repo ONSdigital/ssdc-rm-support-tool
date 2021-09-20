@@ -9,6 +9,8 @@ import {
   MenuItem,
   Typography,
   Box,
+  Dialog,
+  DialogContent,
 } from "@material-ui/core";
 
 const SEARCH_FIELD_WIDTH = 200;
@@ -24,6 +26,7 @@ class SurveySampleSearch extends Component {
     selectedInvalidFilter: "",
     selectedLaunchedFilter: "",
     searchTerm: "",
+    searchTermFailedValidation: false
   };
 
   componentDidMount() {
@@ -43,25 +46,15 @@ class SurveySampleSearch extends Component {
     });
   };
 
-  stripWhiteSpaceAndValidate = () => {
-
+  onSearch = async () => {
     this.setState({ searchTerm: this.state.searchTerm.trim() })
 
-    if (/^[ A-Za-z0-9_@.&-]*$/.test(this.state.searchTerm)) {
-      this.setState({ searchTermFailedValidation: false });
+    if (!/^[ A-Za-z0-9@.'-]*$/.test(this.state.searchTerm)) {
+      this.setState({ searchTermFailedValidation: true });
       return;
     }
 
-    alert('Failed validation, allowed chars = x, y & z');
-    this.setState({ searchTermFailedValidation: true });
-
-  };
-
-
-  onSearch = async () => {
-
-    this.stripWhiteSpaceAndValidate();
-
+    this.setState({ searchTermFailedValidation: false });
 
     let searchUrl = `/api/surveyCases/${this.props.surveyId}?searchTerm=${this.state.searchTerm}`;
 
@@ -120,6 +113,10 @@ class SurveySampleSearch extends Component {
       selectedLaunchedFilter: event.target.value,
     });
   };
+
+  closeInvalideSearchDialog = () => {
+    this.setState({ searchTermFailedValidation: false });
+  }
 
   render() {
     const noFilterMenuItem = (
@@ -245,6 +242,23 @@ class SurveySampleSearch extends Component {
             </Select>
           </FormControl>
         </div>
+        {this.state.searchTermFailedValidation && (
+          <Dialog open={true} maxWidth={300}>
+            <DialogContent style={{ padding: 30 }}>
+
+              <p>Only Letters numbers and @'-. can be searched for</p>
+              <div>
+                <Button
+                  onClick={this.closeInvalideSearchDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Close
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     );
   }

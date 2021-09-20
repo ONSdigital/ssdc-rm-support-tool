@@ -78,10 +78,6 @@ class SurveyCaseSearch extends Component {
     });
   };
 
-  checkWhitespace = (valueToValidate) => {
-    return valueToValidate.trim();
-  };
-
   isNumeric = (str) => {
     return /^\+?\d+$/.test(str);
   };
@@ -169,7 +165,6 @@ class SurveyCaseSearch extends Component {
             style={borderStyles}
             surveyId={this.props.surveyId}
             onSearchExecuteAndPopulateList={this.onSearchExecuteAndPopulateList}
-            searchTermValidator={this.checkWhitespace}
             collectionExercises={this.state.collectionExercises}
           />
         </div>
