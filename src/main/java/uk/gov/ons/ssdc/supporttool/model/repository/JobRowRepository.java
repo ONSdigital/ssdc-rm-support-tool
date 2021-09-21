@@ -21,15 +21,15 @@ public interface JobRowRepository extends JpaRepository<JobRow, UUID> {
   // This is required because otherwise Hibernate will attempt to read ALL the JobRows, which
   // could number in the millions, causing an out of memory crash
   @Modifying
-  @Query("delete from JobRow r where r.job.id = :jobId and r.jobRowStatus = :rowStatus")
-  void deleteByJobIdAndAndJobRowStatus(
-      @Param("jobId") UUID jobId, @Param("rowStatus") JobRowStatus rowStatus);
+  @Query("delete from JobRow r where r.job = :job and r.jobRowStatus = :rowStatus")
+  void deleteByJobAndAndJobRowStatus(
+      @Param("job") Job job, @Param("rowStatus") JobRowStatus rowStatus);
 
   // This is required because otherwise Hibernate will attempt to read ALL the JobRows, which
   // could number in the millions, causing an out of memory crash
   @Modifying
-  @Query("delete from JobRow r where r.job.id = :jobId")
-  void deleteByJobId(@Param("jobId") UUID jobId);
+  @Query("delete from JobRow r where r.job = :job")
+  void deleteByJob(@Param("job") Job job);
 
   List<JobRow> findTop500ByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 }
