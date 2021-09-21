@@ -79,22 +79,18 @@ public class ActionRuleEndpoint {
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
     }
 
-    userIdentity.checkUserPermission(
-        createdBy,
-        collexExercise.get().getSurvey(),
-        userActivity);
+    userIdentity.checkUserPermission(createdBy, collexExercise.get().getSurvey(), userActivity);
 
-    if (actionRuleDTO.getPackCode().isEmpty() && actionRuleDTO.getType().equals(ActionRuleType.PRINT)) {
-      throw new IllegalStateException("There must be a Pack Code for a PRINT action rule!");
+    PrintTemplate printTemplate = null;
+    if (actionRuleDTO.getType().equals(ActionRuleType.PRINT)) {
+      printTemplate =
+          printTemplateRepository
+              .findById(actionRuleDTO.getPackCode())
+              .orElseThrow(
+                  () ->
+                      new ResponseStatusException(
+                          HttpStatus.BAD_REQUEST, "Print template not found"));
     }
-
-    PrintTemplate printTemplate =
-        printTemplateRepository
-            .findById(actionRuleDTO.getPackCode())
-            .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Print template not found"));
 
     ActionRule actionRule = new ActionRule();
     actionRule.setId(UUID.randomUUID());

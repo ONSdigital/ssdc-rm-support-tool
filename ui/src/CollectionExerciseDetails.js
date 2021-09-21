@@ -267,7 +267,7 @@ class CollectionExerciseDetails extends Component {
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"OUTBOUND_PHONE"}>Outbound phone</MenuItem>
+        <MenuItem value={"OUTBOUND_TELEPHONE"}>Outbound phone</MenuItem>
       );
     }
     if (
