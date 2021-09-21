@@ -18,7 +18,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 import SampleUpload from "./SampleUpload";
 import { getActionRulePrintTemplates } from "./Utils";
 import { Link } from "react-router-dom";
@@ -175,9 +174,10 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
-    let printTemplate = null;
+    let printTemplatePackCode = "";
+
     if (this.state.newActionRuleType === "PRINT") {
-      printTemplate = "printTemplates/" + this.state.newActionRulePackCode;
+      printTemplatePackCode = this.state.newActionRulePackCode;
     }
 
     const newActionRule = {
@@ -186,8 +186,7 @@ class CollectionExerciseDetails extends Component {
         this.state.newActionRuleTriggerDate
       ).toISOString(),
       classifiers: this.state.newActionRuleClassifiers,
-      packCode: this.state.newActionRulePackCode,
-      printTemplate: printTemplate,
+      packCode: printTemplatePackCode,
       collectionExerciseId: this.props.collectionExerciseId,
     };
 
