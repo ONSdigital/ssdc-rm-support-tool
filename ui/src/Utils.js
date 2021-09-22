@@ -103,3 +103,25 @@ export const getActionRulePrintTemplates = async (surveyId) => {
 
   return templates;
 };
+
+export const getActionRuleSmsTemplates = async (surveyId) => {
+  const response = await fetch(
+    `/api/surveys/${surveyId}/actionRuleSmsTemplates`
+  );
+  const smsTemplatesJson = await response.json();
+  const smsTemplates = smsTemplatesJson._embedded.actionRuleSurveySmsTemplates;
+
+  let templates = [];
+
+  for (let i = 0; i < smsTemplates.length; i++) {
+    const print_template_url = new URL(smsTemplates[i]._links.smsTemplate.href);
+
+    const smsTemplateResponse = await fetch(print_template_url.pathname);
+    const smsTemplateJson = await smsTemplateResponse.json();
+    const packCode = smsTemplateJson._links.self.href.split("/").pop();
+
+    templates.push(packCode);
+  }
+
+  return templates;
+};

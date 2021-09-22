@@ -5,6 +5,7 @@ import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityTyp
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_SMS_ACTION_RULE;
+import static uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper.getColumns;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -98,6 +99,11 @@ public class ActionRuleEndpoint {
                     () ->
                         new ResponseStatusException(
                             HttpStatus.BAD_REQUEST, "SMS template not found"));
+        if (!getColumns(collexExercise.get().getSurvey(), true)
+            .contains(actionRuleDTO.getPhoneNumberColumn())) {
+          throw new ResponseStatusException(
+              HttpStatus.BAD_REQUEST, "Phone number column does not exist");
+        }
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
