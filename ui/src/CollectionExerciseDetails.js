@@ -18,7 +18,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 import SampleUpload from "./SampleUpload";
 import { getActionRulePrintTemplates } from "./Utils";
 import { Link } from "react-router-dom";
@@ -175,22 +174,20 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
-    let printTemplate = null;
+    let printTemplatePackCode = "";
+
     if (this.state.newActionRuleType === "PRINT") {
-      printTemplate = "printTemplates/" + this.state.newActionRulePackCode;
+      printTemplatePackCode = this.state.newActionRulePackCode;
     }
 
     const newActionRule = {
-      id: uuidv4(),
       type: this.state.newActionRuleType,
       triggerDateTime: new Date(
         this.state.newActionRuleTriggerDate
       ).toISOString(),
-      hasTriggered: false,
       classifiers: this.state.newActionRuleClassifiers,
-      printTemplate: printTemplate,
-      collectionExercise:
-        "collectionExercises/" + this.props.collectionExerciseId,
+      packCode: printTemplatePackCode,
+      collectionExerciseId: this.props.collectionExerciseId,
     };
 
     const response = await fetch("/api/actionRules", {
@@ -270,7 +267,7 @@ class CollectionExerciseDetails extends Component {
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"OUTBOUND_PHONE"}>Outbound phone</MenuItem>
+        <MenuItem value={"OUTBOUND_TELEPHONE"}>Outbound phone</MenuItem>
       );
     }
     if (
