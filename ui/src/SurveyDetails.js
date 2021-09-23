@@ -93,39 +93,23 @@ class SurveyDetails extends Component {
   refreshDataFromBackend = async () => {
     this.getCollectionExercises();
 
-    const allPrintFulfilmentTemplates = await getAllPrintTemplates().then(
-      (templates) => {
-        return templates;
-      }
-    );
-    const allSmsFulfilmentTemplates = await getAllSmsTemplates().then(
-      (templates) => {
-        return templates;
-      }
-    );
+    const allPrintFulfilmentTemplates = await getAllPrintTemplates();
+    const allSmsFulfilmentTemplates = await getAllSmsTemplates();
 
     const actionRulePrintTemplates = await getActionRulePrintTemplates(
       this.props.surveyId
-    ).then((actionRuleTemplates) => {
-      return actionRuleTemplates;
-    });
+    );
 
     const actionRuleSmsTemplates = await getActionRuleSmsTemplates(
       this.props.surveyId
-    ).then((actionRuleTemplates) => {
-      return actionRuleTemplates;
-    });
+    );
 
     const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
       this.props.surveyId
-    ).then((fulfilmentTemplates) => {
-      return fulfilmentTemplates;
-    });
+    );
     const smsFulfilmentTemplates = await getSmsFulfilmentTemplates(
       this.props.surveyId
-    ).then((smsTemplates) => {
-      return smsTemplates;
-    });
+    );
 
     let allowableActionRulePrintTemplates = [];
     let allowableActionRuleSmsTemplates = [];
