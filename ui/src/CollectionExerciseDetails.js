@@ -22,6 +22,7 @@ import SampleUpload from "./SampleUpload";
 import {
   getActionRulePrintTemplates,
   getActionRuleSmsTemplates,
+  getSensitiveSampleColumns,
 } from "./Utils";
 import { Link } from "react-router-dom";
 
@@ -31,6 +32,7 @@ class CollectionExerciseDetails extends Component {
     actionRules: [],
     printPackCodes: [],
     printTemplateHrefToPackCodeMap: new Map(),
+    sensitiveSampleColumns: [],
     smsPackCodes: [],
     smsTemplateHrefToPackCodeMap: new Map(),
     createActionRulesDialogDisplayed: false,
@@ -52,6 +54,7 @@ class CollectionExerciseDetails extends Component {
     this.getActionRules();
     this.getPrintTemplates();
     this.getSmsTemplates();
+    this.getSensitiveSampleColumns();
 
     this.interval = setInterval(() => this.getActionRules(), 1000);
   }
@@ -72,6 +75,11 @@ class CollectionExerciseDetails extends Component {
 
     this.setState({ authorisedActivities: authJson });
   };
+
+  getSensitiveSampleColumns = async () => {
+    const sensitiveSampleColumns = await getSensitiveSampleColumns(this.props.surveyId)
+    this.setState({ sensitiveSampleColumns: sensitiveSampleColumns });
+  }
 
   getCollectionExerciseName = async () => {
     const response = await fetch(
@@ -222,6 +230,14 @@ class CollectionExerciseDetails extends Component {
       failedValidation = true;
     }
 
+    if (
+      !this.state.newActionRuleSmsPhoneNumberColumn &&
+      this.state.newActionRuleType === "SMS"
+    ) {
+      this.setState({ smsPhoneNumberColumnValidationError: true });
+      failedValidation = true;
+    }
+
     if (failedValidation) {
       return;
     }
@@ -313,6 +329,12 @@ class CollectionExerciseDetails extends Component {
     const smsPackCodeMenuItems = this.state.smsPackCodes.map((packCode) => (
       <MenuItem key={packCode} value={packCode}>
         {packCode}
+      </MenuItem>
+    ));
+
+    const sensitiveSampleColumnsMenuItems = this.state.sensitiveSampleColumns.map((column) => (
+      <MenuItem key={column} value={column}>
+        {column}
       </MenuItem>
     ));
 
@@ -431,15 +453,16 @@ class CollectionExerciseDetails extends Component {
                         {smsPackCodeMenuItems}
                       </Select>
                     </FormControl>
-                    <TextField
-                      fullWidth={true}
-                      required
-                      style={{ marginTop: 20 }}
-                      error={this.state.smsPhoneNumberColumnValidationError}
-                      label="Phone Number Column"
-                      onChange={this.onNewActionRuleSmsPhoneNumberChange}
-                      value={this.state.newActionRuleSmsPhoneNumberColumn}
-                    />
+                    <FormControl required fullWidth={true}>
+                      <InputLabel>Phone Number Column</InputLabel>
+                      <Select
+                        onChange={this.onNewActionRuleSmsPhoneNumberChange}
+                        value={this.state.newActionRuleSmsPhoneNumberColumn}
+                        error={this.state.smsPhoneNumberColumnValidationError}
+                      >
+                        {sensitiveSampleColumnsMenuItems}
+                      </Select>
+                    </FormControl>
                   </>
                 )}
                 <TextField

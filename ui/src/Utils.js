@@ -125,3 +125,17 @@ export const getActionRuleSmsTemplates = async (surveyId) => {
 
   return templates;
 };
+
+export const getSensitiveSampleColumns = async (surveyId) => {
+  const response = await fetch(`/api/surveys/${surveyId}`);
+  if (!response.ok) {
+    return;
+  }
+
+  const surveyJson = await response.json();
+  const sensitiveColumns = surveyJson.sampleValidationRules
+    .filter((rule) => rule.sensitive)
+    .map((rule) => rule.columnName);
+
+  return sensitiveColumns;
+};
