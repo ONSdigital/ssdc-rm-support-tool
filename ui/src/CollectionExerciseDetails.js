@@ -77,9 +77,11 @@ class CollectionExerciseDetails extends Component {
   };
 
   getSensitiveSampleColumns = async () => {
-    const sensitiveSampleColumns = await getSensitiveSampleColumns(this.props.surveyId)
+    const sensitiveSampleColumns = await getSensitiveSampleColumns(
+      this.props.surveyId
+    );
     this.setState({ sensitiveSampleColumns: sensitiveSampleColumns });
-  }
+  };
 
   getCollectionExerciseName = async () => {
     const response = await fetch(
@@ -332,11 +334,12 @@ class CollectionExerciseDetails extends Component {
       </MenuItem>
     ));
 
-    const sensitiveSampleColumnsMenuItems = this.state.sensitiveSampleColumns.map((column) => (
-      <MenuItem key={column} value={column}>
-        {column}
-      </MenuItem>
-    ));
+    const sensitiveSampleColumnsMenuItems =
+      this.state.sensitiveSampleColumns.map((column) => (
+        <MenuItem key={column} value={column}>
+          {column}
+        </MenuItem>
+      ));
 
     let allowedActionRuleTypeMenuItems = [];
     if (this.state.authorisedActivities.includes("CREATE_PRINT_ACTION_RULE")) {

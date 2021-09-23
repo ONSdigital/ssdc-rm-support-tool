@@ -10,7 +10,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSensitiveSampleColumns } from './Utils'
+import { getSensitiveSampleColumns } from "./Utils";
 
 class SensitiveData extends Component {
   state = {
@@ -23,14 +23,12 @@ class SensitiveData extends Component {
   };
 
   openDialog = () => {
-    getSensitiveSampleColumns(this.props.surveyId).then(
-      (sensitiveColumns) => {
-        this.setState({
-          allowableSensitiveDataColumns: sensitiveColumns,
-          showDialog: true,
-        });
-      }
-    );
+    getSensitiveSampleColumns(this.props.surveyId).then((sensitiveColumns) => {
+      this.setState({
+        allowableSensitiveDataColumns: sensitiveColumns,
+        showDialog: true,
+      });
+    });
   };
 
   closeDialog = () => {
