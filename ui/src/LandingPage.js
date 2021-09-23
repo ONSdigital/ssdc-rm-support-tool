@@ -415,14 +415,6 @@ class LandingPage extends Component {
         if (!Array.isArray(parsedJson)) {
           this.setState({ templateValidationError: true });
           failedValidation = true;
-        } else {
-          const validTemplateItems = ["__uac__", "__qid__"];
-          parsedJson.forEach((item) => {
-            if (!validTemplateItems.includes(item)) {
-              this.setState({ templateValidationError: true });
-              failedValidation = true;
-            }
-          });
         }
       } catch (err) {
         this.setState({ templateValidationError: true });
