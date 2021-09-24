@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
+import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
+
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
@@ -28,8 +30,11 @@ public class RowChunkProcessor {
   private final PubSubTemplate pubSubTemplate;
   private final JobRepository jobRepository;
 
-  @Value("${queueconfig.sample-topic}")
-  private String sampleTopic;
+  @Value("${queueconfig.shared-pubsub-project}")
+  private String sharedPubsubProject;
+
+  @Value("${queueconfig.new-case-topic}")
+  private String newCaseTopic;
 
   public RowChunkProcessor(
       JobRowRepository jobRowRepository,
@@ -51,9 +56,11 @@ public class RowChunkProcessor {
 
     for (JobRow jobRow : jobRows) {
       try {
+        String topic = toProjectTopicName(newCaseTopic, sharedPubsubProject).toString();
+
         ListenableFuture<String> future =
             pubSubTemplate.publish(
-                sampleTopic, TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators));
+                topic, TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators));
 
         // Wait for up to 30 seconds to confirm that message was published
         future.get(30, TimeUnit.SECONDS);

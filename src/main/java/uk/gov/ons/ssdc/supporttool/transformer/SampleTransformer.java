@@ -5,15 +5,15 @@ import java.util.Map;
 import java.util.UUID;
 import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.Sample;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.NewCase;
 
 public class SampleTransformer implements Transformer {
   @Override
   public Object transformRow(
       Map<String, String> rowData, Job job, ColumnValidator[] columnValidators) {
-    Sample sample = new Sample();
-    sample.setCaseId(UUID.randomUUID());
-    sample.setCollectionExerciseId(job.getCollectionExercise().getId());
+    NewCase newCase = new NewCase();
+    newCase.setCaseId(UUID.randomUUID());
+    newCase.setCollectionExerciseId(job.getCollectionExercise().getId());
 
     Map<String, String> nonSensitiveSampleData = new HashMap<>();
     Map<String, String> sensitiveSampleData = new HashMap<>();
@@ -29,11 +29,11 @@ public class SampleTransformer implements Transformer {
       }
     }
 
-    sample.setSample(nonSensitiveSampleData);
-    sample.setSampleSensitive(sensitiveSampleData);
+    newCase.setSample(nonSensitiveSampleData);
+    newCase.setSampleSensitive(sensitiveSampleData);
 
-    sample.setJobId(job.getId());
-    sample.setOriginatingUser(job.getCreatedBy());
-    return sample;
+    newCase.setJobId(job.getId());
+    newCase.setOriginatingUser(job.getCreatedBy());
+    return newCase;
   }
 }
