@@ -12,4 +12,5 @@ public class PayloadDTO {
   private InvalidCaseDTO invalidCase;
   private PrintFulfilmentDTO printFulfilment;
   private UpdateSampleSensitive updateSampleSensitive;
+  private NewCase newCase;
 }
