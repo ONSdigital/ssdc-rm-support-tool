@@ -32,8 +32,6 @@ public class SampleTransformer implements Transformer {
     newCase.setSample(nonSensitiveSampleData);
     newCase.setSampleSensitive(sensitiveSampleData);
 
-    newCase.setJobId(job.getId());
-    newCase.setOriginatingUser(job.getCreatedBy());
     return newCase;
   }
 }
