@@ -19,20 +19,31 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import SampleUpload from "./SampleUpload";
-import { getActionRulePrintTemplates } from "./Utils";
+import {
+  getActionRulePrintTemplates,
+  getActionRuleSmsTemplates,
+  getSensitiveSampleColumns,
+} from "./Utils";
 import { Link } from "react-router-dom";
 
 class CollectionExerciseDetails extends Component {
   state = {
     authorisedActivities: [],
     actionRules: [],
-    packCodes: [],
+    printPackCodes: [],
     printTemplateHrefToPackCodeMap: new Map(),
+    sensitiveSampleColumns: [],
+    smsPackCodes: [],
+    smsTemplateHrefToPackCodeMap: new Map(),
     createActionRulesDialogDisplayed: false,
-    packCodeValidationError: false,
+    printPackCodeValidationError: false,
+    smsPackCodeValidationError: false,
+    smsPhoneNumberColumnValidationError: false,
     actionRuleTypeValidationError: false,
     collectionExerciseName: "",
-    newActionRulePackCode: "",
+    newActionRulePrintPackCode: "",
+    newActionRuleSmsPackCode: "",
+    newActionRuleSmsPhoneNumberColumn: "",
     newActionRuleClassifiers: "",
     newActionRuleType: "",
   };
@@ -42,6 +53,8 @@ class CollectionExerciseDetails extends Component {
     this.getCollectionExerciseName();
     this.getActionRules();
     this.getPrintTemplates();
+    this.getSmsTemplates();
+    this.getSensitiveSampleColumns();
 
     this.interval = setInterval(() => this.getActionRules(), 1000);
   }
@@ -61,6 +74,13 @@ class CollectionExerciseDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+  };
+
+  getSensitiveSampleColumns = async () => {
+    const sensitiveSampleColumns = await getSensitiveSampleColumns(
+      this.props.surveyId
+    );
+    this.setState({ sensitiveSampleColumns: sensitiveSampleColumns });
   };
 
   getCollectionExerciseName = async () => {
@@ -86,6 +106,7 @@ class CollectionExerciseDetails extends Component {
     const actionRules = actionRuleJson._embedded.actionRules;
 
     let printTemplateHrefToPackCodeMap = new Map();
+    let smsTemplateHrefToPackCodeMap = new Map();
 
     for (let i = 0; i < actionRules.length; i++) {
       if (actionRules[i].type === "PRINT") {
@@ -100,26 +121,45 @@ class CollectionExerciseDetails extends Component {
           actionRules[i]._links.printTemplate.href,
           packCode
         );
+      } else if (actionRules[i].type === "SMS") {
+        const smsTemplateUrl = new URL(actionRules[i]._links.smsTemplate.href);
+        const smsTemplateResponse = await fetch(smsTemplateUrl.pathname);
+        const smsTemplateJson = await smsTemplateResponse.json();
+        const packCode = smsTemplateJson._links.self.href.split("/").pop();
+
+        smsTemplateHrefToPackCodeMap.set(
+          actionRules[i]._links.smsTemplate.href,
+          packCode
+        );
       }
     }
 
     this.setState({
       actionRules: actionRules,
       printTemplateHrefToPackCodeMap: printTemplateHrefToPackCodeMap,
+      smsTemplateHrefToPackCodeMap: smsTemplateHrefToPackCodeMap,
     });
   };
 
   getPrintTemplates = async () => {
     const packCodes = await getActionRulePrintTemplates(this.props.surveyId);
-    this.setState({ packCodes: packCodes });
+    this.setState({ printPackCodes: packCodes });
+  };
+
+  getSmsTemplates = async () => {
+    const packCodes = await getActionRuleSmsTemplates(this.props.surveyId);
+    this.setState({ smsPackCodes: packCodes });
   };
 
   openDialog = () => {
     this.setState({
       newActionRuleType: "",
       actionRuleTypeValidationError: false,
-      newActionRulePackCode: "",
+      newActionRulePrintPackCode: "",
+      newActionRuleSmsPackCode: "",
+      newActionRuleSmsPhoneNumberColumn: "",
       packCodeValidationError: false,
+      smsPhoneNumberColumnValidationError: false,
       newActionRuleClassifiers: "",
       createActionRulesDialogDisplayed: true,
       newActionRuleTriggerDate: this.getTimeNowForDateTimePicker(),
@@ -130,10 +170,17 @@ class CollectionExerciseDetails extends Component {
     this.setState({ createActionRulesDialogDisplayed: false });
   };
 
-  onNewActionRulePackCodeChange = (event) => {
+  onNewActionRulePrintPackCodeChange = (event) => {
     this.setState({
-      packCodeValidationError: false,
-      newActionRulePackCode: event.target.value,
+      printPackCodeValidationError: false,
+      newActionRulePrintPackCode: event.target.value,
+    });
+  };
+
+  onNewActionRuleSmsPackCodeChange = (event) => {
+    this.setState({
+      smsPackCodeValidationError: false,
+      newActionRuleSmsPackCode: event.target.value,
     });
   };
 
@@ -154,6 +201,13 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
+  onNewActionRuleSmsPhoneNumberChange = (event) => {
+    this.setState({
+      newActionRuleSmsPhoneNumberColumn: event.target.value,
+      smsPhoneNumberColumnValidationError: false,
+    });
+  };
+
   onCreateActionRule = async () => {
     var failedValidation = false;
 
@@ -163,10 +217,26 @@ class CollectionExerciseDetails extends Component {
     }
 
     if (
-      !this.state.newActionRulePackCode &&
+      !this.state.newActionRulePrintPackCode &&
       this.state.newActionRuleType === "PRINT"
     ) {
-      this.setState({ packCodeValidationError: true });
+      this.setState({ printPackCodeValidationError: true });
+      failedValidation = true;
+    }
+
+    if (
+      !this.state.newActionRuleSmsPackCode &&
+      this.state.newActionRuleType === "SMS"
+    ) {
+      this.setState({ smsPackCodeValidationError: true });
+      failedValidation = true;
+    }
+
+    if (
+      !this.state.newActionRuleSmsPhoneNumberColumn &&
+      this.state.newActionRuleType === "SMS"
+    ) {
+      this.setState({ smsPhoneNumberColumnValidationError: true });
       failedValidation = true;
     }
 
@@ -174,10 +244,17 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
-    let printTemplatePackCode = "";
+    let newActionRulePackCode = "";
+    let newActionRuleSmsPhoneNumberColumn = null;
 
     if (this.state.newActionRuleType === "PRINT") {
-      printTemplatePackCode = this.state.newActionRulePackCode;
+      newActionRulePackCode = this.state.newActionRulePrintPackCode;
+    }
+
+    if (this.state.newActionRuleType === "SMS") {
+      newActionRulePackCode = this.state.newActionRuleSmsPackCode;
+      newActionRuleSmsPhoneNumberColumn =
+        this.state.newActionRuleSmsPhoneNumberColumn;
     }
 
     const newActionRule = {
@@ -186,8 +263,9 @@ class CollectionExerciseDetails extends Component {
         this.state.newActionRuleTriggerDate
       ).toISOString(),
       classifiers: this.state.newActionRuleClassifiers,
-      packCode: printTemplatePackCode,
+      packCode: newActionRulePackCode,
       collectionExerciseId: this.props.collectionExerciseId,
+      phoneNumberColumn: newActionRuleSmsPhoneNumberColumn,
     };
 
     const response = await fetch("/api/actionRules", {
@@ -216,6 +294,10 @@ class CollectionExerciseDetails extends Component {
           packCode = this.state.printTemplateHrefToPackCodeMap.get(
             actionRule._links.printTemplate.href
           );
+        } else if (actionRule.type === "SMS") {
+          packCode = this.state.smsTemplateHrefToPackCodeMap.get(
+            actionRule._links.smsTemplate.href
+          );
         }
 
         return (
@@ -240,16 +322,34 @@ class CollectionExerciseDetails extends Component {
       }
     );
 
-    const packCodeMenuItems = this.state.packCodes.map((packCode) => (
+    const printPackCodeMenuItems = this.state.printPackCodes.map((packCode) => (
       <MenuItem key={packCode} value={packCode}>
         {packCode}
       </MenuItem>
     ));
 
+    const smsPackCodeMenuItems = this.state.smsPackCodes.map((packCode) => (
+      <MenuItem key={packCode} value={packCode}>
+        {packCode}
+      </MenuItem>
+    ));
+
+    const sensitiveSampleColumnsMenuItems =
+      this.state.sensitiveSampleColumns.map((column) => (
+        <MenuItem key={column} value={column}>
+          {column}
+        </MenuItem>
+      ));
+
     let allowedActionRuleTypeMenuItems = [];
     if (this.state.authorisedActivities.includes("CREATE_PRINT_ACTION_RULE")) {
       allowedActionRuleTypeMenuItems.push(
         <MenuItem value={"PRINT"}>Print</MenuItem>
+      );
+    }
+    if (this.state.authorisedActivities.includes("CREATE_SMS_ACTION_RULE")) {
+      allowedActionRuleTypeMenuItems.push(
+        <MenuItem value={"SMS"}>SMS</MenuItem>
       );
     }
     if (
@@ -336,13 +436,37 @@ class CollectionExerciseDetails extends Component {
                   <FormControl required fullWidth={true}>
                     <InputLabel>Pack Code</InputLabel>
                     <Select
-                      onChange={this.onNewActionRulePackCodeChange}
-                      value={this.state.newActionRulePackCode}
-                      error={this.state.packCodeValidationError}
+                      onChange={this.onNewActionRulePrintPackCodeChange}
+                      value={this.state.newActionRulePrintPackCode}
+                      error={this.state.printPackCodeValidationError}
                     >
-                      {packCodeMenuItems}
+                      {printPackCodeMenuItems}
                     </Select>
                   </FormControl>
+                )}
+                {this.state.newActionRuleType === "SMS" && (
+                  <>
+                    <FormControl required fullWidth={true}>
+                      <InputLabel>Pack Code</InputLabel>
+                      <Select
+                        onChange={this.onNewActionRuleSmsPackCodeChange}
+                        value={this.state.newActionRuleSmsPackCode}
+                        error={this.state.smsPackCodeValidationError}
+                      >
+                        {smsPackCodeMenuItems}
+                      </Select>
+                    </FormControl>
+                    <FormControl required fullWidth={true}>
+                      <InputLabel>Phone Number Column</InputLabel>
+                      <Select
+                        onChange={this.onNewActionRuleSmsPhoneNumberChange}
+                        value={this.state.newActionRuleSmsPhoneNumberColumn}
+                        error={this.state.smsPhoneNumberColumnValidationError}
+                      >
+                        {sensitiveSampleColumnsMenuItems}
+                      </Select>
+                    </FormControl>
+                  </>
                 )}
                 <TextField
                   fullWidth={true}

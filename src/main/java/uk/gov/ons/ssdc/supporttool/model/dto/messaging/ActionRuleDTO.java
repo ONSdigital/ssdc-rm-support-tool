@@ -17,4 +17,6 @@ public class ActionRuleDTO {
   private ActionRuleType type;
 
   private OffsetDateTime triggerDateTime;
+
+  private String phoneNumberColumn;
 }

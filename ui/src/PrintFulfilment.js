@@ -70,9 +70,7 @@ class PrintFulfilment extends Component {
   refreshDataFromBackend = async () => {
     const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
       this.props.surveyId
-    ).then((fulfilmentTemplates) => {
-      return fulfilmentTemplates;
-    });
+    );
 
     this.setState({
       allowableFulfilmentPrintTemplates: fulfilmentPrintTemplates,

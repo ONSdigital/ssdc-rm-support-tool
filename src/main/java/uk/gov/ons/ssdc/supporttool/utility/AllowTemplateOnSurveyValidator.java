@@ -1,28 +1,32 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
-import static uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper.getExpectedColumns;
+import static uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper.getColumns;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
+import java.util.stream.Collectors;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 
-public class AllowPrintTemplateOnSurveyValidator {
+public class AllowTemplateOnSurveyValidator {
   private static final Set<String> OTHER_ALLOWABLE_COLUMNS =
       Set.of("__uac__", "__qid__", "__caseref__");
 
-  public static Optional<String> validate(Survey survey, PrintTemplate printTemplate) {
-    Set<String> surveyColumns = Set.of(getExpectedColumns(survey));
-    Set<String> printTemplateColumns = Set.of(printTemplate.getTemplate());
-
+  public static Optional<String> validate(Survey survey, Set<String> templateColumns) {
+    Set<String> surveyColumns = getColumns(survey, false);
+    Set<String> sensitiveSurveyColumns =
+        getColumns(survey, true).stream()
+            .map(column -> "__sensitive__." + column)
+            .collect(Collectors.toSet());
     Set<String> surveyColumnsPlusOtherAllowableColumns = new HashSet<>();
+
     surveyColumnsPlusOtherAllowableColumns.addAll(surveyColumns);
+    surveyColumnsPlusOtherAllowableColumns.addAll(sensitiveSurveyColumns);
     surveyColumnsPlusOtherAllowableColumns.addAll(OTHER_ALLOWABLE_COLUMNS);
 
-    if (!surveyColumnsPlusOtherAllowableColumns.containsAll(printTemplateColumns)) {
+    if (!surveyColumnsPlusOtherAllowableColumns.containsAll(templateColumns)) {
       Set<String> printTemplateColumnsNotAllowed = new HashSet<>();
-      printTemplateColumnsNotAllowed.addAll(printTemplateColumns);
+      printTemplateColumnsNotAllowed.addAll(templateColumns);
       printTemplateColumnsNotAllowed.removeAll(surveyColumnsPlusOtherAllowableColumns);
       String errorMessage =
           "Survey is missing columns: " + String.join(", ", printTemplateColumnsNotAllowed);
