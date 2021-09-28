@@ -4,7 +4,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class AllowPrintTemplateOnSurvey {
+public class AllowTemplateOnSurvey {
   private UUID surveyId;
   private String packCode;
 }

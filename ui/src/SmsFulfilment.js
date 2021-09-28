@@ -50,9 +50,7 @@ class SmsFulfilment extends Component {
   refreshDataFromBackend = async () => {
     const fulfilmentPrintTemplates = await getSmsFulfilmentTemplates(
       this.props.surveyId
-    ).then((smsTemplates) => {
-      return smsTemplates;
-    });
+    );
 
     this.setState({
       allowableSmsFulfilmentTemplates: fulfilmentPrintTemplates,
