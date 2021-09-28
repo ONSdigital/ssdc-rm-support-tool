@@ -16,7 +16,6 @@ import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.NewCase;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.transformer.NewCaseTransformer;
@@ -61,7 +60,8 @@ public class RowChunkProcessor {
 
         ListenableFuture<String> future =
             pubSubTemplate.publish(
-                topic, TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators, newCaseTopic));
+                topic,
+                TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators, newCaseTopic));
 
         // Wait for up to 30 seconds to confirm that message was published
         future.get(30, TimeUnit.SECONDS);
