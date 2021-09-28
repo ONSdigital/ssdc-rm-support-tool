@@ -157,18 +157,7 @@ public class SurveyCasesEndpoint {
 
   private String escapeSqlLikeSpecialCharacters(String stringToEscape) {
     return stringToEscape
-        .replace("\\", "\\\\")
         .replace("%", "\\%")
-        .replace("&", "\\&")
-        .replace("+", "\\+")
-        .replace("_", "\\_")
-        .replace("~", "\\~")
-        .replace("#", "\\#")
-        .replace("|", "\\|")
-        .replace("^", "\\^")
-        .replace("(", "\\(")
-        .replace(")", "\\)")
-        .replace("[", "\\[")
-        .replace("]", "\\]");
+        .replace("_", "\\_");
   }
 }
