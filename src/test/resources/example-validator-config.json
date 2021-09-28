@@ -48,6 +48,11 @@
   {
     "columnName": "PHONE_NUMBER",
     "sensitive": true,
-    "rules": []
+    "rules": [
+      {
+        "className": "uk.gov.ons.ssdc.common.validation.RegexRule",
+        "expression": "^07[0-9]{9}$"
+      }
+    ]
   }
 ]
