@@ -73,7 +73,7 @@ dummyuseridentity: dummy@fake-email.com
 printsupplierconfigfile: dummy-print-supplier-config.json
 
 queueconfig:
-  sample-topic: rm-internal-sample
+  new-case-topic: event_new-case
   print-fulfilment-topic: event_print-fulfilment
   deactivate-uac-topic: event_deactivate-uac
   refusal-event-topic: event_refusal
