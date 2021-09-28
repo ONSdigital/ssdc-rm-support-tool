@@ -156,8 +156,6 @@ public class SurveyCasesEndpoint {
   }
 
   private String escapeSqlLikeSpecialCharacters(String stringToEscape) {
-    return stringToEscape
-        .replace("%", "\\%")
-        .replace("_", "\\_");
+    return stringToEscape.replace("%", "\\%").replace("_", "\\_");
   }
 }
