@@ -14,7 +14,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 
 class UserAdmin extends Component {
   state = {
@@ -52,7 +51,7 @@ class UserAdmin extends Component {
     const usersJson = await usersResponse.json();
 
     this.setState({
-      users: usersJson._embedded.users,
+      users: usersJson,
     });
   };
 
@@ -62,7 +61,7 @@ class UserAdmin extends Component {
     const groupsJson = await groupsResponse.json();
 
     this.setState({
-      groups: groupsJson._embedded.userGroups,
+      groups: groupsJson,
     });
   };
 
@@ -108,7 +107,6 @@ class UserAdmin extends Component {
     }
 
     const newUser = {
-      id: uuidv4(),
       email: this.state.email,
     };
 
@@ -148,7 +146,6 @@ class UserAdmin extends Component {
     }
 
     const newGroup = {
-      id: uuidv4(),
       name: this.state.groupName,
     };
 
@@ -162,25 +159,20 @@ class UserAdmin extends Component {
   };
 
   render() {
-    const usersTableRows = this.state.users.map((user) => {
-      const userId = user._links.self.href.split("/").pop();
-
-      return (
+    const usersTableRows = this.state.users.map((user) => (
         <TableRow key={user.email}>
           <TableCell component="th" scope="row">
-            <Link to={`/userDetails?userId=${userId}`}>{user.email}</Link>
+            <Link to={`/userDetails?userId=${user.id}`}>{user.email}</Link>
           </TableCell>
         </TableRow>
-      );
-    });
+      )
+    );
 
-    const groupsTableRows = this.state.groups.map((group, index) => {
-      const groupId = group._links.self.href.split("/").pop();
-
+    const groupsTableRows = this.state.groups.map((group) => {
       return (
-        <TableRow key={groupId}>
+        <TableRow key={group.id}>
           <TableCell component="th" scope="row">
-            <Link to={`/groupDetails?groupId=${groupId}`}>{group.name}</Link>
+            <Link to={`/groupDetails?groupId=${group.id}`}>{group.name}</Link>
           </TableCell>
         </TableRow>
       );

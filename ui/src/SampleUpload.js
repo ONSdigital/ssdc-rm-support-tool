@@ -87,14 +87,18 @@ class SampleUpload extends Component {
           body: jobData,
         });
 
-        // Hide the progress dialog and flash the snackbar message
-        this.setState({
-          fileProgress: 1.0,
-          fileUploadSuccess: true,
-          uploadInProgress: false,
-        });
+        if (response.ok) {
+          // Hide the progress dialog and flash the snackbar message
+          this.setState({
+            fileProgress: 1.0,
+            fileUploadSuccess: true,
+            uploadInProgress: false,
+          });
 
-        this.getJobs();
+          this.getJobs();
+        } else {
+          // TODO - nice error handling
+        }
       });
   };
 

@@ -20,7 +20,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 
 class GroupDetails extends Component {
   state = {
@@ -65,55 +64,14 @@ class GroupDetails extends Component {
 
   getUserGroupPermissions = async () => {
     const permissionsResponse = await fetch(
-      `/api/userGroups/${this.props.groupId}/permissions`
+      `/api/userGroupPermissions/?groupId=${this.props.groupId}`
     );
 
     const permissionsJson = await permissionsResponse.json();
 
-    const groupActivities = await this.getGroupActivities(
-      permissionsJson._embedded.userGroupPermissions
-    );
-
     this.setState({
-      groupActivities: groupActivities,
+      groupActivities: permissionsJson,
     });
-  };
-
-  getGroupActivities = async (userGroupPermissions) => {
-    let groupActivities = [];
-
-    for (const userGroupPermission of userGroupPermissions) {
-      const userGroupPermissionId = userGroupPermission._links.self.href
-        .split("/")
-        .pop();
-
-      const permissionsResponse = await fetch(
-        `/api/userGroupPermissions/${userGroupPermissionId}`
-      );
-
-      const permissionsJson = await permissionsResponse.json();
-
-      const activity = permissionsJson.authorisedActivity;
-
-      const surveyResponse = await fetch(
-        `/api/userGroupPermissions/${userGroupPermissionId}/survey`
-      );
-
-      let surveyName = "All Surveys - Global permission";
-
-      if (surveyResponse.ok) {
-        const surveyJson = await surveyResponse.json();
-        surveyName = surveyJson.name;
-      }
-
-      groupActivities.push({
-        activity: activity,
-        surveyName: surveyName,
-        userGroupPermissionId: userGroupPermissionId,
-      });
-    }
-
-    return groupActivities;
   };
 
   getAuthorisedActivities = async () => {
@@ -145,7 +103,7 @@ class GroupDetails extends Component {
     const surveysJson = await surveysResponse.json();
 
     this.setState({
-      allSurveys: surveysJson._embedded.surveys,
+      allSurveys: surveysJson,
     });
   };
 
@@ -210,22 +168,11 @@ class GroupDetails extends Component {
       return;
     }
 
-    var newUserGroupPermission;
-
-    if (this.state.surveyId) {
-      newUserGroupPermission = {
-        id: uuidv4(),
+    const newUserGroupPermission = {
         authorisedActivity: this.state.activity,
-        group: `userGroups/${this.props.groupId}`,
-        survey: `surveys/${this.state.surveyId}`,
+        groupId: this.props.groupId,
+        surveyId: this.state.surveyId,
       };
-    } else {
-      newUserGroupPermission = {
-        id: uuidv4(),
-        authorisedActivity: this.state.activity,
-        group: `userGroups/${this.props.groupId}`,
-      };
-    }
 
     await fetch("/api/userGroupPermissions", {
       method: "POST",
@@ -239,22 +186,24 @@ class GroupDetails extends Component {
   render() {
     const groupActivitiesTableRows = this.state.groupActivities.map(
       (groupActivity, index) => {
+        const surveyName = groupActivity.surveyId ? groupActivity.surveyName : "All Surveys - Global permission";
+
         return (
           <TableRow key={index}>
             <TableCell component="th" scope="row">
-              {groupActivity.activity}
+              {groupActivity.authorisedActivity}
             </TableCell>
             <TableCell component="th" scope="row">
-              {groupActivity.surveyName}
+              {surveyName}
             </TableCell>
             <TableCell component="th" scope="row">
               <Button
                 variant="contained"
                 onClick={() =>
                   this.openRemoveDialog(
-                    groupActivity.activity,
-                    groupActivity.surveyName,
-                    groupActivity.userGroupPermissionId
+                    groupActivity.authorisedActivity,
+                    surveyName,
+                    groupActivity.id
                   )
                 }
               >
@@ -274,15 +223,13 @@ class GroupDetails extends Component {
       );
     });
 
-    const surveyMenuItems = this.state.allSurveys.map((survey) => {
-      const surveyId = survey._links.self.href.split("/").pop();
-
-      return (
-        <MenuItem key={surveyId} value={surveyId}>
+    const surveyMenuItems = this.state.allSurveys.map((survey) =>
+      (
+        <MenuItem key={survey.id} value={survey.id}>
           {survey.name}
         </MenuItem>
-      );
-    });
+      )
+    );
 
     return (
       <div style={{ padding: 20 }}>
