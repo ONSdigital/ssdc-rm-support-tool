@@ -70,11 +70,11 @@ class CaseDetails extends Component {
     const caseJson = await response.json();
 
     if (response.ok) {
-        this.setState({
-          case: caseJson,
-          uacQidLinks: caseJson.uacQidLinks,
-          events: caseJson.events,
-        });
+      this.setState({
+        case: caseJson,
+        uacQidLinks: caseJson.uacQidLinks,
+        events: caseJson.events,
+      });
     }
   };
 
@@ -170,7 +170,10 @@ class CaseDetails extends Component {
                   <TableCell component="th" scope="row">
                     <div>Case ref: {this.state.case.caseRef}</div>
                     <div>Survey name: {this.state.surveyName}</div>
-                    <div>Collection Exercise name: {this.state.case.collectionExerciseName}</div>
+                    <div>
+                      Collection Exercise name:{" "}
+                      {this.state.case.collectionExerciseName}
+                    </div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>

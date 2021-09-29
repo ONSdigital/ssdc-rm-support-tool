@@ -169,10 +169,10 @@ class GroupDetails extends Component {
     }
 
     const newUserGroupPermission = {
-        authorisedActivity: this.state.activity,
-        groupId: this.props.groupId,
-        surveyId: this.state.surveyId,
-      };
+      authorisedActivity: this.state.activity,
+      groupId: this.props.groupId,
+      surveyId: this.state.surveyId,
+    };
 
     await fetch("/api/userGroupPermissions", {
       method: "POST",
@@ -186,7 +186,9 @@ class GroupDetails extends Component {
   render() {
     const groupActivitiesTableRows = this.state.groupActivities.map(
       (groupActivity, index) => {
-        const surveyName = groupActivity.surveyId ? groupActivity.surveyName : "All Surveys - Global permission";
+        const surveyName = groupActivity.surveyId
+          ? groupActivity.surveyName
+          : "All Surveys - Global permission";
 
         return (
           <TableRow key={index}>
@@ -223,13 +225,11 @@ class GroupDetails extends Component {
       );
     });
 
-    const surveyMenuItems = this.state.allSurveys.map((survey) =>
-      (
-        <MenuItem key={survey.id} value={survey.id}>
-          {survey.name}
-        </MenuItem>
-      )
-    );
+    const surveyMenuItems = this.state.allSurveys.map((survey) => (
+      <MenuItem key={survey.id} value={survey.id}>
+        {survey.name}
+      </MenuItem>
+    ));
 
     return (
       <div style={{ padding: 20 }}>

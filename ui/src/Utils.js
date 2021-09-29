@@ -2,7 +2,7 @@ export const getAllPrintTemplates = async () => {
   const response = await fetch("/api/printTemplates");
   const templateJson = await response.json();
 
-  const templatePackCodes = templateJson.map(template => template.packCode)
+  const templatePackCodes = templateJson.map((template) => template.packCode);
 
   return templatePackCodes;
 };
@@ -11,7 +11,7 @@ export const getAllSmsTemplates = async () => {
   const response = await fetch("/api/smsTemplates");
   const templateJson = await response.json();
 
-  const templatePackCodes = templateJson.map(template => template.packCode)
+  const templatePackCodes = templateJson.map((template) => template.packCode);
 
   return templatePackCodes;
 };
@@ -26,7 +26,9 @@ export const getFulfilmentPrintTemplates = async (surveyId) => {
 };
 
 export const getSmsFulfilmentTemplates = async (surveyId) => {
-  const response = await fetch(`/api/fulfilmentSurveySmsTemplates/?surveyId=${surveyId}`);
+  const response = await fetch(
+    `/api/fulfilmentSurveySmsTemplates/?surveyId=${surveyId}`
+  );
   const smsFulfilmentTemplatesJson = await response.json();
 
   return smsFulfilmentTemplatesJson;

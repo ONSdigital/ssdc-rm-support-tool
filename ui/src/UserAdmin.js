@@ -160,13 +160,12 @@ class UserAdmin extends Component {
 
   render() {
     const usersTableRows = this.state.users.map((user) => (
-        <TableRow key={user.email}>
-          <TableCell component="th" scope="row">
-            <Link to={`/userDetails?userId=${user.id}`}>{user.email}</Link>
-          </TableCell>
-        </TableRow>
-      )
-    );
+      <TableRow key={user.email}>
+        <TableCell component="th" scope="row">
+          <Link to={`/userDetails?userId=${user.id}`}>{user.email}</Link>
+        </TableCell>
+      </TableRow>
+    ));
 
     const groupsTableRows = this.state.groups.map((group) => {
       return (

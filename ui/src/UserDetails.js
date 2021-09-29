@@ -189,11 +189,10 @@ class UserDetails extends Component {
     );
 
     const groupMenuItems = this.state.groups.map((group) => (
-        <MenuItem key={group.id} value={group.id}>
-          {group.name}
-        </MenuItem>
-      )
-    );
+      <MenuItem key={group.id} value={group.id}>
+        {group.name}
+      </MenuItem>
+    ));
 
     return (
       <div style={{ padding: 20 }}>

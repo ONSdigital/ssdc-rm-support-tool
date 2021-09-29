@@ -108,9 +108,7 @@ class LandingPage extends Component {
   };
 
   getFulfilmentTrigger = async () => {
-    const response = await fetch(
-      `/api/fulfilmentNextTriggers`
-    );
+    const response = await fetch(`/api/fulfilmentNextTriggers`);
 
     if (!response.ok) {
       this.setState({
@@ -280,9 +278,12 @@ class LandingPage extends Component {
       this.state.nextFulfilmentTriggerDateTime
     ).toISOString();
 
-    const response = await fetch(`/api/fulfilmentNextTriggers/?triggerDateTime=${triggerDateTime}`, {
-      method: "POST"
-    });
+    const response = await fetch(
+      `/api/fulfilmentNextTriggers/?triggerDateTime=${triggerDateTime}`,
+      {
+        method: "POST",
+      }
+    );
 
     if (response.ok) {
       this.setState({ configureNextTriggerDisplayed: false });
@@ -446,40 +447,36 @@ class LandingPage extends Component {
 
   render() {
     const surveyTableRows = this.state.surveys.map((survey) => (
-        <TableRow key={survey.name}>
-          <TableCell component="th" scope="row">
-            <Link to={`/survey?surveyId=${survey.id}`}>{survey.name}</Link>
-          </TableCell>
-        </TableRow>
-      )
-    );
+      <TableRow key={survey.name}>
+        <TableCell component="th" scope="row">
+          <Link to={`/survey?surveyId=${survey.id}`}>{survey.name}</Link>
+        </TableCell>
+      </TableRow>
+    ));
 
     const printTemplateRows = this.state.printTemplates.map((printTemplate) => (
-        <TableRow key={printTemplate.packCode}>
-          <TableCell component="th" scope="row">
-            {printTemplate.packCode}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {printTemplate.printSupplier}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {JSON.stringify(printTemplate.template)}
-          </TableCell>
-        </TableRow>
-      )
-    );
-    const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) =>
-       (
-        <TableRow key={smsTemplate.packCode}>
-          <TableCell component="th" scope="row">
-            {smsTemplate.packCode}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {JSON.stringify(smsTemplate.template)}
-          </TableCell>
-        </TableRow>
-      )
-    );
+      <TableRow key={printTemplate.packCode}>
+        <TableCell component="th" scope="row">
+          {printTemplate.packCode}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {printTemplate.printSupplier}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(printTemplate.template)}
+        </TableCell>
+      </TableRow>
+    ));
+    const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) => (
+      <TableRow key={smsTemplate.packCode}>
+        <TableCell component="th" scope="row">
+          {smsTemplate.packCode}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(smsTemplate.template)}
+        </TableCell>
+      </TableRow>
+    ));
 
     const printSupplierMenuItems = this.state.printSuppliers.map((supplier) => (
       <MenuItem key={supplier} value={supplier}>
@@ -552,16 +549,18 @@ class LandingPage extends Component {
             </TableContainer>
           </div>
         )}
-        {this.state.authorisedActivities.includes("CONFIGURE_FULFILMENT_TRIGGER") && (
-        <div>
-          <Button
-            variant="contained"
-            onClick={this.openFulfilmentTriggerDialog}
-            style={{ marginTop: 20 }}
-          >
-            Configure fulfilment trigger
-          </Button>
-        </div>
+        {this.state.authorisedActivities.includes(
+          "CONFIGURE_FULFILMENT_TRIGGER"
+        ) && (
+          <div>
+            <Button
+              variant="contained"
+              onClick={this.openFulfilmentTriggerDialog}
+              style={{ marginTop: 20 }}
+            >
+              Configure fulfilment trigger
+            </Button>
+          </div>
         )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>

@@ -119,10 +119,7 @@ class SurveySampleSearch extends Component {
     collectionExerciseMenuItems.push(noFilterMenuItem);
     collectionExerciseMenuItems.push(
       this.props.collectionExercises.map((collex) => (
-        <MenuItem
-          key={collex.name}
-          value={collex.id}
-        >
+        <MenuItem key={collex.name} value={collex.id}>
           {collex.name}
         </MenuItem>
       ))

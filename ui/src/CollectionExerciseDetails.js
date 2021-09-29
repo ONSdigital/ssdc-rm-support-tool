@@ -103,7 +103,7 @@ class CollectionExerciseDetails extends Component {
     const actionRuleJson = await response.json();
 
     this.setState({
-      actionRules: actionRuleJson
+      actionRules: actionRuleJson,
     });
   };
 

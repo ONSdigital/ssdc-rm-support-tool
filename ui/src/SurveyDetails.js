@@ -18,7 +18,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 import {
   getActionRulePrintTemplates,
   getActionRuleSmsTemplates,
@@ -184,7 +183,6 @@ class SurveyDetails extends Component {
     }
 
     const newCollectionExercise = {
-      id: uuidv4(),
       name: this.state.newCollectionExerciseName,
       surveyId: this.props.surveyId,
     };
@@ -383,16 +381,16 @@ class SurveyDetails extends Component {
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(
       (collex) => (
-          <TableRow key={collex.name}>
-            <TableCell component="th" scope="row">
-              <Link
-                to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
-              >
-                {collex.name}
-              </Link>
-            </TableCell>
-          </TableRow>
-        )
+        <TableRow key={collex.name}>
+          <TableCell component="th" scope="row">
+            <Link
+              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
+            >
+              {collex.name}
+            </Link>
+          </TableCell>
+        </TableRow>
+      )
     );
 
     const actionRulePrintTemplateTableRows =
