@@ -1,12 +1,16 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
@@ -31,6 +35,32 @@ public class CollectionExerciseEndpoint {
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.surveyRepository = surveyRepository;
     this.userIdentity = userIdentity;
+  }
+
+  @GetMapping
+  public List<CollectionExerciseDto> findCollexsBySurvey(
+      @RequestParam(value = "surveyId") UUID surveyId,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    Survey survey =
+        surveyRepository
+            .findById(surveyId)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+
+    userIdentity.checkUserPermission(
+        userEmail, survey, UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES);
+
+    return collectionExerciseRepository.findBySurvey(survey).stream()
+        .map(
+            collex -> {
+              CollectionExerciseDto collectionExerciseDto = new CollectionExerciseDto();
+              collectionExerciseDto.setId(collex.getId());
+              collectionExerciseDto.setSurveyId(surveyId);
+              collectionExerciseDto.setName(collex.getName());
+              return collectionExerciseDto;
+            })
+        .collect(Collectors.toList());
   }
 
   @PostMapping

@@ -148,12 +148,12 @@ class SurveyDetails extends Component {
 
   getCollectionExercises = async () => {
     const response = await fetch(
-      `/api/surveys/${this.props.surveyId}/collectionExercises`
+      `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
     const collexJson = await response.json();
 
     this.setState({
-      collectionExercises: collexJson._embedded.collectionExercises,
+      collectionExercises: collexJson,
     });
   };
 
@@ -382,21 +382,17 @@ class SurveyDetails extends Component {
 
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(
-      (collex) => {
-        const collexId = collex._links.self.href.split("/").pop();
-
-        return (
+      (collex) => (
           <TableRow key={collex.name}>
             <TableCell component="th" scope="row">
               <Link
-                to={`/collex?surveyId=${this.props.surveyId}&collexId=${collexId}`}
+                to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
               >
                 {collex.name}
               </Link>
             </TableCell>
           </TableRow>
-        );
-      }
+        )
     );
 
     const actionRulePrintTemplateTableRows =

@@ -121,7 +121,7 @@ class SurveySampleSearch extends Component {
       this.props.collectionExercises.map((collex) => (
         <MenuItem
           key={collex.name}
-          value={collex._links.self.href.split("/").pop()}
+          value={collex.id}
         >
           {collex.name}
         </MenuItem>

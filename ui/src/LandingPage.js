@@ -17,7 +17,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 import { Link } from "react-router-dom";
 
 class LandingPage extends Component {
@@ -100,7 +99,7 @@ class LandingPage extends Component {
     const response = await fetch("/api/surveys");
     const surveyJson = await response.json();
 
-    this.setState({ surveys: surveyJson._embedded.surveys });
+    this.setState({ surveys: surveyJson });
   };
 
   getDateTimeForDateTimePicker = (date) => {
@@ -257,7 +256,6 @@ class LandingPage extends Component {
     }
 
     const newSurvey = {
-      id: uuidv4(),
       name: this.state.newSurveyName,
       sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules),
       sampleWithHeaderRow: this.state.newSurveyHeaderRow,
@@ -447,17 +445,14 @@ class LandingPage extends Component {
   };
 
   render() {
-    const surveyTableRows = this.state.surveys.map((survey) => {
-      const surveyId = survey._links.self.href.split("/").pop();
-
-      return (
+    const surveyTableRows = this.state.surveys.map((survey) => (
         <TableRow key={survey.name}>
           <TableCell component="th" scope="row">
-            <Link to={`/survey?surveyId=${surveyId}`}>{survey.name}</Link>
+            <Link to={`/survey?surveyId=${survey.id}`}>{survey.name}</Link>
           </TableCell>
         </TableRow>
-      );
-    });
+      )
+    );
 
     const printTemplateRows = this.state.printTemplates.map((printTemplate) => (
         <TableRow key={printTemplate.packCode}>

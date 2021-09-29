@@ -10,12 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
 import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsTemplateDto;
-import uk.gov.ons.ssdc.supporttool.model.repository.PrintTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
