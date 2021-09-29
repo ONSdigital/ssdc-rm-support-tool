@@ -121,6 +121,7 @@ public class ActionRuleEndpoint {
     actionRule.setCreatedBy(createdBy);
     actionRule.setSmsTemplate(smsTemplate);
     actionRule.setPhoneNumberColumn(actionRuleDTO.getPhoneNumberColumn());
+    actionRule.setUacMetadata(actionRuleDTO.getUacMetadata());
 
     actionRuleRepository.saveAndFlush(actionRule);
 

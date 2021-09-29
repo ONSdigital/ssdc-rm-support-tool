@@ -40,12 +40,14 @@ class CollectionExerciseDetails extends Component {
     smsPackCodeValidationError: false,
     smsPhoneNumberColumnValidationError: false,
     actionRuleTypeValidationError: false,
+    smsUacQidMetadataValidationError: false,
     collectionExerciseName: "",
     newActionRulePrintPackCode: "",
     newActionRuleSmsPackCode: "",
     newActionRuleSmsPhoneNumberColumn: "",
     newActionRuleClassifiers: "",
     newActionRuleType: "",
+    newSmsUacQidMetadata: "",
   };
 
   componentDidMount() {
@@ -208,6 +210,13 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
+  onNewActionRuleSmsUacQidMetadataChange = (event) => {
+    this.setState({
+      newActionRuleSmsSmsUacQidMetadata: event.target.value,
+      smsUacQidMetadataValidationError: false,
+    });
+  };
+
   onCreateActionRule = async () => {
     var failedValidation = false;
 
@@ -240,12 +249,22 @@ class CollectionExerciseDetails extends Component {
       failedValidation = true;
     }
 
+    if (
+        !this.state.newSmsUacQidMetadata &&
+        this.state.newActionRuleType === "SMS"
+    ) {
+      this.setState({ smsUacQidMetadataValidationError: true });
+      failedValidation = true;
+    }
+
     if (failedValidation) {
       return;
     }
 
     let newActionRulePackCode = "";
     let newActionRuleSmsPhoneNumberColumn = null;
+    let newActionRuleSmsUacQidMetadata = "";
+
 
     if (this.state.newActionRuleType === "PRINT") {
       newActionRulePackCode = this.state.newActionRulePrintPackCode;
@@ -465,6 +484,18 @@ class CollectionExerciseDetails extends Component {
                       >
                         {sensitiveSampleColumnsMenuItems}
                       </Select>
+                    </FormControl>
+                    <FormControl required fullWidth={true}>
+                      <InputLabel>UAC QID Metadata</InputLabel>
+                      <TextField
+                          // required
+                          // fullWidth={true}
+                          style={{ marginTop: 20 }}
+                          error={this.state.smsUacQidMetadataValidationError}
+                          id="standard-required"
+                          onChange={this.onNewActionRuleSmsUacQidMetadataChange}
+                          value={this.state.newSmsUacQidMetadata}
+                      />
                     </FormControl>
                   </>
                 )}

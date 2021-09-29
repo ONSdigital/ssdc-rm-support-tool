@@ -1,6 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.model.dto.messaging;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.UUID;
 import lombok.Data;
 import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
@@ -19,4 +20,6 @@ public class ActionRuleDTO {
   private OffsetDateTime triggerDateTime;
 
   private String phoneNumberColumn;
+
+  private Map<String, String> uacMetadata;
 }
