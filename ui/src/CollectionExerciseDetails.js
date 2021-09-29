@@ -251,12 +251,20 @@ class CollectionExerciseDetails extends Component {
       failedValidation = true;
     }
 
-    if (
-        !this.state.newSmsUacQidMetadata &&
-        this.state.newActionRuleType === "SMS"
-    ) {
+    if (!this.state.newSmsUacQidMetadata.trim()) {
       this.setState({ smsUacQidMetadataValidationError: true });
       failedValidation = true;
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.newSmsUacQidMetadata);
+        if (parsedJson.length === 0) {
+          this.setState({ smsUacQidMetadataValidationError: true });
+          failedValidation = true;
+        }
+      } catch (err) {
+        this.setState({ smsUacQidMetadataValidationError: true });
+        failedValidation = true;
+      }
     }
 
     if (failedValidation) {
@@ -265,8 +273,6 @@ class CollectionExerciseDetails extends Component {
 
     let newActionRulePackCode = "";
     let newActionRuleSmsPhoneNumberColumn = null;
-    let newActionRuleSmsUacQidMetadata = "";
-
 
     if (this.state.newActionRuleType === "PRINT") {
       newActionRulePackCode = this.state.newActionRulePrintPackCode;
@@ -287,6 +293,7 @@ class CollectionExerciseDetails extends Component {
       packCode: newActionRulePackCode,
       collectionExerciseId: this.props.collectionExerciseId,
       phoneNumberColumn: newActionRuleSmsPhoneNumberColumn,
+      uacMetadata: JSON.parse(this.state.newSmsUacQidMetadata),
     };
 
     const response = await fetch("/api/actionRules", {
@@ -488,23 +495,13 @@ class CollectionExerciseDetails extends Component {
                       </Select>
                     </FormControl>
                     <FormControl required fullWidth={true}>
-                      <InputLabel>UAC QID Metadata</InputLabel>
                       <TextField
-                          // required
-                          // fullWidth={true}
-                          // style={{ marginTop: 20 }}
-                          // error={this.state.smsUacQidMetadataValidationError}
-                          // id="standard-required"
-                          // onChange={this.onNewActionRuleSmsUacQidMetadataChange}
-                          // value={this.state.newSmsUacQidMetadata}
-
-                        required
-                        fullWidth={true}
                         style={{ marginTop: 20 }}
-                        error={this.state.packCodeValidationError}
-                        label="Pack Code"
-                        onChange={this.onPackCodeChange}
-                        value={this.state.packCode}
+                        error={this.state.smsUacQidMetadataValidationError}
+                        label="UAC QID Metadata"
+                        id="standard-required"
+                        onChange={this.onNewActionRuleSmsUacQidMetadataChange}
+                        value={this.state.newSmsUacQidMetadata}
                       />
                     </FormControl>
                   </>
