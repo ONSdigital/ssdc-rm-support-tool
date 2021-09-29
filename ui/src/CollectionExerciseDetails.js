@@ -214,7 +214,7 @@ class CollectionExerciseDetails extends Component {
 
   onNewActionRuleSmsUacQidMetadataChange = (event) => {
     this.setState({
-      newActionRuleSmsSmsUacQidMetadata: event.target.value,
+      newSmsUacQidMetadata: event.target.value,
       smsUacQidMetadataValidationError: false,
     });
   };
@@ -492,11 +492,19 @@ class CollectionExerciseDetails extends Component {
                       <TextField
                           // required
                           // fullWidth={true}
-                          style={{ marginTop: 20 }}
-                          error={this.state.smsUacQidMetadataValidationError}
-                          id="standard-required"
-                          onChange={this.onNewActionRuleSmsUacQidMetadataChange}
-                          value={this.state.newSmsUacQidMetadata}
+                          // style={{ marginTop: 20 }}
+                          // error={this.state.smsUacQidMetadataValidationError}
+                          // id="standard-required"
+                          // onChange={this.onNewActionRuleSmsUacQidMetadataChange}
+                          // value={this.state.newSmsUacQidMetadata}
+
+                        required
+                        fullWidth={true}
+                        style={{ marginTop: 20 }}
+                        error={this.state.packCodeValidationError}
+                        label="Pack Code"
+                        onChange={this.onPackCodeChange}
+                        value={this.state.packCode}
                       />
                     </FormControl>
                   </>
