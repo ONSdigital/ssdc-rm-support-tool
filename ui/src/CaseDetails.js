@@ -203,56 +203,49 @@ class CaseDetails extends Component {
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>
-                      Receipted:{" "}
-                      {this.state.case.receiptReceived ? "Yes" : "No"}
-                    </div>
-                    <div>
                       Refused:{" "}
                       {this.state.case.refusalReceived
                         ? this.state.case.refusalReceived
                         : "No"}
                     </div>
                     <div>Invalid: {this.state.case.invalid ? "Yes" : "No"}</div>
-                    <div>
-                      Launched EQ: {this.state.case.eqLaunched ? "Yes" : "No"}
-                    </div>
                   </TableCell>
                   <TableCell align="right">
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_REFUSAL"
                     ) && (
-                      <Refusal
-                        caseId={this.props.caseId}
-                        case={this.state.case}
-                      />
-                    )}
+                        <Refusal
+                          caseId={this.props.caseId}
+                          case={this.state.case}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_INVALID_CASE"
                     ) && <InvalidCase caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_PRINT_FULFILMENT"
                     ) && (
-                      <PrintFulfilment
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <PrintFulfilment
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "UPDATE_SAMPLE_SENSITIVE"
                     ) && (
-                      <SensitiveData
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <SensitiveData
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_SMS_FULFILMENT"
                     ) && (
-                      <SmsFulfilment
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <SmsFulfilment
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                   </TableCell>
                 </TableBody>
               </Table>

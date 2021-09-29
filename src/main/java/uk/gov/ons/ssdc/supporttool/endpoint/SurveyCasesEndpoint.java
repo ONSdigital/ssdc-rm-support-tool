@@ -57,9 +57,7 @@ public class SurveyCasesEndpoint {
       @PathVariable(value = "surveyId") UUID surveyId,
       @RequestParam(value = "searchTerm") String searchTerm,
       @RequestParam(value = "collexId", required = false) Optional<UUID> collexId,
-      @RequestParam(value = "receipted", required = false) Optional<Boolean> receiptReceived,
       @RequestParam(value = "invalid", required = false) Optional<Boolean> caseInvalid,
-      @RequestParam(value = "launched", required = false) Optional<Boolean> eqLaunched,
       @RequestParam(value = "refusal", required = false)
           Optional<UIRefusalTypeDTO> refusalReceived) {
 
@@ -82,19 +80,9 @@ public class SurveyCasesEndpoint {
       namedParameters.put("collexId", collexId.get());
     }
 
-    if (receiptReceived.isPresent()) {
-      queryStringBuilder.append(" AND c.receipt_received = :receiptReceived");
-      namedParameters.put("receiptReceived", receiptReceived.get());
-    }
-
     if (caseInvalid.isPresent()) {
       queryStringBuilder.append(" AND c.invalid = :caseInvalid");
       namedParameters.put("caseInvalid", caseInvalid.get());
-    }
-
-    if (eqLaunched.isPresent()) {
-      queryStringBuilder.append(" AND c.eq_launched = :eqLaunched");
-      namedParameters.put("eqLaunched", eqLaunched.get());
     }
 
     if (refusalReceived.isPresent()) {

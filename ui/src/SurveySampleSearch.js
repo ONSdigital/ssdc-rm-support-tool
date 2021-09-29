@@ -20,9 +20,7 @@ class SurveySampleSearch extends Component {
     selectedCollectionExercise: "",
     refusalTypes: [],
     selectedRefusalFilter: "",
-    selectedReceiptedFilter: "",
     selectedInvalidFilter: "",
-    selectedLaunchedFilter: "",
     searchTerm: "",
   };
 
@@ -49,9 +47,8 @@ class SurveySampleSearch extends Component {
       return;
     }
     this.setState({ searchTermFailedValidation: false });
-    let searchUrl = `/api/surveyCases/${
-      this.props.surveyId
-    }?searchTerm=${encodeURIComponent(this.state.searchTerm)}`;
+    let searchUrl = `/api/surveyCases/${this.props.surveyId
+      }?searchTerm=${encodeURIComponent(this.state.searchTerm)}`;
 
     if (this.state.selectedCollectionExercise) {
       searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
@@ -61,16 +58,8 @@ class SurveySampleSearch extends Component {
       searchUrl += `&refusal=${this.state.selectedRefusalFilter}`;
     }
 
-    if (this.state.selectedReceiptedFilter) {
-      searchUrl += `&receipted=${this.state.selectedReceiptedFilter}`;
-    }
-
     if (this.state.selectedInvalidFilter) {
       searchUrl += `&invalid=${this.state.selectedInvalidFilter}`;
-    }
-
-    if (this.state.selectedLaunchedFilter) {
-      searchUrl += `&launched=${this.state.selectedLaunchedFilter}`;
     }
 
     this.props.onSearchExecuteAndPopulateList(
@@ -91,21 +80,10 @@ class SurveySampleSearch extends Component {
       selectedRefusalFilter: event.target.value,
     });
   };
-  onFilterReceipted = (event) => {
-    this.setState({
-      selectedReceiptedFilter: event.target.value,
-    });
-  };
 
   onFilterInvalid = (event) => {
     this.setState({
       selectedInvalidFilter: event.target.value,
-    });
-  };
-
-  onFilterLaunched = (event) => {
-    this.setState({
-      selectedLaunchedFilter: event.target.value,
     });
   };
 
@@ -204,30 +182,10 @@ class SurveySampleSearch extends Component {
           </FormControl>
 
           <FormControl style={BOOL_FILTER_STYLE}>
-            <InputLabel>Receipted</InputLabel>
-            <Select
-              onChange={this.onFilterReceipted}
-              value={this.state.selectedReceiptedFilter}
-            >
-              {trueOrFalseFilterMenuItems}
-            </Select>
-          </FormControl>
-
-          <FormControl style={BOOL_FILTER_STYLE}>
             <InputLabel>Invalid</InputLabel>
             <Select
               onChange={this.onFilterInvalid}
               value={this.state.selectedInvalidFilter}
-            >
-              {trueOrFalseFilterMenuItems}
-            </Select>
-          </FormControl>
-
-          <FormControl style={BOOL_FILTER_STYLE}>
-            <InputLabel>Launched</InputLabel>
-            <Select
-              onChange={this.onFilterLaunched}
-              value={this.state.selectedLaunchedFilter}
             >
               {trueOrFalseFilterMenuItems}
             </Select>
