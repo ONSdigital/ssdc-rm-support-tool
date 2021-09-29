@@ -162,7 +162,9 @@ class CollectionExerciseDetails extends Component {
       newActionRuleSmsPhoneNumberColumn: "",
       packCodeValidationError: false,
       smsPhoneNumberColumnValidationError: false,
+      smsUacQidMetadataValidationError: false,
       newActionRuleClassifiers: "",
+      newSmsUacQidMetadata: "",
       createActionRulesDialogDisplayed: true,
       newActionRuleTriggerDate: this.getTimeNowForDateTimePicker(),
     });
