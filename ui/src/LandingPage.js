@@ -46,7 +46,6 @@ class LandingPage extends Component {
     notifyTemplateIdErrorMessage: "",
     newSurveyHeaderRow: true,
     newSurveySampleSeparator: ",",
-    triggerID: "366ce7da-f885-493d-b933-a3b74d583a06",
     nextFulfilmentTriggerDateTime: "1970-01-01T00:00:00.000Z",
     configureNextTriggerDisplayed: false,
   };
@@ -111,7 +110,7 @@ class LandingPage extends Component {
 
   getFulfilmentTrigger = async () => {
     const response = await fetch(
-      `/api/fulfilmentNextTriggers/${this.state.triggerID}`
+      `/api/fulfilmentNextTriggers`
     );
 
     if (!response.ok) {
@@ -122,7 +121,7 @@ class LandingPage extends Component {
       });
     } else {
       const fulfilmentNextTriggerJson = await response.json();
-      var dateOfTrigger = new Date(fulfilmentNextTriggerJson.triggerDateTime);
+      var dateOfTrigger = new Date(fulfilmentNextTriggerJson);
       this.setState({
         nextFulfilmentTriggerDateTime:
           this.getDateTimeForDateTimePicker(dateOfTrigger),
@@ -134,13 +133,14 @@ class LandingPage extends Component {
     const response = await fetch("/api/printTemplates");
     const templateJson = await response.json();
 
-    this.setState({ printTemplates: templateJson._embedded.printTemplates });
+    this.setState({ printTemplates: templateJson });
   };
+
   getSmsTemplates = async () => {
     const response = await fetch("/api/smsTemplates");
     const templateJson = await response.json();
 
-    this.setState({ smsTemplates: templateJson._embedded.smsTemplates });
+    this.setState({ smsTemplates: templateJson });
   };
 
   openDialog = () => {
@@ -278,17 +278,12 @@ class LandingPage extends Component {
   };
 
   onUpdateFulfilmentTriggerDateTime = async () => {
-    const updatedTriggerDateTime = {
-      id: this.state.triggerID,
-      triggerDateTime: new Date(
-        this.state.nextFulfilmentTriggerDateTime
-      ).toISOString(),
-    };
+    const triggerDateTime = new Date(
+      this.state.nextFulfilmentTriggerDateTime
+    ).toISOString();
 
-    const response = await fetch("/api/fulfilmentNextTriggers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedTriggerDateTime),
+    const response = await fetch(`/api/fulfilmentNextTriggers/?triggerDateTime=${triggerDateTime}`, {
+      method: "POST"
     });
 
     if (response.ok) {
@@ -464,13 +459,10 @@ class LandingPage extends Component {
       );
     });
 
-    const printTemplateRows = this.state.printTemplates.map((printTemplate) => {
-      const packCode = printTemplate._links.self.href.split("/").pop();
-
-      return (
-        <TableRow key={packCode}>
+    const printTemplateRows = this.state.printTemplates.map((printTemplate) => (
+        <TableRow key={printTemplate.packCode}>
           <TableCell component="th" scope="row">
-            {packCode}
+            {printTemplate.packCode}
           </TableCell>
           <TableCell component="th" scope="row">
             {printTemplate.printSupplier}
@@ -479,22 +471,20 @@ class LandingPage extends Component {
             {JSON.stringify(printTemplate.template)}
           </TableCell>
         </TableRow>
-      );
-    });
-    const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) => {
-      const packCode = smsTemplate._links.self.href.split("/").pop();
-
-      return (
-        <TableRow key={packCode}>
+      )
+    );
+    const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) =>
+       (
+        <TableRow key={smsTemplate.packCode}>
           <TableCell component="th" scope="row">
-            {packCode}
+            {smsTemplate.packCode}
           </TableCell>
           <TableCell component="th" scope="row">
             {JSON.stringify(smsTemplate.template)}
           </TableCell>
         </TableRow>
-      );
-    });
+      )
+    );
 
     const printSupplierMenuItems = this.state.printSuppliers.map((supplier) => (
       <MenuItem key={supplier} value={supplier}>
@@ -567,6 +557,7 @@ class LandingPage extends Component {
             </TableContainer>
           </div>
         )}
+        {this.state.authorisedActivities.includes("CONFIGURE_FULFILMENT_TRIGGER") && (
         <div>
           <Button
             variant="contained"
@@ -576,6 +567,7 @@ class LandingPage extends Component {
             Configure fulfilment trigger
           </Button>
         </div>
+        )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
             <div style={{ marginTop: 20 }}>

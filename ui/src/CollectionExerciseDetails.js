@@ -31,10 +31,8 @@ class CollectionExerciseDetails extends Component {
     authorisedActivities: [],
     actionRules: [],
     printPackCodes: [],
-    printTemplateHrefToPackCodeMap: new Map(),
     sensitiveSampleColumns: [],
     smsPackCodes: [],
-    smsTemplateHrefToPackCodeMap: new Map(),
     createActionRulesDialogDisplayed: false,
     printPackCodeValidationError: false,
     smsPackCodeValidationError: false,
@@ -100,44 +98,12 @@ class CollectionExerciseDetails extends Component {
 
   getActionRules = async () => {
     const response = await fetch(
-      `/api/collectionExercises/${this.props.collectionExerciseId}/actionRules`
+      `/api/actionRules/?collectionExercise=${this.props.collectionExerciseId}`
     );
     const actionRuleJson = await response.json();
-    const actionRules = actionRuleJson._embedded.actionRules;
-
-    let printTemplateHrefToPackCodeMap = new Map();
-    let smsTemplateHrefToPackCodeMap = new Map();
-
-    for (let i = 0; i < actionRules.length; i++) {
-      if (actionRules[i].type === "PRINT") {
-        const printTemplateUrl = new URL(
-          actionRules[i]._links.printTemplate.href
-        );
-        const printTemplateResponse = await fetch(printTemplateUrl.pathname);
-        const printTemplateJson = await printTemplateResponse.json();
-        const packCode = printTemplateJson._links.self.href.split("/").pop();
-
-        printTemplateHrefToPackCodeMap.set(
-          actionRules[i]._links.printTemplate.href,
-          packCode
-        );
-      } else if (actionRules[i].type === "SMS") {
-        const smsTemplateUrl = new URL(actionRules[i]._links.smsTemplate.href);
-        const smsTemplateResponse = await fetch(smsTemplateUrl.pathname);
-        const smsTemplateJson = await smsTemplateResponse.json();
-        const packCode = smsTemplateJson._links.self.href.split("/").pop();
-
-        smsTemplateHrefToPackCodeMap.set(
-          actionRules[i]._links.smsTemplate.href,
-          packCode
-        );
-      }
-    }
 
     this.setState({
-      actionRules: actionRules,
-      printTemplateHrefToPackCodeMap: printTemplateHrefToPackCodeMap,
-      smsTemplateHrefToPackCodeMap: smsTemplateHrefToPackCodeMap,
+      actionRules: actionRuleJson
     });
   };
 
@@ -288,18 +254,6 @@ class CollectionExerciseDetails extends Component {
   render() {
     const actionRuleTableRows = this.state.actionRules.map(
       (actionRule, index) => {
-        let packCode = "";
-
-        if (actionRule.type === "PRINT") {
-          packCode = this.state.printTemplateHrefToPackCodeMap.get(
-            actionRule._links.printTemplate.href
-          );
-        } else if (actionRule.type === "SMS") {
-          packCode = this.state.smsTemplateHrefToPackCodeMap.get(
-            actionRule._links.smsTemplate.href
-          );
-        }
-
         return (
           <TableRow key={index}>
             <TableCell component="th" scope="row">
@@ -315,7 +269,7 @@ class CollectionExerciseDetails extends Component {
               {actionRule.classifiers}
             </TableCell>
             <TableCell component="th" scope="row">
-              {packCode}
+              {actionRule.packCode}
             </TableCell>
           </TableRow>
         );

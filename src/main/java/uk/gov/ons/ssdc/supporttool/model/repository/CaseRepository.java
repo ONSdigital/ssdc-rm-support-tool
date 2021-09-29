@@ -2,14 +2,12 @@ package uk.gov.ons.ssdc.supporttool.model.repository;
 
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import uk.gov.ons.ssdc.common.model.entity.Case;
 
-@RepositoryRestResource
-public interface CaseRepository extends PagingAndSortingRepository<Case, UUID> {
+public interface CaseRepository extends JpaRepository<Case, UUID> {
   Optional<Case> findByCaseRef(@Param("caseRef") Long caseRef);
 
   @Query(

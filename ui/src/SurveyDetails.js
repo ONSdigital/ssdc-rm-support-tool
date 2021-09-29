@@ -186,7 +186,7 @@ class SurveyDetails extends Component {
     const newCollectionExercise = {
       id: uuidv4(),
       name: this.state.newCollectionExerciseName,
-      survey: "surveys/" + this.props.surveyId,
+      surveyId: this.props.surveyId,
     };
 
     const response = await fetch("/api/collectionExercises", {
@@ -336,9 +336,8 @@ class SurveyDetails extends Component {
     }
 
     const newAllowSmsTemplate = {
-      id: uuidv4(),
-      survey: "surveys/" + this.props.surveyId,
-      smsTemplate: "smsTemplates/" + this.state.smsTemplateToAllow,
+      surveyId: this.props.surveyId,
+      packCode: this.state.smsTemplateToAllow,
     };
 
     const response = await fetch("/api/fulfilmentSurveySmsTemplates", {
