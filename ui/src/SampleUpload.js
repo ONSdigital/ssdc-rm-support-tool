@@ -87,6 +87,11 @@ class SampleUpload extends Component {
           body: jobData,
         });
 
+        if (!response.ok) {
+          // TODO - nice error handling
+          // If we check it, it's is currently buggy and leaves the popup on the screen for unknown reasons - need to raise a defect
+        }
+
         // Hide the progress dialog and flash the snackbar message
         this.setState({
           fileProgress: 1.0,

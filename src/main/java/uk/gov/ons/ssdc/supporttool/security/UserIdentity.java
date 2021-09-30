@@ -60,8 +60,9 @@ public class UserIdentity {
                     && permission.getSurvey().getId().equals(survey.getId())
                 // Otherwise, user must have specific activity/survey combo to be authorised
                 || (permission.getAuthorisedActivity() == activity
-                    && permission.getSurvey() != null
-                    && permission.getSurvey().getId().equals(survey.getId())))) {
+                    && (permission.getSurvey() == null
+                        || (permission.getSurvey() != null
+                            && permission.getSurvey().getId().equals(survey.getId())))))) {
           return; // User is authorised
         }
       }

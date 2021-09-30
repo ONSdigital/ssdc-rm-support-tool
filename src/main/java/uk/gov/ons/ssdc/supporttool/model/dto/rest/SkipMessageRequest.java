@@ -1,4 +1,4 @@
-package uk.gov.ons.ssdc.supporttool.model.dto.messaging;
+package uk.gov.ons.ssdc.supporttool.model.dto.rest;
 
 import lombok.Data;
 

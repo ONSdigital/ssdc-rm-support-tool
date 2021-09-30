@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/whoami")
-public class WhoAmI {
+public class WhoAmIEndpoint {
   @GetMapping
   public Map<String, String> getWhoIAm(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {

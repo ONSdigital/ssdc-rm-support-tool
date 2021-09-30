@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseSearchResult;
@@ -149,7 +149,7 @@ public class SurveyCasesEndpoint {
   private void checkSurveySearchCasesPermission(String userEmail, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
-      throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Survey not found");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Survey not found");
     }
     userIdentity.checkUserPermission(
         userEmail, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
