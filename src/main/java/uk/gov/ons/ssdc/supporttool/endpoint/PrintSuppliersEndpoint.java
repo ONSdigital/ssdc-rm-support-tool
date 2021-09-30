@@ -1,6 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LIST_PRINT_SUPPLIERS;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +37,7 @@ public class PrintSuppliersEndpoint {
   @GetMapping
   public Set<String> getPrintSuppliers(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, CREATE_PRINT_TEMPLATE);
+    userIdentity.checkGlobalUserPermission(userEmail, LIST_PRINT_SUPPLIERS);
 
     if (printSuppliers != null) {
       return printSuppliers;

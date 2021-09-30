@@ -10,16 +10,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.ons.ssdc.common.model.entity.Case;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
+import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
+import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
+import uk.gov.ons.ssdc.common.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.common.model.entity.User;
 import uk.gov.ons.ssdc.common.model.entity.UserGroup;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupMember;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
+import uk.gov.ons.ssdc.common.validation.Rule;
+import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.PrintTemplateRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.UacQidLinkRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupMemberRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupPermissionRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupRepository;
@@ -32,6 +41,11 @@ public class IntegrationTestHelper {
 
   private final SurveyRepository surveyRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
+  private final PrintTemplateRepository printTemplateRepository;
+  private final SmsTemplateRepository smsTemplateRepository;
+  private final CaseRepository caseRepository;
+  private final UacQidLinkRepository uacQidLinkRepository;
+
   private final UserRepository userRepository;
   private final UserGroupRepository userGroupRepository;
   private final UserGroupMemberRepository userGroupMemberRepository;
@@ -40,12 +54,20 @@ public class IntegrationTestHelper {
   public IntegrationTestHelper(
       SurveyRepository surveyRepository,
       CollectionExerciseRepository collectionExerciseRepository,
+      PrintTemplateRepository printTemplateRepository,
+      SmsTemplateRepository smsTemplateRepository,
+      CaseRepository caseRepository,
+      UacQidLinkRepository uacQidLinkRepository,
       UserRepository userRepository,
       UserGroupRepository userGroupRepository,
       UserGroupMemberRepository userGroupMemberRepository,
       UserGroupPermissionRepository userGroupPermissionRepository) {
     this.surveyRepository = surveyRepository;
     this.collectionExerciseRepository = collectionExerciseRepository;
+    this.printTemplateRepository = printTemplateRepository;
+    this.smsTemplateRepository = smsTemplateRepository;
+    this.caseRepository = caseRepository;
+    this.uacQidLinkRepository = uacQidLinkRepository;
     this.userRepository = userRepository;
     this.userGroupRepository = userGroupRepository;
     this.userGroupMemberRepository = userGroupMemberRepository;
@@ -53,18 +75,43 @@ public class IntegrationTestHelper {
   }
 
   public void testGet(
-      int port, UserGroupAuthorisedActivityType activity, BundleFunction bundleFunction) {
-    BundleOfUsefulTestStuff bundle = getTestBundle();
+      int port, UserGroupAuthorisedActivityType activity, BundleUrlGetter bundleUrlGetter) {
     setUpTestUserPermission(activity);
+    BundleOfUsefulTestStuff bundle = getTestBundle();
 
-    String url = String.format("http://localhost:%d/api/%s", port, bundleFunction.getUrl(bundle));
+    String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
     assertThat(response.getStatusCodeValue()).isBetween(200, 299);
 
     deleteAllPermissions();
+    restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
 
     try {
       restTemplate.getForEntity(url, String.class);
+      fail("API call was not forbidden, but should have been");
+    } catch (HttpClientErrorException expectedException) {
+      assertThat(expectedException.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+  }
+
+  public void testPost(
+      int port,
+      UserGroupAuthorisedActivityType activity,
+      BundleUrlGetter bundleUrlGetter,
+      BundlePostObjectGetter bundlePostObjectGetter) {
+    setUpTestUserPermission(activity);
+    BundleOfUsefulTestStuff bundle = getTestBundle();
+
+    String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
+    Object objectToPost = bundlePostObjectGetter.getObject(bundle);
+    ResponseEntity<String> response = restTemplate.postForEntity(url, objectToPost, String.class);
+    assertThat(response.getStatusCodeValue()).isBetween(200, 299);
+
+    deleteAllPermissions();
+    restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
+
+    try {
+      restTemplate.postForEntity(url, objectToPost, String.class);
       fail("API call was not forbidden, but should have been");
     } catch (HttpClientErrorException expectedException) {
       assertThat(expectedException.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -76,7 +123,11 @@ public class IntegrationTestHelper {
     survey.setId(UUID.randomUUID());
     survey.setName("Test");
     survey.setSampleWithHeaderRow(true);
-    survey.setSampleValidationRules(new ColumnValidator[] {});
+    survey.setSampleValidationRules(
+        new ColumnValidator[] {
+          new ColumnValidator("foo", false, new Rule[] {}),
+          new ColumnValidator("bar", false, new Rule[] {})
+        });
     survey.setSampleSeparator(',');
     survey = surveyRepository.saveAndFlush(survey);
 
@@ -86,11 +137,65 @@ public class IntegrationTestHelper {
     collectionExercise.setName("Test");
     collectionExercise = collectionExerciseRepository.saveAndFlush(collectionExercise);
 
+    Case caze = new Case();
+    caze.setId(UUID.randomUUID());
+    caze.setCollectionExercise(collectionExercise);
+    caze = caseRepository.saveAndFlush(caze);
+
+    UacQidLink uacQidLink = new UacQidLink();
+    uacQidLink.setId(UUID.randomUUID());
+    uacQidLink.setQid("TEST_QID_" + UUID.randomUUID());
+    uacQidLink.setUac("TEST_UAC_" + UUID.randomUUID());
+    uacQidLink.setCaze(caze);
+    uacQidLink = uacQidLinkRepository.saveAndFlush(uacQidLink);
+
+    PrintTemplate printTemplate = new PrintTemplate();
+    printTemplate.setPackCode("TEST_PRINT_PACK_CODE_" + UUID.randomUUID());
+    printTemplate.setTemplate(new String[] {"foo", "bar"});
+    printTemplate.setPrintSupplier("SUPPLIER_A");
+    printTemplate = printTemplateRepository.saveAndFlush(printTemplate);
+
+    SmsTemplate smsTemplate = new SmsTemplate();
+    smsTemplate.setPackCode("TEST_SMS_PACK_CODE_" + UUID.randomUUID());
+    smsTemplate.setTemplate(new String[] {"foo", "bar"});
+    smsTemplate.setNotifyTemplateId(UUID.randomUUID());
+    smsTemplate = smsTemplateRepository.saveAndFlush(smsTemplate);
+
+    User user = setupDummyUser(UUID.randomUUID());
+    UserGroup group = setupDummyGroup(UUID.randomUUID());
+
     BundleOfUsefulTestStuff bundle = new BundleOfUsefulTestStuff();
     bundle.setSurveyId(survey.getId());
     bundle.setCollexId(collectionExercise.getId());
+    bundle.setCaseId(caze.getId());
+    bundle.setQid(uacQidLink.getQid());
+    bundle.setPrintTemplatePackCode(printTemplate.getPackCode());
+    bundle.setSmsTemplatePackCode(smsTemplate.getPackCode());
+    bundle.setUserId(user.getId());
+    bundle.setGroupId(group.getId());
 
     return bundle;
+  }
+
+  private void restoreDummyUserAndOtherGubbins(BundleOfUsefulTestStuff bundle) {
+    setupDummyUser(bundle.getUserId());
+    setupDummyGroup(bundle.getGroupId());
+  }
+
+  private User setupDummyUser(UUID userId) {
+    User user = new User();
+    user.setId(userId);
+    user.setEmail("TEST_USER_" + UUID.randomUUID());
+    user = userRepository.saveAndFlush(user);
+    return user;
+  }
+
+  private UserGroup setupDummyGroup(UUID groupId) {
+    UserGroup group = new UserGroup();
+    group.setId(groupId);
+    group.setName("Test");
+    group = userGroupRepository.saveAndFlush(group);
+    return group;
   }
 
   private void deleteAllPermissions() {

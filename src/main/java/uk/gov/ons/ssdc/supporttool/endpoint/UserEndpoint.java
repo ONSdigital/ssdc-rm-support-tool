@@ -40,7 +40,7 @@ public class UserEndpoint {
         userRepository
             .findById(userId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
 
     return mapDto(user);
   }

@@ -1,6 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.testhelper;
 
 @FunctionalInterface
-public interface BundleFunction {
+public interface BundleUrlGetter {
   String getUrl(BundleOfUsefulTestStuff bundle);
 }
