@@ -504,50 +504,50 @@ class LandingPage extends Component {
           </TableContainer>
         )}
         {this.state.authorisedActivities.includes("CREATE_PRINT_TEMPLATE") && (
-          <div>
-            <Button
-              variant="contained"
-              onClick={this.openPrintTemplateDialog}
-              style={{ marginTop: 20 }}
-            >
-              Create Print Template
-            </Button>
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                    <TableCell>Print Supplier</TableCell>
-                    <TableCell>Template</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{printTemplateRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </div>
+          <Button
+            variant="contained"
+            onClick={this.openPrintTemplateDialog}
+            style={{ marginTop: 20 }}
+          >
+            Create Print Template
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes("LIST_PRINT_TEMPLATES") && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pack Code</TableCell>
+                  <TableCell>Print Supplier</TableCell>
+                  <TableCell>Template</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{printTemplateRows}</TableBody>
+            </Table>
+          </TableContainer>
         )}
 
         {this.state.authorisedActivities.includes("CREATE_SMS_TEMPLATE") && (
-          <div>
-            <Button
-              variant="contained"
-              onClick={this.openSmsTemplateDialog}
-              style={{ marginTop: 20 }}
-            >
-              Create sms Template
-            </Button>
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                    <TableCell>Template</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{smsTemplateRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </div>
+          <Button
+            variant="contained"
+            onClick={this.openSmsTemplateDialog}
+            style={{ marginTop: 20 }}
+          >
+            Create sms Template
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes("LIST_SMS_TEMPLATES") && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pack Code</TableCell>
+                  <TableCell>Template</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{smsTemplateRows}</TableBody>
+            </Table>
+          </TableContainer>
         )}
         {this.state.authorisedActivities.includes(
           "CONFIGURE_FULFILMENT_TRIGGER"

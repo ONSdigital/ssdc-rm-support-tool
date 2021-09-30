@@ -65,7 +65,7 @@ public class SurveyEndpoint {
   }
 
   @PostMapping
-  public ResponseEntity<Void> createSurvey(
+  public ResponseEntity<UUID> createSurvey(
       @RequestBody SurveyDto surveyDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     userIdentity.checkGlobalUserPermission(
@@ -79,6 +79,6 @@ public class SurveyEndpoint {
     survey.setSampleWithHeaderRow(surveyDto.isSampleWithHeaderRow());
     surveyRepository.saveAndFlush(survey);
 
-    return new ResponseEntity<>(HttpStatus.CREATED);
+    return new ResponseEntity<>(survey.getId(), HttpStatus.CREATED);
   }
 }
