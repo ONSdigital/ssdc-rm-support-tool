@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,26 @@ public class CollectionExerciseEndpoint {
     this.userIdentity = userIdentity;
   }
 
+  @GetMapping("/{collexId}")
+  public CollectionExerciseDto getCollex(
+      @PathVariable(value = "collexId") UUID collexId,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    CollectionExercise collectionExercise =
+        collectionExerciseRepository
+            .findById(collexId)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Collection exercise not found"));
+
+    userIdentity.checkUserPermission(
+        userEmail,
+        collectionExercise.getSurvey(),
+        UserGroupAuthorisedActivityType.VIEW_COLLECTION_EXERCISE);
+
+    return mapDto(collectionExercise.getSurvey().getId(), collectionExercise);
+  }
+
   @GetMapping
   public List<CollectionExerciseDto> findCollexsBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
@@ -52,15 +73,16 @@ public class CollectionExerciseEndpoint {
         userEmail, survey, UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES);
 
     return collectionExerciseRepository.findBySurvey(survey).stream()
-        .map(
-            collex -> {
-              CollectionExerciseDto collectionExerciseDto = new CollectionExerciseDto();
-              collectionExerciseDto.setId(collex.getId());
-              collectionExerciseDto.setSurveyId(surveyId);
-              collectionExerciseDto.setName(collex.getName());
-              return collectionExerciseDto;
-            })
+        .map(collex -> mapDto(surveyId, collex))
         .collect(Collectors.toList());
+  }
+
+  private CollectionExerciseDto mapDto(UUID surveyId, CollectionExercise collex) {
+    CollectionExerciseDto collectionExerciseDto = new CollectionExerciseDto();
+    collectionExerciseDto.setId(collex.getId());
+    collectionExerciseDto.setSurveyId(surveyId);
+    collectionExerciseDto.setName(collex.getName());
+    return collectionExerciseDto;
   }
 
   @PostMapping

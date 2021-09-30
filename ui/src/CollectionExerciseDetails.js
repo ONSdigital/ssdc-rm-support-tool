@@ -349,20 +349,22 @@ class CollectionExerciseDetails extends Component {
             </Button>
           </div>
         )}
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Type</TableCell>
-                <TableCell>Trigger date</TableCell>
-                <TableCell>Has triggered?</TableCell>
-                <TableCell>Classifiers</TableCell>
-                <TableCell>Pack Code</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{actionRuleTableRows}</TableBody>
-          </Table>
-        </TableContainer>
+        {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Trigger date</TableCell>
+                  <TableCell>Has triggered?</TableCell>
+                  <TableCell>Classifiers</TableCell>
+                  <TableCell>Pack Code</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{actionRuleTableRows}</TableBody>
+            </Table>
+          </TableContainer>
+        )}
         {(this.state.authorisedActivities.includes("LOAD_SAMPLE") ||
           this.state.authorisedActivities.includes(
             "VIEW_SAMPLE_LOAD_PROGRESS"
