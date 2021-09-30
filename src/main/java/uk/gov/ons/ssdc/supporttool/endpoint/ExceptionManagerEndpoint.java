@@ -14,11 +14,11 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
 @Controller
 @RequestMapping(value = "/api/exceptionManager")
-public class ExceptionManager {
+public class ExceptionManagerEndpoint {
   private final ExceptionManagerClient exceptionManagerClient;
   private final UserIdentity userIdentity;
 
-  public ExceptionManager(
+  public ExceptionManagerEndpoint(
       ExceptionManagerClient exceptionManagerClient, UserIdentity userIdentity) {
     this.exceptionManagerClient = exceptionManagerClient;
     this.userIdentity = userIdentity;

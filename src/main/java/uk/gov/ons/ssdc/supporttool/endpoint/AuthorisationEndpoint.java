@@ -21,10 +21,10 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @RestController
 @RequestMapping(value = "/api/auth")
-public class Authorisation {
+public class AuthorisationEndpoint {
   private final UserRepository userRepository;
 
-  public Authorisation(UserRepository userRepository) {
+  public AuthorisationEndpoint(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
