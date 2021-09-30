@@ -65,12 +65,13 @@ public class SurveyCasesEndpoint {
 
     checkSurveySearchCasesPermission(userEmail, surveyId);
 
-    String likeSearchTerm = String.format("%%%s%%", searchTerm);
+    String escapedSearchTerm = escapeSqlLikeSpecialCharacters(searchTerm);
+    String likeSearchTerm = String.format("%%%s%%", escapedSearchTerm);
     StringBuilder queryStringBuilder = new StringBuilder(searchCasesInSurveyPartialQuery);
     queryStringBuilder
         .append(" AND EXISTS (SELECT * FROM jsonb_each_text(c.sample) AS x(ky, val)")
         .append(
-            " WHERE LOWER(REPLACE(x.val, ' ', '')) LIKE LOWER(REPLACE(:likeSearchTerm, ' ', '')))");
+            " WHERE LOWER(REPLACE(x.val, ' ', '')) LIKE LOWER(REPLACE(:likeSearchTerm, ' ', '')) ESCAPE '\\')");
 
     Map<String, Object> namedParameters = new HashMap();
     namedParameters.put("surveyId", surveyId);
@@ -152,5 +153,9 @@ public class SurveyCasesEndpoint {
     }
     userIdentity.checkUserPermission(
         userEmail, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
+  }
+
+  private String escapeSqlLikeSpecialCharacters(String stringToEscape) {
+    return stringToEscape.replace("%", "\\%").replace("_", "\\_");
   }
 }
