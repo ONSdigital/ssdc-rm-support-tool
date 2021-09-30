@@ -17,10 +17,12 @@ class SmsFulfilment extends Component {
     allowableSmsFulfilmentTemplates: [],
     packCodeValidationError: false,
     packCodeValidationErrorDesc: "",
+    smsUacQidMetadataValidationError: false,
     showDialog: false,
     phoneNumber: "",
     newValueValidationError: "",
     validationError: false,
+    newSmsUacQidMetadata: "",
   };
 
   openDialog = () => {
@@ -60,7 +62,16 @@ class SmsFulfilment extends Component {
     this.setState({ packCode: event.target.value });
   };
 
+  onNewActionRuleSmsUacQidMetadataChange = (event) => {
+    this.setState({
+      newSmsUacQidMetadata: event.target.value,
+      smsUacQidMetadataValidationError: false,
+    });
+  };
+
   onCreate = async () => {
+    var failedValidation = false;
+
     if (!this.state.packCode) {
       this.setState({
         packCodeValidationError: true,
@@ -75,10 +86,28 @@ class SmsFulfilment extends Component {
       return;
     }
 
+    if (!this.state.newSmsUacQidMetadata.trim()) {
+      this.setState({ smsUacQidMetadataValidationError: true });
+      failedValidation = true;
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.newSmsUacQidMetadata);
+        if (parsedJson.length === 0) {
+          this.setState({ smsUacQidMetadataValidationError: true });
+          failedValidation = true;
+        }
+      } catch (err) {
+        this.setState({ smsUacQidMetadataValidationError: true });
+        failedValidation = true;
+      }
+    }
+
     const smsFulfilment = {
       packCode: this.state.packCode,
       phoneNumber: this.state.phoneNumber,
+      uacMetadata: JSON.parse(this.state.newSmsUacQidMetadata),
     };
+
     const response = await fetch(
       `/api/cases/${this.props.caseId}/action/sms-fulfilment`,
       {
@@ -138,6 +167,16 @@ class SmsFulfilment extends Component {
                 value={this.state.phoneNumber}
                 helperText={this.state.newValueValidationError}
               />
+              <FormControl required fullWidth={true}>
+                <TextField
+                  style={{ minWidth: 200 }}
+                  error={this.state.smsUacQidMetadataValidationError}
+                  label="UAC QID Metadata"
+                  id="standard-required"
+                  onChange={this.onNewActionRuleSmsUacQidMetadataChange}
+                  value={this.state.newSmsUacQidMetadata}
+                />
+              </FormControl>
             </div>
             <div style={{ marginTop: 10 }}>
               <Button

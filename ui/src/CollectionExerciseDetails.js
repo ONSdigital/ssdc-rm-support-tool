@@ -496,7 +496,7 @@ class CollectionExerciseDetails extends Component {
                     </FormControl>
                     <FormControl required fullWidth={true}>
                       <TextField
-                        style={{ marginTop: 20 }}
+                        style={{ minWidth: 200 }}
                         error={this.state.smsUacQidMetadataValidationError}
                         label="UAC QID Metadata"
                         id="standard-required"

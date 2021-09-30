@@ -180,6 +180,7 @@ public class CaseEndpoint {
     smsFulfilment.setCaseId(caze.getId());
     smsFulfilment.setPackCode(smsFulfilmentAction.getPackCode());
     smsFulfilment.setPhoneNumber(smsFulfilmentAction.getPhoneNumber());
+    smsFulfilment.setUacMetadata(smsFulfilmentAction.getUacMetadata());
 
     smsFulfilmentRequest.setHeader(header);
     payload.setSmsFulfilment(smsFulfilment);

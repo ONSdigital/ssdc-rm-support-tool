@@ -1,5 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.model.dto.rest;
 
+import java.util.Map;
 import java.util.UUID;
 import lombok.Data;
 
@@ -8,4 +9,5 @@ public class SmsFulfilment {
   private UUID caseId;
   private String phoneNumber;
   private String packCode;
+  private Map<String, String> uacMetadata;
 }
