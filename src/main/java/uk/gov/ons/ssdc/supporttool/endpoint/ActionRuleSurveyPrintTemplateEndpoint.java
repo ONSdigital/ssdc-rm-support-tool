@@ -60,7 +60,7 @@ public class ActionRuleSurveyPrintTemplateEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         survey,
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES);
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES);
 
     return actionRuleSurveyPrintTemplateRepository.findBySurvey(survey).stream()
         .map(arspt -> arspt.getPrintTemplate().getPackCode())
