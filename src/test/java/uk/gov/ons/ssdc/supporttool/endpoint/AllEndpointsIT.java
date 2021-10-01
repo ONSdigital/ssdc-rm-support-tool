@@ -36,7 +36,7 @@ import uk.gov.ons.ssdc.supporttool.testhelper.IntegrationTestHelper;
  * namely the one and only one which _should_ be allowed. Then we call it again, without that
  * permission and check that we get a 403 FORBIDDEN response.
  *
- * The reason why all these tests are in one file is performance: if they were in seperate files
+ * The reason why all these tests are in one file is performance: if they were in separate files
  * then Spring Boot would have to start and stop for every endpoint, which would take 30 seconds, so
  * for 26+ endpoints, that would take 13 minutes... unacceptably long for a build cycle.
  *
