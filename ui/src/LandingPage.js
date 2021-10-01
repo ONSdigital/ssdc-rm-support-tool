@@ -50,14 +50,19 @@ class LandingPage extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend();
-
-    this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+  }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend(authorisedActivities);
+    this.getPrintSuppliers(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+
+    this.interval = setInterval(() => this.refreshDataFromBackend(this.state.authorisedActivities), 1000);
   }
 
   getAuthorisedActivities = async () => {
@@ -70,32 +75,31 @@ class LandingPage extends Component {
 
     const authorisedActivities = await authResponse.json();
 
-    if (authorisedActivities.includes("CREATE_PRINT_TEMPLATE")) {
-      const supplierResponse = await fetch("/api/printsuppliers");
+    this.setState({ authorisedActivities: authorisedActivities });
 
-      // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
-      if (!supplierResponse.ok) {
-        return;
-      }
-
-      const supplierJson = await supplierResponse.json();
-
-      this.setState({
-        authorisedActivities: authorisedActivities,
-        printSuppliers: supplierJson,
-      });
-    } else {
-      this.setState({ authorisedActivities: authorisedActivities });
-    }
+    return authorisedActivities;
   };
 
-  refreshDataFromBackend = () => {
-    this.getSurveys();
-    this.getPrintTemplates();
-    this.getSmsTemplates();
+  refreshDataFromBackend = (authorisedActivities) => {
+    this.getSurveys(authorisedActivities);
+    this.getPrintTemplates(authorisedActivities);
+    this.getSmsTemplates(authorisedActivities);
   };
 
-  getSurveys = async () => {
+  getPrintSuppliers = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_PRINT_SUPPLIERS")) return;
+
+    const supplierResponse = await fetch("/api/printsuppliers");
+    const supplierJson = await supplierResponse.json();
+
+    this.setState({
+      printSuppliers: supplierJson,
+    });
+}
+
+  getSurveys = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_SURVEYS")) return;
+
     const response = await fetch("/api/surveys");
     const surveyJson = await response.json();
 
@@ -126,14 +130,18 @@ class LandingPage extends Component {
     }
   };
 
-  getPrintTemplates = async () => {
+  getPrintTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_PRINT_TEMPLATES")) return;
+
     const response = await fetch("/api/printTemplates");
     const templateJson = await response.json();
 
     this.setState({ printTemplates: templateJson });
   };
 
-  getSmsTemplates = async () => {
+  getSmsTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_SMS_TEMPLATES")) return;
+
     const response = await fetch("/api/smsTemplates");
     const templateJson = await response.json();
 
