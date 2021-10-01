@@ -81,7 +81,7 @@ public class IntegrationTestHelper {
 
     String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-    assertThat(response.getStatusCodeValue()).isBetween(200, 299);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     deleteAllPermissions();
     restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
@@ -105,7 +105,7 @@ public class IntegrationTestHelper {
     String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
     Object objectToPost = bundlePostObjectGetter.getObject(bundle);
     ResponseEntity<String> response = restTemplate.postForEntity(url, objectToPost, String.class);
-    assertThat(response.getStatusCodeValue()).isBetween(200, 299);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     deleteAllPermissions();
     restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
