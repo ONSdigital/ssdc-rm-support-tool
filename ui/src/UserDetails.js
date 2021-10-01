@@ -37,20 +37,27 @@ class UserDetails extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getUser();
-    this.getGroups();
-
-    this.getUserMemberOf();
-
-    this.interval = setInterval(() => this.getUserMemberOf(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  getUser = async () => {
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getUser(authorisedActivities);
+    this.getGroups(authorisedActivities);
+
+    this.getUserMemberOf(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.getUserMemberOf(authorisedActivities),
+      1000
+    );
+  };
+
+  getUser = async (authorisedActivities) => {
     const userResponse = await fetch(`/api/users/${this.props.userId}`);
 
     const userJson = await userResponse.json();
@@ -60,7 +67,7 @@ class UserDetails extends Component {
     });
   };
 
-  getUserMemberOf = async () => {
+  getUserMemberOf = async (authorisedActivities) => {
     const userMemberOfResponse = await fetch(
       `/api/userGroupMembers/?userId=${this.props.userId}`
     );
@@ -72,7 +79,7 @@ class UserDetails extends Component {
     });
   };
 
-  getGroups = async () => {
+  getGroups = async (authorisedActivities) => {
     const groupsResponse = await fetch("/api/userGroups");
 
     const groupsJson = await groupsResponse.json();
@@ -95,6 +102,8 @@ class UserDetails extends Component {
       authorisedActivities: authorisedActivities,
       isLoading: false,
     });
+
+    return authorisedActivities;
   };
 
   openJoinGroupDialog = () => {

@@ -24,10 +24,14 @@ class SurveyCaseSearch extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getSampleColumns();
-    this.getCollectionExercises();
+    this.getAuthorisedBackendData();
   }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getSampleColumns(authorisedActivities);
+    this.getCollectionExercises(authorisedActivities);
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -40,9 +44,11 @@ class SurveyCaseSearch extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
-  getCollectionExercises = async () => {
+  getCollectionExercises = async (authorisedActivities) => {
     const response = await fetch(
       `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
@@ -86,7 +92,7 @@ class SurveyCaseSearch extends Component {
     return /^\+?\d+$/.test(str);
   };
 
-  getSampleColumns = async () => {
+  getSampleColumns = async (authorisedActivities) => {
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
     if (!response.ok) {
       return;

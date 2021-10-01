@@ -39,20 +39,27 @@ class GroupDetails extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getGroup();
-    this.getAllActivities();
-    this.getAllSurveys();
-    this.getUserGroupPermissions();
-
-    this.interval = setInterval(() => this.getUserGroupPermissions(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  getGroup = async () => {
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getGroup(authorisedActivities);
+    this.getAllActivities(authorisedActivities);
+    this.getAllSurveys(authorisedActivities);
+    this.getUserGroupPermissions(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.getUserGroupPermissions(authorisedActivities),
+      1000
+    );
+  };
+
+  getGroup = async (authorisedActivities) => {
     const groupResponse = await fetch(`/api/userGroups/${this.props.groupId}`);
 
     const groupJson = await groupResponse.json();
@@ -62,7 +69,7 @@ class GroupDetails extends Component {
     });
   };
 
-  getUserGroupPermissions = async () => {
+  getUserGroupPermissions = async (authorisedActivities) => {
     const permissionsResponse = await fetch(
       `/api/userGroupPermissions/?groupId=${this.props.groupId}`
     );
@@ -87,9 +94,11 @@ class GroupDetails extends Component {
       authorisedActivities: authorisedActivities,
       isLoading: false,
     });
+
+    return authorisedActivities;
   };
 
-  getAllActivities = async () => {
+  getAllActivities = async (authorisedActivities) => {
     const activitiesResponse = await fetch("/api/authorisedActivityTypes");
     const activitiesJson = await activitiesResponse.json();
 
@@ -98,7 +107,7 @@ class GroupDetails extends Component {
     });
   };
 
-  getAllSurveys = async () => {
+  getAllSurveys = async (authorisedActivities) => {
     const surveysResponse = await fetch("/api/surveys");
     const surveysJson = await surveysResponse.json();
 

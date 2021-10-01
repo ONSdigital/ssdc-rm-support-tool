@@ -57,16 +57,23 @@ class SurveyDetails extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend();
-
-    this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.refreshDataFromBackend(authorisedActivities),
+      1000
+    );
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -79,6 +86,8 @@ class SurveyDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
   getSurveyName = async () => {
@@ -89,24 +98,32 @@ class SurveyDetails extends Component {
     this.setState({ surveyName: surveyJson.name });
   };
 
-  refreshDataFromBackend = async () => {
-    this.getCollectionExercises();
+  refreshDataFromBackend = async (authorisedActivities) => {
+    this.getCollectionExercises(authorisedActivities);
 
-    const allPrintFulfilmentTemplates = await getAllPrintTemplates();
-    const allSmsFulfilmentTemplates = await getAllSmsTemplates();
+    const allPrintFulfilmentTemplates = await getAllPrintTemplates(
+      authorisedActivities
+    );
+    const allSmsFulfilmentTemplates = await getAllSmsTemplates(
+      authorisedActivities
+    );
 
     const actionRulePrintTemplates = await getActionRulePrintTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
 
     const actionRuleSmsTemplates = await getActionRuleSmsTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
 
     const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
     const smsFulfilmentTemplates = await getSmsFulfilmentTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
 
@@ -145,7 +162,7 @@ class SurveyDetails extends Component {
     });
   };
 
-  getCollectionExercises = async () => {
+  getCollectionExercises = async (authorisedActivities) => {
     const response = await fetch(
       `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );

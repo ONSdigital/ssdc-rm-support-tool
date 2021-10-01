@@ -24,18 +24,23 @@ class ExceptionManager extends Component {
     peekResult: "",
   };
 
-  componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend();
-
-    this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
-  }
+  componentDidMount() {}
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  refreshDataFromBackend = async () => {
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.refreshDataFromBackend(authorisedActivities),
+      1000
+    );
+  };
+
+  refreshDataFromBackend = async (authorisedActivities) => {
     const response = await fetch("/api/exceptionManager/badMessagesSummary");
     const exceptions = await response.json();
 
@@ -55,6 +60,8 @@ class ExceptionManager extends Component {
       authorisedActivities: authorisedActivities,
       isLoading: false,
     });
+
+    return authorisedActivities;
   };
 
   openDetailsDialog = async (messageHash) => {

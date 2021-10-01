@@ -59,11 +59,15 @@ class LandingPage extends Component {
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend(authorisedActivities);
     this.getPrintSuppliers(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
-    this.interval = setInterval(() => this.refreshDataFromBackend(this.state.authorisedActivities), 1000);
-  }
+    this.refreshDataFromBackend(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.refreshDataFromBackend(authorisedActivities),
+      1000
+    );
+  };
 
   getAuthorisedActivities = async () => {
     const authResponse = await fetch("/api/auth");
@@ -95,7 +99,7 @@ class LandingPage extends Component {
     this.setState({
       printSuppliers: supplierJson,
     });
-}
+  };
 
   getSurveys = async (authorisedActivities) => {
     if (!authorisedActivities.includes("LIST_SURVEYS")) return;

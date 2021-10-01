@@ -33,18 +33,26 @@ class CaseDetails extends Component {
   };
 
   componentDidMount() {
-    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCasesAndQidData();
-
-    this.interval = setInterval(() => this.getCasesAndQidData(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  getSurveyName = async () => {
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+
+    this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCasesAndQidData(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.getCasesAndQidData(authorisedActivities),
+      1000
+    );
+  };
+
+  getSurveyName = async (authorisedActivities) => {
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
 
     const surveyJson = await response.json();
@@ -63,9 +71,11 @@ class CaseDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
-  getCasesAndQidData = async () => {
+  getCasesAndQidData = async (authorisedActivities) => {
     const response = await fetch(`/api/cases/${this.props.caseId}`);
     const caseJson = await response.json();
 

@@ -1,4 +1,4 @@
-export const getAllPrintTemplates = async () => {
+export const getAllPrintTemplates = async (authorisedActivities) => {
   const response = await fetch("/api/printTemplates");
   const templateJson = await response.json();
 
@@ -7,7 +7,7 @@ export const getAllPrintTemplates = async () => {
   return templatePackCodes;
 };
 
-export const getAllSmsTemplates = async () => {
+export const getAllSmsTemplates = async (authorisedActivities) => {
   const response = await fetch("/api/smsTemplates");
   const templateJson = await response.json();
 
@@ -16,7 +16,10 @@ export const getAllSmsTemplates = async () => {
   return templatePackCodes;
 };
 
-export const getFulfilmentPrintTemplates = async (surveyId) => {
+export const getFulfilmentPrintTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
   const response = await fetch(
     `/api/fulfilmentSurveyPrintTemplates/?surveyId=${surveyId}`
   );
@@ -25,7 +28,10 @@ export const getFulfilmentPrintTemplates = async (surveyId) => {
   return printTemplatesJson;
 };
 
-export const getSmsFulfilmentTemplates = async (surveyId) => {
+export const getSmsFulfilmentTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
   const response = await fetch(
     `/api/fulfilmentSurveySmsTemplates/?surveyId=${surveyId}`
   );
@@ -34,7 +40,10 @@ export const getSmsFulfilmentTemplates = async (surveyId) => {
   return smsFulfilmentTemplatesJson;
 };
 
-export const getActionRulePrintTemplates = async (surveyId) => {
+export const getActionRulePrintTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
   const response = await fetch(
     `/api/actionRuleSurveyPrintTemplates/?surveyId=${surveyId}`
   );
@@ -43,7 +52,10 @@ export const getActionRulePrintTemplates = async (surveyId) => {
   return printTemplatesJson;
 };
 
-export const getActionRuleSmsTemplates = async (surveyId) => {
+export const getActionRuleSmsTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
   const response = await fetch(
     `/api/actionRuleSurveySmsTemplates/?surveyId=${surveyId}`
   );
@@ -52,7 +64,10 @@ export const getActionRuleSmsTemplates = async (surveyId) => {
   return smsTemplatesJson;
 };
 
-export const getSensitiveSampleColumns = async (surveyId) => {
+export const getSensitiveSampleColumns = async (
+  authorisedActivities,
+  surveyId
+) => {
   const response = await fetch(`/api/surveys/${surveyId}`);
   if (!response.ok) {
     return;
