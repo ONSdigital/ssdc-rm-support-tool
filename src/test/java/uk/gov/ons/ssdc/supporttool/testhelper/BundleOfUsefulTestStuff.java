@@ -7,4 +7,12 @@ import lombok.Data;
 public class BundleOfUsefulTestStuff {
   private UUID surveyId;
   private UUID collexId;
+  private UUID caseId;
+  private String qid;
+  private String printTemplatePackCode;
+  private String smsTemplatePackCode;
+  private UUID userId;
+  private UUID groupId;
+  private UUID groupMemberId;
+  private UUID groupPermissionId;
 }
