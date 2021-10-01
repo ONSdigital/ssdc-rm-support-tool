@@ -122,7 +122,12 @@ class CollectionExerciseDetails extends Component {
   };
 
   getPrintTemplates = async (authorisedActivities) => {
-    if (!authorisedActivities.includes("LIST_PRINT_TEMPLATES")) return;
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+      )
+    )
+      return;
 
     const packCodes = await getActionRulePrintTemplates(
       authorisedActivities,
@@ -132,7 +137,12 @@ class CollectionExerciseDetails extends Component {
   };
 
   getSmsTemplates = async (authorisedActivities) => {
-    if (!authorisedActivities.includes("LIST_SMS_TEMPLATES")) return;
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES"
+      )
+    )
+      return;
 
     const packCodes = await getActionRuleSmsTemplates(
       authorisedActivities,
