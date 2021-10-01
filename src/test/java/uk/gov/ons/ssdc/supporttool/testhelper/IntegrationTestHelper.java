@@ -81,16 +81,18 @@ public class IntegrationTestHelper {
 
     String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getStatusCode()).as("GET is OK").isEqualTo(HttpStatus.OK);
 
     deleteAllPermissions();
     restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
 
     try {
       restTemplate.getForEntity(url, String.class);
-      fail("API call was not forbidden, but should have been");
+      fail("GET API call was not forbidden, but should have been");
     } catch (HttpClientErrorException expectedException) {
-      assertThat(expectedException.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+      assertThat(expectedException.getStatusCode())
+          .as("GET is FORBIDDEN")
+          .isEqualTo(HttpStatus.FORBIDDEN);
     }
   }
 
@@ -105,16 +107,18 @@ public class IntegrationTestHelper {
     String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
     Object objectToPost = bundlePostObjectGetter.getObject(bundle);
     ResponseEntity<String> response = restTemplate.postForEntity(url, objectToPost, String.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(response.getStatusCode()).as("POST is CREATED").isEqualTo(HttpStatus.CREATED);
 
     deleteAllPermissions();
     restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
 
     try {
       restTemplate.postForEntity(url, objectToPost, String.class);
-      fail("API call was not forbidden, but should have been");
+      fail("POST API call was not forbidden, but should have been");
     } catch (HttpClientErrorException expectedException) {
-      assertThat(expectedException.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+      assertThat(expectedException.getStatusCode())
+          .as("POST is FORBIDDEN")
+          .isEqualTo(HttpStatus.FORBIDDEN);
     }
   }
 
@@ -131,9 +135,11 @@ public class IntegrationTestHelper {
 
     try {
       restTemplate.delete(url);
-      fail("API call was not forbidden, but should have been");
+      fail("DELETE API call was not forbidden, but should have been");
     } catch (HttpClientErrorException expectedException) {
-      assertThat(expectedException.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+      assertThat(expectedException.getStatusCode())
+          .as("DELETE is FORBIDDEN")
+          .isEqualTo(HttpStatus.FORBIDDEN);
     }
   }
 
