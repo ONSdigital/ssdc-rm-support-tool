@@ -25,8 +25,8 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupMemberDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupPermissionDto;
 import uk.gov.ons.ssdc.supporttool.testhelper.IntegrationTestHelper;
 
-/* The purpose of these tests is to check, in a quick & dirty way, that they _work_ without being
- * too fussy. There are circa 140 endpoints which support the Support Tool UI, but it remains
+/* The purpose of these tests is to check, in a quick & dirty way, the endpoints _work_ without
+ * being too fussy. There are circa 140 endpoints which support the Support Tool UI, but it remains
  * a tool for developers and testers, so doesn't need to be tested to the same rigorous standards
  * as something which would be used by end-users... it would be too costly!
  *
