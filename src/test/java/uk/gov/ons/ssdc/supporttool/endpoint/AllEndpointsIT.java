@@ -25,6 +25,26 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupMemberDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupPermissionDto;
 import uk.gov.ons.ssdc.supporttool.testhelper.IntegrationTestHelper;
 
+/* The purpose of these tests is to check, in a quick & dirty way, that they _work_ without being
+ * too fussy. There are circa 140 endpoints which support the Support Tool UI, but it remains
+ * a tool for developers and testers, so doesn't need to be tested to the same rigorous standards
+ * as something which would be used by end-users... it would be too costly!
+ *
+ * However, one non-negotiable is **SECURITY** so we have to check that our API endpoints are secure
+ * which we do with our role-based access control (RBAC) mechanism. To satisfy ourselves that all
+ * our endpoints have been correctly secured, we call them with a single security permission:
+ * namely the one and only one which _should_ be allowed. Then we call it again, without that
+ * permission and check that we get a 403 FORBIDDEN response.
+ *
+ * The reason why all these tests are in one file is performance: if they were in seperate files
+ * then Spring Boot would have to start and stop for every endpoint, which would take 30 seconds, so
+ * for 26+ endpoints, that would take 13 minutes... unacceptably long for a build cycle.
+ *
+ * If you want to test for extra stuff, it's the original author's opinion that you should do that
+ * in a separate test, rather than bloat these tests. Keep your 'traditional' integration tests,
+ * which do checks on database rows and pubsub messages, out of these tests, which are supposed to
+ * be quick and easy to write.
+ */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -295,6 +315,11 @@ public class AllEndpointsIT {
           userGroupMemberDto.setGroupId(bundle.getGroupId());
           return userGroupMemberDto;
         });
+
+    integrationTestHelper.testDelete(
+        port,
+        UserGroupAuthorisedActivityType.SUPER_USER,
+        (bundle) -> String.format("userGroupMembers/%s", bundle.getGroupMemberId()));
   }
 
   @Test
@@ -315,5 +340,10 @@ public class AllEndpointsIT {
           groupPermissionDto.setAuthorisedActivity(UserGroupAuthorisedActivityType.LOAD_SAMPLE);
           return groupPermissionDto;
         });
+
+    integrationTestHelper.testDelete(
+        port,
+        UserGroupAuthorisedActivityType.SUPER_USER,
+        (bundle) -> String.format("userGroupPermissions/%s", bundle.getGroupPermissionId()));
   }
 }

@@ -118,6 +118,25 @@ public class IntegrationTestHelper {
     }
   }
 
+  public void testDelete(
+      int port, UserGroupAuthorisedActivityType activity, BundleUrlGetter bundleUrlGetter) {
+    setUpTestUserPermission(activity);
+    BundleOfUsefulTestStuff bundle = getTestBundle();
+
+    String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
+    restTemplate.delete(url);
+
+    deleteAllPermissions();
+    restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
+
+    try {
+      restTemplate.delete(url);
+      fail("API call was not forbidden, but should have been");
+    } catch (HttpClientErrorException expectedException) {
+      assertThat(expectedException.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+  }
+
   private BundleOfUsefulTestStuff getTestBundle() {
     Survey survey = new Survey();
     survey.setId(UUID.randomUUID());
@@ -163,6 +182,8 @@ public class IntegrationTestHelper {
 
     User user = setupDummyUser(UUID.randomUUID());
     UserGroup group = setupDummyGroup(UUID.randomUUID());
+    UserGroupMember userGroupMember = setupDummyGroupMember(UUID.randomUUID(), user, group);
+    UserGroupPermission userGroupPermission = setupDummyGroupPermission(UUID.randomUUID(), group);
 
     BundleOfUsefulTestStuff bundle = new BundleOfUsefulTestStuff();
     bundle.setSurveyId(survey.getId());
@@ -173,13 +194,17 @@ public class IntegrationTestHelper {
     bundle.setSmsTemplatePackCode(smsTemplate.getPackCode());
     bundle.setUserId(user.getId());
     bundle.setGroupId(group.getId());
+    bundle.setGroupMemberId(userGroupMember.getId());
+    bundle.setGroupPermissionId(userGroupPermission.getId());
 
     return bundle;
   }
 
   private void restoreDummyUserAndOtherGubbins(BundleOfUsefulTestStuff bundle) {
-    setupDummyUser(bundle.getUserId());
-    setupDummyGroup(bundle.getGroupId());
+    User user = setupDummyUser(bundle.getUserId());
+    UserGroup group = setupDummyGroup(bundle.getGroupId());
+    setupDummyGroupMember(bundle.getGroupMemberId(), user, group);
+    setupDummyGroupPermission(bundle.getGroupPermissionId(), group);
   }
 
   private User setupDummyUser(UUID userId) {
@@ -196,6 +221,24 @@ public class IntegrationTestHelper {
     group.setName("Test");
     group = userGroupRepository.saveAndFlush(group);
     return group;
+  }
+
+  private UserGroupMember setupDummyGroupMember(UUID groupMemberId, User user, UserGroup group) {
+    UserGroupMember groupMember = new UserGroupMember();
+    groupMember.setId(groupMemberId);
+    groupMember.setGroup(group);
+    groupMember.setUser(user);
+    groupMember = userGroupMemberRepository.saveAndFlush(groupMember);
+    return groupMember;
+  }
+
+  private UserGroupPermission setupDummyGroupPermission(UUID groupPermissionId, UserGroup group) {
+    UserGroupPermission permission = new UserGroupPermission();
+    permission.setId(groupPermissionId);
+    permission.setGroup(group);
+    permission.setAuthorisedActivity(UserGroupAuthorisedActivityType.LOAD_SAMPLE);
+    permission = userGroupPermissionRepository.saveAndFlush(permission);
+    return permission;
   }
 
   private void deleteAllPermissions() {

@@ -13,4 +13,6 @@ public class BundleOfUsefulTestStuff {
   private String smsTemplatePackCode;
   private UUID userId;
   private UUID groupId;
+  private UUID groupMemberId;
+  private UUID groupPermissionId;
 }
