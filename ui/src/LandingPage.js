@@ -475,6 +475,9 @@ class LandingPage extends Component {
         <TableCell component="th" scope="row">
           {JSON.stringify(smsTemplate.template)}
         </TableCell>
+        <TableCell component="th" scope="row">
+          {smsTemplate.notifyTemplateId}
+        </TableCell>
       </TableRow>
     ));
 
@@ -543,6 +546,7 @@ class LandingPage extends Component {
                 <TableRow>
                   <TableCell>Pack Code</TableCell>
                   <TableCell>Template</TableCell>
+                  <TableCell>Gov Notify Template ID</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>{smsTemplateRows}</TableBody>
