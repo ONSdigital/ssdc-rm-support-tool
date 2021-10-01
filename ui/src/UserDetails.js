@@ -58,6 +58,8 @@ class UserDetails extends Component {
   };
 
   getUser = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const userResponse = await fetch(`/api/users/${this.props.userId}`);
 
     const userJson = await userResponse.json();
@@ -68,6 +70,8 @@ class UserDetails extends Component {
   };
 
   getUserMemberOf = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const userMemberOfResponse = await fetch(
       `/api/userGroupMembers/?userId=${this.props.userId}`
     );
@@ -80,6 +84,8 @@ class UserDetails extends Component {
   };
 
   getGroups = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const groupsResponse = await fetch("/api/userGroups");
 
     const groupsJson = await groupsResponse.json();

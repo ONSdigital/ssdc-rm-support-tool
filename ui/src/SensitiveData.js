@@ -47,6 +47,8 @@ class SensitiveData extends Component {
   };
 
   getSensitiveSampleColumns = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_SURVEY")) return;
+
     const sensitiveColumns = await getSensitiveSampleColumns(
       authorisedActivities,
       this.props.surveyId

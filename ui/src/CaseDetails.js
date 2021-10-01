@@ -53,6 +53,8 @@ class CaseDetails extends Component {
   };
 
   getSurveyName = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_SURVEY")) return;
+
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
 
     const surveyJson = await response.json();
@@ -76,6 +78,8 @@ class CaseDetails extends Component {
   };
 
   getCasesAndQidData = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_CASE_DETAILS")) return;
+
     const response = await fetch(`/api/cases/${this.props.caseId}`);
     const caseJson = await response.json();
 

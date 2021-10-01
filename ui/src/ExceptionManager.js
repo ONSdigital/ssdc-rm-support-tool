@@ -41,6 +41,8 @@ class ExceptionManager extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const response = await fetch("/api/exceptionManager/badMessagesSummary");
     const exceptions = await response.json();
 

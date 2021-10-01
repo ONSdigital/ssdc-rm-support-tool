@@ -49,7 +49,7 @@ class GroupDetails extends Component {
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getGroup(authorisedActivities);
-    this.getAllActivities(authorisedActivities);
+    this.getAllActivities();
     this.getAllSurveys(authorisedActivities);
     this.getUserGroupPermissions(authorisedActivities);
 
@@ -60,6 +60,8 @@ class GroupDetails extends Component {
   };
 
   getGroup = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const groupResponse = await fetch(`/api/userGroups/${this.props.groupId}`);
 
     const groupJson = await groupResponse.json();
@@ -70,6 +72,8 @@ class GroupDetails extends Component {
   };
 
   getUserGroupPermissions = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const permissionsResponse = await fetch(
       `/api/userGroupPermissions/?groupId=${this.props.groupId}`
     );
@@ -98,7 +102,8 @@ class GroupDetails extends Component {
     return authorisedActivities;
   };
 
-  getAllActivities = async (authorisedActivities) => {
+  getAllActivities = async () => {
+    // This is not an RBAC protected endpoint
     const activitiesResponse = await fetch("/api/authorisedActivityTypes");
     const activitiesJson = await activitiesResponse.json();
 
@@ -108,6 +113,8 @@ class GroupDetails extends Component {
   };
 
   getAllSurveys = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_SURVEYS")) return;
+
     const surveysResponse = await fetch("/api/surveys");
     const surveysJson = await surveysResponse.json();
 

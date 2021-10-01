@@ -92,6 +92,8 @@ class CollectionExerciseDetails extends Component {
   };
 
   getCollectionExerciseName = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_COLLECTION_EXERCISE")) return;
+
     const response = await fetch(
       `api/collectionExercises/${this.props.collectionExerciseId}`
     );
@@ -107,6 +109,8 @@ class CollectionExerciseDetails extends Component {
   };
 
   getActionRules = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_ACTION_RULES")) return;
+
     const response = await fetch(
       `/api/actionRules/?collectionExercise=${this.props.collectionExerciseId}`
     );
@@ -118,6 +122,8 @@ class CollectionExerciseDetails extends Component {
   };
 
   getPrintTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_PRINT_TEMPLATES")) return;
+
     const packCodes = await getActionRulePrintTemplates(
       authorisedActivities,
       this.props.surveyId
@@ -126,6 +132,8 @@ class CollectionExerciseDetails extends Component {
   };
 
   getSmsTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_SMS_TEMPLATES")) return;
+
     const packCodes = await getActionRuleSmsTemplates(
       authorisedActivities,
       this.props.surveyId

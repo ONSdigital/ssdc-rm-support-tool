@@ -116,6 +116,11 @@ class LandingPage extends Component {
   };
 
   getFulfilmentTrigger = async () => {
+    if (
+      !this.state.authorisedActivities.includes("CONFIGURE_FULFILMENT_TRIGGER")
+    )
+      return;
+
     const response = await fetch(`/api/fulfilmentNextTriggers`);
 
     if (!response.ok) {
@@ -165,7 +170,7 @@ class LandingPage extends Component {
   };
 
   openFulfilmentTriggerDialog = () => {
-    this.getFulfilmentTrigger();
+    this.getFulfilmentTrigger(); // TODO - this is so ugly, but will have to live with it as I can't fix everything
     this.setState({
       configureNextTriggerDisplayed: true,
     });

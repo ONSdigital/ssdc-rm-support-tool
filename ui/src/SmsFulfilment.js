@@ -72,6 +72,13 @@ class SmsFulfilment extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
+      )
+    )
+      return;
+
     const fulfilmentPrintTemplates = await getSmsFulfilmentTemplates(
       authorisedActivities,
       this.props.surveyId

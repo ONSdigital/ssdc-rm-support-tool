@@ -49,6 +49,8 @@ class SurveyCaseSearch extends Component {
   };
 
   getCollectionExercises = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_COLLECTION_EXERCISES")) return;
+
     const response = await fetch(
       `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
@@ -93,6 +95,8 @@ class SurveyCaseSearch extends Component {
   };
 
   getSampleColumns = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_SURVEY")) return;
+
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
     if (!response.ok) {
       return;

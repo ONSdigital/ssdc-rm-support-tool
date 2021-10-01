@@ -53,6 +53,8 @@ class UserAdmin extends Component {
   };
 
   getUsers = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const usersResponse = await fetch("/api/users");
 
     const usersJson = await usersResponse.json();
@@ -63,6 +65,8 @@ class UserAdmin extends Component {
   };
 
   getGroups = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const groupsResponse = await fetch("/api/userGroups");
 
     const groupsJson = await groupsResponse.json();

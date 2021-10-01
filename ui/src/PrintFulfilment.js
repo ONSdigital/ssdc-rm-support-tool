@@ -91,6 +91,13 @@ class PrintFulfilment extends Component {
 
   // TODO: Need to handle errors from Promises
   refreshDataFromBackend = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
+      )
+    )
+      return;
+
     const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
       authorisedActivities,
       this.props.surveyId

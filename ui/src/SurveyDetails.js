@@ -90,7 +90,9 @@ class SurveyDetails extends Component {
     return authJson;
   };
 
-  getSurveyName = async () => {
+  getSurveyName = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_SURVEY")) return;
+
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
 
     const surveyJson = await response.json();
@@ -100,6 +102,8 @@ class SurveyDetails extends Component {
 
   refreshDataFromBackend = async (authorisedActivities) => {
     this.getCollectionExercises(authorisedActivities);
+
+    // TODO: The security of this is a nightmare, because the method assumes the user has a ton of permissions. Will work for now, but refactor in future.
 
     const allPrintFulfilmentTemplates = await getAllPrintTemplates(
       authorisedActivities
@@ -163,6 +167,8 @@ class SurveyDetails extends Component {
   };
 
   getCollectionExercises = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_COLLECTION_EXERCISES")) return;
+
     const response = await fetch(
       `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
