@@ -19,7 +19,7 @@ import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
 @RequestMapping(value = "/api/printsuppliers")
-public class PrintSuppliers {
+public class PrintSuppliersEndpoint {
 
   public static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
 
@@ -30,7 +30,7 @@ public class PrintSuppliers {
 
   private Set<String> printSuppliers = null;
 
-  public PrintSuppliers(UserIdentity userIdentity) {
+  public PrintSuppliersEndpoint(UserIdentity userIdentity) {
     this.userIdentity = userIdentity;
   }
 

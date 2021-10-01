@@ -92,7 +92,7 @@ class SmsFulfilment extends Component {
     } else {
       try {
         const parsedJson = JSON.parse(this.state.newSmsUacQidMetadata);
-        if (parsedJson.length === 0) {
+        if (Object.keys(parsedJson).length === 0) {
           this.setState({ smsUacQidMetadataValidationError: true });
           failedValidation = true;
         }

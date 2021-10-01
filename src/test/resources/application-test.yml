@@ -11,3 +11,5 @@ spring:
 queueconfig:
   shared-pubsub-project: shared-project
 
+dummyuseridentity: integration-tests@testymctest.com
+
