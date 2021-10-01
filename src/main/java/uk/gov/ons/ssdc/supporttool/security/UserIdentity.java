@@ -37,7 +37,7 @@ public class UserIdentity {
   public void checkUserPermission(
       String userEmail, Survey survey, UserGroupAuthorisedActivityType activity) {
     // TODO: Remove this before releasing to production!
-    if (userEmail.equals("one-more-user@fake-email.com")) {
+    if (userEmail.equals("dummy@fake-email.com")) {
       return; // User is authorised - hack workaround for ease of dev/testing... remember to remove!
     }
 
