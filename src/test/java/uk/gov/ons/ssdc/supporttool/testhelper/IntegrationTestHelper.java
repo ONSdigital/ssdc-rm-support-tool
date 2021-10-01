@@ -145,7 +145,8 @@ public class IntegrationTestHelper {
     survey.setSampleValidationRules(
         new ColumnValidator[] {
           new ColumnValidator("foo", false, new Rule[] {}),
-          new ColumnValidator("bar", false, new Rule[] {})
+          new ColumnValidator("bar", false, new Rule[] {}),
+          new ColumnValidator("testPhoneNumber", true, new Rule[] {})
         });
     survey.setSampleSeparator(',');
     survey = surveyRepository.saveAndFlush(survey);

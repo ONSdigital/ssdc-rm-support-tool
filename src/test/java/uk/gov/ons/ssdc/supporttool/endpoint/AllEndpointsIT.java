@@ -62,6 +62,57 @@ public class AllEndpointsIT {
 
     integrationTestHelper.testPost(
         port,
+        UserGroupAuthorisedActivityType.CREATE_PRINT_ACTION_RULE,
+        (bundle) -> "actionRules",
+        (bundle) -> {
+          ActionRuleDto actionRuleDto = new ActionRuleDto();
+          actionRuleDto.setType(ActionRuleType.PRINT);
+          actionRuleDto.setCollectionExerciseId(bundle.getCollexId());
+          actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
+          actionRuleDto.setPackCode(bundle.getPrintTemplatePackCode());
+          return actionRuleDto;
+        });
+
+    integrationTestHelper.testPost(
+        port,
+        UserGroupAuthorisedActivityType.CREATE_SMS_ACTION_RULE,
+        (bundle) -> "actionRules",
+        (bundle) -> {
+          ActionRuleDto actionRuleDto = new ActionRuleDto();
+          actionRuleDto.setType(ActionRuleType.SMS);
+          actionRuleDto.setCollectionExerciseId(bundle.getCollexId());
+          actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
+          actionRuleDto.setPackCode(bundle.getSmsTemplatePackCode());
+          actionRuleDto.setPhoneNumberColumn("testPhoneNumber");
+          return actionRuleDto;
+        });
+
+    integrationTestHelper.testPost(
+        port,
+        UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE,
+        (bundle) -> "actionRules",
+        (bundle) -> {
+          ActionRuleDto actionRuleDto = new ActionRuleDto();
+          actionRuleDto.setType(ActionRuleType.OUTBOUND_TELEPHONE);
+          actionRuleDto.setCollectionExerciseId(bundle.getCollexId());
+          actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
+          return actionRuleDto;
+        });
+
+    integrationTestHelper.testPost(
+        port,
+        UserGroupAuthorisedActivityType.CREATE_FACE_TO_FACE_ACTION_RULE,
+        (bundle) -> "actionRules",
+        (bundle) -> {
+          ActionRuleDto actionRuleDto = new ActionRuleDto();
+          actionRuleDto.setType(ActionRuleType.FACE_TO_FACE);
+          actionRuleDto.setCollectionExerciseId(bundle.getCollexId());
+          actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
+          return actionRuleDto;
+        });
+
+    integrationTestHelper.testPost(
+        port,
         UserGroupAuthorisedActivityType.CREATE_DEACTIVATE_UAC_ACTION_RULE,
         (bundle) -> "actionRules",
         (bundle) -> {
