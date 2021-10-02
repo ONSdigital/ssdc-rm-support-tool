@@ -39,6 +39,7 @@ class CollectionExerciseDetails extends Component {
     smsPhoneNumberColumnValidationError: false,
     actionRuleTypeValidationError: false,
     smsUacQidMetadataValidationError: false,
+    printUacQidMetadataValidationError: false,
     collectionExerciseName: "",
     newActionRulePrintPackCode: "",
     newActionRuleSmsPackCode: "",
@@ -46,6 +47,7 @@ class CollectionExerciseDetails extends Component {
     newActionRuleClassifiers: "",
     newActionRuleType: "",
     newSmsUacQidMetadata: "",
+    newPrintUacQidMetadata: "",
   };
 
   componentDidMount() {
@@ -129,8 +131,10 @@ class CollectionExerciseDetails extends Component {
       packCodeValidationError: false,
       smsPhoneNumberColumnValidationError: false,
       smsUacQidMetadataValidationError: false,
+      printUacQidMetadataValidationError: false,
       newActionRuleClassifiers: "",
       newSmsUacQidMetadata: "",
+      newPrintUacQidMetadata: "",
       createActionRulesDialogDisplayed: true,
       newActionRuleTriggerDate: this.getTimeNowForDateTimePicker(),
     });
@@ -185,6 +189,13 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
+  onNewActionRulePrintUacQidMetadataChange = (event) => {
+    this.setState({
+      newPrintUacQidMetadata: event.target.value,
+      printUacQidMetadataValidationError: false,
+    });
+  };
+
   onCreateActionRule = async () => {
     var failedValidation = false;
 
@@ -233,6 +244,22 @@ class CollectionExerciseDetails extends Component {
       }
     }
 
+    if (!this.state.newPrintUacQidMetadata.trim()) {
+      this.setState({ printUacQidMetadataValidationError: true });
+      failedValidation = true;
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.newPrintUacQidMetadata);
+        if (Object.keys(parsedJson).length === 0) {
+          this.setState({ printUacQidMetadataValidationError: true });
+          failedValidation = true;
+        }
+      } catch (err) {
+        this.setState({ printUacQidMetadataValidationError: true });
+        failedValidation = true;
+      }
+    }
+
     if (failedValidation) {
       return;
     }
@@ -259,7 +286,8 @@ class CollectionExerciseDetails extends Component {
       packCode: newActionRulePackCode,
       collectionExerciseId: this.props.collectionExerciseId,
       phoneNumberColumn: newActionRuleSmsPhoneNumberColumn,
-      uacMetadata: JSON.parse(this.state.newSmsUacQidMetadata),
+      smsUacMetadata: JSON.parse(this.state.newSmsUacQidMetadata),
+      printUacMetadata: JSON.parse(this.state.newPrintUacQidMetadata),
     };
 
     const response = await fetch("/api/actionRules", {
@@ -417,7 +445,8 @@ class CollectionExerciseDetails extends Component {
                   </Select>
                 </FormControl>
                 {this.state.newActionRuleType === "PRINT" && (
-                  <FormControl required fullWidth={true}>
+                    <>
+                    <FormControl required fullWidth={true}>
                     <InputLabel>Pack Code</InputLabel>
                     <Select
                       onChange={this.onNewActionRulePrintPackCodeChange}
@@ -427,6 +456,17 @@ class CollectionExerciseDetails extends Component {
                       {printPackCodeMenuItems}
                     </Select>
                   </FormControl>
+                  <FormControl required fullWidth={true}>
+                    <TextField
+                        style={{ minWidth: 200 }}
+                        error={this.state.printUacQidMetadataValidationError}
+                        label="UAC QID Metadata"
+                        id="standard-required"
+                        onChange={this.onNewActionRulePrintUacQidMetadataChange}
+                        value={this.state.newPrintUacQidMetadata}
+                    />
+                  </FormControl>
+                </>
                 )}
                 {this.state.newActionRuleType === "SMS" && (
                   <>

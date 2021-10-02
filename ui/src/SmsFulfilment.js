@@ -105,7 +105,7 @@ class SmsFulfilment extends Component {
     const smsFulfilment = {
       packCode: this.state.packCode,
       phoneNumber: this.state.phoneNumber,
-      uacMetadata: JSON.parse(this.state.newSmsUacQidMetadata),
+      smsUacMetadata: JSON.parse(this.state.newSmsUacQidMetadata),
     };
 
     const response = await fetch(
