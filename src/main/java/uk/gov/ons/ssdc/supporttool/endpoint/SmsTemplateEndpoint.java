@@ -51,7 +51,7 @@ public class SmsTemplateEndpoint {
       @RequestBody SmsTemplateDto smsTemplateDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     userIdentity.checkGlobalUserPermission(
-        userEmail, UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE);
+        userEmail, UserGroupAuthorisedActivityType.CREATE_SMS_TEMPLATE);
 
     SmsTemplate smsTemplate = new SmsTemplate();
     smsTemplate.setTemplate(smsTemplateDto.getTemplate());
