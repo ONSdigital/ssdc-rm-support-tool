@@ -170,7 +170,7 @@ class LandingPage extends Component {
   };
 
   openFulfilmentTriggerDialog = () => {
-    this.getFulfilmentTrigger(); // TODO - this is so ugly, but will have to live with it as I can't fix everything
+    this.getFulfilmentTrigger();
     this.setState({
       configureNextTriggerDisplayed: true,
     });
