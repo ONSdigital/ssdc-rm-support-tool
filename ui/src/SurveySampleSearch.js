@@ -29,6 +29,7 @@ class SurveySampleSearch extends Component {
   }
 
   getRefusalTypes = async () => {
+    // This endpoint has no security
     const response = await fetch("/api/refusals/types");
     let refusalJson = await response.json();
 

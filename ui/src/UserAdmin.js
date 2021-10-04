@@ -30,22 +30,31 @@ class UserAdmin extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend();
-
-    this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  refreshDataFromBackend = () => {
-    this.getUsers();
-    this.getGroups();
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.refreshDataFromBackend(authorisedActivities),
+      1000
+    );
   };
 
-  getUsers = async () => {
+  refreshDataFromBackend = (authorisedActivities) => {
+    this.getUsers(authorisedActivities);
+    this.getGroups(authorisedActivities);
+  };
+
+  getUsers = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const usersResponse = await fetch("/api/users");
 
     const usersJson = await usersResponse.json();
@@ -55,7 +64,9 @@ class UserAdmin extends Component {
     });
   };
 
-  getGroups = async () => {
+  getGroups = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const groupsResponse = await fetch("/api/userGroups");
 
     const groupsJson = await groupsResponse.json();
@@ -78,6 +89,8 @@ class UserAdmin extends Component {
       authorisedActivities: authorisedActivities,
       isLoading: false,
     });
+
+    return authorisedActivities;
   };
 
   openCreateUserDialog = () => {

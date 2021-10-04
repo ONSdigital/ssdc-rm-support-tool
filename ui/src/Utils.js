@@ -1,4 +1,7 @@
-export const getAllPrintTemplates = async () => {
+export const getAllPrintTemplates = async (authorisedActivities) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (!authorisedActivities.includes("LIST_PRINT_TEMPLATES")) return [];
+
   const response = await fetch("/api/printTemplates");
   const templateJson = await response.json();
 
@@ -7,7 +10,10 @@ export const getAllPrintTemplates = async () => {
   return templatePackCodes;
 };
 
-export const getAllSmsTemplates = async () => {
+export const getAllSmsTemplates = async (authorisedActivities) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (!authorisedActivities.includes("LIST_SMS_TEMPLATES")) return [];
+
   const response = await fetch("/api/smsTemplates");
   const templateJson = await response.json();
 
@@ -16,7 +22,18 @@ export const getAllSmsTemplates = async () => {
   return templatePackCodes;
 };
 
-export const getFulfilmentPrintTemplates = async (surveyId) => {
+export const getFulfilmentPrintTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (
+    !authorisedActivities.includes(
+      "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
+    )
+  )
+    return [];
+
   const response = await fetch(
     `/api/fulfilmentSurveyPrintTemplates/?surveyId=${surveyId}`
   );
@@ -25,7 +42,16 @@ export const getFulfilmentPrintTemplates = async (surveyId) => {
   return printTemplatesJson;
 };
 
-export const getSmsFulfilmentTemplates = async (surveyId) => {
+export const getSmsFulfilmentTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (
+    !authorisedActivities.includes("LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS")
+  )
+    return [];
+
   const response = await fetch(
     `/api/fulfilmentSurveySmsTemplates/?surveyId=${surveyId}`
   );
@@ -34,7 +60,18 @@ export const getSmsFulfilmentTemplates = async (surveyId) => {
   return smsFulfilmentTemplatesJson;
 };
 
-export const getActionRulePrintTemplates = async (surveyId) => {
+export const getActionRulePrintTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (
+    !authorisedActivities.includes(
+      "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+    )
+  )
+    return [];
+
   const response = await fetch(
     `/api/actionRuleSurveyPrintTemplates/?surveyId=${surveyId}`
   );
@@ -43,7 +80,16 @@ export const getActionRulePrintTemplates = async (surveyId) => {
   return printTemplatesJson;
 };
 
-export const getActionRuleSmsTemplates = async (surveyId) => {
+export const getActionRuleSmsTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (
+    !authorisedActivities.includes("LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES")
+  )
+    return [];
+
   const response = await fetch(
     `/api/actionRuleSurveySmsTemplates/?surveyId=${surveyId}`
   );
@@ -52,7 +98,13 @@ export const getActionRuleSmsTemplates = async (surveyId) => {
   return smsTemplatesJson;
 };
 
-export const getSensitiveSampleColumns = async (surveyId) => {
+export const getSensitiveSampleColumns = async (
+  authorisedActivities,
+  surveyId
+) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (!authorisedActivities.includes("VIEW_SURVEY")) return [];
+
   const response = await fetch(`/api/surveys/${surveyId}`);
   if (!response.ok) {
     return;
