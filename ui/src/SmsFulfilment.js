@@ -41,6 +41,7 @@ class SmsFulfilment extends Component {
       newValueValidationError: "",
       phoneNumber: "",
       validationError: false,
+      newSmsUacQidMetadata: "",
     });
   };
 
@@ -70,8 +71,6 @@ class SmsFulfilment extends Component {
   };
 
   onCreate = async () => {
-    var failedValidation = false;
-
     if (!this.state.packCode) {
       this.setState({
         packCodeValidationError: true,
@@ -86,26 +85,26 @@ class SmsFulfilment extends Component {
       return;
     }
 
-    if (!this.state.newSmsUacQidMetadata.trim()) {
-      this.setState({ smsUacQidMetadataValidationError: true });
-      failedValidation = true;
-    } else {
+    var uacMetadataJson = null;
+
+    if (this.state.newSmsUacQidMetadata.length > 0) {
       try {
         const parsedJson = JSON.parse(this.state.newSmsUacQidMetadata);
         if (Object.keys(parsedJson).length === 0) {
           this.setState({ smsUacQidMetadataValidationError: true });
-          failedValidation = true;
+          return;
         }
       } catch (err) {
         this.setState({ smsUacQidMetadataValidationError: true });
-        failedValidation = true;
+        return;
       }
+      uacMetadataJson = JSON.parse(this.state.newSmsUacQidMetadata);
     }
 
     const smsFulfilment = {
       packCode: this.state.packCode,
       phoneNumber: this.state.phoneNumber,
-      smsUacMetadata: JSON.parse(this.state.newSmsUacQidMetadata),
+      uacMetadata: uacMetadataJson,
     };
 
     const response = await fetch(
@@ -167,7 +166,7 @@ class SmsFulfilment extends Component {
                 value={this.state.phoneNumber}
                 helperText={this.state.newValueValidationError}
               />
-              <FormControl required fullWidth={true}>
+              <FormControl fullWidth={true}>
                 <TextField
                   style={{ minWidth: 200 }}
                   error={this.state.smsUacQidMetadataValidationError}

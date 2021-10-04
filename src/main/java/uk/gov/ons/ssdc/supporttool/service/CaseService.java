@@ -118,6 +118,7 @@ public class CaseService {
     PrintFulfilmentDTO printFulfilmentDTO = new PrintFulfilmentDTO();
     printFulfilmentDTO.setCaseId(caze.getId());
     printFulfilmentDTO.setPackCode(printFulfilment.getPackCode());
+    printFulfilmentDTO.setUacMetadata(printFulfilment.getUacMetadata());
 
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setPrintFulfilment(printFulfilmentDTO);

@@ -196,9 +196,6 @@ public class CaseEndpoint {
         caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.CREATE_CASE_PRINT_FULFILMENT);
 
-    printFulfilment.setUacMetadata();
-
-
     caseService.buildAndSendPrintFulfilmentCaseEvent(printFulfilment, caze, userEmail);
 
     return new ResponseEntity<>(HttpStatus.OK);

@@ -38,16 +38,14 @@ class CollectionExerciseDetails extends Component {
     smsPackCodeValidationError: false,
     smsPhoneNumberColumnValidationError: false,
     actionRuleTypeValidationError: false,
-    smsUacQidMetadataValidationError: false,
-    printUacQidMetadataValidationError: false,
+    uacQidMetadataValidationError: false,
     collectionExerciseName: "",
     newActionRulePrintPackCode: "",
     newActionRuleSmsPackCode: "",
     newActionRuleSmsPhoneNumberColumn: "",
     newActionRuleClassifiers: "",
     newActionRuleType: "",
-    newSmsUacQidMetadata: "",
-    newPrintUacQidMetadata: "",
+    newUacQidMetadata: "",
   };
 
   componentDidMount() {
@@ -130,11 +128,9 @@ class CollectionExerciseDetails extends Component {
       newActionRuleSmsPhoneNumberColumn: "",
       packCodeValidationError: false,
       smsPhoneNumberColumnValidationError: false,
-      smsUacQidMetadataValidationError: false,
-      printUacQidMetadataValidationError: false,
+      uacQidMetadataValidationError: false,
       newActionRuleClassifiers: "",
-      newSmsUacQidMetadata: "",
-      newPrintUacQidMetadata: "",
+      newUacQidMetadata: "",
       createActionRulesDialogDisplayed: true,
       newActionRuleTriggerDate: this.getTimeNowForDateTimePicker(),
     });
@@ -182,17 +178,10 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
-  onNewActionRuleSmsUacQidMetadataChange = (event) => {
+  onNewActionRuleUacQidMetadataChange = (event) => {
     this.setState({
-      newSmsUacQidMetadata: event.target.value,
-      smsUacQidMetadataValidationError: false,
-    });
-  };
-
-  onNewActionRulePrintUacQidMetadataChange = (event) => {
-    this.setState({
-      newPrintUacQidMetadata: event.target.value,
-      printUacQidMetadataValidationError: false,
+      newUacQidMetadata: event.target.value,
+      uacQidMetadataValidationError: false,
     });
   };
 
@@ -228,36 +217,20 @@ class CollectionExerciseDetails extends Component {
       failedValidation = true;
     }
 
-    if (!this.state.newSmsUacQidMetadata.trim()) {
-      this.setState({ smsUacQidMetadataValidationError: true });
-      failedValidation = true;
-    } else {
-      try {
-        const parsedJson = JSON.parse(this.state.newSmsUacQidMetadata);
-        if (Object.keys(parsedJson).length === 0) {
-          this.setState({ smsUacQidMetadataValidationError: true });
-          failedValidation = true;
-        }
-      } catch (err) {
-        this.setState({ smsUacQidMetadataValidationError: true });
-        failedValidation = true;
-      }
-    }
+    var uacMetadataJson = null;
 
-    if (!this.state.newPrintUacQidMetadata.trim()) {
-      this.setState({ printUacQidMetadataValidationError: true });
-      failedValidation = true;
-    } else {
+    if (this.state.newUacQidMetadata.length > 0) {
       try {
-        const parsedJson = JSON.parse(this.state.newPrintUacQidMetadata);
+        const parsedJson = JSON.parse(this.state.newUacQidMetadata);
         if (Object.keys(parsedJson).length === 0) {
-          this.setState({ printUacQidMetadataValidationError: true });
+          this.setState({ uacQidMetadataValidationError: true });
           failedValidation = true;
         }
       } catch (err) {
-        this.setState({ printUacQidMetadataValidationError: true });
+        this.setState({ uacQidMetadataValidationError: true });
         failedValidation = true;
       }
+      uacMetadataJson = JSON.parse(this.state.newUacQidMetadata);
     }
 
     if (failedValidation) {
@@ -286,8 +259,7 @@ class CollectionExerciseDetails extends Component {
       packCode: newActionRulePackCode,
       collectionExerciseId: this.props.collectionExerciseId,
       phoneNumberColumn: newActionRuleSmsPhoneNumberColumn,
-      smsUacMetadata: JSON.parse(this.state.newSmsUacQidMetadata),
-      printUacMetadata: JSON.parse(this.state.newPrintUacQidMetadata),
+      uacMetadata: uacMetadataJson,
     };
 
     const response = await fetch("/api/actionRules", {
@@ -320,6 +292,9 @@ class CollectionExerciseDetails extends Component {
             </TableCell>
             <TableCell component="th" scope="row">
               {actionRule.hasTriggered ? "YES" : "NO"}
+            </TableCell>
+            <TableCell component="th" scope="row">
+              {JSON.stringify(actionRule.uacMetadata)}
             </TableCell>
             <TableCell component="th" scope="row">
               {actionRule.classifiers}
@@ -413,6 +388,7 @@ class CollectionExerciseDetails extends Component {
                   <TableCell>Type</TableCell>
                   <TableCell>Trigger date</TableCell>
                   <TableCell>Has triggered?</TableCell>
+                  <TableCell>UAC Metadata</TableCell>
                   <TableCell>Classifiers</TableCell>
                   <TableCell>Pack Code</TableCell>
                 </TableRow>
@@ -445,28 +421,27 @@ class CollectionExerciseDetails extends Component {
                   </Select>
                 </FormControl>
                 {this.state.newActionRuleType === "PRINT" && (
-                    <>
+                  <>
                     <FormControl required fullWidth={true}>
-                    <InputLabel>Pack Code</InputLabel>
-                    <Select
-                      onChange={this.onNewActionRulePrintPackCodeChange}
-                      value={this.state.newActionRulePrintPackCode}
-                      error={this.state.printPackCodeValidationError}
-                    >
-                      {printPackCodeMenuItems}
-                    </Select>
-                  </FormControl>
-                  <FormControl required fullWidth={true}>
-                    <TextField
+                      <InputLabel>Pack Code</InputLabel>
+                      <Select
+                        onChange={this.onNewActionRulePrintPackCodeChange}
+                        value={this.state.newActionRulePrintPackCode}
+                        error={this.state.printPackCodeValidationError}
+                      >
+                        {printPackCodeMenuItems}
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth={true}>
+                      <TextField
                         style={{ minWidth: 200 }}
-                        error={this.state.printUacQidMetadataValidationError}
+                        error={this.state.uacQidMetadataValidationError}
                         label="UAC QID Metadata"
-                        id="standard-required"
-                        onChange={this.onNewActionRulePrintUacQidMetadataChange}
-                        value={this.state.newPrintUacQidMetadata}
-                    />
-                  </FormControl>
-                </>
+                        onChange={this.onNewActionRuleUacQidMetadataChange}
+                        value={this.state.newUacQidMetadata}
+                      />
+                    </FormControl>
+                  </>
                 )}
                 {this.state.newActionRuleType === "SMS" && (
                   <>
@@ -490,14 +465,13 @@ class CollectionExerciseDetails extends Component {
                         {sensitiveSampleColumnsMenuItems}
                       </Select>
                     </FormControl>
-                    <FormControl required fullWidth={true}>
+                    <FormControl fullWidth={true}>
                       <TextField
                         style={{ minWidth: 200 }}
-                        error={this.state.smsUacQidMetadataValidationError}
+                        error={this.state.uacQidMetadataValidationError}
                         label="UAC QID Metadata"
-                        id="standard-required"
-                        onChange={this.onNewActionRuleSmsUacQidMetadataChange}
-                        value={this.state.newSmsUacQidMetadata}
+                        onChange={this.onNewActionRuleUacQidMetadataChange}
+                        value={this.state.newUacQidMetadata}
                       />
                     </FormControl>
                   </>

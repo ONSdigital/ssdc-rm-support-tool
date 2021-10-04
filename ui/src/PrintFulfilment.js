@@ -7,7 +7,8 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select, TextField,
+  Select,
+  TextField,
 } from "@material-ui/core";
 import { getFulfilmentPrintTemplates } from "./Utils";
 
@@ -34,6 +35,7 @@ class PrintFulfilment extends Component {
       allowableFulfilmentPrintTemplates: [],
       packCodeValidationError: false,
       showDialog: false,
+      newPrintUacQidMetadata: "",
     });
   };
 
@@ -49,8 +51,6 @@ class PrintFulfilment extends Component {
   };
 
   onCreate = async () => {
-    var failedValidation = false;
-
     if (!this.state.packCode) {
       this.setState({
         packCodeValidationError: true,
@@ -59,25 +59,25 @@ class PrintFulfilment extends Component {
       return;
     }
 
-    if (!this.state.newPrintUacQidMetadata.trim()) {
-      this.setState({ printUacQidMetadataValidationError: true });
-      failedValidation = true;
-    } else {
+    var uacMetadataJson = null;
+
+    if (this.state.newPrintUacQidMetadata.length > 0) {
       try {
         const parsedJson = JSON.parse(this.state.newPrintUacQidMetadata);
         if (Object.keys(parsedJson).length === 0) {
           this.setState({ printUacQidMetadataValidationError: true });
-          failedValidation = true;
+          return;
         }
       } catch (err) {
         this.setState({ printUacQidMetadataValidationError: true });
-        failedValidation = true;
+        return;
       }
+      uacMetadataJson = JSON.parse(this.state.newPrintUacQidMetadata);
     }
 
     const printFulfilment = {
       packCode: this.state.packCode,
-      printUacMetadata: JSON.parse(this.state.newPrintUacQidMetadata),
+      uacMetadata: uacMetadataJson,
     };
 
     const response = await fetch(
@@ -135,14 +135,14 @@ class PrintFulfilment extends Component {
                   {fulfilmentPrintTemplateMenuItems}
                 </Select>
               </FormControl>
-              <FormControl required fullWidth={true}>
+              <FormControl fullWidth={true}>
                 <TextField
-                    style={{ minWidth: 200 }}
-                    error={this.state.printUacQidMetadataValidationError}
-                    label="UAC QID Metadata"
-                    id="standard-required"
-                    onChange={this.onNewActionRulePrintUacQidMetadataChange}
-                    value={this.state.newPrintUacQidMetadata}
+                  style={{ minWidth: 200 }}
+                  error={this.state.printUacQidMetadataValidationError}
+                  label="UAC QID Metadata"
+                  id="standard-required"
+                  onChange={this.onNewActionRulePrintUacQidMetadataChange}
+                  value={this.state.newPrintUacQidMetadata}
                 />
               </FormControl>
             </div>
