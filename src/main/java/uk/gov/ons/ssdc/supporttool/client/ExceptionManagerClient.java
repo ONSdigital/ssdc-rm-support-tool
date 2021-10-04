@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.SkipMessageRequest;
+import uk.gov.ons.ssdc.supporttool.model.dto.rest.SkipMessageRequest;
 
 @Component
 public class ExceptionManagerClient {

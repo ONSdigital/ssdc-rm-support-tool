@@ -18,7 +18,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 import {
   getActionRulePrintTemplates,
   getActionRuleSmsTemplates,
@@ -148,12 +147,12 @@ class SurveyDetails extends Component {
 
   getCollectionExercises = async () => {
     const response = await fetch(
-      `/api/surveys/${this.props.surveyId}/collectionExercises`
+      `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
     const collexJson = await response.json();
 
     this.setState({
-      collectionExercises: collexJson._embedded.collectionExercises,
+      collectionExercises: collexJson,
     });
   };
 
@@ -184,9 +183,8 @@ class SurveyDetails extends Component {
     }
 
     const newCollectionExercise = {
-      id: uuidv4(),
       name: this.state.newCollectionExerciseName,
-      survey: "surveys/" + this.props.surveyId,
+      surveyId: this.props.surveyId,
     };
 
     const response = await fetch("/api/collectionExercises", {
@@ -336,9 +334,8 @@ class SurveyDetails extends Component {
     }
 
     const newAllowSmsTemplate = {
-      id: uuidv4(),
-      survey: "surveys/" + this.props.surveyId,
-      smsTemplate: "smsTemplates/" + this.state.smsTemplateToAllow,
+      surveyId: this.props.surveyId,
+      packCode: this.state.smsTemplateToAllow,
     };
 
     const response = await fetch("/api/fulfilmentSurveySmsTemplates", {
@@ -383,21 +380,17 @@ class SurveyDetails extends Component {
 
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(
-      (collex) => {
-        const collexId = collex._links.self.href.split("/").pop();
-
-        return (
-          <TableRow key={collex.name}>
-            <TableCell component="th" scope="row">
-              <Link
-                to={`/collex?surveyId=${this.props.surveyId}&collexId=${collexId}`}
-              >
-                {collex.name}
-              </Link>
-            </TableCell>
-          </TableRow>
-        );
-      }
+      (collex) => (
+        <TableRow key={collex.name}>
+          <TableCell component="th" scope="row">
+            <Link
+              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
+            >
+              {collex.name}
+            </Link>
+          </TableCell>
+        </TableRow>
+      )
     );
 
     const actionRulePrintTemplateTableRows =

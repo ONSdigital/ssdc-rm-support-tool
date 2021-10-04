@@ -34,7 +34,6 @@ class CaseDetails extends Component {
 
   componentDidMount() {
     this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCollexName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCasesAndQidData();
 
@@ -51,18 +50,6 @@ class CaseDetails extends Component {
     const surveyJson = await response.json();
 
     this.setState({ surveyName: surveyJson.name });
-  };
-
-  getCollexName = async () => {
-    const collexResponse = await fetch(
-      `/api/cases/${this.props.caseId}/collectionExercise`
-    );
-
-    const collexJson = await collexResponse.json();
-
-    this.setState({
-      collexName: collexJson.name,
-    });
   };
 
   getAuthorisedActivities = async () => {
@@ -83,27 +70,11 @@ class CaseDetails extends Component {
     const caseJson = await response.json();
 
     if (response.ok) {
-      this.setState({ case: caseJson });
-
-      const uacQidLinksResponse = await fetch(
-        `/api/cases/${this.props.caseId}/uacQidLinks`
-      );
-      const uacQidLinksJson = await uacQidLinksResponse.json();
-
-      const uacQidLinks = uacQidLinksJson._embedded.uacQidLinks;
-
-      let events = caseJson.events;
-      for (let i = 0; i < uacQidLinks.length; i++) {
-        events = events.concat(uacQidLinks[i].events);
-      }
-
-      if (uacQidLinksResponse.ok) {
-        this.setState({
-          case: caseJson,
-          uacQidLinks: uacQidLinks,
-          events: events,
-        });
-      }
+      this.setState({
+        case: caseJson,
+        uacQidLinks: caseJson.uacQidLinks,
+        events: caseJson.events,
+      });
     }
   };
 
@@ -205,7 +176,10 @@ class CaseDetails extends Component {
                   <TableCell component="th" scope="row">
                     <div>Case ref: {this.state.case.caseRef}</div>
                     <div>Survey name: {this.state.surveyName}</div>
-                    <div>Collection Exercise name: {this.state.collexName}</div>
+                    <div>
+                      Collection Exercise name:{" "}
+                      {this.state.case.collectionExerciseName}
+                    </div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>

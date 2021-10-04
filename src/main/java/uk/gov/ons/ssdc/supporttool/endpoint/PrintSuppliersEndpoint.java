@@ -1,6 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LIST_PRINT_SUPPLIERS;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,7 @@ import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
 @RequestMapping(value = "/api/printsuppliers")
-public class PrintSuppliers {
+public class PrintSuppliersEndpoint {
 
   public static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
 
@@ -30,14 +30,14 @@ public class PrintSuppliers {
 
   private Set<String> printSuppliers = null;
 
-  public PrintSuppliers(UserIdentity userIdentity) {
+  public PrintSuppliersEndpoint(UserIdentity userIdentity) {
     this.userIdentity = userIdentity;
   }
 
   @GetMapping
   public Set<String> getPrintSuppliers(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, CREATE_PRINT_TEMPLATE);
+    userIdentity.checkGlobalUserPermission(userEmail, LIST_PRINT_SUPPLIERS);
 
     if (printSuppliers != null) {
       return printSuppliers;

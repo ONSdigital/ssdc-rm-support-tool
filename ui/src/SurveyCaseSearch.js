@@ -44,12 +44,12 @@ class SurveyCaseSearch extends Component {
 
   getCollectionExercises = async () => {
     const response = await fetch(
-      `/api/surveys/${this.props.surveyId}/collectionExercises`
+      `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
     const collexJson = await response.json();
 
     this.setState({
-      collectionExercises: collexJson._embedded.collectionExercises,
+      collectionExercises: collexJson,
     });
   };
 
