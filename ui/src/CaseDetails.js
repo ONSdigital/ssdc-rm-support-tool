@@ -278,7 +278,7 @@ class CaseDetails extends Component {
                     <TableCell>Last Updated At</TableCell>
                     <TableCell>Active</TableCell>
                     <TableCell>EQ Launched</TableCell>
-                    <TableCell>ReceiptReceived</TableCell>
+                    <TableCell>Receipt Received</TableCell>
                     <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>
