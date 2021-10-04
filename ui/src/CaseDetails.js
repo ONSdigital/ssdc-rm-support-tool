@@ -148,6 +148,12 @@ class CaseDetails extends Component {
         <TableCell component="th" scope="row">
           {uacQidLink.active ? "Yes" : "No"}
         </TableCell>
+        <TableCell component="th" scope="row">
+          {uacQidLink.eqLaunched ? "Yes" : "No"}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {uacQidLink.receiptReceived ? "Yes" : "No"}
+        </TableCell>
         <TableCell>
           {this.state.authorisedActivities.includes("DEACTIVATE_UAC") &&
             uacQidLink.active && (
@@ -191,19 +197,12 @@ class CaseDetails extends Component {
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>
-                      Receipted:{" "}
-                      {this.state.case.receiptReceived ? "Yes" : "No"}
-                    </div>
-                    <div>
                       Refused:{" "}
                       {this.state.case.refusalReceived
                         ? this.state.case.refusalReceived
                         : "No"}
                     </div>
                     <div>Invalid: {this.state.case.invalid ? "Yes" : "No"}</div>
-                    <div>
-                      Launched EQ: {this.state.case.eqLaunched ? "Yes" : "No"}
-                    </div>
                   </TableCell>
                   <TableCell align="right">
                     {this.state.authorisedActivities.includes(
@@ -266,6 +265,8 @@ class CaseDetails extends Component {
                     <TableCell>Created At</TableCell>
                     <TableCell>Last Updated At</TableCell>
                     <TableCell>Active</TableCell>
+                    <TableCell>EQ Launched</TableCell>
+                    <TableCell>Receipt Received</TableCell>
                     <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>
