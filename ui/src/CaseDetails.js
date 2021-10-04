@@ -208,38 +208,38 @@ class CaseDetails extends Component {
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_REFUSAL"
                     ) && (
-                        <Refusal
-                          caseId={this.props.caseId}
-                          case={this.state.case}
-                        />
-                      )}
+                      <Refusal
+                        caseId={this.props.caseId}
+                        case={this.state.case}
+                      />
+                    )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_INVALID_CASE"
                     ) && <InvalidCase caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_PRINT_FULFILMENT"
                     ) && (
-                        <PrintFulfilment
-                          caseId={this.props.caseId}
-                          surveyId={this.props.surveyId}
-                        />
-                      )}
+                      <PrintFulfilment
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                      />
+                    )}
                     {this.state.authorisedActivities.includes(
                       "UPDATE_SAMPLE_SENSITIVE"
                     ) && (
-                        <SensitiveData
-                          caseId={this.props.caseId}
-                          surveyId={this.props.surveyId}
-                        />
-                      )}
+                      <SensitiveData
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                      />
+                    )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_SMS_FULFILMENT"
                     ) && (
-                        <SmsFulfilment
-                          caseId={this.props.caseId}
-                          surveyId={this.props.surveyId}
-                        />
-                      )}
+                      <SmsFulfilment
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                      />
+                    )}
                   </TableCell>
                 </TableBody>
               </Table>
