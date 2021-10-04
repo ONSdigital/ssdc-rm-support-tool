@@ -251,8 +251,8 @@ class CaseDetails extends Component {
                     <TableCell>Created At</TableCell>
                     <TableCell>Last Updated At</TableCell>
                     <TableCell>Active</TableCell>
-                    <TableCell>EqLaunched</TableCell>
-                    <TableCell>ReceiptReceived</TableCell>
+                    <TableCell>EQ Launched</TableCell>
+                    <TableCell>Receipt Received</TableCell>
                     <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>
