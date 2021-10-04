@@ -1,10 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.model.repository;
 
+import java.util.List;
 import java.util.UUID;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.jpa.repository.JpaRepository;
 import uk.gov.ons.ssdc.common.model.entity.FulfilmentSurveyPrintTemplate;
+import uk.gov.ons.ssdc.common.model.entity.Survey;
 
-@RepositoryRestResource
 public interface FulfilmentSurveyPrintTemplateRepository
-    extends PagingAndSortingRepository<FulfilmentSurveyPrintTemplate, UUID> {}
+    extends JpaRepository<FulfilmentSurveyPrintTemplate, UUID> {
+  List<FulfilmentSurveyPrintTemplate> findBySurvey(Survey survey);
+}

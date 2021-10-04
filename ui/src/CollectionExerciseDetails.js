@@ -31,10 +31,8 @@ class CollectionExerciseDetails extends Component {
     authorisedActivities: [],
     actionRules: [],
     printPackCodes: [],
-    printTemplateHrefToPackCodeMap: new Map(),
     sensitiveSampleColumns: [],
     smsPackCodes: [],
-    smsTemplateHrefToPackCodeMap: new Map(),
     createActionRulesDialogDisplayed: false,
     printPackCodeValidationError: false,
     smsPackCodeValidationError: false,
@@ -49,19 +47,26 @@ class CollectionExerciseDetails extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCollectionExerciseName();
-    this.getActionRules();
-    this.getPrintTemplates();
-    this.getSmsTemplates();
-    this.getSensitiveSampleColumns();
-
-    this.interval = setInterval(() => this.getActionRules(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCollectionExerciseName(authorisedActivities);
+    this.getActionRules(authorisedActivities);
+    this.getPrintTemplates(authorisedActivities);
+    this.getSmsTemplates(authorisedActivities);
+    this.getSensitiveSampleColumns(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.getActionRules(authorisedActivities),
+      1000
+    );
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -74,16 +79,21 @@ class CollectionExerciseDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
-  getSensitiveSampleColumns = async () => {
+  getSensitiveSampleColumns = async (authorisedActivities) => {
     const sensitiveSampleColumns = await getSensitiveSampleColumns(
+      authorisedActivities,
       this.props.surveyId
     );
     this.setState({ sensitiveSampleColumns: sensitiveSampleColumns });
   };
 
-  getCollectionExerciseName = async () => {
+  getCollectionExerciseName = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_COLLECTION_EXERCISE")) return;
+
     const response = await fetch(
       `api/collectionExercises/${this.props.collectionExerciseId}`
     );
@@ -98,56 +108,46 @@ class CollectionExerciseDetails extends Component {
     this.setState({ collectionExerciseName: collectionExerciseJson.name });
   };
 
-  getActionRules = async () => {
+  getActionRules = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_ACTION_RULES")) return;
+
     const response = await fetch(
-      `/api/collectionExercises/${this.props.collectionExerciseId}/actionRules`
+      `/api/actionRules/?collectionExercise=${this.props.collectionExerciseId}`
     );
     const actionRuleJson = await response.json();
-    const actionRules = actionRuleJson._embedded.actionRules;
-
-    let printTemplateHrefToPackCodeMap = new Map();
-    let smsTemplateHrefToPackCodeMap = new Map();
-
-    for (let i = 0; i < actionRules.length; i++) {
-      if (actionRules[i].type === "PRINT") {
-        const printTemplateUrl = new URL(
-          actionRules[i]._links.printTemplate.href
-        );
-        const printTemplateResponse = await fetch(printTemplateUrl.pathname);
-        const printTemplateJson = await printTemplateResponse.json();
-        const packCode = printTemplateJson._links.self.href.split("/").pop();
-
-        printTemplateHrefToPackCodeMap.set(
-          actionRules[i]._links.printTemplate.href,
-          packCode
-        );
-      } else if (actionRules[i].type === "SMS") {
-        const smsTemplateUrl = new URL(actionRules[i]._links.smsTemplate.href);
-        const smsTemplateResponse = await fetch(smsTemplateUrl.pathname);
-        const smsTemplateJson = await smsTemplateResponse.json();
-        const packCode = smsTemplateJson._links.self.href.split("/").pop();
-
-        smsTemplateHrefToPackCodeMap.set(
-          actionRules[i]._links.smsTemplate.href,
-          packCode
-        );
-      }
-    }
 
     this.setState({
-      actionRules: actionRules,
-      printTemplateHrefToPackCodeMap: printTemplateHrefToPackCodeMap,
-      smsTemplateHrefToPackCodeMap: smsTemplateHrefToPackCodeMap,
+      actionRules: actionRuleJson,
     });
   };
 
-  getPrintTemplates = async () => {
-    const packCodes = await getActionRulePrintTemplates(this.props.surveyId);
+  getPrintTemplates = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+      )
+    )
+      return;
+
+    const packCodes = await getActionRulePrintTemplates(
+      authorisedActivities,
+      this.props.surveyId
+    );
     this.setState({ printPackCodes: packCodes });
   };
 
-  getSmsTemplates = async () => {
-    const packCodes = await getActionRuleSmsTemplates(this.props.surveyId);
+  getSmsTemplates = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES"
+      )
+    )
+      return;
+
+    const packCodes = await getActionRuleSmsTemplates(
+      authorisedActivities,
+      this.props.surveyId
+    );
     this.setState({ smsPackCodes: packCodes });
   };
 
@@ -288,18 +288,6 @@ class CollectionExerciseDetails extends Component {
   render() {
     const actionRuleTableRows = this.state.actionRules.map(
       (actionRule, index) => {
-        let packCode = "";
-
-        if (actionRule.type === "PRINT") {
-          packCode = this.state.printTemplateHrefToPackCodeMap.get(
-            actionRule._links.printTemplate.href
-          );
-        } else if (actionRule.type === "SMS") {
-          packCode = this.state.smsTemplateHrefToPackCodeMap.get(
-            actionRule._links.smsTemplate.href
-          );
-        }
-
         return (
           <TableRow key={index}>
             <TableCell component="th" scope="row">
@@ -315,7 +303,7 @@ class CollectionExerciseDetails extends Component {
               {actionRule.classifiers}
             </TableCell>
             <TableCell component="th" scope="row">
-              {packCode}
+              {actionRule.packCode}
             </TableCell>
           </TableRow>
         );
@@ -395,20 +383,22 @@ class CollectionExerciseDetails extends Component {
             </Button>
           </div>
         )}
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Type</TableCell>
-                <TableCell>Trigger date</TableCell>
-                <TableCell>Has triggered?</TableCell>
-                <TableCell>Classifiers</TableCell>
-                <TableCell>Pack Code</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{actionRuleTableRows}</TableBody>
-          </Table>
-        </TableContainer>
+        {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Trigger date</TableCell>
+                  <TableCell>Has triggered?</TableCell>
+                  <TableCell>Classifiers</TableCell>
+                  <TableCell>Pack Code</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{actionRuleTableRows}</TableBody>
+            </Table>
+          </TableContainer>
+        )}
         {(this.state.authorisedActivities.includes("LOAD_SAMPLE") ||
           this.state.authorisedActivities.includes(
             "VIEW_SAMPLE_LOAD_PROGRESS"

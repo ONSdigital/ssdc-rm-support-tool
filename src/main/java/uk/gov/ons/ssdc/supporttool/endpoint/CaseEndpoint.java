@@ -5,17 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.ons.ssdc.common.model.entity.Case;
+import uk.gov.ons.ssdc.common.model.entity.Event;
+import uk.gov.ons.ssdc.common.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.client.NotifyServiceClient;
@@ -24,14 +26,17 @@ import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestPayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.SmsFulfilment;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseDto;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.EventDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsFulfilmentAction;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.UacQidLinkDto;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
 
-@Controller
+@RestController
 @RequestMapping(value = "/api/cases")
 public class CaseEndpoint {
 
@@ -39,12 +44,72 @@ public class CaseEndpoint {
   private final CaseService caseService;
   private final UserIdentity userIdentity;
 
-  @Autowired
   public CaseEndpoint(
       NotifyServiceClient notifyServiceClient, UserIdentity userIdentity, CaseService caseService) {
     this.notifyServiceClient = notifyServiceClient;
     this.userIdentity = userIdentity;
     this.caseService = caseService;
+  }
+
+  @GetMapping("/{caseId}")
+  public CaseDto getCase(
+      @PathVariable(value = "caseId") UUID caseId,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    Case caze = caseService.getCaseByCaseId(caseId);
+
+    userIdentity.checkUserPermission(
+        userEmail,
+        caze.getCollectionExercise().getSurvey(),
+        UserGroupAuthorisedActivityType.VIEW_CASE_DETAILS);
+
+    CaseDto caseDto = new CaseDto();
+    caseDto.setCollectionExerciseName(caze.getCollectionExercise().getName());
+    caseDto.setCaseRef(caze.getCaseRef());
+    caseDto.setRefusalReceived(caze.getRefusalReceived());
+    caseDto.setInvalid(caze.isInvalid());
+    caseDto.setCreatedAt(caze.getCreatedAt());
+    caseDto.setLastUpdatedAt(caze.getLastUpdatedAt());
+
+    List<EventDto> events = new LinkedList<>();
+    for (Event event : caze.getEvents()) {
+      EventDto eventDto = mapEventDto(event);
+      events.add(eventDto);
+    }
+
+    List<UacQidLinkDto> uacQidLinks = new LinkedList<>();
+    for (UacQidLink uacQidLink : caze.getUacQidLinks()) {
+      UacQidLinkDto uacQidLinkDto = new UacQidLinkDto();
+      uacQidLinkDto.setQid(uacQidLink.getQid());
+      uacQidLinkDto.setActive(uacQidLink.isActive());
+      uacQidLinkDto.setCreatedAt(uacQidLink.getCreatedAt());
+      uacQidLinkDto.setLastUpdatedAt(uacQidLink.getLastUpdatedAt());
+      uacQidLinkDto.setReceiptReceived(uacQidLink.isReceiptReceived());
+      uacQidLinkDto.setEqLaunched(uacQidLink.isEqLaunched());
+      uacQidLinks.add(uacQidLinkDto);
+
+      for (Event event : uacQidLink.getEvents()) {
+        EventDto eventDto = mapEventDto(event);
+        events.add(eventDto);
+      }
+    }
+
+    caseDto.setUacQidLinks(uacQidLinks);
+    caseDto.setEvents(events);
+
+    return caseDto;
+  }
+
+  private EventDto mapEventDto(Event event) {
+    EventDto eventDto = new EventDto();
+    eventDto.setDescription(event.getDescription());
+    eventDto.setDateTime(event.getDateTime());
+    eventDto.setType(event.getType());
+    eventDto.setChannel(event.getChannel());
+    eventDto.setSource(event.getSource());
+    eventDto.setMessageId(event.getMessageId());
+    eventDto.setPayload(event.getPayload());
+    eventDto.setCorrelationId(event.getCorrelationId());
+    return eventDto;
   }
 
   @PostMapping("{caseId}/action/updateSensitiveField")

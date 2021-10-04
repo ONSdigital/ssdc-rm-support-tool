@@ -8,7 +8,7 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 
 @RestController
 @RequestMapping(value = "/api/authorisedActivityTypes")
-public class AuthorisedActivityTypes {
+public class AuthorisedActivityTypesEndpoint {
   private static final Set<UserGroupAuthorisedActivityType> AUTHORISED_ACTIVITY_TYPES =
       Set.of(UserGroupAuthorisedActivityType.values());
 

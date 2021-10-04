@@ -7,23 +7,27 @@ import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityTyp
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_SMS_ACTION_RULE;
 import static uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper.getColumns;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.ActionRule;
+import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
 import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.ActionRuleDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.ActionRuleDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.PrintTemplateRepository;
@@ -53,18 +57,65 @@ public class ActionRuleEndpoint {
     this.smsTemplateRepository = smsTemplateRepository;
   }
 
+  @GetMapping
+  public List<ActionRuleDto> findActionRulesByCollex(
+      @RequestParam(value = "collectionExercise") UUID collectionExerciseId,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    CollectionExercise collectionExercise =
+        collectionExerciseRepository
+            .findById(collectionExerciseId)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Collection exercise not found"));
+
+    userIdentity.checkUserPermission(
+        userEmail,
+        collectionExercise.getSurvey(),
+        UserGroupAuthorisedActivityType.LIST_ACTION_RULES);
+
+    List<ActionRule> actionRules =
+        actionRuleRepository.findByCollectionExercise(collectionExercise);
+
+    List<ActionRuleDto> actionRuleDtos =
+        actionRules.stream()
+            .map(
+                actionRule -> {
+                  ActionRuleDto actionRuleDTO = new ActionRuleDto();
+                  actionRuleDTO.setClassifiers(actionRule.getClassifiers());
+
+                  if (actionRule.getType() == ActionRuleType.PRINT) {
+                    actionRuleDTO.setPackCode(actionRule.getPrintTemplate().getPackCode());
+                  } else if (actionRule.getType() == ActionRuleType.SMS) {
+                    actionRuleDTO.setPackCode(actionRule.getSmsTemplate().getPackCode());
+                  }
+
+                  actionRuleDTO.setType(actionRule.getType());
+                  actionRuleDTO.setCollectionExerciseId(actionRule.getCollectionExercise().getId());
+                  actionRuleDTO.setPhoneNumberColumn(actionRule.getPhoneNumberColumn());
+                  actionRuleDTO.setTriggerDateTime(actionRule.getTriggerDateTime());
+                  actionRuleDTO.setHasTriggered(actionRule.isHasTriggered());
+                  return actionRuleDTO;
+                })
+            .collect(Collectors.toList());
+
+    return actionRuleDtos;
+  }
+
   @PostMapping
   @Transactional
   public ResponseEntity<UUID> insertActionRules(
-      @RequestBody() ActionRuleDTO actionRuleDTO,
+      @RequestBody() ActionRuleDto actionRuleDTO,
       @Value("#{request.getAttribute('userEmail')}") String createdBy) {
 
-    Optional<CollectionExercise> collexExercise =
-        collectionExerciseRepository.findById(actionRuleDTO.getCollectionExerciseId());
-
-    if (!collexExercise.isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
-    }
+    CollectionExercise collectionExercise =
+        collectionExerciseRepository
+            .findById(actionRuleDTO.getCollectionExerciseId())
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Collection exercise not found"));
 
     UserGroupAuthorisedActivityType userActivity;
 
@@ -99,7 +150,7 @@ public class ActionRuleEndpoint {
                     () ->
                         new ResponseStatusException(
                             HttpStatus.BAD_REQUEST, "SMS template not found"));
-        if (!getColumns(collexExercise.get().getSurvey(), true)
+        if (!getColumns(collectionExercise.getSurvey(), true)
             .contains(actionRuleDTO.getPhoneNumberColumn())) {
           throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Phone number column does not exist");
@@ -109,13 +160,13 @@ public class ActionRuleEndpoint {
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
     }
 
-    userIdentity.checkUserPermission(createdBy, collexExercise.get().getSurvey(), userActivity);
+    userIdentity.checkUserPermission(createdBy, collectionExercise.getSurvey(), userActivity);
 
     ActionRule actionRule = new ActionRule();
     actionRule.setId(UUID.randomUUID());
     actionRule.setClassifiers(actionRuleDTO.getClassifiers());
     actionRule.setPrintTemplate(printTemplate);
-    actionRule.setCollectionExercise(collexExercise.get());
+    actionRule.setCollectionExercise(collectionExercise);
     actionRule.setType(actionRuleDTO.getType());
     actionRule.setTriggerDateTime(actionRuleDTO.getTriggerDateTime());
     actionRule.setCreatedBy(createdBy);

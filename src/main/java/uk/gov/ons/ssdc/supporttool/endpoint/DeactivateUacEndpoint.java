@@ -1,7 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.DEACTIVATE_UAC;
 
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.Optional;
@@ -57,7 +57,7 @@ public class DeactivateUacEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         uacQidLinkOpt.get().getCaze().getCollectionExercise().getSurvey(),
-        CREATE_PRINT_TEMPLATE);
+        DEACTIVATE_UAC);
 
     EventDTO event = new EventDTO();
 

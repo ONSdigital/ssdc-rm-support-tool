@@ -18,7 +18,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 import {
   getActionRulePrintTemplates,
   getActionRuleSmsTemplates,
@@ -58,16 +57,23 @@ class SurveyDetails extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend();
-
-    this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.refreshDataFromBackend(authorisedActivities),
+      1000
+    );
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -80,9 +86,13 @@ class SurveyDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
-  getSurveyName = async () => {
+  getSurveyName = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_SURVEY")) return;
+
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
 
     const surveyJson = await response.json();
@@ -90,24 +100,34 @@ class SurveyDetails extends Component {
     this.setState({ surveyName: surveyJson.name });
   };
 
-  refreshDataFromBackend = async () => {
-    this.getCollectionExercises();
+  refreshDataFromBackend = async (authorisedActivities) => {
+    this.getCollectionExercises(authorisedActivities);
 
-    const allPrintFulfilmentTemplates = await getAllPrintTemplates();
-    const allSmsFulfilmentTemplates = await getAllSmsTemplates();
+    // TODO: The security of this is a nightmare, because the method assumes the user has a ton of permissions. Will work for now, but refactor in future.
+
+    const allPrintFulfilmentTemplates = await getAllPrintTemplates(
+      authorisedActivities
+    );
+    const allSmsFulfilmentTemplates = await getAllSmsTemplates(
+      authorisedActivities
+    );
 
     const actionRulePrintTemplates = await getActionRulePrintTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
 
     const actionRuleSmsTemplates = await getActionRuleSmsTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
 
     const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
     const smsFulfilmentTemplates = await getSmsFulfilmentTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
 
@@ -146,14 +166,16 @@ class SurveyDetails extends Component {
     });
   };
 
-  getCollectionExercises = async () => {
+  getCollectionExercises = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_COLLECTION_EXERCISES")) return;
+
     const response = await fetch(
-      `/api/surveys/${this.props.surveyId}/collectionExercises`
+      `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
     const collexJson = await response.json();
 
     this.setState({
-      collectionExercises: collexJson._embedded.collectionExercises,
+      collectionExercises: collexJson,
     });
   };
 
@@ -184,9 +206,8 @@ class SurveyDetails extends Component {
     }
 
     const newCollectionExercise = {
-      id: uuidv4(),
       name: this.state.newCollectionExerciseName,
-      survey: "surveys/" + this.props.surveyId,
+      surveyId: this.props.surveyId,
     };
 
     const response = await fetch("/api/collectionExercises", {
@@ -336,9 +357,8 @@ class SurveyDetails extends Component {
     }
 
     const newAllowSmsTemplate = {
-      id: uuidv4(),
-      survey: "surveys/" + this.props.surveyId,
-      smsTemplate: "smsTemplates/" + this.state.smsTemplateToAllow,
+      surveyId: this.props.surveyId,
+      packCode: this.state.smsTemplateToAllow,
     };
 
     const response = await fetch("/api/fulfilmentSurveySmsTemplates", {
@@ -383,21 +403,17 @@ class SurveyDetails extends Component {
 
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(
-      (collex) => {
-        const collexId = collex._links.self.href.split("/").pop();
-
-        return (
-          <TableRow key={collex.name}>
-            <TableCell component="th" scope="row">
-              <Link
-                to={`/collex?surveyId=${this.props.surveyId}&collexId=${collexId}`}
-              >
-                {collex.name}
-              </Link>
-            </TableCell>
-          </TableRow>
-        );
-      }
+      (collex) => (
+        <TableRow key={collex.name}>
+          <TableCell component="th" scope="row">
+            <Link
+              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
+            >
+              {collex.name}
+            </Link>
+          </TableCell>
+        </TableRow>
+      )
     );
 
     const actionRulePrintTemplateTableRows =

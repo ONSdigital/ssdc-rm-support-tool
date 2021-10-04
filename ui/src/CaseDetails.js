@@ -33,36 +33,33 @@ class CaseDetails extends Component {
   };
 
   componentDidMount() {
-    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCollexName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCasesAndQidData();
-
-    this.interval = setInterval(() => this.getCasesAndQidData(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  getSurveyName = async () => {
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+
+    this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCasesAndQidData(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.getCasesAndQidData(authorisedActivities),
+      1000
+    );
+  };
+
+  getSurveyName = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_SURVEY")) return;
+
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
 
     const surveyJson = await response.json();
 
     this.setState({ surveyName: surveyJson.name });
-  };
-
-  getCollexName = async () => {
-    const collexResponse = await fetch(
-      `/api/cases/${this.props.caseId}/collectionExercise`
-    );
-
-    const collexJson = await collexResponse.json();
-
-    this.setState({
-      collexName: collexJson.name,
-    });
   };
 
   getAuthorisedActivities = async () => {
@@ -76,34 +73,22 @@ class CaseDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
-  getCasesAndQidData = async () => {
+  getCasesAndQidData = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_CASE_DETAILS")) return;
+
     const response = await fetch(`/api/cases/${this.props.caseId}`);
     const caseJson = await response.json();
 
     if (response.ok) {
-      this.setState({ case: caseJson });
-
-      const uacQidLinksResponse = await fetch(
-        `/api/cases/${this.props.caseId}/uacQidLinks`
-      );
-      const uacQidLinksJson = await uacQidLinksResponse.json();
-
-      const uacQidLinks = uacQidLinksJson._embedded.uacQidLinks;
-
-      let events = caseJson.events;
-      for (let i = 0; i < uacQidLinks.length; i++) {
-        events = events.concat(uacQidLinks[i].events);
-      }
-
-      if (uacQidLinksResponse.ok) {
-        this.setState({
-          case: caseJson,
-          uacQidLinks: uacQidLinks,
-          events: events,
-        });
-      }
+      this.setState({
+        case: caseJson,
+        uacQidLinks: caseJson.uacQidLinks,
+        events: caseJson.events,
+      });
     }
   };
 
@@ -163,6 +148,12 @@ class CaseDetails extends Component {
         <TableCell component="th" scope="row">
           {uacQidLink.active ? "Yes" : "No"}
         </TableCell>
+        <TableCell component="th" scope="row">
+          {uacQidLink.eqLaunched ? "Yes" : "No"}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {uacQidLink.receiptReceived ? "Yes" : "No"}
+        </TableCell>
         <TableCell>
           {this.state.authorisedActivities.includes("DEACTIVATE_UAC") &&
             uacQidLink.active && (
@@ -199,13 +190,12 @@ class CaseDetails extends Component {
                   <TableCell component="th" scope="row">
                     <div>Case ref: {this.state.case.caseRef}</div>
                     <div>Survey name: {this.state.surveyName}</div>
-                    <div>Collection Exercise name: {this.state.collexName}</div>
+                    <div>
+                      Collection Exercise name:{" "}
+                      {this.state.case.collectionExerciseName}
+                    </div>
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
-                    <div>
-                      Receipted:{" "}
-                      {this.state.case.receiptReceived ? "Yes" : "No"}
-                    </div>
                     <div>
                       Refused:{" "}
                       {this.state.case.refusalReceived
@@ -213,9 +203,6 @@ class CaseDetails extends Component {
                         : "No"}
                     </div>
                     <div>Invalid: {this.state.case.invalid ? "Yes" : "No"}</div>
-                    <div>
-                      Launched EQ: {this.state.case.eqLaunched ? "Yes" : "No"}
-                    </div>
                   </TableCell>
                   <TableCell align="right">
                     {this.state.authorisedActivities.includes(
@@ -278,6 +265,8 @@ class CaseDetails extends Component {
                     <TableCell>Created At</TableCell>
                     <TableCell>Last Updated At</TableCell>
                     <TableCell>Active</TableCell>
+                    <TableCell>EQ Launched</TableCell>
+                    <TableCell>Receipt Received</TableCell>
                     <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>

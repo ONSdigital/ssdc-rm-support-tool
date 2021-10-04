@@ -24,10 +24,14 @@ class SurveyCaseSearch extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getSampleColumns();
-    this.getCollectionExercises();
+    this.getAuthorisedBackendData();
   }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getSampleColumns(authorisedActivities);
+    this.getCollectionExercises(authorisedActivities);
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -40,16 +44,20 @@ class SurveyCaseSearch extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
-  getCollectionExercises = async () => {
+  getCollectionExercises = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_COLLECTION_EXERCISES")) return;
+
     const response = await fetch(
-      `/api/surveys/${this.props.surveyId}/collectionExercises`
+      `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
     const collexJson = await response.json();
 
     this.setState({
-      collectionExercises: collexJson._embedded.collectionExercises,
+      collectionExercises: collexJson,
     });
   };
 
@@ -86,7 +94,9 @@ class SurveyCaseSearch extends Component {
     return /^\+?\d+$/.test(str);
   };
 
-  getSampleColumns = async () => {
+  getSampleColumns = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_SURVEY")) return;
+
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
     if (!response.ok) {
       return;

@@ -17,7 +17,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { uuidv4 } from "./common";
 import { Link } from "react-router-dom";
 
 class LandingPage extends Component {
@@ -46,21 +45,29 @@ class LandingPage extends Component {
     notifyTemplateIdErrorMessage: "",
     newSurveyHeaderRow: true,
     newSurveySampleSeparator: ",",
-    triggerID: "366ce7da-f885-493d-b933-a3b74d583a06",
     nextFulfilmentTriggerDateTime: "1970-01-01T00:00:00.000Z",
     configureNextTriggerDisplayed: false,
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.refreshDataFromBackend();
-
-    this.interval = setInterval(() => this.refreshDataFromBackend(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getPrintSuppliers(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+
+    this.refreshDataFromBackend(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.refreshDataFromBackend(authorisedActivities),
+      1000
+    );
+  };
 
   getAuthorisedActivities = async () => {
     const authResponse = await fetch("/api/auth");
@@ -72,36 +79,35 @@ class LandingPage extends Component {
 
     const authorisedActivities = await authResponse.json();
 
-    if (authorisedActivities.includes("CREATE_PRINT_TEMPLATE")) {
-      const supplierResponse = await fetch("/api/printsuppliers");
+    this.setState({ authorisedActivities: authorisedActivities });
 
-      // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
-      if (!supplierResponse.ok) {
-        return;
-      }
-
-      const supplierJson = await supplierResponse.json();
-
-      this.setState({
-        authorisedActivities: authorisedActivities,
-        printSuppliers: supplierJson,
-      });
-    } else {
-      this.setState({ authorisedActivities: authorisedActivities });
-    }
+    return authorisedActivities;
   };
 
-  refreshDataFromBackend = () => {
-    this.getSurveys();
-    this.getPrintTemplates();
-    this.getSmsTemplates();
+  refreshDataFromBackend = (authorisedActivities) => {
+    this.getSurveys(authorisedActivities);
+    this.getPrintTemplates(authorisedActivities);
+    this.getSmsTemplates(authorisedActivities);
   };
 
-  getSurveys = async () => {
+  getPrintSuppliers = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_PRINT_SUPPLIERS")) return;
+
+    const supplierResponse = await fetch("/api/printsuppliers");
+    const supplierJson = await supplierResponse.json();
+
+    this.setState({
+      printSuppliers: supplierJson,
+    });
+  };
+
+  getSurveys = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_SURVEYS")) return;
+
     const response = await fetch("/api/surveys");
     const surveyJson = await response.json();
 
-    this.setState({ surveys: surveyJson._embedded.surveys });
+    this.setState({ surveys: surveyJson });
   };
 
   getDateTimeForDateTimePicker = (date) => {
@@ -110,9 +116,12 @@ class LandingPage extends Component {
   };
 
   getFulfilmentTrigger = async () => {
-    const response = await fetch(
-      `/api/fulfilmentNextTriggers/${this.state.triggerID}`
-    );
+    if (
+      !this.state.authorisedActivities.includes("CONFIGURE_FULFILMENT_TRIGGER")
+    )
+      return;
+
+    const response = await fetch(`/api/fulfilmentNextTriggers`);
 
     if (!response.ok) {
       this.setState({
@@ -122,7 +131,7 @@ class LandingPage extends Component {
       });
     } else {
       const fulfilmentNextTriggerJson = await response.json();
-      var dateOfTrigger = new Date(fulfilmentNextTriggerJson.triggerDateTime);
+      var dateOfTrigger = new Date(fulfilmentNextTriggerJson);
       this.setState({
         nextFulfilmentTriggerDateTime:
           this.getDateTimeForDateTimePicker(dateOfTrigger),
@@ -130,17 +139,22 @@ class LandingPage extends Component {
     }
   };
 
-  getPrintTemplates = async () => {
+  getPrintTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_PRINT_TEMPLATES")) return;
+
     const response = await fetch("/api/printTemplates");
     const templateJson = await response.json();
 
-    this.setState({ printTemplates: templateJson._embedded.printTemplates });
+    this.setState({ printTemplates: templateJson });
   };
-  getSmsTemplates = async () => {
+
+  getSmsTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_SMS_TEMPLATES")) return;
+
     const response = await fetch("/api/smsTemplates");
     const templateJson = await response.json();
 
-    this.setState({ smsTemplates: templateJson._embedded.smsTemplates });
+    this.setState({ smsTemplates: templateJson });
   };
 
   openDialog = () => {
@@ -257,7 +271,6 @@ class LandingPage extends Component {
     }
 
     const newSurvey = {
-      id: uuidv4(),
       name: this.state.newSurveyName,
       sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules),
       sampleWithHeaderRow: this.state.newSurveyHeaderRow,
@@ -278,18 +291,16 @@ class LandingPage extends Component {
   };
 
   onUpdateFulfilmentTriggerDateTime = async () => {
-    const updatedTriggerDateTime = {
-      id: this.state.triggerID,
-      triggerDateTime: new Date(
-        this.state.nextFulfilmentTriggerDateTime
-      ).toISOString(),
-    };
+    const triggerDateTime = new Date(
+      this.state.nextFulfilmentTriggerDateTime
+    ).toISOString();
 
-    const response = await fetch("/api/fulfilmentNextTriggers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedTriggerDateTime),
-    });
+    const response = await fetch(
+      `/api/fulfilmentNextTriggers/?triggerDateTime=${triggerDateTime}`,
+      {
+        method: "POST",
+      }
+    );
 
     if (response.ok) {
       this.setState({ configureNextTriggerDisplayed: false });
@@ -452,49 +463,40 @@ class LandingPage extends Component {
   };
 
   render() {
-    const surveyTableRows = this.state.surveys.map((survey) => {
-      const surveyId = survey._links.self.href.split("/").pop();
+    const surveyTableRows = this.state.surveys.map((survey) => (
+      <TableRow key={survey.name}>
+        <TableCell component="th" scope="row">
+          <Link to={`/survey?surveyId=${survey.id}`}>{survey.name}</Link>
+        </TableCell>
+      </TableRow>
+    ));
 
-      return (
-        <TableRow key={survey.name}>
-          <TableCell component="th" scope="row">
-            <Link to={`/survey?surveyId=${surveyId}`}>{survey.name}</Link>
-          </TableCell>
-        </TableRow>
-      );
-    });
-
-    const printTemplateRows = this.state.printTemplates.map((printTemplate) => {
-      const packCode = printTemplate._links.self.href.split("/").pop();
-
-      return (
-        <TableRow key={packCode}>
-          <TableCell component="th" scope="row">
-            {packCode}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {printTemplate.printSupplier}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {JSON.stringify(printTemplate.template)}
-          </TableCell>
-        </TableRow>
-      );
-    });
-    const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) => {
-      const packCode = smsTemplate._links.self.href.split("/").pop();
-
-      return (
-        <TableRow key={packCode}>
-          <TableCell component="th" scope="row">
-            {packCode}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {JSON.stringify(smsTemplate.template)}
-          </TableCell>
-        </TableRow>
-      );
-    });
+    const printTemplateRows = this.state.printTemplates.map((printTemplate) => (
+      <TableRow key={printTemplate.packCode}>
+        <TableCell component="th" scope="row">
+          {printTemplate.packCode}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {printTemplate.printSupplier}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(printTemplate.template)}
+        </TableCell>
+      </TableRow>
+    ));
+    const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) => (
+      <TableRow key={smsTemplate.packCode}>
+        <TableCell component="th" scope="row">
+          {smsTemplate.packCode}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(smsTemplate.template)}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {smsTemplate.notifyTemplateId}
+        </TableCell>
+      </TableRow>
+    ));
 
     const printSupplierMenuItems = this.state.printSuppliers.map((supplier) => (
       <MenuItem key={supplier} value={supplier}>
@@ -522,60 +524,65 @@ class LandingPage extends Component {
           </TableContainer>
         )}
         {this.state.authorisedActivities.includes("CREATE_PRINT_TEMPLATE") && (
-          <div>
-            <Button
-              variant="contained"
-              onClick={this.openPrintTemplateDialog}
-              style={{ marginTop: 20 }}
-            >
-              Create Print Template
-            </Button>
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                    <TableCell>Print Supplier</TableCell>
-                    <TableCell>Template</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{printTemplateRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </div>
+          <Button
+            variant="contained"
+            onClick={this.openPrintTemplateDialog}
+            style={{ marginTop: 20 }}
+          >
+            Create Print Template
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes("LIST_PRINT_TEMPLATES") && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pack Code</TableCell>
+                  <TableCell>Print Supplier</TableCell>
+                  <TableCell>Template</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{printTemplateRows}</TableBody>
+            </Table>
+          </TableContainer>
         )}
 
         {this.state.authorisedActivities.includes("CREATE_SMS_TEMPLATE") && (
+          <Button
+            variant="contained"
+            onClick={this.openSmsTemplateDialog}
+            style={{ marginTop: 20 }}
+          >
+            Create sms Template
+          </Button>
+        )}
+        {this.state.authorisedActivities.includes("LIST_SMS_TEMPLATES") && (
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pack Code</TableCell>
+                  <TableCell>Template</TableCell>
+                  <TableCell>Gov Notify Template ID</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{smsTemplateRows}</TableBody>
+            </Table>
+          </TableContainer>
+        )}
+        {this.state.authorisedActivities.includes(
+          "CONFIGURE_FULFILMENT_TRIGGER"
+        ) && (
           <div>
             <Button
               variant="contained"
-              onClick={this.openSmsTemplateDialog}
+              onClick={this.openFulfilmentTriggerDialog}
               style={{ marginTop: 20 }}
             >
-              Create sms Template
+              Configure fulfilment trigger
             </Button>
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                    <TableCell>Template</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{smsTemplateRows}</TableBody>
-              </Table>
-            </TableContainer>
           </div>
         )}
-        <div>
-          <Button
-            variant="contained"
-            onClick={this.openFulfilmentTriggerDialog}
-            style={{ marginTop: 20 }}
-          >
-            Configure fulfilment trigger
-          </Button>
-        </div>
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
             <div style={{ marginTop: 20 }}>

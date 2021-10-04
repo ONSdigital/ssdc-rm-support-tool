@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseSearchResult;
@@ -57,9 +57,7 @@ public class SurveyCasesEndpoint {
       @PathVariable(value = "surveyId") UUID surveyId,
       @RequestParam(value = "searchTerm") String searchTerm,
       @RequestParam(value = "collexId", required = false) Optional<UUID> collexId,
-      @RequestParam(value = "receipted", required = false) Optional<Boolean> receiptReceived,
       @RequestParam(value = "invalid", required = false) Optional<Boolean> caseInvalid,
-      @RequestParam(value = "launched", required = false) Optional<Boolean> eqLaunched,
       @RequestParam(value = "refusal", required = false)
           Optional<UIRefusalTypeDTO> refusalReceived) {
 
@@ -82,19 +80,9 @@ public class SurveyCasesEndpoint {
       namedParameters.put("collexId", collexId.get());
     }
 
-    if (receiptReceived.isPresent()) {
-      queryStringBuilder.append(" AND c.receipt_received = :receiptReceived");
-      namedParameters.put("receiptReceived", receiptReceived.get());
-    }
-
     if (caseInvalid.isPresent()) {
       queryStringBuilder.append(" AND c.invalid = :caseInvalid");
       namedParameters.put("caseInvalid", caseInvalid.get());
-    }
-
-    if (eqLaunched.isPresent()) {
-      queryStringBuilder.append(" AND c.eq_launched = :eqLaunched");
-      namedParameters.put("eqLaunched", eqLaunched.get());
     }
 
     if (refusalReceived.isPresent()) {
@@ -149,7 +137,7 @@ public class SurveyCasesEndpoint {
   private void checkSurveySearchCasesPermission(String userEmail, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
-      throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Survey not found");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Survey not found");
     }
     userIdentity.checkUserPermission(
         userEmail, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
