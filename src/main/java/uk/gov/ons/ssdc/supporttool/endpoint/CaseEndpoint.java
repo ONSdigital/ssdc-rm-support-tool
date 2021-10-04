@@ -67,8 +67,6 @@ public class CaseEndpoint {
     caseDto.setCaseRef(caze.getCaseRef());
     caseDto.setRefusalReceived(caze.getRefusalReceived());
     caseDto.setInvalid(caze.isInvalid());
-    caseDto.setReceiptReceived(caze.isReceiptReceived());
-    caseDto.setEqLaunched(caze.isEqLaunched());
     caseDto.setCreatedAt(caze.getCreatedAt());
     caseDto.setLastUpdatedAt(caze.getLastUpdatedAt());
 
@@ -85,6 +83,8 @@ public class CaseEndpoint {
       uacQidLinkDto.setActive(uacQidLink.isActive());
       uacQidLinkDto.setCreatedAt(uacQidLink.getCreatedAt());
       uacQidLinkDto.setLastUpdatedAt(uacQidLink.getLastUpdatedAt());
+      uacQidLinkDto.setReceiptReceived(uacQidLink.isReceiptReceived());
+      uacQidLinkDto.setEqLaunched(uacQidLink.isEqLaunched());
       uacQidLinks.add(uacQidLinkDto);
 
       for (Event event : uacQidLink.getEvents()) {
