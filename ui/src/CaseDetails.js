@@ -209,19 +209,12 @@ class CaseDetails extends Component {
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>
-                      Receipted:{" "}
-                      {this.state.case.receiptReceived ? "Yes" : "No"}
-                    </div>
-                    <div>
                       Refused:{" "}
                       {this.state.case.refusalReceived
                         ? this.state.case.refusalReceived
                         : "No"}
                     </div>
                     <div>Invalid: {this.state.case.invalid ? "Yes" : "No"}</div>
-                    <div>
-                      Launched EQ: {this.state.case.eqLaunched ? "Yes" : "No"}
-                    </div>
                   </TableCell>
                   <TableCell align="right">
                     {this.state.authorisedActivities.includes(
