@@ -47,19 +47,26 @@ class CollectionExerciseDetails extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCollectionExerciseName();
-    this.getActionRules();
-    this.getPrintTemplates();
-    this.getSmsTemplates();
-    this.getSensitiveSampleColumns();
-
-    this.interval = setInterval(() => this.getActionRules(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCollectionExerciseName(authorisedActivities);
+    this.getActionRules(authorisedActivities);
+    this.getPrintTemplates(authorisedActivities);
+    this.getSmsTemplates(authorisedActivities);
+    this.getSensitiveSampleColumns(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.getActionRules(authorisedActivities),
+      1000
+    );
+  };
 
   getAuthorisedActivities = async () => {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
@@ -72,16 +79,21 @@ class CollectionExerciseDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
-  getSensitiveSampleColumns = async () => {
+  getSensitiveSampleColumns = async (authorisedActivities) => {
     const sensitiveSampleColumns = await getSensitiveSampleColumns(
+      authorisedActivities,
       this.props.surveyId
     );
     this.setState({ sensitiveSampleColumns: sensitiveSampleColumns });
   };
 
-  getCollectionExerciseName = async () => {
+  getCollectionExerciseName = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_COLLECTION_EXERCISE")) return;
+
     const response = await fetch(
       `api/collectionExercises/${this.props.collectionExerciseId}`
     );
@@ -96,7 +108,9 @@ class CollectionExerciseDetails extends Component {
     this.setState({ collectionExerciseName: collectionExerciseJson.name });
   };
 
-  getActionRules = async () => {
+  getActionRules = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_ACTION_RULES")) return;
+
     const response = await fetch(
       `/api/actionRules/?collectionExercise=${this.props.collectionExerciseId}`
     );
@@ -107,13 +121,33 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
-  getPrintTemplates = async () => {
-    const packCodes = await getActionRulePrintTemplates(this.props.surveyId);
+  getPrintTemplates = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+      )
+    )
+      return;
+
+    const packCodes = await getActionRulePrintTemplates(
+      authorisedActivities,
+      this.props.surveyId
+    );
     this.setState({ printPackCodes: packCodes });
   };
 
-  getSmsTemplates = async () => {
-    const packCodes = await getActionRuleSmsTemplates(this.props.surveyId);
+  getSmsTemplates = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES"
+      )
+    )
+      return;
+
+    const packCodes = await getActionRuleSmsTemplates(
+      authorisedActivities,
+      this.props.surveyId
+    );
     this.setState({ smsPackCodes: packCodes });
   };
 
