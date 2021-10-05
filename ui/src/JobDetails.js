@@ -150,6 +150,50 @@ class JobDetails extends Component {
               Uploaded by: {this.props.job.createdBy}
             </Typography>
           </Grid>
+          {this.props.job.processedAt && (
+            <Grid container item xs={12}>
+              <Grid container item xs={12} spacing={3}>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Processed at: {this.props.job.processedAt}
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} spacing={3}>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Processed by: {this.props.job.processedBy}
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
+          {this.props.job.cancelledAt && (
+            <Grid container item xs={12}>
+              <Grid container item xs={12} spacing={3}>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Cancelled at: {this.props.job.cancelledAt}
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} spacing={3}>
+                <Typography
+                  variant="inherit"
+                  color="inherit"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Cancelled by: {this.props.job.cancelledBy}
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
         </Grid>
       );
     }
