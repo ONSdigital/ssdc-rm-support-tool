@@ -43,7 +43,7 @@ public class NewCaseTransformer implements Transformer {
     payloadDTO.setNewCase(newCase);
 
     EventDTO event = new EventDTO();
-    EventHeaderDTO eventHeader = EventHelper.createEventDTO(topic, job.getCreatedBy());
+    EventHeaderDTO eventHeader = EventHelper.createEventDTO(topic, job.getProcessedBy());
     eventHeader.setCorrelationId(job.getId());
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
