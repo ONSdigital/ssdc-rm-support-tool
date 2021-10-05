@@ -2,8 +2,8 @@ package uk.gov.ons.ssdc.supporttool.transformer;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import uk.gov.ons.ssdc.common.model.entity.Job;
+import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
@@ -14,9 +14,12 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 public class NewCaseTransformer implements Transformer {
   @Override
   public Object transformRow(
-      Map<String, String> rowData, Job job, ColumnValidator[] columnValidators, String topic) {
+      Job job, JobRow jobRow, ColumnValidator[] columnValidators, String topic) {
+
+    Map<String, String> rowData = jobRow.getRowData();
+
     NewCase newCase = new NewCase();
-    newCase.setCaseId(UUID.randomUUID());
+    newCase.setCaseId(jobRow.getId()); // Use row ID so we get no dupes if support tool crashes
     newCase.setCollectionExerciseId(job.getCollectionExercise().getId());
 
     Map<String, String> nonSensitiveSampleData = new HashMap<>();
