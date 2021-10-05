@@ -22,4 +22,10 @@ public class JobDto {
   private JobStatusDto jobStatus;
 
   private String fatalErrorDescription;
+
+  private String processedBy;
+  private OffsetDateTime processedAt;
+
+  private String cancelledBy;
+  private OffsetDateTime cancelledAt;
 }
