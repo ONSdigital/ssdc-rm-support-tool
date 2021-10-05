@@ -33,18 +33,28 @@ class CaseDetails extends Component {
   };
 
   componentDidMount() {
-    this.getSurveyName(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCasesAndQidData();
-
-    this.interval = setInterval(() => this.getCasesAndQidData(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  getSurveyName = async () => {
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+
+    this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getCasesAndQidData(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.getCasesAndQidData(authorisedActivities),
+      1000
+    );
+  };
+
+  getSurveyName = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_SURVEY")) return;
+
     const response = await fetch(`/api/surveys/${this.props.surveyId}`);
 
     const surveyJson = await response.json();
@@ -63,9 +73,13 @@ class CaseDetails extends Component {
     const authJson = await response.json();
 
     this.setState({ authorisedActivities: authJson });
+
+    return authJson;
   };
 
-  getCasesAndQidData = async () => {
+  getCasesAndQidData = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_CASE_DETAILS")) return;
+
     const response = await fetch(`/api/cases/${this.props.caseId}`);
     const caseJson = await response.json();
 
@@ -136,6 +150,10 @@ class CaseDetails extends Component {
         </TableCell>
         <TableCell component="th" scope="row">
           {JSON.stringify(uacQidLink.uacMetadata)}
+          {uacQidLink.eqLaunched ? "Yes" : "No"}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {uacQidLink.receiptReceived ? "Yes" : "No"}
         </TableCell>
         <TableCell>
           {this.state.authorisedActivities.includes("DEACTIVATE_UAC") &&
@@ -180,19 +198,12 @@ class CaseDetails extends Component {
                     <div>Created at: {this.state.case.createdAt}</div>
                     <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
                     <div>
-                      Receipted:{" "}
-                      {this.state.case.receiptReceived ? "Yes" : "No"}
-                    </div>
-                    <div>
                       Refused:{" "}
                       {this.state.case.refusalReceived
                         ? this.state.case.refusalReceived
                         : "No"}
                     </div>
                     <div>Invalid: {this.state.case.invalid ? "Yes" : "No"}</div>
-                    <div>
-                      Launched EQ: {this.state.case.eqLaunched ? "Yes" : "No"}
-                    </div>
                   </TableCell>
                   <TableCell align="right">
                     {this.state.authorisedActivities.includes(
@@ -256,6 +267,8 @@ class CaseDetails extends Component {
                     <TableCell>Last Updated At</TableCell>
                     <TableCell>Active</TableCell>
                     <TableCell>UAC Metadata</TableCell>
+                    <TableCell>EQ Launched</TableCell>
+                    <TableCell>Receipt Received</TableCell>
                     <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>

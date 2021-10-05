@@ -10,4 +10,6 @@ public class UacQidLinkDto {
   private OffsetDateTime createdAt;
   private OffsetDateTime lastUpdatedAt;
   private Object uacMetadata;
+  private boolean receiptReceived = false;
+  private boolean eqLaunched = false;
 }

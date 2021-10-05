@@ -25,8 +25,31 @@ class SmsFulfilment extends Component {
     newSmsUacQidMetadata: "",
   };
 
+  componentDidMount() {
+    this.getAuthorisedBackendData();
+  }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend(authorisedActivities);
+  };
+
+  getAuthorisedActivities = async () => {
+    const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return;
+    }
+
+    const authJson = await response.json();
+
+    this.setState({ authorisedActivities: authJson });
+
+    return authJson;
+  };
+
   openDialog = () => {
-    this.refreshDataFromBackend();
     this.setState({
       showDialog: true,
     });
@@ -50,8 +73,17 @@ class SmsFulfilment extends Component {
       phoneNumber: event.target.value,
     });
   };
-  refreshDataFromBackend = async () => {
+
+  refreshDataFromBackend = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
+      )
+    )
+      return;
+
     const fulfilmentPrintTemplates = await getSmsFulfilmentTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
 
@@ -59,6 +91,7 @@ class SmsFulfilment extends Component {
       allowableSmsFulfilmentTemplates: fulfilmentPrintTemplates,
     });
   };
+
   onSmsTemplateChange = (event) => {
     this.setState({ packCode: event.target.value });
   };

@@ -22,8 +22,31 @@ class PrintFulfilment extends Component {
     newPrintUacQidMetadata: "",
   };
 
+  componentDidMount() {
+    this.getAuthorisedBackendData();
+  }
+
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.refreshDataFromBackend(authorisedActivities);
+  };
+
+  getAuthorisedActivities = async () => {
+    const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return;
+    }
+
+    const authJson = await response.json();
+
+    this.setState({ authorisedActivities: authJson });
+
+    return authJson;
+  };
+
   openDialog = () => {
-    this.refreshDataFromBackend();
     this.setState({
       showDialog: true,
     });
@@ -95,8 +118,16 @@ class PrintFulfilment extends Component {
   };
 
   // TODO: Need to handle errors from Promises
-  refreshDataFromBackend = async () => {
+  refreshDataFromBackend = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
+      )
+    )
+      return;
+
     const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
+      authorisedActivities,
       this.props.surveyId
     );
 

@@ -39,20 +39,29 @@ class GroupDetails extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getGroup();
-    this.getAllActivities();
-    this.getAllSurveys();
-    this.getUserGroupPermissions();
-
-    this.interval = setInterval(() => this.getUserGroupPermissions(), 1000);
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  getGroup = async () => {
+  getAuthorisedBackendData = async () => {
+    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getGroup(authorisedActivities);
+    this.getAllActivities();
+    this.getAllSurveys(authorisedActivities);
+    this.getUserGroupPermissions(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.getUserGroupPermissions(authorisedActivities),
+      1000
+    );
+  };
+
+  getGroup = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const groupResponse = await fetch(`/api/userGroups/${this.props.groupId}`);
 
     const groupJson = await groupResponse.json();
@@ -62,7 +71,9 @@ class GroupDetails extends Component {
     });
   };
 
-  getUserGroupPermissions = async () => {
+  getUserGroupPermissions = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("SUPER_USER")) return;
+
     const permissionsResponse = await fetch(
       `/api/userGroupPermissions/?groupId=${this.props.groupId}`
     );
@@ -87,9 +98,12 @@ class GroupDetails extends Component {
       authorisedActivities: authorisedActivities,
       isLoading: false,
     });
+
+    return authorisedActivities;
   };
 
   getAllActivities = async () => {
+    // This is not an RBAC protected endpoint
     const activitiesResponse = await fetch("/api/authorisedActivityTypes");
     const activitiesJson = await activitiesResponse.json();
 
@@ -98,7 +112,9 @@ class GroupDetails extends Component {
     });
   };
 
-  getAllSurveys = async () => {
+  getAllSurveys = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_SURVEYS")) return;
+
     const surveysResponse = await fetch("/api/surveys");
     const surveysJson = await surveysResponse.json();
 
