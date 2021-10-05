@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -191,6 +192,8 @@ public class JobEndpoint {
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
       job.setJobStatus(JobStatus.PROCESSING_IN_PROGRESS);
+      job.setProcessedBy(userEmail);
+      job.setProcessedAt(OffsetDateTime.now());
       jobRepository.saveAndFlush(job);
     } else {
       throw new ResponseStatusException(
@@ -210,6 +213,8 @@ public class JobEndpoint {
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
       job.setJobStatus(JobStatus.CANCELLED);
+      job.setCancelledBy(userEmail);
+      job.setCancelledAt(OffsetDateTime.now());
       jobRepository.saveAndFlush(job);
 
       jobRowRepository.deleteByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
@@ -275,6 +280,10 @@ public class JobEndpoint {
     jobDto.setProcessedRowCount(job.getProcessingRowNumber());
     jobDto.setRowErrorCount(job.getErrorRowCount());
     jobDto.setFatalErrorDescription(job.getFatalErrorDescription());
+    jobDto.setProcessedBy(job.getProcessedBy());
+    jobDto.setProcessedAt(job.getProcessedAt());
+    jobDto.setCancelledBy(job.getCancelledBy());
+    jobDto.setCancelledAt(job.getCancelledAt());
     return jobDto;
   }
 }
