@@ -60,8 +60,7 @@ public class RowChunkProcessor {
 
         ListenableFuture<String> future =
             pubSubTemplate.publish(
-                topic,
-                TRANSFORMER.transformRow(jobRow.getRowData(), job, columnValidators, newCaseTopic));
+                topic, TRANSFORMER.transformRow(job, jobRow, columnValidators, newCaseTopic));
 
         // Wait for up to 30 seconds to confirm that message was published
         future.get(30, TimeUnit.SECONDS);
