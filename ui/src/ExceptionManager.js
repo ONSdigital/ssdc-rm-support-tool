@@ -24,7 +24,9 @@ class ExceptionManager extends Component {
     peekResult: "",
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.getAuthorisedBackendData();
+  }
 
   componentWillUnmount() {
     clearInterval(this.interval);
