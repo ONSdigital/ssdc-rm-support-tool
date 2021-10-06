@@ -28,3 +28,6 @@ format-ui:
 	$(MAKE) -C ui format
 
 format: format-mvn format-ui
+
+package-audit-ui:
+	$(MAKE) -C ui package-audit
