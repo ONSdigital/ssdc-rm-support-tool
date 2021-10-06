@@ -51,7 +51,8 @@
     "rules": [
       {
         "className": "uk.gov.ons.ssdc.common.validation.RegexRule",
-        "expression": "^07[0-9]{9}$"
+        "expression": "^07[0-9]{9}$",
+        "userFriendlyError": "Invalid UK mobile phone number"
       }
     ]
   }
