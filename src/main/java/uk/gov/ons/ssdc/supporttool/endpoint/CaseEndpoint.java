@@ -81,7 +81,7 @@ public class CaseEndpoint {
       UacQidLinkDto uacQidLinkDto = new UacQidLinkDto();
       uacQidLinkDto.setQid(uacQidLink.getQid());
       uacQidLinkDto.setActive(uacQidLink.isActive());
-      uacQidLinkDto.setUacMetadata(uacQidLink.getUacMetadata());
+      uacQidLinkDto.setMetadata(uacQidLink.getMetadata());
       uacQidLinkDto.setCreatedAt(uacQidLink.getCreatedAt());
       uacQidLinkDto.setLastUpdatedAt(uacQidLink.getLastUpdatedAt());
       uacQidLinkDto.setReceiptReceived(uacQidLink.isReceiptReceived());

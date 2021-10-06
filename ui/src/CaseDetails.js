@@ -152,7 +152,7 @@ class CaseDetails extends Component {
           {JSON.stringify(uacQidLink.metadata)}
         </TableCell>
         <TableCell component="th" scope="row">
-        {uacQidLink.eqLaunched ? "Yes" : "No"}
+          {uacQidLink.eqLaunched ? "Yes" : "No"}
         </TableCell>
         <TableCell component="th" scope="row">
           {uacQidLink.receiptReceived ? "Yes" : "No"}
