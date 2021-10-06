@@ -25,7 +25,7 @@ class ExceptionManager extends Component {
   };
 
   componentDidMount() {
-    this.getAuthorisedBackendData()
+    this.getAuthorisedBackendData();
   }
 
   componentWillUnmount() {
