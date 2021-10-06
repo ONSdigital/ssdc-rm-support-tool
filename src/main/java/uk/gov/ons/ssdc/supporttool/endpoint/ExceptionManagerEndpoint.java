@@ -27,7 +27,7 @@ public class ExceptionManagerEndpoint {
   @GetMapping(value = "/badMessagesSummary", produces = "application/json")
   public ResponseEntity<String> getBadMessagesSummary(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);  // TODO: EXCEPTION_MANAGER_VIEWER
 
     return new ResponseEntity<>(exceptionManagerClient.getBadMessagesSummary(), HttpStatus.OK);
   }
