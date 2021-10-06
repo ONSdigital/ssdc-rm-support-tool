@@ -3,3 +3,6 @@ format:
 
 format-check:
 	npx prettier --check .
+
+package-audit:
+	npm audit --production

@@ -6,6 +6,7 @@ jobs:
   include:
     - language: java
       jdk: openjdk11
+      name: Java Service Build
 
       before_install:
         - make format-check-mvn
@@ -26,9 +27,11 @@ jobs:
 
     - language: node_js
       node_js: 14
+      name: UI Checks
 
       before_install:
         - make format-check-ui
+        - make package-audit-ui
 
       script: echo "SKIPPING DEFAULT SCRIPT" # Travis has a default node script step we do not want to run
 
