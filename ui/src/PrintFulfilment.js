@@ -52,7 +52,6 @@ class PrintFulfilment extends Component {
   closeDialog = () => {
     this.setState({
       packCode: "",
-      allowableFulfilmentPrintTemplates: [],
       packCodeValidationError: false,
       showDialog: false,
     });
