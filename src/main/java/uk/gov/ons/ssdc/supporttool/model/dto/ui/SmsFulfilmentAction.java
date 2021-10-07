@@ -6,4 +6,5 @@ import lombok.Data;
 public class SmsFulfilmentAction {
   private String packCode;
   private String phoneNumber;
+  private Object uacMetadata;
 }

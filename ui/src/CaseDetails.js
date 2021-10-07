@@ -149,6 +149,9 @@ class CaseDetails extends Component {
           {uacQidLink.active ? "Yes" : "No"}
         </TableCell>
         <TableCell component="th" scope="row">
+          {JSON.stringify(uacQidLink.metadata)}
+        </TableCell>
+        <TableCell component="th" scope="row">
           {uacQidLink.eqLaunched ? "Yes" : "No"}
         </TableCell>
         <TableCell component="th" scope="row">
@@ -265,6 +268,7 @@ class CaseDetails extends Component {
                     <TableCell>Created At</TableCell>
                     <TableCell>Last Updated At</TableCell>
                     <TableCell>Active</TableCell>
+                    <TableCell>UAC Metadata</TableCell>
                     <TableCell>EQ Launched</TableCell>
                     <TableCell>Receipt Received</TableCell>
                     <TableCell>Action</TableCell>
