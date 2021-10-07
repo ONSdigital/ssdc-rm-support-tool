@@ -56,7 +56,6 @@ class SmsFulfilment extends Component {
   closeDialog = () => {
     this.setState({
       packCode: "",
-      allowableSmsFulfilmentTemplates: [],
       packCodeValidationError: false,
       showDialog: false,
       newValueValidationError: "",
