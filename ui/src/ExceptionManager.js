@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import {
-  Typography,
-  Paper,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
-  CircularProgress,
+  DialogContentText,
+  DialogTitle,
+  Paper,
+  Typography
 } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -21,6 +23,7 @@ class ExceptionManager extends Component {
     exceptions: [],
     exceptionDetails: null,
     showPeekDialog: false,
+    showQuarantineDialog: false,
     peekResult: "",
   };
 
@@ -102,13 +105,28 @@ class ExceptionManager extends Component {
     this.setState({ showPeekDialog: false });
   };
 
-  onQuarantine = async () => {
+  openQuarantineDialog = () => {
+    this.setState({
+      showQuarantineDialog: true,
+    })
+  };
+
+  closeQuarantineDialog = () => {
+    this.setState({
+      showQuarantineDialog: false,
+    })
+  };
+
+  quarantineMessage = async () => {
     const response = await fetch(
       `/api/exceptionManager/skipMessage/${this.state.exceptionDetails[0].exceptionReport.messageHash}`
     );
 
     if (response.ok) {
-      this.setState({ exceptionDetails: null });
+      this.setState({
+        exceptionDetails: null,
+      })
+      this.closeQuarantineDialog();
     }
   };
 
@@ -191,6 +209,7 @@ class ExceptionManager extends Component {
             <DialogContent style={{ padding: 30 }}>
               <div>{exceptionDetailsSections}</div>
               <div>
+                {this.state.authorisedActivities.includes("EXCEPTION_MANAGER_PEEK") && (
                 <Button
                   onClick={this.onPeek}
                   variant="contained"
@@ -198,13 +217,16 @@ class ExceptionManager extends Component {
                 >
                   Peek
                 </Button>
+                )}
+                {this.state.authorisedActivities.includes("EXCEPTION_MANAGER_QUARANTINE") && (
                 <Button
-                  onClick={this.onQuarantine}
+                  onClick={this.openQuarantineDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
                   Quarantine
                 </Button>
+                )}
                 <Button
                   onClick={this.closeDetailsDialog}
                   variant="contained"
@@ -231,6 +253,31 @@ class ExceptionManager extends Component {
                 </Button>
               </div>
             </DialogContent>
+          </Dialog>
+        )}
+        {this.state.showQuarantineDialog && (
+          <Dialog open={this.state.showQuarantineDialog}>
+            <DialogTitle id="alert-dialog-title">
+              {"Confirm quarantine?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to quarantine this message?
+              </DialogContentText>
+            </DialogContent>
+            <div align="center">
+              <Button onClick={this.quarantineMessage} variant="contained" style={{ margin: 10 }}>
+                Yes
+              </Button>
+              <Button
+                onClick={this.closeQuarantineDialog}
+                variant="contained"
+                autoFocus
+                style={{ margin: 10 }}
+              >
+                No
+              </Button>
+            </div>
           </Dialog>
         )}
       </div>
