@@ -96,6 +96,7 @@ public class ActionRuleEndpoint {
                   actionRuleDTO.setPhoneNumberColumn(actionRule.getPhoneNumberColumn());
                   actionRuleDTO.setTriggerDateTime(actionRule.getTriggerDateTime());
                   actionRuleDTO.setHasTriggered(actionRule.isHasTriggered());
+                  actionRuleDTO.setUacMetadata(actionRule.getUacMetadata());
                   return actionRuleDTO;
                 })
             .collect(Collectors.toList());
@@ -172,6 +173,7 @@ public class ActionRuleEndpoint {
     actionRule.setCreatedBy(createdBy);
     actionRule.setSmsTemplate(smsTemplate);
     actionRule.setPhoneNumberColumn(actionRuleDTO.getPhoneNumberColumn());
+    actionRule.setUacMetadata(actionRuleDTO.getUacMetadata());
 
     actionRuleRepository.saveAndFlush(actionRule);
 
