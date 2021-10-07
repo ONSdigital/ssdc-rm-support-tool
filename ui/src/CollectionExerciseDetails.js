@@ -407,29 +407,34 @@ class CollectionExerciseDetails extends Component {
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Collection Exercise Details - {this.state.collectionExerciseName}
         </Typography>
+        {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              Action Rules
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Trigger date</TableCell>
+                    <TableCell>Has triggered?</TableCell>
+                    <TableCell>UAC Metadata</TableCell>
+                    <TableCell>Classifiers</TableCell>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{actionRuleTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
         {allowedActionRuleTypeMenuItems.length > 0 && (
-          <div style={{ marginTop: 20 }}>
+          <div style={{ marginTop: 10 }}>
             <Button variant="contained" onClick={this.openDialog}>
               Create Action Rule
             </Button>
           </div>
-        )}
-        {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Trigger date</TableCell>
-                  <TableCell>Has triggered?</TableCell>
-                  <TableCell>UAC Metadata</TableCell>
-                  <TableCell>Classifiers</TableCell>
-                  <TableCell>Pack Code</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{actionRuleTableRows}</TableBody>
-            </Table>
-          </TableContainer>
         )}
         {(this.state.authorisedActivities.includes("LOAD_SAMPLE") ||
           this.state.authorisedActivities.includes(
