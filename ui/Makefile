@@ -5,4 +5,7 @@ format-check:
 	npx prettier --check .
 
 package-audit:
-	npm audit --production
+	npx audit-ci --moderate --skip-dev
+
+package-audit-dev:
+	npx audit-ci --moderate
