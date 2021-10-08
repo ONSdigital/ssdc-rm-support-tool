@@ -180,6 +180,27 @@ class SampleUpload extends Component {
 
     return (
       <div style={{ marginTop: 20 }}>
+        {this.props.authorisedActivities.includes(
+          "VIEW_SAMPLE_LOAD_PROGRESS"
+        ) && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              Uploaded Sample Files
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>File Name</TableCell>
+                    <TableCell>Date Uploaded</TableCell>
+                    <TableCell align="right">Status</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{jobTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
         {this.props.authorisedActivities.includes("LOAD_SAMPLE") && (
           <>
             <input
@@ -192,27 +213,15 @@ class SampleUpload extends Component {
               }}
             />
             <label htmlFor="contained-button-file">
-              <Button variant="contained" component="span">
+              <Button
+                variant="contained"
+                component="span"
+                style={{ marginTop: 10 }}
+              >
                 Upload Sample File
               </Button>
             </label>
           </>
-        )}
-        {this.props.authorisedActivities.includes(
-          "VIEW_SAMPLE_LOAD_PROGRESS"
-        ) && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>File Name</TableCell>
-                  <TableCell>Date Uploaded</TableCell>
-                  <TableCell align="right">Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{jobTableRows}</TableBody>
-            </Table>
-          </TableContainer>
         )}
         <Dialog open={this.state.uploadInProgress}>
           <DialogContent style={{ padding: 30 }}>
