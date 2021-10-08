@@ -5,7 +5,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,7 +12,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,7 +26,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 import uk.gov.ons.ssdc.supporttool.testhelper.IntegrationTestHelper;
 
 @ExtendWith(SpringExtension.class)
@@ -38,7 +34,8 @@ import uk.gov.ons.ssdc.supporttool.testhelper.IntegrationTestHelper;
 class ExceptionManagerEndpointIT {
 
   private static final String BAD_MESSAGE_DETAILS_ENDPOINT = "api/exceptionManager/badMessage";
-  private static final String BAD_MESSAGES_SUMMARY_ENDPOINT = "api/exceptionManager/badMessagesSummary";
+  private static final String BAD_MESSAGES_SUMMARY_ENDPOINT =
+      "api/exceptionManager/badMessagesSummary";
   private static final String PEEK_MESSAGE_ENDPOINT = "api/exceptionManager/peekMessage";
   private static final String QUARANTINE_MESSAGE_ENDPOINT = "api/exceptionManager/skipMessage";
   private static final String BAD_MESSAGE_DETAILS_API_ENDPOINT = "/badmessage";
@@ -73,7 +70,8 @@ class ExceptionManagerEndpointIT {
   @Test
   void testGetBadMessagesSummary() throws JsonProcessingException {
     // Given
-    integrationTestHelper.setUpTestUserPermission(UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
+    integrationTestHelper.setUpTestUserPermission(
+        UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
     // Stub the Exception Manager API endpoint
     String exceptionManagerApiResponse = "[{\"test\":\"test\"}]";
@@ -103,11 +101,13 @@ class ExceptionManagerEndpointIT {
   @Test
   void testGetBadMessageDetails() throws JsonProcessingException {
     // Given
-    integrationTestHelper.setUpTestUserPermission(UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
+    integrationTestHelper.setUpTestUserPermission(
+        UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
     // Stub the Exception Manager API endpoint
     String exceptionManagerApiResponse = "[{\"test\":\"test\"}]";
-    String exceptionManagerApiMessageDetailUrl = String.format("%s/%s", BAD_MESSAGE_DETAILS_API_ENDPOINT, TEST_MESSAGE_HASH);
+    String exceptionManagerApiMessageDetailUrl =
+        String.format("%s/%s", BAD_MESSAGE_DETAILS_API_ENDPOINT, TEST_MESSAGE_HASH);
     wireMockServer.stubFor(
         WireMock.get(WireMock.urlEqualTo(exceptionManagerApiMessageDetailUrl))
             .willReturn(
@@ -117,7 +117,9 @@ class ExceptionManagerEndpointIT {
                     .withHeader("Content-Type", "application/json")));
 
     RestTemplate restTemplate = new RestTemplate();
-    String url = String.format("http://localhost:%s/%s/%s", port, BAD_MESSAGE_DETAILS_ENDPOINT, TEST_MESSAGE_HASH);
+    String url =
+        String.format(
+            "http://localhost:%s/%s/%s", port, BAD_MESSAGE_DETAILS_ENDPOINT, TEST_MESSAGE_HASH);
 
     // When
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -134,11 +136,13 @@ class ExceptionManagerEndpointIT {
   @Test
   void testPeekMessage() {
     // Given
-    integrationTestHelper.setUpTestUserPermission(UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_PEEK);
+    integrationTestHelper.setUpTestUserPermission(
+        UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_PEEK);
 
     // Stub the Exception Manager API endpoint
     String exceptionManagerApiResponse = "test";
-    String exceptionManagerApiMessagePeekUrl = String.format("%s/%s", PEEK_MESSAGE_ENDPOINT_API_ENDPOINT, TEST_MESSAGE_HASH);
+    String exceptionManagerApiMessagePeekUrl =
+        String.format("%s/%s", PEEK_MESSAGE_ENDPOINT_API_ENDPOINT, TEST_MESSAGE_HASH);
     wireMockServer.stubFor(
         WireMock.get(WireMock.urlEqualTo(exceptionManagerApiMessagePeekUrl))
             .willReturn(
@@ -148,7 +152,8 @@ class ExceptionManagerEndpointIT {
                     .withHeader("Content-Type", "application/json")));
 
     RestTemplate restTemplate = new RestTemplate();
-    String url = String.format("http://localhost:%s/%s/%s", port, PEEK_MESSAGE_ENDPOINT, TEST_MESSAGE_HASH);
+    String url =
+        String.format("http://localhost:%s/%s/%s", port, PEEK_MESSAGE_ENDPOINT, TEST_MESSAGE_HASH);
 
     // When
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -165,17 +170,18 @@ class ExceptionManagerEndpointIT {
   @Test
   void testQuarantineMessage() {
     // Given
-    integrationTestHelper.setUpTestUserPermission(UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_QUARANTINE);
+    integrationTestHelper.setUpTestUserPermission(
+        UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_QUARANTINE);
 
     // Stub the Exception Manager API endpoint
     wireMockServer.stubFor(
         WireMock.post(WireMock.urlEqualTo(QUARANTINE_MESSAGE_ENDPOINT_API_ENDPOINT))
-            .willReturn(
-                WireMock.aResponse()
-                    .withStatus(200)));
+            .willReturn(WireMock.aResponse().withStatus(200)));
 
     RestTemplate restTemplate = new RestTemplate();
-    String url = String.format("http://localhost:%s/%s/%s", port, QUARANTINE_MESSAGE_ENDPOINT, TEST_MESSAGE_HASH);
+    String url =
+        String.format(
+            "http://localhost:%s/%s/%s", port, QUARANTINE_MESSAGE_ENDPOINT, TEST_MESSAGE_HASH);
 
     // When
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -186,4 +192,3 @@ class ExceptionManagerEndpointIT {
     verify(postRequestedFor(urlEqualTo(QUARANTINE_MESSAGE_ENDPOINT_API_ENDPOINT)));
   }
 }
-
