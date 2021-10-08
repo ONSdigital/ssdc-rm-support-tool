@@ -494,25 +494,54 @@ class SurveyDetails extends Component {
           </div>
         )}
         {this.state.authorisedActivities.includes(
+          "LIST_COLLECTION_EXERCISES"
+        ) && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              Collection Exercises
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Collection Exercise Name</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{collectionExerciseTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
+        {this.state.authorisedActivities.includes(
           "CREATE_COLLECTION_EXERCISE"
         ) && (
-          <Button variant="contained" onClick={this.openDialog}>
+          <Button
+            variant="contained"
+            onClick={this.openDialog}
+            style={{ marginTop: 10 }}
+          >
             Create Collection Exercise
           </Button>
         )}
+
         {this.state.authorisedActivities.includes(
-          "LIST_COLLECTION_EXERCISES"
+          "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
         ) && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Collection Exercise Name</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{collectionExerciseTableRows}</TableBody>
-            </Table>
-          </TableContainer>
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              Print Templates Allowed on Action Rules
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{actionRulePrintTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
         )}
         {this.state.authorisedActivities.includes(
           "ALLOW_PRINT_TEMPLATE_ON_ACTION_RULE"
@@ -520,24 +549,30 @@ class SurveyDetails extends Component {
           <Button
             variant="contained"
             onClick={this.openActionRulePrintTemplateDialog}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 10 }}
           >
             Allow Print Template on Action Rule
           </Button>
         )}
+
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+          "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES"
         ) && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pack Code</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{actionRulePrintTemplateTableRows}</TableBody>
-            </Table>
-          </TableContainer>
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              SMS Templates Allowed on Action Rules
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{actionRuleSmsTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
         )}
         {this.state.authorisedActivities.includes(
           "ALLOW_SMS_TEMPLATE_ON_ACTION_RULE"
@@ -545,24 +580,30 @@ class SurveyDetails extends Component {
           <Button
             variant="contained"
             onClick={this.openActionRuleSmsTemplateDialog}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 10 }}
           >
             Allow SMS Template on Action Rule
           </Button>
         )}
+
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES"
+          "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
         ) && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pack Code</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{actionRuleSmsTemplateTableRows}</TableBody>
-            </Table>
-          </TableContainer>
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              Print Templates Allowed on Fulfilments
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{fulfilmentPrintTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
         )}
         {this.state.authorisedActivities.includes(
           "ALLOW_PRINT_TEMPLATE_ON_FULFILMENT"
@@ -570,24 +611,30 @@ class SurveyDetails extends Component {
           <Button
             variant="contained"
             onClick={this.openFulfilmentPrintTemplateDialog}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 10 }}
           >
             Allow Print Template on Fulfilment
           </Button>
         )}
+
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
+          "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
         ) && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pack Code</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{fulfilmentPrintTemplateTableRows}</TableBody>
-            </Table>
-          </TableContainer>
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              SMS Templates Allowed on Fulfilments
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{smsFulfilmentTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
         )}
         {this.state.authorisedActivities.includes(
           "ALLOW_SMS_TEMPLATE_ON_FULFILMENT"
@@ -595,25 +642,12 @@ class SurveyDetails extends Component {
           <Button
             variant="contained"
             onClick={this.openSmsFulfilmentTemplateDialog}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 10 }}
           >
             Allow SMS Template on Fulfilment
           </Button>
         )}
-        {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
-        ) && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pack Code</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{smsFulfilmentTemplateTableRows}</TableBody>
-            </Table>
-          </TableContainer>
-        )}
+
         <Dialog open={this.state.createCollectionExerciseDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
