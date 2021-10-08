@@ -28,7 +28,11 @@ class LandingPage extends Component {
     validationError: false,
     newSurveyName: "",
     validationRulesValidationError: false,
+    sampleDefinitionUrlError: false,
+    surveyMetadataError: false,
     newSurveyValidationRules: "",
+    newSurveySampleDefintionUrl: "",
+    newSurveyMetadata: "",
     printTemplates: [],
     smsTemplates: [],
     createPrintTemplateDialogDisplayed: false,
@@ -167,6 +171,10 @@ class LandingPage extends Component {
       createSurveyDialogDisplayed: true,
       newSurveyHeaderRow: true,
       newSurveySampleSeparator: ",",
+      sampleDefinitionUrlError: false,
+      surveyMetadataError: false,
+      newSurveySampleDefintionUrl: "",
+      newSurveyMetadata: "",
     });
   };
 
@@ -235,6 +243,22 @@ class LandingPage extends Component {
     });
   };
 
+  onNewSurveySampleDefinitionUrlChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+    this.setState({
+      sampleDefinitionUrlError: resetValidation,
+      newSurveySampleDefintionUrl: event.target.value,
+    });
+  };
+
+  onNewSurveyMetadataChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+    this.setState({
+      surveyMetadataError: resetValidation,
+      newSurveyMetadata: event.target.value,
+    });
+  };
+
   onNewSurveyHeaderRowChange = (event) => {
     this.setState({ newSurveyHeaderRow: event.target.value });
   };
@@ -267,6 +291,27 @@ class LandingPage extends Component {
       }
     }
 
+    if (!this.state.newSurveySampleDefintionUrl.trim()) {
+      this.setState({ sampleDefinitionUrlError: true });
+      validationFailed = true;
+    }
+
+    let metadataJson = null;
+    if (this.state.newSurveyMetadata.length > 0) {
+      try {
+        const parsedJson = JSON.parse(this.state.newSurveyMetadata);
+        if (Object.keys(parsedJson).length === 0) {
+          this.setState({ surveyMetadataError: true });
+          validationFailed = true;
+        } else {
+          metadataJson = JSON.parse(this.state.newSurveyMetadata);
+        }
+      } catch (err) {
+        this.setState({ surveyMetadataError: true });
+        validationFailed = true;
+      }
+    }
+
     if (validationFailed) {
       return;
     }
@@ -276,6 +321,8 @@ class LandingPage extends Component {
       sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules),
       sampleWithHeaderRow: this.state.newSurveyHeaderRow,
       sampleSeparator: this.state.newSurveySampleSeparator,
+      sampleDefinitionUrl: this.state.newSurveySampleDefintionUrl,
+      metadata: metadataJson,
     };
 
     await fetch("/api/surveys", {
@@ -469,6 +516,14 @@ class LandingPage extends Component {
         <TableCell component="th" scope="row">
           <Link to={`/survey?surveyId=${survey.id}`}>{survey.name}</Link>
         </TableCell>
+        <TableCell component="th" scope="row">
+          <a href={survey.sampleDefinitionUrl} target="_blank" rel="noreferrer">
+            {survey.sampleDefinitionUrl}
+          </a>
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(survey.metadata)}
+        </TableCell>
       </TableRow>
     ));
 
@@ -516,7 +571,9 @@ class LandingPage extends Component {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Survey Name</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Sample Definition URL</TableCell>
+                    <TableCell>Metadata</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{surveyTableRows}</TableBody>
@@ -653,6 +710,7 @@ class LandingPage extends Component {
                   >
                     <MenuItem value={","}>Comma</MenuItem>
                     <MenuItem value={":"}>Colon</MenuItem>
+                    <MenuItem value={"|"}>Pipe</MenuItem>
                   </Select>
                 </FormControl>
                 <TextField
@@ -665,6 +723,27 @@ class LandingPage extends Component {
                   label="Validation rules"
                   onChange={this.onNewSurveyValidationRulesChange}
                   value={this.state.newSurveyValidationRules}
+                />
+                <TextField
+                  style={{ marginTop: 10 }}
+                  required
+                  multiline
+                  fullWidth={true}
+                  error={this.state.sampleDefinitionUrlError}
+                  id="standard-required"
+                  label="Survey Definition URL"
+                  onChange={this.onNewSurveySampleDefinitionUrlChange}
+                  value={this.state.newSurveySampleDefintionUrl}
+                />
+                <TextField
+                  style={{ marginTop: 10 }}
+                  multiline
+                  fullWidth={true}
+                  error={this.state.surveyMetadataError}
+                  id="standard-required"
+                  label="Metadata"
+                  onChange={this.onNewSurveyMetadataChange}
+                  value={this.state.newSurveyMetadata}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
