@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class PrintFulfilment {
   private String packCode;
+  private Object uacMetadata;
 }

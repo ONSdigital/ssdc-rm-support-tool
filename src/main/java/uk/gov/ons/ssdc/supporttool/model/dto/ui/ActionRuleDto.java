@@ -20,5 +20,7 @@ public class ActionRuleDto {
 
   private String phoneNumberColumn;
 
+  private Object uacMetadata;
+
   private boolean hasTriggered;
 }

@@ -10,6 +10,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Typography,
 } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -506,70 +507,91 @@ class LandingPage extends Component {
 
     return (
       <div style={{ padding: 20 }}>
+        {this.state.authorisedActivities.includes("LIST_SURVEYS") && (
+          <>
+            <Typography variant="h6" color="inherit">
+              Surveys
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Survey Name</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{surveyTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
         {this.state.authorisedActivities.includes("CREATE_SURVEY") && (
-          <Button variant="contained" onClick={this.openDialog}>
+          <Button
+            variant="contained"
+            onClick={this.openDialog}
+            style={{ marginTop: 10 }}
+          >
             Create Survey
           </Button>
         )}
-        {this.state.authorisedActivities.includes("LIST_SURVEYS") && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Survey Name</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{surveyTableRows}</TableBody>
-            </Table>
-          </TableContainer>
+
+        {this.state.authorisedActivities.includes("LIST_PRINT_TEMPLATES") && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              Print Templates
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                    <TableCell>Print Supplier</TableCell>
+                    <TableCell>Template</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{printTemplateRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
         )}
         {this.state.authorisedActivities.includes("CREATE_PRINT_TEMPLATE") && (
           <Button
             variant="contained"
             onClick={this.openPrintTemplateDialog}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 10 }}
           >
             Create Print Template
           </Button>
         )}
-        {this.state.authorisedActivities.includes("LIST_PRINT_TEMPLATES") && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pack Code</TableCell>
-                  <TableCell>Print Supplier</TableCell>
-                  <TableCell>Template</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{printTemplateRows}</TableBody>
-            </Table>
-          </TableContainer>
-        )}
 
+        {this.state.authorisedActivities.includes("LIST_SMS_TEMPLATES") && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              SMS Templates
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                    <TableCell>Template</TableCell>
+                    <TableCell>Gov Notify Template ID</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{smsTemplateRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
         {this.state.authorisedActivities.includes("CREATE_SMS_TEMPLATE") && (
           <Button
             variant="contained"
             onClick={this.openSmsTemplateDialog}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 10 }}
           >
             Create sms Template
           </Button>
         )}
-        {this.state.authorisedActivities.includes("LIST_SMS_TEMPLATES") && (
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pack Code</TableCell>
-                  <TableCell>Template</TableCell>
-                  <TableCell>Gov Notify Template ID</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{smsTemplateRows}</TableBody>
-            </Table>
-          </TableContainer>
-        )}
+
         {this.state.authorisedActivities.includes(
           "CONFIGURE_FULFILMENT_TRIGGER"
         ) && (
