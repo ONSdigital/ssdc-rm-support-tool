@@ -42,7 +42,8 @@
     ]
   },
   "devDependencies": {
-    "react-scripts": "4.0.3",
-    "prettier": "2.3.2"
+    "audit-ci": "^4.1.0",
+    "prettier": "2.3.2",
+    "react-scripts": "4.0.3"
   }
 }
