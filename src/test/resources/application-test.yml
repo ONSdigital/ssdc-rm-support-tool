@@ -8,6 +8,13 @@ spring:
         emulator-host: localhost:18538
         project-id: our-project
 
+# for wiremock server
+exception-manager:
+  connection:
+    host: localhost
+    port: 8667
+    scheme: http
+
 queueconfig:
   shared-pubsub-project: shared-project
 

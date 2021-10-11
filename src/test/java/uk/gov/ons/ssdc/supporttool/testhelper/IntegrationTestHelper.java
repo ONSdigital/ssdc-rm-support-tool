@@ -256,7 +256,7 @@ public class IntegrationTestHelper {
     userRepository.deleteAllInBatch();
   }
 
-  private void setUpTestUserPermission(UserGroupAuthorisedActivityType authorisedActivity) {
+  public void setUpTestUserPermission(UserGroupAuthorisedActivityType authorisedActivity) {
     deleteAllPermissions();
 
     User user = new User();

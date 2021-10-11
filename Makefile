@@ -30,4 +30,4 @@ format-ui:
 format: format-mvn format-ui
 
 package-audit-ui:
-	$(MAKE) -C ui package-audit || true   # Prevent non-zero exit temporarily vuln https://github.com/advisories/GHSA-8p5q-j9m2-g8wr
+	$(MAKE) -C ui package-audit

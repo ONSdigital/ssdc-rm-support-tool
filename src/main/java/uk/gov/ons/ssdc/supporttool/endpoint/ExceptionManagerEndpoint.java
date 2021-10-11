@@ -27,7 +27,8 @@ public class ExceptionManagerEndpoint {
   @GetMapping(value = "/badMessagesSummary", produces = "application/json")
   public ResponseEntity<String> getBadMessagesSummary(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    userIdentity.checkGlobalUserPermission(
+        userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
     return new ResponseEntity<>(exceptionManagerClient.getBadMessagesSummary(), HttpStatus.OK);
   }
@@ -36,7 +37,8 @@ public class ExceptionManagerEndpoint {
   public ResponseEntity<String> getBadMessageDetails(
       @PathVariable("messageHash") String messageHash,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    userIdentity.checkGlobalUserPermission(
+        userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
     return new ResponseEntity<>(
         exceptionManagerClient.getBadMessageDetails(messageHash), HttpStatus.OK);
@@ -46,7 +48,8 @@ public class ExceptionManagerEndpoint {
   public ResponseEntity<String> peekMessage(
       @PathVariable("messageHash") String messageHash,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    userIdentity.checkGlobalUserPermission(
+        userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_PEEK);
 
     return new ResponseEntity<>(exceptionManagerClient.peekMessage(messageHash), HttpStatus.OK);
   }
@@ -55,7 +58,8 @@ public class ExceptionManagerEndpoint {
   public ResponseEntity<Void> skipMessage(
       @PathVariable("messageHash") String messageHash,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    userIdentity.checkGlobalUserPermission(
+        userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_QUARANTINE);
 
     SkipMessageRequest skipMessageRequest = new SkipMessageRequest();
     skipMessageRequest.setMessageHash(messageHash);
