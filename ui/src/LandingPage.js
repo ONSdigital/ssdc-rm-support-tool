@@ -612,7 +612,9 @@ class LandingPage extends Component {
             </div>
           </>
         )}
-        {this.state.authorisedActivities.includes("EXCEPTION_MANAGER_VIEWER") && (
+        {this.state.authorisedActivities.includes(
+          "EXCEPTION_MANAGER_VIEWER"
+        ) && (
           <>
             <div style={{ marginTop: 20 }}>
               <Link to="/exceptionManager">Exception Manager</Link>
