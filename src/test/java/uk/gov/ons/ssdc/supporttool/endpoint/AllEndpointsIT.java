@@ -315,6 +315,7 @@ public class AllEndpointsIT {
           surveyDto.setSampleSeparator(',');
           surveyDto.setSampleValidationRules(
               new ColumnValidator[] {new ColumnValidator("foo", false, new Rule[] {})});
+          surveyDto.setSampleDefinitionUrl("http://foo.bar");
           return surveyDto;
         });
   }

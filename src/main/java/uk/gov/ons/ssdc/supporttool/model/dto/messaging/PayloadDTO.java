@@ -13,5 +13,6 @@ public class PayloadDTO {
   private PrintFulfilmentDTO printFulfilment;
   private UpdateSampleSensitive updateSampleSensitive;
   private NewCase newCase;
+  private SurveyUpdateDto surveyUpdate;
   private CollectionExerciseUpdateDTO collectionExerciseUpdate;
 }

@@ -160,6 +160,7 @@ public class IntegrationTestHelper {
           new ColumnValidator("testPhoneNumber", true, new Rule[] {})
         });
     survey.setSampleSeparator(',');
+    survey.setSampleDefinitionUrl("http://foo.bar");
     survey = surveyRepository.saveAndFlush(survey);
 
     CollectionExercise collectionExercise = new CollectionExercise();
