@@ -1,10 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
@@ -52,6 +54,12 @@ public class AllEndpointsIT {
   @Autowired private IntegrationTestHelper integrationTestHelper;
 
   @LocalServerPort private int port;
+
+  private static final Map<String, String> TEST_COLLECTION_EXERCISE_METADATA =
+      Map.of("TEST_COLLECTION_EXERCISE_METADATA", "TEST");
+
+  @Value("${queueconfig.collection-exercise-update-event-topic}")
+  private String collectionExerciseUpdateEventTopic;
 
   @Test
   public void testActionRuleEndpoints() {
@@ -192,6 +200,10 @@ public class AllEndpointsIT {
           CollectionExerciseDto collectionExerciseDto = new CollectionExerciseDto();
           collectionExerciseDto.setSurveyId(bundle.getSurveyId());
           collectionExerciseDto.setName("Test");
+          collectionExerciseDto.setReference("TEST_REFERENCE");
+          collectionExerciseDto.setStartDate(OffsetDateTime.now());
+          collectionExerciseDto.setEndDate(OffsetDateTime.now().plusDays(2));
+          collectionExerciseDto.setMetadata(TEST_COLLECTION_EXERCISE_METADATA);
           return collectionExerciseDto;
         });
   }
