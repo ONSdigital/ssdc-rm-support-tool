@@ -345,7 +345,7 @@ public class AllEndpointsIT {
         (bundle) -> "userGroups",
         (bundle) -> {
           UserGroupDto userGroupDto = new UserGroupDto();
-          userGroupDto.setName("Test");
+          userGroupDto.setName("TEST_GROUP_" + UUID.randomUUID());
           return userGroupDto;
         });
   }
@@ -364,7 +364,7 @@ public class AllEndpointsIT {
         (bundle) -> {
           UserGroupMemberDto userGroupMemberDto = new UserGroupMemberDto();
           userGroupMemberDto.setUserId(bundle.getUserId());
-          userGroupMemberDto.setGroupId(bundle.getGroupId());
+          userGroupMemberDto.setGroupId(bundle.getSecondGroupId());
           return userGroupMemberDto;
         });
 

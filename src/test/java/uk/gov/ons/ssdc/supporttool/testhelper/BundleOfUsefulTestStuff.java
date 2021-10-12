@@ -15,4 +15,5 @@ public class BundleOfUsefulTestStuff {
   private UUID groupId;
   private UUID groupMemberId;
   private UUID groupPermissionId;
+  private UUID secondGroupId;
 }
