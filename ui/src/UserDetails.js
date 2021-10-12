@@ -203,11 +203,19 @@ class UserDetails extends Component {
       }
     );
 
-    const groupMenuItems = this.state.groups.map((group) => (
-      <MenuItem key={group.id} value={group.id}>
-        {group.name}
-      </MenuItem>
-    ));
+    const addGroupMenuItems = this.state.groups
+      .filter(
+        (group) =>
+          !this.state.memberOfGroups
+            .map((memberOfGroup) => memberOfGroup.groupId)
+            .includes(group.id)
+      )
+      .sort()
+      .map((group) => (
+        <MenuItem key={group.id} value={group.id}>
+          {group.name}
+        </MenuItem>
+      ));
 
     return (
       <div style={{ padding: 20 }}>
@@ -233,7 +241,7 @@ class UserDetails extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Group Name</TableCell>
-                    <TableCell></TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>{memberOfGroupTableRows}</TableBody>
@@ -251,7 +259,7 @@ class UserDetails extends Component {
                       value={this.state.groupId}
                       error={this.state.groupValidationError}
                     >
-                      {groupMenuItems}
+                      {addGroupMenuItems}
                     </Select>
                   </FormControl>
                 </div>

@@ -95,6 +95,17 @@ public class UserGroupPermissionEndpoint {
                   () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
     }
 
+    for (UserGroupPermission existingPermission : group.getPermissions()) {
+      if (existingPermission
+              .getAuthorisedActivity()
+              .equals(userGroupPermissionDto.getAuthorisedActivity())
+          && (survey == null && existingPermission.getSurvey() == null
+              || existingPermission.getSurvey() != null
+                  && existingPermission.getSurvey().equals(survey))) {
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Permission already exists");
+      }
+    }
+
     UserGroupPermission userGroupPermission = new UserGroupPermission();
     userGroupPermission.setId(UUID.randomUUID());
     userGroupPermission.setGroup(group);
