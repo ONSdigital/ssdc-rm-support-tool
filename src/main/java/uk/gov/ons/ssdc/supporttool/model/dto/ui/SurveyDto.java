@@ -11,4 +11,6 @@ public class SurveyDto {
   private ColumnValidator[] sampleValidationRules;
   private boolean sampleWithHeaderRow;
   private char sampleSeparator;
+  private String sampleDefinitionUrl;
+  private Object metadata;
 }
