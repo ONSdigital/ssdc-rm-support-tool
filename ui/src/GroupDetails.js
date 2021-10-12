@@ -243,7 +243,7 @@ class GroupDetails extends Component {
   buildSurveyMenuItem = (survey) => {
     if (survey === null) {
       return (
-        <MenuItem key="All Surveys" value={globalSurveyId}>
+        <MenuItem key={globalSurveyId} value={globalSurveyId}>
           <i>All Surveys - Global permission</i>
         </MenuItem>
       );
