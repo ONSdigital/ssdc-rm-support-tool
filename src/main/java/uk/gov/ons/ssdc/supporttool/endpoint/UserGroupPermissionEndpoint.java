@@ -99,9 +99,9 @@ public class UserGroupPermissionEndpoint {
       if (existingPermission
               .getAuthorisedActivity()
               .equals(userGroupPermissionDto.getAuthorisedActivity())
-          && (survey == null && existingPermission.getSurvey() == null
-              || existingPermission.getSurvey() != null
-                  && existingPermission.getSurvey().equals(survey))) {
+          && ((survey == null && existingPermission.getSurvey() == null)
+              || (existingPermission.getSurvey() != null
+                  && existingPermission.getSurvey().equals(survey)))) {
         throw new ResponseStatusException(HttpStatus.CONFLICT, "Permission already exists");
       }
     }
