@@ -22,6 +22,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
 const globalSurveyId = "GLOBAL";
+const globalSurveyLabel = "All Surveys - Global permission";
+
 class GroupDetails extends Component {
   state = {
     authorisedActivities: [],
@@ -244,7 +246,7 @@ class GroupDetails extends Component {
     if (survey === null) {
       return (
         <MenuItem key={globalSurveyId} value={globalSurveyId}>
-          <i>All Surveys - Global permission</i>
+          <i>{globalSurveyLabel}</i>
         </MenuItem>
       );
     }
@@ -260,7 +262,7 @@ class GroupDetails extends Component {
       (groupActivity, index) => {
         const surveyName = groupActivity.surveyId
           ? groupActivity.surveyName
-          : "All Surveys - Global permission";
+          : globalSurveyLabel;
 
         return (
           <TableRow key={index}>
