@@ -149,6 +149,11 @@ public class CaseEndpoint {
 
     for (var dataToValidate : fieldAndValueToValidate.entrySet()) {
 
+      if (dataToValidate.getValue().length() == 0) {
+        // Blanking out the sensitive PII data is allowed, for GDPR reasons
+        continue;
+      }
+
       for (ColumnValidator columnValidator : columnValidators) {
         if (columnValidator.getColumnName().equals(dataToValidate.getKey())) {
           Map<String, String> validateThis =
