@@ -38,7 +38,7 @@ class MyGroupUserAdmin extends Component {
     this.refreshBackendData(allUsers);
 
     this.interval = setInterval(() => this.refreshBackendData(allUsers), 1000);
-  }
+  };
 
   componentWillUnmount() {
     clearInterval(this.interval);

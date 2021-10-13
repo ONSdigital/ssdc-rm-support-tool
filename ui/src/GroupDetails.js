@@ -128,16 +128,14 @@ class GroupDetails extends Component {
   filterAllUsers = (allUsers, groupAdmins) => {
     const allUsersAutocompleteOptions = allUsers.filter(
       (user) =>
-        !groupAdmins
-          .map((groupAdmin) => groupAdmin.userId)
-          .includes(user.id)
+        !groupAdmins.map((groupAdmin) => groupAdmin.userId).includes(user.id)
     );
 
     this.setState({
       allUsersAutocompleteOptions: allUsersAutocompleteOptions,
     });
   };
-  
+
   getUserGroupPermissions = async (authorisedActivities) => {
     if (!authorisedActivities.includes("SUPER_USER")) return;
 
@@ -372,7 +370,7 @@ class GroupDetails extends Component {
       newAdminUserId: newValue ? newValue.id : null,
       newAdminEmailValidationError: newValue ? false : true,
     });
-  }
+  };
 
   buildSurveyMenuItem = (survey) => {
     if (survey === null) {
