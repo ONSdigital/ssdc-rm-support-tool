@@ -213,6 +213,7 @@ public class IntegrationTestHelper {
   private void restoreDummyUserAndOtherGubbins(BundleOfUsefulTestStuff bundle) {
     User user = setupDummyUser(bundle.getUserId());
     UserGroup group = setupDummyGroup(bundle.getGroupId());
+    setupDummyGroup(bundle.getSecondGroupId());
     setupDummyGroupMember(bundle.getGroupMemberId(), user, group);
     setupDummyGroupPermission(bundle.getGroupPermissionId(), group);
   }
