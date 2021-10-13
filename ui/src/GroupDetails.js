@@ -63,21 +63,23 @@ class GroupDetails extends Component {
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getGroup(authorisedActivities);
-    this.getAdmins(authorisedActivities);
+    const admins = await this.getAdmins(authorisedActivities);
     this.getAllActivities();
     this.getAllSurveys(authorisedActivities);
     this.getUserGroupPermissions(authorisedActivities);
-    this.getAllUsers(authorisedActivities);
+    const allUsers = await this.getAllUsers(authorisedActivities);
+    this.filterAllUsers(allUsers, admins);
 
     this.interval = setInterval(
-      () => this.refreshBackendData(authorisedActivities),
+      () => this.refreshBackendData(authorisedActivities, allUsers),
       1000
     );
   };
 
-  refreshBackendData = (authorisedActivities) => {
+  refreshBackendData = async (authorisedActivities, allUsers) => {
     this.getUserGroupPermissions(authorisedActivities);
-    this.getAdmins(authorisedActivities);
+    const admins = await this.getAdmins(authorisedActivities);
+    this.filterAllUsers(allUsers, admins);
   };
 
   getGroup = async (authorisedActivities) => {
@@ -104,6 +106,8 @@ class GroupDetails extends Component {
     this.setState({
       admins: responseJson,
     });
+
+    return responseJson;
   };
 
   getAllUsers = async (authorisedActivities) => {
@@ -118,9 +122,22 @@ class GroupDetails extends Component {
 
     const responseJson = await response.json();
 
-    this.setState({ allUsersAutocompleteOptions: responseJson });
+    return responseJson;
   };
 
+  filterAllUsers = (allUsers, groupAdmins) => {
+    const allUsersAutocompleteOptions = allUsers.filter(
+      (user) =>
+        !groupAdmins
+          .map((groupAdmin) => groupAdmin.userId)
+          .includes(user.id)
+    );
+
+    this.setState({
+      allUsersAutocompleteOptions: allUsersAutocompleteOptions,
+    });
+  };
+  
   getUserGroupPermissions = async (authorisedActivities) => {
     if (!authorisedActivities.includes("SUPER_USER")) return;
 

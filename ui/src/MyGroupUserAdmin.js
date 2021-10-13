@@ -31,20 +31,22 @@ class MyGroupUserAdmin extends Component {
     groupMemberIdToRemove: null,
   };
 
-  componentDidMount() {
-    this.getAuthorisedBackendData();
+  componentDidMount = async () => {
+    this.getGroup(); // Changes infrequently
+    const allUsers = await this.getAllUsers(); // Changes infrequently, but expensive to fetch
 
-    this.interval = setInterval(() => this.getGroupMembers(), 1000);
+    this.refreshBackendData(allUsers);
+
+    this.interval = setInterval(() => this.refreshBackendData(allUsers), 1000);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  getAuthorisedBackendData = async () => {
-    this.getGroup();
-    this.getGroupMembers();
-    this.getAllUsers();
+  refreshBackendData = async (allUsers) => {
+    const groupMembers = await this.getGroupMembers();
+    this.filterAllUsers(allUsers, groupMembers);
   };
 
   getGroup = async () => {
@@ -65,6 +67,21 @@ class MyGroupUserAdmin extends Component {
     this.setState({
       groupMembers: responseJson,
     });
+
+    return responseJson;
+  };
+
+  filterAllUsers = (allUsers, groupMembers) => {
+    const allUsersAutocompleteOptions = allUsers.filter(
+      (user) =>
+        !groupMembers
+          .map((memberOfGroup) => memberOfGroup.userId)
+          .includes(user.id)
+    );
+
+    this.setState({
+      allUsersAutocompleteOptions: allUsersAutocompleteOptions,
+    });
   };
 
   getAllUsers = async () => {
@@ -72,12 +89,12 @@ class MyGroupUserAdmin extends Component {
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
-      return;
+      return [];
     }
 
     const responseJson = await response.json();
 
-    this.setState({ allUsersAutocompleteOptions: responseJson });
+    return responseJson;
   };
 
   onEmailChange = (_, newValue) => {
