@@ -212,7 +212,8 @@ class JobDetails extends Component {
         "PROCESSED",
         "CANCELLED",
       ].includes(this.props.job.jobStatus) &&
-      this.props.job.rowErrorCount > 0
+      this.props.job.rowErrorCount > 0 &&
+      this.props.authorisedActivities.includes("LOAD_SAMPLE")
     ) {
       buttonFragment = (
         <Grid container spacing={1}>
