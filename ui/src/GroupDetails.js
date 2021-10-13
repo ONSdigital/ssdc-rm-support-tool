@@ -292,7 +292,6 @@ class GroupDetails extends Component {
     );
 
     const activityMenuItems = this.state.allActivities
-      .filter((activity) => !this.state.groupActivities.includes(activity))
       .sort()
       .map((activity) => {
         return (
