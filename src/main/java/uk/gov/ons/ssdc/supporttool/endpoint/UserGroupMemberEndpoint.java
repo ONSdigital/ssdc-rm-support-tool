@@ -87,6 +87,12 @@ public class UserGroupMemberEndpoint {
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
 
+    if (user.getMemberOf().stream()
+        .anyMatch(userGroupMember -> userGroupMember.getGroup() == group)) {
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "User is already a member of this group");
+    }
+
     UserGroupMember userGroupMember = new UserGroupMember();
     userGroupMember.setId(UUID.randomUUID());
     userGroupMember.setUser(user);

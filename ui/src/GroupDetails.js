@@ -21,6 +21,9 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
+const globalSurveyId = "GLOBAL";
+const globalSurveyLabel = "All Surveys - Global permission";
+
 class GroupDetails extends Component {
   state = {
     authorisedActivities: [],
@@ -29,12 +32,14 @@ class GroupDetails extends Component {
     groupActivities: [],
     allActivities: [],
     allSurveys: [],
+    allowedSurveys: [],
     showAllowDialog: false,
     showRemoveDialog: false,
     activity: null,
     activityValidationError: false,
     surveyId: null,
     surveyName: null,
+    surveyValidationError: false,
     userGroupPermissionId: null,
   };
 
@@ -127,6 +132,7 @@ class GroupDetails extends Component {
     this.setState({
       activity: null,
       activityValidationError: false,
+      surveyValidationError: false,
       surveyId: null,
       showAllowDialog: true,
     });
@@ -164,8 +170,26 @@ class GroupDetails extends Component {
   };
 
   onActivityChange = (event) => {
+    const existingPermissionSurveyIds = this.state.groupActivities
+      .filter((activity) => activity.authorisedActivity === event.target.value)
+      .map((permission) => permission.surveyId);
+
+    // Build the list of surveys this activity is not already allowed on
+    let allowedSurveys = [];
+    if (!existingPermissionSurveyIds.includes(null)) {
+      // For global permissions
+      allowedSurveys.push(null);
+    }
+    allowedSurveys.push(
+      ...this.state.allSurveys
+        .filter((survey) => !existingPermissionSurveyIds.includes(survey.id))
+        .sort((a, b) => a.name.localeCompare(b.name)) // Sort by survey name alphabetically
+    );
+
     this.setState({
       activity: event.target.value,
+      allowedSurveys: allowedSurveys,
+      surveyValidationError: false,
     });
   };
 
@@ -180,23 +204,57 @@ class GroupDetails extends Component {
       this.setState({
         activityValidationError: true,
       });
-
       return;
+    }
+    if (!this.state.surveyId) {
+      this.setState({
+        surveyValidationError: true,
+      });
+      return;
+    }
+
+    let surveyId;
+    if (this.state.surveyId === globalSurveyId) {
+      surveyId = null;
+    } else {
+      surveyId = this.state.surveyId;
     }
 
     const newUserGroupPermission = {
       authorisedActivity: this.state.activity,
       groupId: this.props.groupId,
-      surveyId: this.state.surveyId,
+      surveyId: surveyId,
     };
 
-    await fetch("/api/userGroupPermissions", {
+    const response = await fetch("/api/userGroupPermissions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newUserGroupPermission),
     });
 
+    if (!response.ok) {
+      this.setState({
+        activityValidationError: true,
+      });
+      return;
+    }
+
     this.setState({ showAllowDialog: false });
+  };
+
+  buildSurveyMenuItem = (survey) => {
+    if (survey === null) {
+      return (
+        <MenuItem key={globalSurveyId} value={globalSurveyId}>
+          <i>{globalSurveyLabel}</i>
+        </MenuItem>
+      );
+    }
+    return (
+      <MenuItem key={survey.id} value={survey.id}>
+        {survey.name}
+      </MenuItem>
+    );
   };
 
   render() {
@@ -204,7 +262,7 @@ class GroupDetails extends Component {
       (groupActivity, index) => {
         const surveyName = groupActivity.surveyId
           ? groupActivity.surveyName
-          : "All Surveys - Global permission";
+          : globalSurveyLabel;
 
         return (
           <TableRow key={index}>
@@ -233,19 +291,19 @@ class GroupDetails extends Component {
       }
     );
 
-    const activityMenuItems = this.state.allActivities.map((activity) => {
-      return (
-        <MenuItem key={activity} value={activity}>
-          {activity}
-        </MenuItem>
-      );
-    });
+    const activityMenuItems = this.state.allActivities
+      .sort()
+      .map((activity) => {
+        return (
+          <MenuItem key={activity} value={activity}>
+            {activity}
+          </MenuItem>
+        );
+      });
 
-    const surveyMenuItems = this.state.allSurveys.map((survey) => (
-      <MenuItem key={survey.id} value={survey.id}>
-        {survey.name}
-      </MenuItem>
-    ));
+    const surveyMenuItems = this.state.allowedSurveys.map((survey) =>
+      this.buildSurveyMenuItem(survey)
+    );
 
     return (
       <div style={{ padding: 20 }}>
@@ -272,7 +330,7 @@ class GroupDetails extends Component {
                   <TableRow>
                     <TableCell>Activity</TableCell>
                     <TableCell>Survey</TableCell>
-                    <TableCell></TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>{groupActivitiesTableRows}</TableBody>
@@ -293,15 +351,18 @@ class GroupDetails extends Component {
                       {activityMenuItems}
                     </Select>
                   </FormControl>
-                  <FormControl fullWidth={true}>
-                    <InputLabel>Survey</InputLabel>
-                    <Select
-                      onChange={this.onSurveyChange}
-                      value={this.state.surveyId}
-                    >
-                      {surveyMenuItems}
-                    </Select>
-                  </FormControl>
+                  {this.state.activity && (
+                    <FormControl required fullWidth={true}>
+                      <InputLabel>Survey</InputLabel>
+                      <Select
+                        onChange={this.onSurveyChange}
+                        value={this.state.surveyId}
+                        error={this.state.surveyValidationError}
+                      >
+                        {surveyMenuItems}
+                      </Select>
+                    </FormControl>
+                  )}
                 </div>
                 <div style={{ marginTop: 10 }}>
                   <Button

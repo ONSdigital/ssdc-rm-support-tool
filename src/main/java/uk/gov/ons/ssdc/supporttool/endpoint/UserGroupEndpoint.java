@@ -66,6 +66,10 @@ public class UserGroupEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
+    if (userGroupRepository.existsByName(userGroupDto.getName())) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Group name already exists");
+    }
+
     UserGroup userGroup = new UserGroup();
     userGroup.setId(UUID.randomUUID());
     userGroup.setName(userGroupDto.getName());
