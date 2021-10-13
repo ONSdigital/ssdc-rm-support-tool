@@ -35,7 +35,14 @@ class SurveyDetails extends Component {
     collectionExercises: [],
     createCollectionExerciseDialogDisplayed: false,
     validationError: false,
+    collectionExerciseMetadataError: false,
+    collectionExerciseDateError: false,
+    collectionExerciseDateErrorMessage: "",
     newCollectionExerciseName: "",
+    newCollectionExerciseReference: "",
+    newCollectionExerciseStartDate: null,
+    newCollectionExerciseEndDate: null,
+    newCollectionExerciseMetadata: "",
     allowActionRulePrintTemplateDialogDisplayed: false,
     allowActionRuleSmsTemplateDialogDisplayed: false,
     allowFulfilmentPrintTemplateDialogDisplayed: false,
@@ -182,8 +189,15 @@ class SurveyDetails extends Component {
   openDialog = () => {
     this.setState({
       newCollectionExerciseName: "",
+      newCollectionExerciseReference: "",
+      newCollectionExerciseStartDate: this.getTimeNowForDateTimePicker(),
+      newCollectionExerciseEndDate: this.getTimeNowForDateTimePicker(),
+      newCollectionExerciseMetadata: "",
       validationError: false,
       createCollectionExerciseDialogDisplayed: true,
+      collectionExerciseMetadataError: false,
+      collectionExerciseDateError: false,
+      collectionExerciseDateErrorMessage: "",
     });
   };
 
@@ -199,15 +213,84 @@ class SurveyDetails extends Component {
     });
   };
 
+  onNewCollectionExerciseReferenceChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+    this.setState({
+      validationError: resetValidation,
+      newCollectionExerciseReference: event.target.value,
+    });
+  };
+
+  onNewCollectionExerciseStartDateChange = (event) => {
+    this.setState({ newCollectionExerciseStartDate: event.target.value });
+  };
+
+  onNewCollectionExerciseEndDateChange = (event) => {
+    this.setState({ newCollectionExerciseEndDate: event.target.value });
+  };
+
+  onNewCollectionExerciseMetadataChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+    this.setState({
+      collectionExerciseMetadataError: resetValidation,
+      newCollectionExerciseMetadata: event.target.value,
+    });
+  };
+
   onCreateCollectionExercise = async () => {
+    let validationFailed = false;
+
     if (!this.state.newCollectionExerciseName.trim()) {
       this.setState({ validationError: true });
+      return;
+    }
+
+    if (!this.state.newCollectionExerciseReference.trim()) {
+      this.setState({ validationError: true });
+      validationFailed = true;
+    }
+
+    if (
+      this.state.newCollectionExerciseStartDate >
+      this.state.newCollectionExerciseEndDate
+    ) {
+      this.setState({
+        collectionExerciseDateError: true,
+        collectionExerciseDateErrorMessage:
+          "End Date must come after Start Date",
+      });
+      return;
+    }
+
+    let metadataJson = null;
+    if (this.state.newCollectionExerciseMetadata.length > 0) {
+      try {
+        const parsedJson = JSON.parse(this.state.newCollectionExerciseMetadata);
+        if (Object.keys(parsedJson).length === 0) {
+          this.setState({ collectionExerciseMetadataError: true });
+          validationFailed = true;
+        } else {
+          metadataJson = JSON.parse(this.state.newCollectionExerciseMetadata);
+        }
+      } catch (err) {
+        this.setState({ collectionExerciseMetadataError: true });
+        validationFailed = true;
+      }
+    }
+
+    if (validationFailed) {
       return;
     }
 
     const newCollectionExercise = {
       name: this.state.newCollectionExerciseName,
       surveyId: this.props.surveyId,
+      reference: this.state.newCollectionExerciseReference,
+      startDate: new Date(
+        this.state.newCollectionExerciseStartDate
+      ).toISOString(),
+      endDate: new Date(this.state.newCollectionExerciseEndDate).toISOString(),
+      metadata: metadataJson,
     };
 
     const response = await fetch("/api/collectionExercises", {
@@ -219,6 +302,12 @@ class SurveyDetails extends Component {
     if (response.ok) {
       this.setState({ createCollectionExerciseDialogDisplayed: false });
     }
+  };
+
+  getTimeNowForDateTimePicker = () => {
+    var dateNow = new Date();
+    dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
+    return dateNow.toJSON().slice(0, 16);
   };
 
   openActionRulePrintTemplateDialog = () => {
@@ -412,6 +501,30 @@ class SurveyDetails extends Component {
               {collex.name}
             </Link>
           </TableCell>
+          <TableCell component="th" scope="row">
+            <Link
+              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
+            >
+              {collex.reference}
+            </Link>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            <Link
+              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
+            >
+              {collex.startDate}
+            </Link>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            <Link
+              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
+            >
+              {collex.endDate}
+            </Link>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(collex.metadata)}
+          </TableCell>
         </TableRow>
       )
     );
@@ -505,6 +618,10 @@ class SurveyDetails extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Collection Exercise Name</TableCell>
+                    <TableCell>Reference</TableCell>
+                    <TableCell>Start Date</TableCell>
+                    <TableCell>End Date</TableCell>
+                    <TableCell>Metadata</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{collectionExerciseTableRows}</TableBody>
@@ -660,6 +777,48 @@ class SurveyDetails extends Component {
                   label="Collection exercise name"
                   onChange={this.onNewCollectionExerciseNameChange}
                   value={this.state.newCollectionExerciseName}
+                />
+                <TextField
+                  required
+                  fullWidth={true}
+                  error={this.state.validationError}
+                  id="standard-required"
+                  label="Reference"
+                  onChange={this.onNewCollectionExerciseReferenceChange}
+                  value={this.state.newCollectionExerciseReference}
+                />
+                <TextField
+                  label="Start Date"
+                  type="datetime-local"
+                  error={this.state.collectionExerciseDateError}
+                  value={this.state.newCollectionExerciseStartDate}
+                  onChange={this.onNewCollectionExerciseStartDateChange}
+                  style={{ marginTop: 20 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  label="End Date"
+                  type="datetime-local"
+                  error={this.state.collectionExerciseDateError}
+                  helperText={this.state.collectionExerciseDateErrorMessage}
+                  value={this.state.newCollectionExerciseEndDate}
+                  onChange={this.onNewCollectionExerciseEndDateChange}
+                  style={{ marginTop: 20 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  style={{ marginTop: 10 }}
+                  multiline
+                  fullWidth={true}
+                  error={this.state.collectionExerciseMetadataError}
+                  id="standard-required"
+                  label="Metadata"
+                  onChange={this.onNewCollectionExerciseMetadataChange}
+                  value={this.state.newCollectionExerciseMetadata}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
