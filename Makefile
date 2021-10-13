@@ -5,7 +5,7 @@ build:
 	./build.sh
 
 build_no_test:
-    ./build_no_test.sh
+	./build_no_test.sh
 
 test-ui:
 	cd ui && npm install && npm test -- --watchAll=false
