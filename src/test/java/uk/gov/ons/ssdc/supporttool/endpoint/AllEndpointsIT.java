@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
@@ -55,11 +54,8 @@ public class AllEndpointsIT {
 
   @LocalServerPort private int port;
 
-  private static final Map<String, String> TEST_COLLECTION_EXERCISE_METADATA =
-      Map.of("TEST_COLLECTION_EXERCISE_METADATA", "TEST");
-
-  @Value("${queueconfig.collection-exercise-update-event-topic}")
-  private String collectionExerciseUpdateEventTopic;
+  private static final Map<String, String> TEST_COLLECTION_EXERCISE_UPDATE_METADATA =
+      Map.of("TEST_COLLECTION_EXERCISE_UPDATE_METADATA", "TEST");
 
   @Test
   public void testActionRuleEndpoints() {
@@ -203,7 +199,7 @@ public class AllEndpointsIT {
           collectionExerciseDto.setReference("TEST_REFERENCE");
           collectionExerciseDto.setStartDate(OffsetDateTime.now());
           collectionExerciseDto.setEndDate(OffsetDateTime.now().plusDays(2));
-          collectionExerciseDto.setMetadata(TEST_COLLECTION_EXERCISE_METADATA);
+          collectionExerciseDto.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
           return collectionExerciseDto;
         });
   }

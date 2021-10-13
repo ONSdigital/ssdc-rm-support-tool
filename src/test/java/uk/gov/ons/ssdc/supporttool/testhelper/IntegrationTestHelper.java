@@ -53,8 +53,8 @@ public class IntegrationTestHelper {
   private final UserGroupMemberRepository userGroupMemberRepository;
   private final UserGroupPermissionRepository userGroupPermissionRepository;
 
-  private static final Map<String, String> TEST_COLLECTION_EXERCISE_METADATA =
-      Map.of("TEST_COLLECTION_EXERCISE_METADATA", "TEST");
+  private static final Map<String, String> TEST_COLLECTION_EXERCISE_UPDATE_METADATA =
+      Map.of("TEST_COLLECTION_EXERCISE_UPDATE_METADATA", "TEST");
 
   public IntegrationTestHelper(
       SurveyRepository surveyRepository,
@@ -170,7 +170,7 @@ public class IntegrationTestHelper {
     collectionExercise.setReference("TEST_REFERENCE");
     collectionExercise.setStartDate(OffsetDateTime.now());
     collectionExercise.setEndDate(OffsetDateTime.now().plusDays(2));
-    collectionExercise.setMetadata(TEST_COLLECTION_EXERCISE_METADATA);
+    collectionExercise.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
     collectionExercise = collectionExerciseRepository.saveAndFlush(collectionExercise);
 
     Case caze = new Case();
