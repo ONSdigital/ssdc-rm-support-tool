@@ -67,7 +67,7 @@ class GroupDetails extends Component {
     this.getAllActivities();
     this.getAllSurveys(authorisedActivities);
     this.getUserGroupPermissions(authorisedActivities);
-    const allUsers = await this.getAllUsers(authorisedActivities);
+    const allUsers = await this.getAllUsers(authorisedActivities); // Only need to do this once... it's an expensive operation
     this.filterAllUsers(allUsers, admins);
 
     this.interval = setInterval(
