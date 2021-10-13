@@ -176,12 +176,12 @@ class CaseDetails extends Component {
         <Link to={`/search?surveyId=${this.props.surveyId}`}>
           ← Back to Search
         </Link>
-        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
+        <Typography variant="h4" color="inherit">
           Case Details
         </Typography>
         {this.state.case && (
           <div>
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <TableContainer component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -247,7 +247,10 @@ class CaseDetails extends Component {
                 </TableBody>
               </Table>
             </TableContainer>
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              Event History
+            </Typography>
+            <TableContainer component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -260,7 +263,10 @@ class CaseDetails extends Component {
                 <TableBody>{caseEvents}</TableBody>
               </Table>
             </TableContainer>
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              UACs and QIDs
+            </Typography>
+            <TableContainer component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
