@@ -27,6 +27,7 @@ class UserAdmin extends Component {
     showGroupDialog: false,
     groupName: "",
     groupNameValidationError: false,
+    groupNameValidationMessage: null,
   };
 
   componentDidMount() {
@@ -136,6 +137,7 @@ class UserAdmin extends Component {
     this.setState({
       groupName: "",
       groupNameValidationError: false,
+      groupNameValidationMessage: null,
       showGroupDialog: true,
     });
   };
@@ -154,7 +156,22 @@ class UserAdmin extends Component {
 
   onCreateGroup = async () => {
     if (!this.state.groupName.trim()) {
-      this.setState({ groupNameValidationError: true });
+      this.setState({
+        groupNameValidationError: true,
+        groupNameValidationMessage: "Group name is required",
+      });
+      return;
+    }
+
+    if (
+      this.state.groups
+        .map((group) => group.name)
+        .includes(this.state.groupName)
+    ) {
+      this.setState({
+        groupNameValidationError: true,
+        groupNameValidationMessage: "Group already exists",
+      });
       return;
     }
 
@@ -285,6 +302,7 @@ class UserAdmin extends Component {
                 label="Group name"
                 onChange={this.onGroupNameChange}
                 error={this.state.groupNameValidationError}
+                helperText={this.state.groupNameValidationMessage}
                 value={this.state.groupName}
               />
             </div>
