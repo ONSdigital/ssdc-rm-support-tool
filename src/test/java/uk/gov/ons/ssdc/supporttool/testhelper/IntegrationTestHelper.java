@@ -190,6 +190,7 @@ public class IntegrationTestHelper {
 
     User user = setupDummyUser(UUID.randomUUID());
     UserGroup group = setupDummyGroup(UUID.randomUUID());
+    UserGroup secondGroup = setupDummyGroup(UUID.randomUUID());
     UserGroupMember userGroupMember = setupDummyGroupMember(UUID.randomUUID(), user, group);
     UserGroupPermission userGroupPermission = setupDummyGroupPermission(UUID.randomUUID(), group);
 
@@ -204,6 +205,7 @@ public class IntegrationTestHelper {
     bundle.setGroupId(group.getId());
     bundle.setGroupMemberId(userGroupMember.getId());
     bundle.setGroupPermissionId(userGroupPermission.getId());
+    bundle.setSecondGroupId(secondGroup.getId());
 
     return bundle;
   }
@@ -226,7 +228,7 @@ public class IntegrationTestHelper {
   private UserGroup setupDummyGroup(UUID groupId) {
     UserGroup group = new UserGroup();
     group.setId(groupId);
-    group.setName("Test");
+    group.setName("TEST_GROUP_" + groupId);
     group = userGroupRepository.saveAndFlush(group);
     return group;
   }
