@@ -248,6 +248,7 @@ class JobDetails extends Component {
             {jobDetailsFragment}
             {buttonFragment}
             {this.props.job &&
+              this.props.authorisedActivities.includes("LOAD_SAMPLE") &&
               ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
                 this.props.job.jobStatus
               ) && (
