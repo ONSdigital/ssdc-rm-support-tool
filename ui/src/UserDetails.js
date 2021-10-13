@@ -210,7 +210,7 @@ class UserDetails extends Component {
             .map((memberOfGroup) => memberOfGroup.groupId)
             .includes(group.id)
       )
-      .sort()
+      .sort((a, b) => a.name.localeCompare(b.name)) // Sort by group name alphabetically
       .map((group) => (
         <MenuItem key={group.id} value={group.id}>
           {group.name}

@@ -178,12 +178,12 @@ class GroupDetails extends Component {
     let allowedSurveys = [];
     if (!existingPermissionSurveyIds.includes(null)) {
       // For global permissions
-      allowedSurveys = allowedSurveys.concat(null);
+      allowedSurveys.push(null);
     }
-    allowedSurveys = allowedSurveys.concat(
-      this.state.allSurveys
+    allowedSurveys.push(
+      ...this.state.allSurveys
         .filter((survey) => !existingPermissionSurveyIds.includes(survey.id))
-        .sort((a, b) => (a.surveyName > b.surveyName ? 1 : -1))
+        .sort((a, b) => a.name.localeCompare(b.name)) // Sort by survey name alphabetically
     );
 
     this.setState({
