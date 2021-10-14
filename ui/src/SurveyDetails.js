@@ -36,8 +36,10 @@ class SurveyDetails extends Component {
     createCollectionExerciseDialogDisplayed: false,
     validationError: false,
     collectionExerciseMetadataError: false,
-    collectionExerciseDateError: false,
-    collectionExerciseDateErrorMessage: "",
+    collectionExerciseStartDateError: false,
+    collectionExerciseEndDateError: false,
+    collectionExerciseStartDateErrorMessage: "",
+    collectionExerciseEndDateErrorMessage: "",
     newCollectionExerciseName: "",
     newCollectionExerciseReference: "",
     newCollectionExerciseStartDate: null,
@@ -196,8 +198,10 @@ class SurveyDetails extends Component {
       validationError: false,
       createCollectionExerciseDialogDisplayed: true,
       collectionExerciseMetadataError: false,
-      collectionExerciseDateError: false,
-      collectionExerciseDateErrorMessage: "",
+      collectionExerciseStartDateError: false,
+      collectionExerciseEndDateError: false,
+      collectionExerciseStartDateErrorMessage: "",
+      collectionExerciseEndDateErrorMessage: "",
     });
   };
 
@@ -255,8 +259,20 @@ class SurveyDetails extends Component {
       this.state.newCollectionExerciseEndDate
     ) {
       this.setState({
-        collectionExerciseDateError: true,
-        collectionExerciseDateErrorMessage:
+        collectionExerciseStartDateError: true,
+        collectionExerciseStartDateErrorMessage:
+          "Start Date must come before End Date",
+      });
+      return;
+    }
+
+    if (
+      this.state.newCollectionExerciseEndDate <
+      this.state.newCollectionExerciseStartDate
+    ) {
+      this.setState({
+        collectionExerciseEndDateError: true,
+        collectionExerciseEndDateErrorMessage:
           "End Date must come after Start Date",
       });
       return;
@@ -788,9 +804,14 @@ class SurveyDetails extends Component {
                   value={this.state.newCollectionExerciseReference}
                 />
                 <TextField
+                  required
                   label="Start Date"
+                  fullWidth={true}
                   type="datetime-local"
-                  error={this.state.collectionExerciseDateError}
+                  error={this.state.collectionExerciseStartDateError}
+                  helperText={
+                    this.state.collectionExerciseStartDateErrorMessage
+                  }
                   value={this.state.newCollectionExerciseStartDate}
                   onChange={this.onNewCollectionExerciseStartDateChange}
                   style={{ marginTop: 20 }}
@@ -799,10 +820,12 @@ class SurveyDetails extends Component {
                   }}
                 />
                 <TextField
+                  required
                   label="End Date"
+                  fullWidth={true}
                   type="datetime-local"
-                  error={this.state.collectionExerciseDateError}
-                  helperText={this.state.collectionExerciseDateErrorMessage}
+                  error={this.state.collectionExerciseEndDateError}
+                  helperText={this.state.collectionExerciseEndDateErrorMessage}
                   value={this.state.newCollectionExerciseEndDate}
                   onChange={this.onNewCollectionExerciseEndDateChange}
                   style={{ marginTop: 20 }}
