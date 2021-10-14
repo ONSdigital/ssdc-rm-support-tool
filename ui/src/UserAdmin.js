@@ -123,7 +123,7 @@ class UserAdmin extends Component {
   onCreateUser = async () => {
     if (!this.validateEmail(this.state.email)) {
       this.setState({
-        emailValidationError: "Must be a valid email address format",
+        emailValidationError: "Must be a valid email address",
       });
       return;
     }
