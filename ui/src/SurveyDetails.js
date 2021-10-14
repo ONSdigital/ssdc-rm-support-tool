@@ -242,7 +242,7 @@ class SurveyDetails extends Component {
 
     if (!this.state.newCollectionExerciseName.trim()) {
       this.setState({ validationError: true });
-      return;
+      validationFailed = true;
     }
 
     if (!this.state.newCollectionExerciseReference.trim()) {
