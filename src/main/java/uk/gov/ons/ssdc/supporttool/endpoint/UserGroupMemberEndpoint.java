@@ -57,15 +57,28 @@ public class UserGroupMemberEndpoint {
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
 
     return userGroupMemberRepository.findByUser(user).stream()
-        .map(
-            member -> {
-              UserGroupMemberDto userGroupMemberDto = new UserGroupMemberDto();
-              userGroupMemberDto.setId(member.getId());
-              userGroupMemberDto.setGroupId(member.getGroup().getId());
-              userGroupMemberDto.setUserId(userId);
-              userGroupMemberDto.setGroupName(member.getGroup().getName());
-              return userGroupMemberDto;
-            })
+        .map(this::mapGroupMember)
+        .collect(Collectors.toList());
+  }
+
+  @GetMapping("/findByGroup/{groupId}")
+  public List<UserGroupMemberDto> findByGroup(
+      @PathVariable(value = "groupId") UUID groupId,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    UserGroup group =
+        userGroupRepository
+            .findById(groupId)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+
+    if (group.getAdmins().stream()
+        .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equals(userEmail))) {
+      // If you're not admin of this group, you have to be super user
+      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    }
+
+    return userGroupMemberRepository.findByGroup(group).stream()
+        .map(this::mapGroupMember)
         .collect(Collectors.toList());
   }
 
@@ -73,19 +86,23 @@ public class UserGroupMemberEndpoint {
   public ResponseEntity<Void> addUserToGroup(
       @RequestBody UserGroupMemberDto userGroupMemberDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    UserGroup group =
+        userGroupRepository
+            .findById(userGroupMemberDto.getGroupId())
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+
+    if (group.getAdmins().stream()
+        .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equals(userEmail))) {
+      // If you're not admin of this group, you have to be super user
+      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    }
 
     User user =
         userRepository
             .findById(userGroupMemberDto.getUserId())
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
-
-    UserGroup group =
-        userGroupRepository
-            .findById(userGroupMemberDto.getGroupId())
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
 
     if (user.getMemberOf().stream()
         .anyMatch(userGroupMember -> userGroupMember.getGroup() == group)) {
@@ -107,8 +124,30 @@ public class UserGroupMemberEndpoint {
   public void removeUserFromGroup(
       @PathVariable(value = "groupMemberId") UUID groupMemberId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    UserGroupMember userGroupMember =
+        userGroupMemberRepository
+            .findById(groupMemberId)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Group membership not found"));
 
-    userGroupMemberRepository.deleteById(groupMemberId);
+    if (userGroupMember.getGroup().getAdmins().stream()
+        .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equals(userEmail))) {
+      // If you're not admin of this group, you have to be super user
+      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    }
+
+    userGroupMemberRepository.delete(userGroupMember);
+  }
+
+  private UserGroupMemberDto mapGroupMember(UserGroupMember member) {
+    UserGroupMemberDto userGroupMemberDto = new UserGroupMemberDto();
+    userGroupMemberDto.setId(member.getId());
+    userGroupMemberDto.setGroupId(member.getGroup().getId());
+    userGroupMemberDto.setUserId(member.getUser().getId());
+    userGroupMemberDto.setUserEmail(member.getUser().getEmail());
+    userGroupMemberDto.setGroupName(member.getGroup().getName());
+    return userGroupMemberDto;
   }
 }

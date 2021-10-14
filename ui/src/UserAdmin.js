@@ -210,24 +210,22 @@ class UserAdmin extends Component {
     return (
       <div style={{ padding: 20 }}>
         <Link to="/">← Back to home</Link>
-        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
+        <Typography variant="h4" color="inherit">
           User Admin
         </Typography>
         {!this.state.authorisedActivities.includes("SUPER_USER") &&
           !this.state.isLoading && (
-            <h1 style={{ color: "red" }}>YOU ARE NOT AUTHORISED</h1>
+            <h1 style={{ color: "red", marginTop: 20 }}>
+              YOU ARE NOT AUTHORISED
+            </h1>
           )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
             <>
-              <Button
-                variant="contained"
-                onClick={this.openCreateUserDialog}
-                style={{ marginTop: 20 }}
-              >
-                Create User
-              </Button>
-              <TableContainer component={Paper} style={{ marginTop: 20 }}>
+              <Typography variant="h6" color="inherit">
+                Users
+              </Typography>
+              <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -237,16 +235,23 @@ class UserAdmin extends Component {
                   <TableBody>{usersTableRows}</TableBody>
                 </Table>
               </TableContainer>
-            </>
-            <>
               <Button
                 variant="contained"
-                onClick={this.openCreateGroupDialog}
-                style={{ marginTop: 20 }}
+                onClick={this.openCreateUserDialog}
+                style={{ marginTop: 10 }}
               >
-                Create Group
+                Create User
               </Button>
-              <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            </>
+            <>
+              <Typography
+                variant="h6"
+                color="inherit"
+                style={{ marginTop: 10 }}
+              >
+                Groups
+              </Typography>
+              <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -256,6 +261,13 @@ class UserAdmin extends Component {
                   <TableBody>{groupsTableRows}</TableBody>
                 </Table>
               </TableContainer>
+              <Button
+                variant="contained"
+                onClick={this.openCreateGroupDialog}
+                style={{ marginTop: 10 }}
+              >
+                Create Group
+              </Button>
             </>
           </>
         )}

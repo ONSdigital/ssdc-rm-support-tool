@@ -4,10 +4,9 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class UserGroupMemberDto {
+public class UserGroupAdminDto {
   private UUID id;
   private UUID userId;
   private String userEmail;
   private UUID groupId;
-  private String groupName;
 }
