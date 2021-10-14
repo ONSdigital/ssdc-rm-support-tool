@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 class LandingPage extends Component {
   state = {
     authorisedActivities: [],
+    thisUserAdminGroups: [],
     surveys: [],
     createSurveyDialogDisplayed: false,
     validationError: false,
@@ -63,6 +64,7 @@ class LandingPage extends Component {
   }
 
   getAuthorisedBackendData = async () => {
+    this.getThisUserAdminGroups(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getPrintSuppliers(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
@@ -87,6 +89,19 @@ class LandingPage extends Component {
     this.setState({ authorisedActivities: authorisedActivities });
 
     return authorisedActivities;
+  };
+
+  getThisUserAdminGroups = async () => {
+    const response = await fetch("/api/userGroups/thisUserAdminGroups");
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return;
+    }
+
+    const responseJson = await response.json();
+
+    this.setState({ thisUserAdminGroups: responseJson });
   };
 
   refreshDataFromBackend = (authorisedActivities) => {
@@ -666,6 +681,13 @@ class LandingPage extends Component {
           <>
             <div style={{ marginTop: 20 }}>
               <Link to="/userAdmin">User and Groups Admin</Link>
+            </div>
+          </>
+        )}
+        {this.state.thisUserAdminGroups.length > 0 && (
+          <>
+            <div style={{ marginTop: 20 }}>
+              <Link to="/myGroupsAdmin">My Groups Admin</Link>
             </div>
           </>
         )}

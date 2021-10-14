@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.User;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserDto;
+import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupAdminRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
@@ -24,10 +25,15 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 public class UserEndpoint {
   private final UserRepository userRepository;
   private final UserIdentity userIdentity;
+  private final UserGroupAdminRepository userGroupAdminRepository;
 
-  public UserEndpoint(UserRepository userRepository, UserIdentity userIdentity) {
+  public UserEndpoint(
+      UserRepository userRepository,
+      UserIdentity userIdentity,
+      UserGroupAdminRepository userGroupAdminRepository) {
     this.userRepository = userRepository;
     this.userIdentity = userIdentity;
+    this.userGroupAdminRepository = userGroupAdminRepository;
   }
 
   @GetMapping("/{userId}")
@@ -47,7 +53,10 @@ public class UserEndpoint {
 
   @GetMapping
   public List<UserDto> getUsers(@Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    if (!userGroupAdminRepository.existsByUserEmail(userEmail)) {
+      // If you're not admin of a group, you have to be super user
+      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    }
 
     return userRepository.findAll().stream().map(this::mapDto).collect(Collectors.toList());
   }
