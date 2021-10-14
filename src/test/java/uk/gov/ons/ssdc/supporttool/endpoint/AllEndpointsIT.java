@@ -343,7 +343,7 @@ public class AllEndpointsIT {
         (bundle) -> "userGroupAdmins",
         (bundle) -> {
           UserGroupAdminDto userGroupAdminDto = new UserGroupAdminDto();
-          userGroupAdminDto.setGroupId(bundle.getGroupId());
+          userGroupAdminDto.setGroupId(bundle.getSecondGroupId());
           userGroupAdminDto.setUserId(bundle.getUserId());
           return userGroupAdminDto;
         });

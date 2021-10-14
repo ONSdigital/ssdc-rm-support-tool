@@ -80,6 +80,11 @@ public class UserGroupAdminEndpoint {
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
 
+    if (user.getAdminOf().stream().anyMatch(userGroupAdmin -> userGroupAdmin.getGroup() == group)) {
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "User is already an admin of this group");
+    }
+
     UserGroupAdmin userGroupAdmin = new UserGroupAdmin();
     userGroupAdmin.setId(UUID.randomUUID());
     userGroupAdmin.setUser(user);
