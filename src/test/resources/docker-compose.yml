@@ -22,7 +22,7 @@ services:
     container_name: setup-pubsub-emulator-support-tool-it
     image: eu.gcr.io/ssdc-rm-ci/rm/gcloud-pubsub-emulator:latest
     environment:
-      - PUBSUB_SETUP_HOST=pubsub-emulator:8538
+      - PUBSUB_SETUP_HOST=pubsub-emulator-support-tool-it:8538
     volumes:
       - ./setup_pubsub.sh:/setup_pubsub.sh
     depends_on:
@@ -32,4 +32,4 @@ services:
 networks:
   default:
     external:
-      name: network_support-tool-it_default
+      name: ssdcrmdockerdev_default
