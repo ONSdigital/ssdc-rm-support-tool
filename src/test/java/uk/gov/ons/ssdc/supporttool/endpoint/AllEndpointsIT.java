@@ -21,6 +21,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SurveyDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserDto;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupAdminDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupMemberDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupPermissionDto;
@@ -338,6 +339,30 @@ public class AllEndpointsIT {
   }
 
   @Test
+  public void testUserGroupAdminEndpoints() {
+    integrationTestHelper.testGet(
+        port,
+        UserGroupAuthorisedActivityType.SUPER_USER,
+        (bundle) -> String.format("userGroupAdmins/findByGroup/%s", bundle.getGroupId()));
+
+    integrationTestHelper.testPost(
+        port,
+        UserGroupAuthorisedActivityType.SUPER_USER,
+        (bundle) -> "userGroupAdmins",
+        (bundle) -> {
+          UserGroupAdminDto userGroupAdminDto = new UserGroupAdminDto();
+          userGroupAdminDto.setGroupId(bundle.getSecondGroupId());
+          userGroupAdminDto.setUserId(bundle.getUserId());
+          return userGroupAdminDto;
+        });
+
+    integrationTestHelper.testDelete(
+        port,
+        UserGroupAuthorisedActivityType.SUPER_USER,
+        (bundle) -> String.format("userGroupAdmins/%s", bundle.getGroupAdminId()));
+  }
+
+  @Test
   public void testUserGroupEndpoints() {
     integrationTestHelper.testGet(
         port,
@@ -346,6 +371,8 @@ public class AllEndpointsIT {
 
     integrationTestHelper.testGet(
         port, UserGroupAuthorisedActivityType.SUPER_USER, (bundle) -> "userGroups");
+
+    integrationTestHelper.testGet(port, null, (bundle) -> "userGroups/thisUserAdminGroups");
 
     integrationTestHelper.testPost(
         port,
@@ -375,6 +402,11 @@ public class AllEndpointsIT {
           userGroupMemberDto.setGroupId(bundle.getSecondGroupId());
           return userGroupMemberDto;
         });
+
+    integrationTestHelper.testGet(
+        port,
+        UserGroupAuthorisedActivityType.SUPER_USER,
+        (bundle) -> String.format("userGroupMembers/findByGroup/%s", bundle.getGroupId()));
 
     integrationTestHelper.testDelete(
         port,

@@ -20,6 +20,7 @@ import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.common.model.entity.User;
 import uk.gov.ons.ssdc.common.model.entity.UserGroup;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupAdmin;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupMember;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
@@ -31,6 +32,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.PrintTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UacQidLinkRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupAdminRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupMemberRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupPermissionRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupRepository;
@@ -51,6 +53,7 @@ public class IntegrationTestHelper {
   private final UserRepository userRepository;
   private final UserGroupRepository userGroupRepository;
   private final UserGroupMemberRepository userGroupMemberRepository;
+  private final UserGroupAdminRepository userGroupAdminRepository;
   private final UserGroupPermissionRepository userGroupPermissionRepository;
 
   private static final Map<String, String> TEST_COLLECTION_EXERCISE_UPDATE_METADATA =
@@ -66,6 +69,7 @@ public class IntegrationTestHelper {
       UserRepository userRepository,
       UserGroupRepository userGroupRepository,
       UserGroupMemberRepository userGroupMemberRepository,
+      UserGroupAdminRepository userGroupAdminRepository,
       UserGroupPermissionRepository userGroupPermissionRepository) {
     this.surveyRepository = surveyRepository;
     this.collectionExerciseRepository = collectionExerciseRepository;
@@ -76,28 +80,34 @@ public class IntegrationTestHelper {
     this.userRepository = userRepository;
     this.userGroupRepository = userGroupRepository;
     this.userGroupMemberRepository = userGroupMemberRepository;
+    this.userGroupAdminRepository = userGroupAdminRepository;
     this.userGroupPermissionRepository = userGroupPermissionRepository;
   }
 
   public void testGet(
       int port, UserGroupAuthorisedActivityType activity, BundleUrlGetter bundleUrlGetter) {
-    setUpTestUserPermission(activity);
+    if (activity != null) {
+      setUpTestUserPermission(activity);
+    }
+
     BundleOfUsefulTestStuff bundle = getTestBundle();
 
     String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
     assertThat(response.getStatusCode()).as("GET is OK").isEqualTo(HttpStatus.OK);
 
-    deleteAllPermissions();
-    restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
+    if (activity != null) {
+      deleteAllPermissions();
+      restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
 
-    try {
-      restTemplate.getForEntity(url, String.class);
-      fail("GET API call was not forbidden, but should have been");
-    } catch (HttpClientErrorException expectedException) {
-      assertThat(expectedException.getStatusCode())
-          .as("GET is FORBIDDEN")
-          .isEqualTo(HttpStatus.FORBIDDEN);
+      try {
+        restTemplate.getForEntity(url, String.class);
+        fail("GET API call was not forbidden, but should have been");
+      } catch (HttpClientErrorException expectedException) {
+        assertThat(expectedException.getStatusCode())
+            .as("GET is FORBIDDEN")
+            .isEqualTo(HttpStatus.FORBIDDEN);
+      }
     }
   }
 
@@ -201,6 +211,7 @@ public class IntegrationTestHelper {
     UserGroup group = setupDummyGroup(UUID.randomUUID());
     UserGroup secondGroup = setupDummyGroup(UUID.randomUUID());
     UserGroupMember userGroupMember = setupDummyGroupMember(UUID.randomUUID(), user, group);
+    UserGroupAdmin userGroupAdmin = setupDummyGroupAdmin(UUID.randomUUID(), user, group);
     UserGroupPermission userGroupPermission = setupDummyGroupPermission(UUID.randomUUID(), group);
 
     BundleOfUsefulTestStuff bundle = new BundleOfUsefulTestStuff();
@@ -213,6 +224,7 @@ public class IntegrationTestHelper {
     bundle.setUserId(user.getId());
     bundle.setGroupId(group.getId());
     bundle.setGroupMemberId(userGroupMember.getId());
+    bundle.setGroupAdminId(userGroupAdmin.getId());
     bundle.setGroupPermissionId(userGroupPermission.getId());
     bundle.setSecondGroupId(secondGroup.getId());
 
@@ -222,7 +234,9 @@ public class IntegrationTestHelper {
   private void restoreDummyUserAndOtherGubbins(BundleOfUsefulTestStuff bundle) {
     User user = setupDummyUser(bundle.getUserId());
     UserGroup group = setupDummyGroup(bundle.getGroupId());
+    setupDummyGroup(bundle.getSecondGroupId());
     setupDummyGroupMember(bundle.getGroupMemberId(), user, group);
+    setupDummyGroupAdmin(bundle.getGroupAdminId(), user, group);
     setupDummyGroupPermission(bundle.getGroupPermissionId(), group);
   }
 
@@ -251,6 +265,15 @@ public class IntegrationTestHelper {
     return groupMember;
   }
 
+  private UserGroupAdmin setupDummyGroupAdmin(UUID groupAdminId, User user, UserGroup group) {
+    UserGroupAdmin groupAdmin = new UserGroupAdmin();
+    groupAdmin.setId(groupAdminId);
+    groupAdmin.setGroup(group);
+    groupAdmin.setUser(user);
+    groupAdmin = userGroupAdminRepository.saveAndFlush(groupAdmin);
+    return groupAdmin;
+  }
+
   private UserGroupPermission setupDummyGroupPermission(UUID groupPermissionId, UserGroup group) {
     UserGroupPermission permission = new UserGroupPermission();
     permission.setId(groupPermissionId);
@@ -263,6 +286,7 @@ public class IntegrationTestHelper {
   private void deleteAllPermissions() {
     userGroupPermissionRepository.deleteAllInBatch();
     userGroupMemberRepository.deleteAllInBatch();
+    userGroupAdminRepository.deleteAllInBatch();
     userGroupRepository.deleteAllInBatch();
     userRepository.deleteAllInBatch();
   }
