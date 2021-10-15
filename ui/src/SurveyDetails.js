@@ -36,10 +36,7 @@ class SurveyDetails extends Component {
     createCollectionExerciseDialogDisplayed: false,
     validationError: false,
     collectionExerciseMetadataError: false,
-    collectionExerciseStartDateError: false,
-    collectionExerciseEndDateError: false,
-    collectionExerciseStartDateErrorMessage: "",
-    collectionExerciseEndDateErrorMessage: "",
+    collectionExerciseDateError: "",
     newCollectionExerciseName: "",
     newCollectionExerciseReference: "",
     newCollectionExerciseStartDate: null,
@@ -188,7 +185,7 @@ class SurveyDetails extends Component {
     });
   };
 
-  openDialog = () => {
+  openCreateCollectionExerciseDialog = () => {
     this.setState({
       newCollectionExerciseName: "",
       newCollectionExerciseReference: "",
@@ -198,14 +195,11 @@ class SurveyDetails extends Component {
       validationError: false,
       createCollectionExerciseDialogDisplayed: true,
       collectionExerciseMetadataError: false,
-      collectionExerciseStartDateError: false,
-      collectionExerciseEndDateError: false,
-      collectionExerciseStartDateErrorMessage: "",
-      collectionExerciseEndDateErrorMessage: "",
+      collectionExerciseDateError: "",
     });
   };
 
-  closeDialog = () => {
+  closeCreateCollectionExerciseDialog = () => {
     this.setState({ createCollectionExerciseDialogDisplayed: false });
   };
 
@@ -255,27 +249,13 @@ class SurveyDetails extends Component {
     }
 
     if (
-      this.state.newCollectionExerciseStartDate >
-      this.state.newCollectionExerciseEndDate
-    ) {
-      this.setState({
-        collectionExerciseStartDateError: true,
-        collectionExerciseStartDateErrorMessage:
-          "Start Date must come before End Date",
-      });
-      return;
-    }
-
-    if (
       this.state.newCollectionExerciseEndDate <
       this.state.newCollectionExerciseStartDate
     ) {
       this.setState({
-        collectionExerciseEndDateError: true,
-        collectionExerciseEndDateErrorMessage:
-          "End Date must come after Start Date",
+        collectionExerciseDateError: "Start date must be before end date",
       });
-      return;
+      validationFailed = true;
     }
 
     let metadataJson = null;
@@ -650,7 +630,7 @@ class SurveyDetails extends Component {
         ) && (
           <Button
             variant="contained"
-            onClick={this.openDialog}
+            onClick={this.openCreateCollectionExerciseDialog}
             style={{ marginTop: 10 }}
           >
             Create Collection Exercise
@@ -806,12 +786,9 @@ class SurveyDetails extends Component {
                 <TextField
                   required
                   label="Start Date"
-                  fullWidth={true}
                   type="datetime-local"
-                  error={this.state.collectionExerciseStartDateError}
-                  helperText={
-                    this.state.collectionExerciseStartDateErrorMessage
-                  }
+                  error={this.state.collectionExerciseDateError}
+                  helperText={this.state.collectionExerciseDateError}
                   value={this.state.newCollectionExerciseStartDate}
                   onChange={this.onNewCollectionExerciseStartDateChange}
                   style={{ marginTop: 20 }}
@@ -822,13 +799,11 @@ class SurveyDetails extends Component {
                 <TextField
                   required
                   label="End Date"
-                  fullWidth={true}
                   type="datetime-local"
-                  error={this.state.collectionExerciseEndDateError}
-                  helperText={this.state.collectionExerciseEndDateErrorMessage}
+                  error={this.state.collectionExerciseDateError}
                   value={this.state.newCollectionExerciseEndDate}
                   onChange={this.onNewCollectionExerciseEndDateChange}
-                  style={{ marginTop: 20 }}
+                  style={{ marginTop: 20, marginLeft: 30 }}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -853,7 +828,7 @@ class SurveyDetails extends Component {
                   Create collection exercise
                 </Button>
                 <Button
-                  onClick={this.closeDialog}
+                  onClick={this.closeCreateCollectionExerciseDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
