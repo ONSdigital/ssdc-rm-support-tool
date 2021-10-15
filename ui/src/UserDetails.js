@@ -203,42 +203,55 @@ class UserDetails extends Component {
       }
     );
 
-    const groupMenuItems = this.state.groups.map((group) => (
-      <MenuItem key={group.id} value={group.id}>
-        {group.name}
-      </MenuItem>
-    ));
+    const addGroupMenuItems = this.state.groups
+      .filter(
+        (group) =>
+          !this.state.memberOfGroups
+            .map((memberOfGroup) => memberOfGroup.groupId)
+            .includes(group.id)
+      )
+      .sort((a, b) => a.name.localeCompare(b.name)) // Sort by group name alphabetically
+      .map((group) => (
+        <MenuItem key={group.id} value={group.id}>
+          {group.name}
+        </MenuItem>
+      ));
 
     return (
       <div style={{ padding: 20 }}>
         <Link to="/userAdmin">← Back to admin</Link>
-        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
+        <Typography variant="h4" color="inherit">
           User Details: {this.state.user.email}
         </Typography>
         {!this.state.authorisedActivities.includes("SUPER_USER") &&
           !this.state.isLoading && (
-            <h1 style={{ color: "red" }}>YOU ARE NOT AUTHORISED</h1>
+            <h1 style={{ color: "red", marginTop: 20 }}>
+              YOU ARE NOT AUTHORISED
+            </h1>
           )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
-            <Button
-              variant="contained"
-              onClick={this.openJoinGroupDialog}
-              style={{ marginTop: 20 }}
-            >
-              Add User to Group
-            </Button>
-            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            <Typography variant="h6" color="inherit">
+              Groups
+            </Typography>
+            <TableContainer component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableCell>Group Name</TableCell>
-                    <TableCell></TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>{memberOfGroupTableRows}</TableBody>
               </Table>
             </TableContainer>
+            <Button
+              variant="contained"
+              onClick={this.openJoinGroupDialog}
+              style={{ marginTop: 10 }}
+            >
+              Add User to Group
+            </Button>
             <Dialog open={this.state.showGroupDialog}>
               <DialogContent
                 style={{ paddingLeft: 30, paddingRight: 30, paddingBottom: 10 }}
@@ -251,7 +264,7 @@ class UserDetails extends Component {
                       value={this.state.groupId}
                       error={this.state.groupValidationError}
                     >
-                      {groupMenuItems}
+                      {addGroupMenuItems}
                     </Select>
                   </FormControl>
                 </div>

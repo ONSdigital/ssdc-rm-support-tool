@@ -23,12 +23,17 @@ import { Link } from "react-router-dom";
 class LandingPage extends Component {
   state = {
     authorisedActivities: [],
+    thisUserAdminGroups: [],
     surveys: [],
     createSurveyDialogDisplayed: false,
     validationError: false,
     newSurveyName: "",
     validationRulesValidationError: false,
+    sampleDefinitionUrlError: false,
+    surveyMetadataError: false,
     newSurveyValidationRules: "",
+    newSurveySampleDefintionUrl: "",
+    newSurveyMetadata: "",
     printTemplates: [],
     smsTemplates: [],
     createPrintTemplateDialogDisplayed: false,
@@ -59,6 +64,7 @@ class LandingPage extends Component {
   }
 
   getAuthorisedBackendData = async () => {
+    this.getThisUserAdminGroups(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getPrintSuppliers(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
@@ -83,6 +89,19 @@ class LandingPage extends Component {
     this.setState({ authorisedActivities: authorisedActivities });
 
     return authorisedActivities;
+  };
+
+  getThisUserAdminGroups = async () => {
+    const response = await fetch("/api/userGroups/thisUserAdminGroups");
+
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    if (!response.ok) {
+      return;
+    }
+
+    const responseJson = await response.json();
+
+    this.setState({ thisUserAdminGroups: responseJson });
   };
 
   refreshDataFromBackend = (authorisedActivities) => {
@@ -167,6 +186,10 @@ class LandingPage extends Component {
       createSurveyDialogDisplayed: true,
       newSurveyHeaderRow: true,
       newSurveySampleSeparator: ",",
+      sampleDefinitionUrlError: false,
+      surveyMetadataError: false,
+      newSurveySampleDefintionUrl: "",
+      newSurveyMetadata: "",
     });
   };
 
@@ -235,6 +258,22 @@ class LandingPage extends Component {
     });
   };
 
+  onNewSurveySampleDefinitionUrlChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+    this.setState({
+      sampleDefinitionUrlError: resetValidation,
+      newSurveySampleDefintionUrl: event.target.value,
+    });
+  };
+
+  onNewSurveyMetadataChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+    this.setState({
+      surveyMetadataError: resetValidation,
+      newSurveyMetadata: event.target.value,
+    });
+  };
+
   onNewSurveyHeaderRowChange = (event) => {
     this.setState({ newSurveyHeaderRow: event.target.value });
   };
@@ -267,6 +306,27 @@ class LandingPage extends Component {
       }
     }
 
+    if (!this.state.newSurveySampleDefintionUrl.trim()) {
+      this.setState({ sampleDefinitionUrlError: true });
+      validationFailed = true;
+    }
+
+    let metadataJson = null;
+    if (this.state.newSurveyMetadata.length > 0) {
+      try {
+        const parsedJson = JSON.parse(this.state.newSurveyMetadata);
+        if (Object.keys(parsedJson).length === 0) {
+          this.setState({ surveyMetadataError: true });
+          validationFailed = true;
+        } else {
+          metadataJson = JSON.parse(this.state.newSurveyMetadata);
+        }
+      } catch (err) {
+        this.setState({ surveyMetadataError: true });
+        validationFailed = true;
+      }
+    }
+
     if (validationFailed) {
       return;
     }
@@ -276,6 +336,8 @@ class LandingPage extends Component {
       sampleValidationRules: JSON.parse(this.state.newSurveyValidationRules),
       sampleWithHeaderRow: this.state.newSurveyHeaderRow,
       sampleSeparator: this.state.newSurveySampleSeparator,
+      sampleDefinitionUrl: this.state.newSurveySampleDefintionUrl,
+      metadata: metadataJson,
     };
 
     await fetch("/api/surveys", {
@@ -469,6 +531,14 @@ class LandingPage extends Component {
         <TableCell component="th" scope="row">
           <Link to={`/survey?surveyId=${survey.id}`}>{survey.name}</Link>
         </TableCell>
+        <TableCell component="th" scope="row">
+          <a href={survey.sampleDefinitionUrl} target="_blank" rel="noreferrer">
+            {survey.sampleDefinitionUrl}
+          </a>
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(survey.metadata)}
+        </TableCell>
       </TableRow>
     ));
 
@@ -516,7 +586,9 @@ class LandingPage extends Component {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Survey Name</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Sample Definition URL</TableCell>
+                    <TableCell>Metadata</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{surveyTableRows}</TableBody>
@@ -612,6 +684,13 @@ class LandingPage extends Component {
             </div>
           </>
         )}
+        {this.state.thisUserAdminGroups.length > 0 && (
+          <>
+            <div style={{ marginTop: 20 }}>
+              <Link to="/myGroupsAdmin">My Groups Admin</Link>
+            </div>
+          </>
+        )}
         {this.state.authorisedActivities.includes(
           "EXCEPTION_MANAGER_VIEWER"
         ) && (
@@ -659,6 +738,7 @@ class LandingPage extends Component {
                   >
                     <MenuItem value={","}>Comma</MenuItem>
                     <MenuItem value={":"}>Colon</MenuItem>
+                    <MenuItem value={"|"}>Pipe</MenuItem>
                   </Select>
                 </FormControl>
                 <TextField
@@ -671,6 +751,27 @@ class LandingPage extends Component {
                   label="Validation rules"
                   onChange={this.onNewSurveyValidationRulesChange}
                   value={this.state.newSurveyValidationRules}
+                />
+                <TextField
+                  style={{ marginTop: 10 }}
+                  required
+                  multiline
+                  fullWidth={true}
+                  error={this.state.sampleDefinitionUrlError}
+                  id="standard-required"
+                  label="Survey Definition URL"
+                  onChange={this.onNewSurveySampleDefinitionUrlChange}
+                  value={this.state.newSurveySampleDefintionUrl}
+                />
+                <TextField
+                  style={{ marginTop: 10 }}
+                  multiline
+                  fullWidth={true}
+                  error={this.state.surveyMetadataError}
+                  id="standard-required"
+                  label="Metadata"
+                  onChange={this.onNewSurveyMetadataChange}
+                  value={this.state.newSurveyMetadata}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
