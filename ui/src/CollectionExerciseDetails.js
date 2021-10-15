@@ -33,6 +33,7 @@ class CollectionExerciseDetails extends Component {
     printPackCodes: [],
     sensitiveSampleColumns: [],
     smsPackCodes: [],
+    createActionRulesDialogDisplayed: false,
     printPackCodeValidationError: false,
     smsPackCodeValidationError: false,
     smsPhoneNumberColumnValidationError: false,
