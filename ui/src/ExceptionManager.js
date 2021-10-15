@@ -105,7 +105,7 @@ class ExceptionManager extends Component {
     const peekText = await response.text();
 
     this.setState({ peekResult: peekText });
-    this.peekInProgress = false;
+    this.peekInProgress = false; // Don't copy this pattern... go looking somewhere other than this file
   };
 
   closePeekDialog = () => {
@@ -142,7 +142,7 @@ class ExceptionManager extends Component {
       this.closeQuarantineDialog();
     }
 
-    this.quarantineInProgress = false;
+    this.quarantineInProgress = false; // Don't copy this pattern... go looking somewhere other than this file
   };
 
   render() {
