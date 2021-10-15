@@ -95,6 +95,8 @@ class UserAdmin extends Component {
   };
 
   openCreateUserDialog = () => {
+    this.createUserInProgress = false;
+
     this.setState({
       email: "",
       emailValidationError: "",
@@ -121,10 +123,17 @@ class UserAdmin extends Component {
   };
 
   onCreateUser = async () => {
+    if (this.createUserInProgress) {
+      return;
+    }
+
+    this.createUserInProgress = true;
+
     if (!this.validateEmail(this.state.email)) {
       this.setState({
         emailValidationError: "Must be a valid email address",
       });
+      this.createUserInProgress = false;
       return;
     }
 
@@ -142,6 +151,8 @@ class UserAdmin extends Component {
   };
 
   openCreateGroupDialog = () => {
+    this.createGroupInProgress = false;
+
     this.setState({
       groupName: "",
       groupNameValidationError: false,
@@ -163,11 +174,18 @@ class UserAdmin extends Component {
   };
 
   onCreateGroup = async () => {
+    if (this.createGroupInProgress) {
+      return;
+    }
+
+    this.createGroupInProgress = true;
+
     if (!this.state.groupName.trim()) {
       this.setState({
         groupNameValidationError: true,
         groupNameValidationMessage: "Group name is required",
       });
+      this.createGroupInProgress = false;
       return;
     }
 
@@ -180,6 +198,7 @@ class UserAdmin extends Component {
         groupNameValidationError: true,
         groupNameValidationMessage: "Group already exists",
       });
+      this.createGroupInProgress = false;
       return;
     }
 

@@ -18,6 +18,8 @@ class Refusal extends Component {
   };
 
   openDialog = () => {
+    this.createInProgress = false;
+
     this.setState({
       showDialog: true,
     });
@@ -39,9 +41,15 @@ class Refusal extends Component {
   };
 
   onCreate = async () => {
+    if (this.createInProgress) {
+      return;
+    }
+
+    this.createInProgress = true;
+
     if (!this.state.type) {
       this.setState({ typeValidationError: true });
-
+      this.createInProgress = false;
       return;
     }
 

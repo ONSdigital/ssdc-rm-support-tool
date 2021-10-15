@@ -85,6 +85,12 @@ class ExceptionManager extends Component {
   };
 
   onPeek = () => {
+    if (this.peekInProgress) {
+      return;
+    }
+
+    this.peekInProgress = true;
+
     this.setState({ peekResult: "", showPeekDialog: true });
 
     this.peekMessage(
@@ -99,6 +105,7 @@ class ExceptionManager extends Component {
     const peekText = await response.text();
 
     this.setState({ peekResult: peekText });
+    this.peekInProgress = false;
   };
 
   closePeekDialog = () => {
@@ -118,6 +125,12 @@ class ExceptionManager extends Component {
   };
 
   quarantineMessage = async () => {
+    if (this.quarantineInProgress) {
+      return;
+    }
+
+    this.quarantineInProgress = true;
+
     const response = await fetch(
       `/api/exceptionManager/skipMessage/${this.state.exceptionDetails[0].exceptionReport.messageHash}`
     );
@@ -128,6 +141,8 @@ class ExceptionManager extends Component {
       });
       this.closeQuarantineDialog();
     }
+
+    this.quarantineInProgress = false;
   };
 
   render() {

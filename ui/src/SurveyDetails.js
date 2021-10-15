@@ -180,6 +180,8 @@ class SurveyDetails extends Component {
   };
 
   openDialog = () => {
+    this.createCollectionExerciseInProgress = false;
+
     this.setState({
       newCollectionExerciseName: "",
       validationError: false,
@@ -200,8 +202,15 @@ class SurveyDetails extends Component {
   };
 
   onCreateCollectionExercise = async () => {
+    if (this.createCollectionExerciseInProgress) {
+      return;
+    }
+
+    this.createCollectionExerciseInProgress = true;
+
     if (!this.state.newCollectionExerciseName.trim()) {
       this.setState({ validationError: true });
+      this.createCollectionExerciseInProgress = false;
       return;
     }
 
@@ -222,6 +231,8 @@ class SurveyDetails extends Component {
   };
 
   openActionRulePrintTemplateDialog = () => {
+    this.allowActionRulePrintTemplateInProgress = false;
+
     this.setState({
       allowActionRulePrintTemplateDialogDisplayed: true,
       printTemplateToAllow: "",
@@ -231,6 +242,8 @@ class SurveyDetails extends Component {
   };
 
   openActionRuleSmsTemplateDialog = () => {
+    this.allowActionRuleSmsTemplateInProgress = false;
+
     this.setState({
       allowActionRuleSmsTemplateDialogDisplayed: true,
       smsTemplateToAllow: "",
@@ -240,6 +253,8 @@ class SurveyDetails extends Component {
   };
 
   openFulfilmentPrintTemplateDialog = () => {
+    this.allowFulfilmentPrintTemplateInProgress = false;
+
     this.setState({
       allowFulfilmentPrintTemplateDialogDisplayed: true,
       printTemplateToAllow: "",
@@ -249,6 +264,8 @@ class SurveyDetails extends Component {
   };
 
   openSmsFulfilmentTemplateDialog = () => {
+    this.allowSmsFulfilmentTemplateInProgress = false;
+
     this.setState({
       allowSmsFulfilmentTemplateDialogDisplayed: true,
       smsTemplateToAllow: "",
@@ -258,11 +275,18 @@ class SurveyDetails extends Component {
   };
 
   onAllowActionRulePrintTemplate = async () => {
+    if (this.allowActionRulePrintTemplateInProgress) {
+      return;
+    }
+
+    this.allowActionRulePrintTemplateInProgress = true;
+
     if (!this.state.printTemplateToAllow) {
       this.setState({
         printTemplateValidationError: true,
       });
 
+      this.allowActionRulePrintTemplateInProgress = false;
       return;
     }
 
@@ -284,15 +308,23 @@ class SurveyDetails extends Component {
       this.setState({
         allowPrintTemplateError: errorMessage,
       });
+      this.allowActionRulePrintTemplateInProgress = false;
     }
   };
 
   onAllowActionRuleSmsTemplate = async () => {
+    if (this.allowActionRuleSmsTemplateInProgress) {
+      return;
+    }
+
+    this.allowActionRuleSmsTemplateInProgress = true;
+
     if (!this.state.smsTemplateToAllow) {
       this.setState({
         smsTemplateValidationError: true,
       });
 
+      this.allowActionRuleSmsTemplateInProgress = false;
       return;
     }
 
@@ -314,15 +346,23 @@ class SurveyDetails extends Component {
       this.setState({
         allowSmsTemplateError: errorMessage,
       });
+      this.allowActionRuleSmsTemplateInProgress = false;
     }
   };
 
   onAllowFulfilmentPrintTemplate = async () => {
+    if (this.allowFulfilmentPrintTemplateInProgress) {
+      return;
+    }
+
+    this.allowFulfilmentPrintTemplateInProgress = true;
+
     if (!this.state.printTemplateToAllow) {
       this.setState({
         printTemplateValidationError: true,
       });
 
+      this.allowFulfilmentPrintTemplateInProgress = false;
       return;
     }
 
@@ -344,15 +384,23 @@ class SurveyDetails extends Component {
       this.setState({
         allowPrintTemplateError: errorMessage,
       });
+      this.allowFulfilmentPrintTemplateInProgress = false;
     }
   };
 
   onAllowSmsFulfilmentTemplate = async () => {
+    if (this.allowSmsFulfilmentTemplateInProgress) {
+      return;
+    }
+
+    this.allowSmsFulfilmentTemplateInProgress = true;
+
     if (!this.state.smsTemplateToAllow) {
       this.setState({
         printTemplateValidationError: true,
       });
 
+      this.allowSmsFulfilmentTemplateInProgress = false;
       return;
     }
 
@@ -374,6 +422,7 @@ class SurveyDetails extends Component {
       this.setState({
         allowPrintTemplateError: errorMessage,
       });
+      this.allowSmsFulfilmentTemplateInProgress = false;
     }
   };
 

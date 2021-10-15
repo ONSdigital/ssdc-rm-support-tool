@@ -113,6 +113,8 @@ class UserDetails extends Component {
   };
 
   openJoinGroupDialog = () => {
+    this.joinGroupInProgress = false;
+
     this.setState({
       groupValidationError: false,
       showGroupDialog: true,
@@ -126,6 +128,8 @@ class UserDetails extends Component {
   };
 
   openRemoveDialog = (groupName, userGroupMemberId) => {
+    this.removeGroupInProgress = false;
+
     this.setState({
       showRemoveDialog: true,
       groupName: groupName,
@@ -140,6 +144,12 @@ class UserDetails extends Component {
   };
 
   removeGroup = async () => {
+    if (this.removeGroupInProgress) {
+      return;
+    }
+
+    this.removeGroupInProgress = true;
+
     await fetch(`/api/userGroupMembers/${this.state.userGroupMemberId}`, {
       method: "DELETE",
     });
@@ -153,11 +163,18 @@ class UserDetails extends Component {
   };
 
   onJoinGroup = async () => {
+    if (this.joinGroupInProgress) {
+      return;
+    }
+
+    this.joinGroupInProgress = true;
+
     if (!this.state.groupId) {
       this.setState({
         groupValidationError: true,
       });
 
+      this.joinGroupInProgress = false;
       return;
     }
 

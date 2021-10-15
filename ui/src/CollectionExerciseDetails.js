@@ -33,7 +33,6 @@ class CollectionExerciseDetails extends Component {
     printPackCodes: [],
     sensitiveSampleColumns: [],
     smsPackCodes: [],
-    createActionRulesDialogDisplayed: false,
     printPackCodeValidationError: false,
     smsPackCodeValidationError: false,
     smsPhoneNumberColumnValidationError: false,
@@ -154,6 +153,8 @@ class CollectionExerciseDetails extends Component {
   };
 
   openDialog = () => {
+    this.createActionRuleDisabled = false;
+
     this.setState({
       newActionRuleType: "",
       actionRuleTypeValidationError: false,
@@ -220,6 +221,12 @@ class CollectionExerciseDetails extends Component {
   };
 
   onCreateActionRule = async () => {
+    if (this.createActionRuleDisabled) {
+      return;
+    }
+
+    this.createActionRuleDisabled = true;
+
     var failedValidation = false;
 
     if (!this.state.newActionRuleType) {
@@ -268,6 +275,7 @@ class CollectionExerciseDetails extends Component {
     }
 
     if (failedValidation) {
+      this.createActionRuleDisabled = false;
       return;
     }
 
@@ -302,9 +310,9 @@ class CollectionExerciseDetails extends Component {
       body: JSON.stringify(newActionRule),
     });
 
-    if (response.ok) {
-      this.setState({ createActionRulesDialogDisplayed: false });
-    }
+    this.setState({
+      createActionRulesDialogDisplayed: !response.ok,
+    });
   };
 
   getTimeNowForDateTimePicker = () => {

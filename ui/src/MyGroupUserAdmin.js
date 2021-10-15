@@ -105,6 +105,8 @@ class MyGroupUserAdmin extends Component {
   };
 
   openAddUserDialog = () => {
+    this.addUserInProgress = false;
+
     this.setState({
       showAddUserToGroupDialog: true,
       userId: "",
@@ -119,8 +121,15 @@ class MyGroupUserAdmin extends Component {
   };
 
   onAddUser = async () => {
+    if (this.addUserInProgress) {
+      return;
+    }
+
+    this.addUserInProgress = true;
+
     if (!this.state.userId) {
       this.setState({ emailValidationError: true });
+      this.addUserInProgress = false;
       return;
     }
 
@@ -141,6 +150,8 @@ class MyGroupUserAdmin extends Component {
   };
 
   openRemoveDialog = (groupMemberIdToRemove) => {
+    this.removeUserFromGroupInProgress = false;
+
     this.setState({
       groupMemberIdToRemove: groupMemberIdToRemove,
       showRemoveDialog: true,
@@ -155,6 +166,12 @@ class MyGroupUserAdmin extends Component {
   };
 
   removeUserFromGroup = async () => {
+    if (this.removeUserFromGroupInProgress) {
+      return;
+    }
+
+    this.removeUserFromGroupInProgress = true;
+
     const response = await fetch(
       `/api/userGroupMembers/${this.state.groupMemberIdToRemove}`,
       {

@@ -47,6 +47,8 @@ class PrintFulfilment extends Component {
   };
 
   openDialog = () => {
+    this.createInProgress = false;
+
     this.setState({
       showDialog: true,
     });
@@ -73,28 +75,40 @@ class PrintFulfilment extends Component {
   };
 
   onCreate = async () => {
+    if (this.createInProgress) {
+      return;
+    }
+
+    this.createInProgress = true;
+
+    let validationFailed = false;
+
     if (!this.state.packCode) {
       this.setState({
         packCodeValidationError: true,
       });
 
-      return;
+      validationFailed = true;
     }
 
     var uacMetadataJson = null;
 
     if (this.state.newPrintUacQidMetadata.length > 0) {
       try {
-        const parsedJson = JSON.parse(this.state.newPrintUacQidMetadata);
-        if (Object.keys(parsedJson).length === 0) {
+        uacMetadataJson = JSON.parse(this.state.newPrintUacQidMetadata);
+        if (Object.keys(uacMetadataJson).length === 0) {
           this.setState({ printUacQidMetadataValidationError: true });
-          return;
+          validationFailed = true;
         }
       } catch (err) {
         this.setState({ printUacQidMetadataValidationError: true });
-        return;
+        validationFailed = true;
       }
-      uacMetadataJson = JSON.parse(this.state.newPrintUacQidMetadata);
+    }
+
+    if (validationFailed) {
+      this.createInProgress = false;
+      return;
     }
 
     const printFulfilment = {
