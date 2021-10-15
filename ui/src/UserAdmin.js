@@ -110,6 +110,7 @@ class UserAdmin extends Component {
   onEmailChange = (event) => {
     this.setState({
       email: event.target.value,
+      emailValidationError: "",
     });
   };
 
