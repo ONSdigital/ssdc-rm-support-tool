@@ -23,7 +23,7 @@ class UserAdmin extends Component {
     groups: [],
     showUserDialog: false,
     email: "",
-    emailValidationError: false,
+    emailValidationError: "",
     showGroupDialog: false,
     groupName: "",
     groupNameValidationError: false,
@@ -97,7 +97,7 @@ class UserAdmin extends Component {
   openCreateUserDialog = () => {
     this.setState({
       email: "",
-      emailValidationError: false,
+      emailValidationError: "",
       showUserDialog: true,
     });
   };
@@ -114,9 +114,17 @@ class UserAdmin extends Component {
     });
   };
 
+  validateEmail = (email) => {
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(email);
+  };
+
   onCreateUser = async () => {
-    if (!this.state.email.trim()) {
-      this.setState({ emailValidationError: true });
+    if (!this.validateEmail(this.state.email)) {
+      this.setState({
+        emailValidationError: "Must be a valid email address",
+      });
       return;
     }
 
@@ -282,6 +290,7 @@ class UserAdmin extends Component {
                 label="Email"
                 onChange={this.onEmailChange}
                 error={this.state.emailValidationError}
+                helperText={this.state.emailValidationError}
                 value={this.state.email}
               />
             </div>
