@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:16432/postgres
+    url: jdbc:postgresql://localhost:16437/postgres
 
   cloud:
     gcp:
       pubsub:
-        emulator-host: localhost:18538
+        emulator-host: localhost:18541
         project-id: our-project
 
 # for wiremock server
