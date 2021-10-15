@@ -34,14 +34,15 @@ class SurveyDetails extends Component {
     surveyName: "",
     collectionExercises: [],
     createCollectionExerciseDialogDisplayed: false,
-    validationError: false,
-    collectionExerciseMetadataError: false,
-    collectionExerciseDateError: "",
     newCollectionExerciseName: "",
+    newCollectionExerciseNameError: false,
     newCollectionExerciseReference: "",
+    newCollectionExerciseReferenceError: false,
     newCollectionExerciseStartDate: null,
     newCollectionExerciseEndDate: null,
+    newCollectionExerciseDateError: "",
     newCollectionExerciseMetadata: "",
+    newCollectionExerciseMetadataError: false,
     allowActionRulePrintTemplateDialogDisplayed: false,
     allowActionRuleSmsTemplateDialogDisplayed: false,
     allowFulfilmentPrintTemplateDialogDisplayed: false,
@@ -192,10 +193,11 @@ class SurveyDetails extends Component {
       newCollectionExerciseStartDate: this.getTimeNowForDateTimePicker(),
       newCollectionExerciseEndDate: this.getTimeNowForDateTimePicker(),
       newCollectionExerciseMetadata: "",
-      validationError: false,
+      newCollectionExerciseNameError: false,
+      newCollectionExerciseReferenceError: false,
       createCollectionExerciseDialogDisplayed: true,
-      collectionExerciseMetadataError: false,
-      collectionExerciseDateError: "",
+      newCollectionExerciseMetadataError: false,
+      newCollectionExerciseDateError: "",
     });
   };
 
@@ -206,32 +208,37 @@ class SurveyDetails extends Component {
   onNewCollectionExerciseNameChange = (event) => {
     const resetValidation = !event.target.value.trim();
     this.setState({
-      validationError: resetValidation,
       newCollectionExerciseName: event.target.value,
+      newCollectionExerciseNameError: resetValidation,
     });
   };
 
   onNewCollectionExerciseReferenceChange = (event) => {
     const resetValidation = !event.target.value.trim();
     this.setState({
-      validationError: resetValidation,
       newCollectionExerciseReference: event.target.value,
+      newCollectionExerciseReferenceError: resetValidation,
     });
   };
 
   onNewCollectionExerciseStartDateChange = (event) => {
-    this.setState({ newCollectionExerciseStartDate: event.target.value });
+    this.setState({
+      newCollectionExerciseStartDate: event.target.value,
+      newCollectionExerciseDateError: "",
+    });
   };
 
   onNewCollectionExerciseEndDateChange = (event) => {
-    this.setState({ newCollectionExerciseEndDate: event.target.value });
+    this.setState({
+      newCollectionExerciseEndDate: event.target.value,
+      newCollectionExerciseDateError: "",
+    });
   };
 
   onNewCollectionExerciseMetadataChange = (event) => {
-    const resetValidation = !event.target.value.trim();
     this.setState({
-      collectionExerciseMetadataError: resetValidation,
       newCollectionExerciseMetadata: event.target.value,
+      newCollectionExerciseMetadataError: false,
     });
   };
 
@@ -239,12 +246,12 @@ class SurveyDetails extends Component {
     let validationFailed = false;
 
     if (!this.state.newCollectionExerciseName.trim()) {
-      this.setState({ validationError: true });
+      this.setState({ newCollectionExerciseNameError: true });
       validationFailed = true;
     }
 
     if (!this.state.newCollectionExerciseReference.trim()) {
-      this.setState({ validationError: true });
+      this.setState({ newCollectionExerciseReferenceError: true });
       validationFailed = true;
     }
 
@@ -253,7 +260,7 @@ class SurveyDetails extends Component {
       this.state.newCollectionExerciseStartDate
     ) {
       this.setState({
-        collectionExerciseDateError: "Start date must be before end date",
+        newCollectionExerciseDateError: "Start date must be before end date",
       });
       validationFailed = true;
     }
@@ -263,13 +270,13 @@ class SurveyDetails extends Component {
       try {
         const parsedJson = JSON.parse(this.state.newCollectionExerciseMetadata);
         if (Object.keys(parsedJson).length === 0) {
-          this.setState({ collectionExerciseMetadataError: true });
+          this.setState({ newCollectionExerciseMetadataError: true });
           validationFailed = true;
         } else {
           metadataJson = JSON.parse(this.state.newCollectionExerciseMetadata);
         }
       } catch (err) {
-        this.setState({ collectionExerciseMetadataError: true });
+        this.setState({ newCollectionExerciseMetadataError: true });
         validationFailed = true;
       }
     }
@@ -498,25 +505,13 @@ class SurveyDetails extends Component {
             </Link>
           </TableCell>
           <TableCell component="th" scope="row">
-            <Link
-              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
-            >
-              {collex.reference}
-            </Link>
+            {collex.reference}
           </TableCell>
           <TableCell component="th" scope="row">
-            <Link
-              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
-            >
-              {collex.startDate}
-            </Link>
+            {collex.startDate}
           </TableCell>
           <TableCell component="th" scope="row">
-            <Link
-              to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
-            >
-              {collex.endDate}
-            </Link>
+            {collex.endDate}
           </TableCell>
           <TableCell component="th" scope="row">
             {JSON.stringify(collex.metadata)}
@@ -768,7 +763,7 @@ class SurveyDetails extends Component {
                 <TextField
                   required
                   fullWidth={true}
-                  error={this.state.validationError}
+                  error={this.state.newCollectionExerciseNameError}
                   id="standard-required"
                   label="Collection exercise name"
                   onChange={this.onNewCollectionExerciseNameChange}
@@ -777,7 +772,7 @@ class SurveyDetails extends Component {
                 <TextField
                   required
                   fullWidth={true}
-                  error={this.state.validationError}
+                  error={this.state.newCollectionExerciseReferenceError}
                   id="standard-required"
                   label="Reference"
                   onChange={this.onNewCollectionExerciseReferenceChange}
@@ -787,8 +782,8 @@ class SurveyDetails extends Component {
                   required
                   label="Start Date"
                   type="datetime-local"
-                  error={this.state.collectionExerciseDateError}
-                  helperText={this.state.collectionExerciseDateError}
+                  error={this.state.newCollectionExerciseDateError}
+                  helperText={this.state.newCollectionExerciseDateError}
                   value={this.state.newCollectionExerciseStartDate}
                   onChange={this.onNewCollectionExerciseStartDateChange}
                   style={{ marginTop: 20 }}
@@ -800,7 +795,7 @@ class SurveyDetails extends Component {
                   required
                   label="End Date"
                   type="datetime-local"
-                  error={this.state.collectionExerciseDateError}
+                  error={this.state.newCollectionExerciseDateError}
                   value={this.state.newCollectionExerciseEndDate}
                   onChange={this.onNewCollectionExerciseEndDateChange}
                   style={{ marginTop: 20, marginLeft: 30 }}
@@ -812,7 +807,7 @@ class SurveyDetails extends Component {
                   style={{ marginTop: 10 }}
                   multiline
                   fullWidth={true}
-                  error={this.state.collectionExerciseMetadataError}
+                  error={this.state.newCollectionExerciseMetadataError}
                   id="standard-required"
                   label="Metadata"
                   onChange={this.onNewCollectionExerciseMetadataChange}
