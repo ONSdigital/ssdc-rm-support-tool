@@ -361,7 +361,7 @@ class LandingPage extends Component {
       body: JSON.stringify(newSurvey),
     });
 
-    await this.setState({ createSurveyDialogDisplayed: false });
+    this.setState({ createSurveyDialogDisplayed: false });
   };
 
   onFulfilmentTriggerDateChange = (event) => {
