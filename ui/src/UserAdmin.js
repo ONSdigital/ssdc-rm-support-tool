@@ -23,7 +23,7 @@ class UserAdmin extends Component {
     groups: [],
     showUserDialog: false,
     email: "",
-    emailValidationError: false,
+    emailValidationError: "",
     showGroupDialog: false,
     groupName: "",
     groupNameValidationError: false,
@@ -97,7 +97,7 @@ class UserAdmin extends Component {
   openCreateUserDialog = () => {
     this.setState({
       email: "",
-      emailValidationError: false,
+      emailValidationError: "",
       showUserDialog: true,
     });
   };
@@ -114,9 +114,17 @@ class UserAdmin extends Component {
     });
   };
 
+  validateEmail = (email) => {
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(email);
+  };
+
   onCreateUser = async () => {
-    if (!this.state.email.trim()) {
-      this.setState({ emailValidationError: true });
+    if (!this.validateEmail(this.state.email)) {
+      this.setState({
+        emailValidationError: "Must be a valid email address",
+      });
       return;
     }
 
@@ -210,24 +218,22 @@ class UserAdmin extends Component {
     return (
       <div style={{ padding: 20 }}>
         <Link to="/">← Back to home</Link>
-        <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
+        <Typography variant="h4" color="inherit">
           User Admin
         </Typography>
         {!this.state.authorisedActivities.includes("SUPER_USER") &&
           !this.state.isLoading && (
-            <h1 style={{ color: "red" }}>YOU ARE NOT AUTHORISED</h1>
+            <h1 style={{ color: "red", marginTop: 20 }}>
+              YOU ARE NOT AUTHORISED
+            </h1>
           )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
             <>
-              <Button
-                variant="contained"
-                onClick={this.openCreateUserDialog}
-                style={{ marginTop: 20 }}
-              >
-                Create User
-              </Button>
-              <TableContainer component={Paper} style={{ marginTop: 20 }}>
+              <Typography variant="h6" color="inherit">
+                Users
+              </Typography>
+              <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -237,16 +243,23 @@ class UserAdmin extends Component {
                   <TableBody>{usersTableRows}</TableBody>
                 </Table>
               </TableContainer>
-            </>
-            <>
               <Button
                 variant="contained"
-                onClick={this.openCreateGroupDialog}
-                style={{ marginTop: 20 }}
+                onClick={this.openCreateUserDialog}
+                style={{ marginTop: 10 }}
               >
-                Create Group
+                Create User
               </Button>
-              <TableContainer component={Paper} style={{ marginTop: 20 }}>
+            </>
+            <>
+              <Typography
+                variant="h6"
+                color="inherit"
+                style={{ marginTop: 10 }}
+              >
+                Groups
+              </Typography>
+              <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -256,6 +269,13 @@ class UserAdmin extends Component {
                   <TableBody>{groupsTableRows}</TableBody>
                 </Table>
               </TableContainer>
+              <Button
+                variant="contained"
+                onClick={this.openCreateGroupDialog}
+                style={{ marginTop: 10 }}
+              >
+                Create Group
+              </Button>
             </>
           </>
         )}
@@ -270,6 +290,7 @@ class UserAdmin extends Component {
                 label="Email"
                 onChange={this.onEmailChange}
                 error={this.state.emailValidationError}
+                helperText={this.state.emailValidationError}
                 value={this.state.email}
               />
             </div>

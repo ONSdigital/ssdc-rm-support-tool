@@ -8,6 +8,8 @@ import UserAdmin from "./UserAdmin";
 import UserDetails from "./UserDetails";
 import GroupDetails from "./GroupDetails";
 import ExceptionManager from "./ExceptionManager";
+import MyGroupsAdmin from "./MyGroupsAdmin";
+import MyGroupUserAdmin from "./MyGroupUserAdmin";
 import {
   BrowserRouter as Router,
   Switch,
@@ -73,6 +75,12 @@ function QueryRouting() {
       </Route>
       <Route path="/exceptionManager">
         <ExceptionManager />
+      </Route>
+      <Route path="/myGroupsAdmin">
+        <MyGroupsAdmin />
+      </Route>
+      <Route path="/myGroupUserAdmin">
+        <MyGroupUserAdmin groupId={query.get("groupId")} />
       </Route>
     </Switch>
   );

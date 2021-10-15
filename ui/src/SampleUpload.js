@@ -260,6 +260,7 @@ class SampleUpload extends Component {
           onClickAway={this.handleClosedDetails}
           onProcessJob={this.onProcessJob}
           onCancelJob={this.onCancelJob}
+          authorisedActivities={this.props.authorisedActivities}
         ></JobDetails>
       </div>
     );

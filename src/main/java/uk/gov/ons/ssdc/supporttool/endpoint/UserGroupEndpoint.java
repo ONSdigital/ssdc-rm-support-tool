@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.UserGroup;
+import uk.gov.ons.ssdc.common.model.entity.UserGroupAdmin;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupDto;
+import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupAdminRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
@@ -24,23 +26,32 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 public class UserGroupEndpoint {
   private final UserGroupRepository userGroupRepository;
   private final UserIdentity userIdentity;
+  private final UserGroupAdminRepository userGroupAdminRepository;
 
-  public UserGroupEndpoint(UserGroupRepository userGroupRepository, UserIdentity userIdentity) {
+  public UserGroupEndpoint(
+      UserGroupRepository userGroupRepository,
+      UserIdentity userIdentity,
+      UserGroupAdminRepository userGroupAdminRepository) {
     this.userGroupRepository = userGroupRepository;
     this.userIdentity = userIdentity;
+    this.userGroupAdminRepository = userGroupAdminRepository;
   }
 
   @GetMapping("/{groupId}")
   public UserGroupDto getUserGroup(
       @PathVariable(value = "groupId") UUID groupId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
-
     UserGroup group =
         userGroupRepository
             .findById(groupId)
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+
+    if (group.getAdmins().stream()
+        .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equals(userEmail))) {
+      // If you're not admin of this group, you have to be super user
+      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    }
 
     return mapDto(group);
   }
@@ -48,9 +59,21 @@ public class UserGroupEndpoint {
   @GetMapping
   public List<UserGroupDto> getUserGroups(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    if (!userGroupAdminRepository.existsByUserEmail(userEmail)) {
+      // If you're not admin of a group, you have to be super user
+      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    }
 
     return userGroupRepository.findAll().stream().map(this::mapDto).collect(Collectors.toList());
+  }
+
+  @GetMapping("/thisUserAdminGroups")
+  public List<UserGroupDto> getUserAdminGroups(
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    return userGroupAdminRepository.findByUserEmail(userEmail).stream()
+        .map(UserGroupAdmin::getGroup)
+        .map(this::mapDto)
+        .collect(Collectors.toList());
   }
 
   private UserGroupDto mapDto(UserGroup group) {
