@@ -311,9 +311,9 @@ class CollectionExerciseDetails extends Component {
       body: JSON.stringify(newActionRule),
     });
 
-    this.setState({
-      createActionRulesDialogDisplayed: !response.ok,
-    });
+    if (response.ok) {
+      this.setState({ createActionRulesDialogDisplayed: false });
+    }
   };
 
   getTimeNowForDateTimePicker = () => {
