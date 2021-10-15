@@ -118,14 +118,14 @@ class SensitiveData extends Component {
     if (response.ok) {
       this.closeDialog();
       this.updateSensitiveDataInProgress = false;
-      return;
+    } else {
+      const data = await response.json();
+      this.setState({
+        newValueValidationError: data.errors,
+        validationError: true,
+      });
+      this.updateSensitiveDataInProgress = false;
     }
-
-    const data = await response.json();
-    this.setState({
-      newValueValidationError: data.errors,
-      validationError: true,
-    });
   };
 
   render() {
