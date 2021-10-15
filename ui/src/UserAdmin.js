@@ -26,8 +26,7 @@ class UserAdmin extends Component {
     emailValidationError: "",
     showGroupDialog: false,
     groupName: "",
-    groupNameValidationError: false,
-    groupNameValidationMessage: null,
+    groupNameValidationError: "",
   };
 
   componentDidMount() {
@@ -121,6 +120,13 @@ class UserAdmin extends Component {
   };
 
   onCreateUser = async () => {
+    if (this.state.users.map((user) => user.email).includes(this.state.email)) {
+      this.setState({
+        emailValidationError: "User already exists",
+      });
+      return;
+    }
+
     if (!this.validateEmail(this.state.email)) {
       this.setState({
         emailValidationError: "Must be a valid email address",
@@ -144,8 +150,7 @@ class UserAdmin extends Component {
   openCreateGroupDialog = () => {
     this.setState({
       groupName: "",
-      groupNameValidationError: false,
-      groupNameValidationMessage: null,
+      groupNameValidationError: "",
       showGroupDialog: true,
     });
   };
@@ -165,8 +170,7 @@ class UserAdmin extends Component {
   onCreateGroup = async () => {
     if (!this.state.groupName.trim()) {
       this.setState({
-        groupNameValidationError: true,
-        groupNameValidationMessage: "Group name is required",
+        groupNameValidationError: "Group name is required",
       });
       return;
     }
@@ -177,8 +181,7 @@ class UserAdmin extends Component {
         .includes(this.state.groupName)
     ) {
       this.setState({
-        groupNameValidationError: true,
-        groupNameValidationMessage: "Group already exists",
+        groupNameValidationError: "Group already exists",
       });
       return;
     }
@@ -323,7 +326,7 @@ class UserAdmin extends Component {
                 label="Group name"
                 onChange={this.onGroupNameChange}
                 error={this.state.groupNameValidationError}
-                helperText={this.state.groupNameValidationMessage}
+                helperText={this.state.groupNameValidationError}
                 value={this.state.groupName}
               />
             </div>
