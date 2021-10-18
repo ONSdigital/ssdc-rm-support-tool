@@ -117,7 +117,6 @@ class SensitiveData extends Component {
 
     if (response.ok) {
       this.closeDialog();
-      this.updateSensitiveDataInProgress = false;
     } else {
       const data = await response.json();
       this.setState({
