@@ -154,6 +154,8 @@ class CollectionExerciseDetails extends Component {
   };
 
   openDialog = () => {
+    this.createActionRuleDisabled = false;
+
     this.setState({
       newActionRuleType: "",
       actionRuleTypeValidationError: false,
@@ -220,6 +222,12 @@ class CollectionExerciseDetails extends Component {
   };
 
   onCreateActionRule = async () => {
+    if (this.createActionRuleDisabled) {
+      return;
+    }
+
+    this.createActionRuleDisabled = true;
+
     var failedValidation = false;
 
     if (!this.state.newActionRuleType) {
@@ -268,6 +276,7 @@ class CollectionExerciseDetails extends Component {
     }
 
     if (failedValidation) {
+      this.createActionRuleDisabled = false;
       return;
     }
 

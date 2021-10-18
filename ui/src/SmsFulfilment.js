@@ -50,6 +50,8 @@ class SmsFulfilment extends Component {
   };
 
   openDialog = () => {
+    this.createInProgress = false;
+
     this.setState({
       showDialog: true,
     });
@@ -103,34 +105,47 @@ class SmsFulfilment extends Component {
   };
 
   onCreate = async () => {
+    if (this.createInProgress) {
+      return;
+    }
+
+    this.createInProgress = true;
+
+    let validationFailed = false;
+
     if (!this.state.packCode) {
       this.setState({
         packCodeValidationError: true,
       });
-      return;
+      validationFailed = true;
     }
+
     if (!this.state.phoneNumber) {
       this.setState({
         validationError: true,
         newValueValidationError: "Please enter phone number",
       });
-      return;
+      validationFailed = true;
     }
 
     var uacMetadataJson = null;
 
     if (this.state.newSmsUacQidMetadata.length > 0) {
       try {
-        const parsedJson = JSON.parse(this.state.newSmsUacQidMetadata);
-        if (Object.keys(parsedJson).length === 0) {
+        uacMetadataJson = JSON.parse(this.state.newSmsUacQidMetadata);
+        if (Object.keys(uacMetadataJson).length === 0) {
           this.setState({ smsUacQidMetadataValidationError: true });
-          return;
+          validationFailed = true;
         }
       } catch (err) {
         this.setState({ smsUacQidMetadataValidationError: true });
-        return;
+        validationFailed = true;
       }
-      uacMetadataJson = JSON.parse(this.state.newSmsUacQidMetadata);
+    }
+
+    if (validationFailed) {
+      this.createInProgress = false;
+      return;
     }
 
     const smsFulfilment = {

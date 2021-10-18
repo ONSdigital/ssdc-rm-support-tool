@@ -189,6 +189,8 @@ class GroupDetails extends Component {
   };
 
   openAllowDialog = () => {
+    this.allowInProgress = false;
+
     this.setState({
       activity: null,
       activityValidationError: false,
@@ -205,6 +207,8 @@ class GroupDetails extends Component {
   };
 
   openRemoveDialog = (activity, surveyName, userGroupPermissionId) => {
+    this.removeActivityPermissionInProgress = false;
+
     this.setState({
       showRemoveDialog: true,
       activity: activity,
@@ -220,6 +224,12 @@ class GroupDetails extends Component {
   };
 
   removeActivityPermission = async () => {
+    if (this.removeActivityPermissionInProgress) {
+      return;
+    }
+
+    this.removeActivityPermissionInProgress = true;
+
     await fetch(
       `/api/userGroupPermissions/${this.state.userGroupPermissionId}`,
       {
@@ -260,16 +270,30 @@ class GroupDetails extends Component {
   };
 
   onAllow = async () => {
+    if (this.allowInProgress) {
+      return;
+    }
+
+    this.allowInProgress = true;
+
+    let failedValidation = false;
+
     if (!this.state.activity) {
       this.setState({
         activityValidationError: true,
       });
-      return;
+      failedValidation = true;
     }
+
     if (!this.state.surveyId) {
       this.setState({
         surveyValidationError: true,
       });
+      failedValidation = true;
+    }
+
+    if (failedValidation) {
+      this.allowInProgress = false;
       return;
     }
 
@@ -296,6 +320,7 @@ class GroupDetails extends Component {
       this.setState({
         activityValidationError: true,
       });
+      this.allowInProgress = false;
       return;
     }
 
@@ -303,6 +328,8 @@ class GroupDetails extends Component {
   };
 
   openRemoveAdminDialog = (adminIdToRemove) => {
+    this.removeAdminInProgress = false;
+
     this.setState({
       adminIdToRemove: adminIdToRemove,
       showRemoveAdminDialog: true,
@@ -310,6 +337,12 @@ class GroupDetails extends Component {
   };
 
   removeAdmin = async () => {
+    if (this.removeAdminInProgress) {
+      return;
+    }
+
+    this.removeAdminInProgress = true;
+
     const response = await fetch(
       `/api/userGroupAdmins/${this.state.adminIdToRemove}`,
       {
@@ -338,6 +371,12 @@ class GroupDetails extends Component {
   };
 
   onAddAdmin = async () => {
+    if (this.addAdminInProgress) {
+      return;
+    }
+
+    this.addAdminInProgress = true;
+
     if (!this.state.newAdminUserId) {
       this.setState({ newAdminEmailValidationError: true });
       return;
@@ -357,6 +396,8 @@ class GroupDetails extends Component {
     if (response.ok) {
       this.closeAddAdminDialog();
     }
+
+    this.addAdminInProgress = false;
   };
 
   closeAddAdminDialog = () => {

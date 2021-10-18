@@ -59,6 +59,8 @@ class SensitiveData extends Component {
   };
 
   openDialog = () => {
+    this.updateSensitiveDataInProgress = false;
+
     this.setState({
       showDialog: true,
     });
@@ -85,11 +87,18 @@ class SensitiveData extends Component {
   };
 
   onUpdateSensitiveData = async () => {
+    if (this.updateSensitiveDataInProgress) {
+      return;
+    }
+
+    this.updateSensitiveDataInProgress = true;
+
     if (!this.state.columnToUpdate) {
       this.setState({
         newValueValidationError: "You must select a column to update",
         validationError: true,
       });
+      this.updateSensitiveDataInProgress = false;
       return;
     }
     const updateSampleSensitive = {
@@ -108,14 +117,14 @@ class SensitiveData extends Component {
 
     if (response.ok) {
       this.closeDialog();
-      return;
+    } else {
+      const data = await response.json();
+      this.setState({
+        newValueValidationError: data.errors,
+        validationError: true,
+      });
+      this.updateSensitiveDataInProgress = false;
     }
-
-    const data = await response.json();
-    this.setState({
-      newValueValidationError: data.errors,
-      validationError: true,
-    });
   };
 
   render() {

@@ -10,6 +10,8 @@ class InvalidCase extends Component {
   };
 
   openDialog = () => {
+    this.createInProgress = false;
+
     this.setState({
       showDialog: true,
     });
@@ -31,9 +33,16 @@ class InvalidCase extends Component {
   };
 
   onCreate = async () => {
+    if (this.createInProgress) {
+      return;
+    }
+
+    this.createInProgress = true;
+
     if (!this.state.reason) {
       this.setState({ reasonValidationError: true });
 
+      this.createInProgress = false;
       return;
     }
 

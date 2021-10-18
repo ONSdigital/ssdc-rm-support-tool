@@ -178,6 +178,8 @@ class LandingPage extends Component {
   };
 
   openDialog = () => {
+    this.createSurveyInProgress = false;
+
     this.setState({
       newSurveyName: "",
       validationError: false,
@@ -194,6 +196,8 @@ class LandingPage extends Component {
   };
 
   openFulfilmentTriggerDialog = () => {
+    this.updateFulfilmentTriggerDateTimeInProgress = false;
+
     this.getFulfilmentTrigger();
     this.setState({
       configureNextTriggerDisplayed: true,
@@ -201,6 +205,8 @@ class LandingPage extends Component {
   };
 
   openPrintTemplateDialog = () => {
+    this.createPrintTemplateInProgress = false;
+
     this.setState({
       printSupplier: "",
       packCode: "",
@@ -213,6 +219,8 @@ class LandingPage extends Component {
   };
 
   openSmsTemplateDialog = () => {
+    this.createSmsTemplateInProgress = false;
+
     this.setState({
       packCode: "",
       template: "",
@@ -283,6 +291,12 @@ class LandingPage extends Component {
   };
 
   onCreateSurvey = async () => {
+    if (this.createSurveyInProgress) {
+      return;
+    }
+
+    this.createSurveyInProgress = true;
+
     let validationFailed = false;
 
     if (!this.state.newSurveyName.trim()) {
@@ -328,6 +342,7 @@ class LandingPage extends Component {
     }
 
     if (validationFailed) {
+      this.createSurveyInProgress = false;
       return;
     }
 
@@ -354,6 +369,12 @@ class LandingPage extends Component {
   };
 
   onUpdateFulfilmentTriggerDateTime = async () => {
+    if (this.updateFulfilmentTriggerDateTimeInProgress) {
+      return;
+    }
+
+    this.updateFulfilmentTriggerDateTimeInProgress = true;
+
     const triggerDateTime = new Date(
       this.state.nextFulfilmentTriggerDateTime
     ).toISOString();
@@ -405,6 +426,12 @@ class LandingPage extends Component {
   };
 
   onCreatePrintTemplate = async () => {
+    if (this.createPrintTemplateInProgress) {
+      return;
+    }
+
+    this.createPrintTemplateInProgress = true;
+
     var failedValidation = false;
 
     if (!this.state.printSupplier.trim()) {
@@ -439,6 +466,7 @@ class LandingPage extends Component {
     }
 
     if (failedValidation) {
+      this.createPrintTemplateInProgress = false;
       return;
     }
 
@@ -458,6 +486,12 @@ class LandingPage extends Component {
   };
 
   onCreateSmsTemplate = async () => {
+    if (this.createSmsTemplateInProgress) {
+      return;
+    }
+
+    this.createSmsTemplateInProgress = true;
+
     var failedValidation = false;
 
     if (!this.state.packCode.trim()) {
@@ -497,6 +531,7 @@ class LandingPage extends Component {
     }
 
     if (failedValidation) {
+      this.createSmsTemplateInProgress = false;
       return;
     }
 
@@ -511,6 +546,7 @@ class LandingPage extends Component {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSmsTemplate),
     });
+
     if (!response.ok) {
       const errorMessage = await response.text();
       this.setState({
@@ -519,10 +555,9 @@ class LandingPage extends Component {
         templateValidationError: true,
         packCodeValidationError: true,
       });
-      return;
+    } else {
+      this.setState({ createSmsTemplateDialogDisplayed: false });
     }
-
-    this.setState({ createSmsTemplateDialogDisplayed: false });
   };
 
   render() {
