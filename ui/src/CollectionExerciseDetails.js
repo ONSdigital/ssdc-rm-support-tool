@@ -318,32 +318,30 @@ class CollectionExerciseDetails extends Component {
       first.triggerDateTime.localeCompare(second.triggerDateTime)
     );
 
-    const actionRuleTableRows = sortedActionRules.map(
-      (actionRule, index) => {
-        return (
-          <TableRow key={index}>
-            <TableCell component="th" scope="row">
-              {actionRule.type}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {actionRule.triggerDateTime}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {actionRule.hasTriggered ? "YES" : "NO"}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {JSON.stringify(actionRule.uacMetadata)}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {actionRule.classifiers}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {actionRule.packCode}
-            </TableCell>
-          </TableRow>
-        );
-      }
-    );
+    const actionRuleTableRows = sortedActionRules.map((actionRule, index) => {
+      return (
+        <TableRow key={index}>
+          <TableCell component="th" scope="row">
+            {actionRule.type}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {actionRule.triggerDateTime}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {actionRule.hasTriggered ? "YES" : "NO"}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(actionRule.uacMetadata)}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {actionRule.classifiers}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {actionRule.packCode}
+          </TableCell>
+        </TableRow>
+      );
+    });
 
     const printPackCodeMenuItems = this.state.printPackCodes.map((packCode) => (
       <MenuItem key={packCode} value={packCode}>
