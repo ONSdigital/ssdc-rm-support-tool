@@ -59,10 +59,7 @@ public class UserGroupEndpoint {
   @GetMapping
   public List<UserGroupDto> getUserGroups(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    if (!userGroupAdminRepository.existsByUserEmail(userEmail)) {
-      // If you're not admin of a group, you have to be super user
-      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
-    }
+    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     return userGroupRepository.findAll().stream().map(this::mapDto).collect(Collectors.toList());
   }
