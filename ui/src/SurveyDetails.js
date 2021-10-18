@@ -34,8 +34,15 @@ class SurveyDetails extends Component {
     surveyName: "",
     collectionExercises: [],
     createCollectionExerciseDialogDisplayed: false,
-    validationError: false,
     newCollectionExerciseName: "",
+    newCollectionExerciseNameError: false,
+    newCollectionExerciseReference: "",
+    newCollectionExerciseReferenceError: false,
+    newCollectionExerciseStartDate: null,
+    newCollectionExerciseEndDate: null,
+    newCollectionExerciseDateError: "",
+    newCollectionExerciseMetadata: "",
+    newCollectionExerciseMetadataError: false,
     allowActionRulePrintTemplateDialogDisplayed: false,
     allowActionRuleSmsTemplateDialogDisplayed: false,
     allowFulfilmentPrintTemplateDialogDisplayed: false,
@@ -179,35 +186,114 @@ class SurveyDetails extends Component {
     });
   };
 
-  openDialog = () => {
+  openCreateCollectionExerciseDialog = () => {
     this.setState({
       newCollectionExerciseName: "",
-      validationError: false,
+      newCollectionExerciseReference: "",
+      newCollectionExerciseStartDate: this.getTimeNowForDateTimePicker(),
+      newCollectionExerciseEndDate: this.getTimeNowForDateTimePicker(),
+      newCollectionExerciseMetadata: "",
+      newCollectionExerciseNameError: false,
+      newCollectionExerciseReferenceError: false,
       createCollectionExerciseDialogDisplayed: true,
+      newCollectionExerciseMetadataError: false,
+      newCollectionExerciseDateError: "",
     });
   };
 
-  closeDialog = () => {
+  closeCreateCollectionExerciseDialog = () => {
     this.setState({ createCollectionExerciseDialogDisplayed: false });
   };
 
   onNewCollectionExerciseNameChange = (event) => {
     const resetValidation = !event.target.value.trim();
     this.setState({
-      validationError: resetValidation,
       newCollectionExerciseName: event.target.value,
+      newCollectionExerciseNameError: resetValidation,
+    });
+  };
+
+  onNewCollectionExerciseReferenceChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+    this.setState({
+      newCollectionExerciseReference: event.target.value,
+      newCollectionExerciseReferenceError: resetValidation,
+    });
+  };
+
+  onNewCollectionExerciseStartDateChange = (event) => {
+    this.setState({
+      newCollectionExerciseStartDate: event.target.value,
+      newCollectionExerciseDateError: "",
+    });
+  };
+
+  onNewCollectionExerciseEndDateChange = (event) => {
+    this.setState({
+      newCollectionExerciseEndDate: event.target.value,
+      newCollectionExerciseDateError: "",
+    });
+  };
+
+  onNewCollectionExerciseMetadataChange = (event) => {
+    this.setState({
+      newCollectionExerciseMetadata: event.target.value,
+      newCollectionExerciseMetadataError: false,
     });
   };
 
   onCreateCollectionExercise = async () => {
+    let validationFailed = false;
+
     if (!this.state.newCollectionExerciseName.trim()) {
-      this.setState({ validationError: true });
+      this.setState({ newCollectionExerciseNameError: true });
+      validationFailed = true;
+    }
+
+    if (!this.state.newCollectionExerciseReference.trim()) {
+      this.setState({ newCollectionExerciseReferenceError: true });
+      validationFailed = true;
+    }
+
+    if (
+      this.state.newCollectionExerciseEndDate <
+      this.state.newCollectionExerciseStartDate
+    ) {
+      this.setState({
+        newCollectionExerciseDateError: "Start date must be before end date",
+      });
+      validationFailed = true;
+    }
+
+    let metadataJson = null;
+    if (this.state.newCollectionExerciseMetadata.length > 0) {
+      try {
+        const parsedJson = JSON.parse(this.state.newCollectionExerciseMetadata);
+        if (Object.keys(parsedJson).length === 0) {
+          this.setState({ newCollectionExerciseMetadataError: true });
+          validationFailed = true;
+        } else {
+          metadataJson = JSON.parse(this.state.newCollectionExerciseMetadata);
+        }
+      } catch (err) {
+        this.setState({ newCollectionExerciseMetadataError: true });
+        validationFailed = true;
+      }
+    }
+
+    if (validationFailed) {
       return;
     }
 
     const newCollectionExercise = {
       name: this.state.newCollectionExerciseName,
       surveyId: this.props.surveyId,
+      reference: this.state.newCollectionExerciseReference,
+      startDate: new Date(
+        this.state.newCollectionExerciseStartDate
+      ).toISOString(),
+      endDate: new Date(this.state.newCollectionExerciseEndDate).toISOString(),
+      metadata: metadataJson,
     };
 
     const response = await fetch("/api/collectionExercises", {
@@ -219,6 +305,12 @@ class SurveyDetails extends Component {
     if (response.ok) {
       this.setState({ createCollectionExerciseDialogDisplayed: false });
     }
+  };
+
+  getTimeNowForDateTimePicker = () => {
+    var dateNow = new Date();
+    dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
+    return dateNow.toJSON().slice(0, 16);
   };
 
   openActionRulePrintTemplateDialog = () => {
@@ -412,6 +504,18 @@ class SurveyDetails extends Component {
               {collex.name}
             </Link>
           </TableCell>
+          <TableCell component="th" scope="row">
+            {collex.reference}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {collex.startDate}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {collex.endDate}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(collex.metadata)}
+          </TableCell>
         </TableRow>
       )
     );
@@ -505,6 +609,10 @@ class SurveyDetails extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Collection Exercise Name</TableCell>
+                    <TableCell>Reference</TableCell>
+                    <TableCell>Start Date</TableCell>
+                    <TableCell>End Date</TableCell>
+                    <TableCell>Metadata</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{collectionExerciseTableRows}</TableBody>
@@ -517,7 +625,7 @@ class SurveyDetails extends Component {
         ) && (
           <Button
             variant="contained"
-            onClick={this.openDialog}
+            onClick={this.openCreateCollectionExerciseDialog}
             style={{ marginTop: 10 }}
           >
             Create Collection Exercise
@@ -655,11 +763,55 @@ class SurveyDetails extends Component {
                 <TextField
                   required
                   fullWidth={true}
-                  error={this.state.validationError}
+                  error={this.state.newCollectionExerciseNameError}
                   id="standard-required"
                   label="Collection exercise name"
                   onChange={this.onNewCollectionExerciseNameChange}
                   value={this.state.newCollectionExerciseName}
+                />
+                <TextField
+                  required
+                  fullWidth={true}
+                  error={this.state.newCollectionExerciseReferenceError}
+                  id="standard-required"
+                  label="Reference"
+                  onChange={this.onNewCollectionExerciseReferenceChange}
+                  value={this.state.newCollectionExerciseReference}
+                />
+                <TextField
+                  required
+                  label="Start Date"
+                  type="datetime-local"
+                  error={this.state.newCollectionExerciseDateError}
+                  helperText={this.state.newCollectionExerciseDateError}
+                  value={this.state.newCollectionExerciseStartDate}
+                  onChange={this.onNewCollectionExerciseStartDateChange}
+                  style={{ marginTop: 20 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  required
+                  label="End Date"
+                  type="datetime-local"
+                  error={this.state.newCollectionExerciseDateError}
+                  value={this.state.newCollectionExerciseEndDate}
+                  onChange={this.onNewCollectionExerciseEndDateChange}
+                  style={{ marginTop: 20, marginLeft: 30 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  style={{ marginTop: 10 }}
+                  multiline
+                  fullWidth={true}
+                  error={this.state.newCollectionExerciseMetadataError}
+                  id="standard-required"
+                  label="Metadata"
+                  onChange={this.onNewCollectionExerciseMetadataChange}
+                  value={this.state.newCollectionExerciseMetadata}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
@@ -671,7 +823,7 @@ class SurveyDetails extends Component {
                   Create collection exercise
                 </Button>
                 <Button
-                  onClick={this.closeDialog}
+                  onClick={this.closeCreateCollectionExerciseDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >

@@ -1,6 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,6 +54,9 @@ public class AllEndpointsIT {
   @Autowired private IntegrationTestHelper integrationTestHelper;
 
   @LocalServerPort private int port;
+
+  private static final Map<String, String> TEST_COLLECTION_EXERCISE_UPDATE_METADATA =
+      Map.of("TEST_COLLECTION_EXERCISE_UPDATE_METADATA", "TEST");
 
   @Test
   public void testActionRuleEndpoints() {
@@ -193,6 +197,10 @@ public class AllEndpointsIT {
           CollectionExerciseDto collectionExerciseDto = new CollectionExerciseDto();
           collectionExerciseDto.setSurveyId(bundle.getSurveyId());
           collectionExerciseDto.setName("Test");
+          collectionExerciseDto.setReference("TEST_REFERENCE");
+          collectionExerciseDto.setStartDate(OffsetDateTime.now());
+          collectionExerciseDto.setEndDate(OffsetDateTime.now().plusDays(2));
+          collectionExerciseDto.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
           return collectionExerciseDto;
         });
   }
