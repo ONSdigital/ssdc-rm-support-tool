@@ -3,6 +3,8 @@ package uk.gov.ons.ssdc.supporttool.testhelper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +55,9 @@ public class IntegrationTestHelper {
   private final UserGroupMemberRepository userGroupMemberRepository;
   private final UserGroupAdminRepository userGroupAdminRepository;
   private final UserGroupPermissionRepository userGroupPermissionRepository;
+
+  private static final Map<String, String> TEST_COLLECTION_EXERCISE_UPDATE_METADATA =
+      Map.of("TEST_COLLECTION_EXERCISE_UPDATE_METADATA", "TEST");
 
   public IntegrationTestHelper(
       SurveyRepository surveyRepository,
@@ -172,6 +177,10 @@ public class IntegrationTestHelper {
     collectionExercise.setId(UUID.randomUUID());
     collectionExercise.setSurvey(survey);
     collectionExercise.setName("Test");
+    collectionExercise.setReference("TEST_REFERENCE");
+    collectionExercise.setStartDate(OffsetDateTime.now());
+    collectionExercise.setEndDate(OffsetDateTime.now().plusDays(2));
+    collectionExercise.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
     collectionExercise = collectionExerciseRepository.saveAndFlush(collectionExercise);
 
     Case caze = new Case();

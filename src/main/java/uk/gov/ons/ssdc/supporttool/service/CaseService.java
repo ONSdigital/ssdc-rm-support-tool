@@ -38,7 +38,7 @@ public class CaseService {
   private String printFulfilmentTopic;
 
   @Value("${queueconfig.update-sample-sensitive-topic}")
-  private String updateSampleSenstiveTopic;
+  private String updateSampleSensitiveTopic;
 
   @Value("${queueconfig.shared-pubsub-project}")
   private String sharedPubsubProject;
@@ -85,11 +85,11 @@ public class CaseService {
 
     EventDTO event = new EventDTO();
 
-    EventHeaderDTO eventHeader = EventHelper.createEventDTO(updateSampleSenstiveTopic, userEmail);
+    EventHeaderDTO eventHeader = EventHelper.createEventDTO(updateSampleSensitiveTopic, userEmail);
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    String topic = toProjectTopicName(updateSampleSenstiveTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(updateSampleSensitiveTopic, sharedPubsubProject).toString();
     pubSubTemplate.publish(topic, event);
   }
 
