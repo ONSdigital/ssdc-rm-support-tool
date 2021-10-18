@@ -26,8 +26,7 @@ class UserAdmin extends Component {
     emailValidationError: "",
     showGroupDialog: false,
     groupName: "",
-    groupNameValidationError: false,
-    groupNameValidationMessage: null,
+    groupNameValidationError: "",
   };
 
   componentDidMount() {
@@ -113,6 +112,7 @@ class UserAdmin extends Component {
   onEmailChange = (event) => {
     this.setState({
       email: event.target.value,
+      emailValidationError: "",
     });
   };
 
@@ -128,6 +128,14 @@ class UserAdmin extends Component {
     }
 
     this.createUserInProgress = true;
+
+    if (this.state.users.map((user) => user.email).includes(this.state.email)) {
+      this.setState({
+        emailValidationError: "User already exists",
+      });
+      this.createUserInProgress = false;
+      return;
+    }
 
     if (!this.validateEmail(this.state.email)) {
       this.setState({
@@ -155,8 +163,7 @@ class UserAdmin extends Component {
 
     this.setState({
       groupName: "",
-      groupNameValidationError: false,
-      groupNameValidationMessage: null,
+      groupNameValidationError: "",
       showGroupDialog: true,
     });
   };
@@ -182,8 +189,7 @@ class UserAdmin extends Component {
 
     if (!this.state.groupName.trim()) {
       this.setState({
-        groupNameValidationError: true,
-        groupNameValidationMessage: "Group name is required",
+        groupNameValidationError: "Group name is required",
       });
       this.createGroupInProgress = false;
       return;
@@ -195,8 +201,7 @@ class UserAdmin extends Component {
         .includes(this.state.groupName)
     ) {
       this.setState({
-        groupNameValidationError: true,
-        groupNameValidationMessage: "Group already exists",
+        groupNameValidationError: "Group already exists",
       });
       this.createGroupInProgress = false;
       return;
@@ -342,7 +347,7 @@ class UserAdmin extends Component {
                 label="Group name"
                 onChange={this.onGroupNameChange}
                 error={this.state.groupNameValidationError}
-                helperText={this.state.groupNameValidationMessage}
+                helperText={this.state.groupNameValidationError}
                 value={this.state.groupName}
               />
             </div>

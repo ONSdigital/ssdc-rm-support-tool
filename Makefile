@@ -4,6 +4,9 @@ test:
 build:
 	./build.sh
 
+build_no_test:
+	SKIP_TESTS=true ./build.sh
+
 test-ui:
 	cd ui && npm install && npm test -- --watchAll=false
 
