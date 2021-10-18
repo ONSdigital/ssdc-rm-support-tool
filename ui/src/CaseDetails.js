@@ -134,7 +134,12 @@ class CaseDetails extends Component {
       </TableRow>
     ));
 
-    const uacQids = this.state.uacQidLinks.map((uacQidLink, index) => (
+    const sortedUacQidLinks = this.state.uacQidLinks.sort((first, second) =>
+      first.createdAt.localeCompare(second.createdAt)
+    );
+    sortedUacQidLinks.reverse();
+
+    const uacQids = sortedUacQidLinks.map((uacQidLink, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
           {uacQidLink.qid}
