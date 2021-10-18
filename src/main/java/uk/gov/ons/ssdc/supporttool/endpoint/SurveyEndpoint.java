@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -91,6 +92,7 @@ public class SurveyEndpoint {
   }
 
   @PostMapping
+  @Transactional
   public ResponseEntity<UUID> createSurvey(
       @RequestBody SurveyDto surveyDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {

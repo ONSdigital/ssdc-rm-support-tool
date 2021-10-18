@@ -1,11 +1,19 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
+
+import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +25,15 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionExerciseUpdateDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CollectionExerciseDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 
 @RestController
 @RequestMapping(value = "/api/collectionExercises")
@@ -28,14 +41,26 @@ public class CollectionExerciseEndpoint {
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final SurveyRepository surveyRepository;
   private final UserIdentity userIdentity;
+  private final PubSubTemplate pubSubTemplate;
+
+  @Value("${queueconfig.collection-exercise-update-event-topic}")
+  private String collectionExerciseUpdateEventTopic;
+
+  @Value("${queueconfig.shared-pubsub-project}")
+  private String sharedPubsubProject;
+
+  @Value("${queueconfig.publishtimeout}")
+  private int publishTimeout;
 
   public CollectionExerciseEndpoint(
       CollectionExerciseRepository collectionExerciseRepository,
       SurveyRepository surveyRepository,
-      UserIdentity userIdentity) {
+      UserIdentity userIdentity,
+      PubSubTemplate pubSubTemplate) {
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.surveyRepository = surveyRepository;
     this.userIdentity = userIdentity;
+    this.pubSubTemplate = pubSubTemplate;
   }
 
   @GetMapping("/{collexId}")
@@ -82,10 +107,15 @@ public class CollectionExerciseEndpoint {
     collectionExerciseDto.setId(collex.getId());
     collectionExerciseDto.setSurveyId(surveyId);
     collectionExerciseDto.setName(collex.getName());
+    collectionExerciseDto.setReference(collex.getReference());
+    collectionExerciseDto.setStartDate(collex.getStartDate());
+    collectionExerciseDto.setEndDate(collex.getEndDate());
+    collectionExerciseDto.setMetadata(collex.getMetadata());
     return collectionExerciseDto;
   }
 
   @PostMapping
+  @Transactional
   public ResponseEntity<UUID> createCollectionExercises(
       @RequestBody CollectionExerciseDto collectionExerciseDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
@@ -103,8 +133,41 @@ public class CollectionExerciseEndpoint {
     collectionExercise.setId(UUID.randomUUID());
     collectionExercise.setName(collectionExerciseDto.getName());
     collectionExercise.setSurvey(survey);
-
+    collectionExercise.setReference(collectionExerciseDto.getReference());
+    collectionExercise.setStartDate(collectionExerciseDto.getStartDate());
+    collectionExercise.setEndDate(collectionExerciseDto.getEndDate());
+    collectionExercise.setMetadata(collectionExerciseDto.getMetadata());
     collectionExercise = collectionExerciseRepository.saveAndFlush(collectionExercise);
+
+    CollectionExerciseUpdateDTO collectionExerciseUpdate = new CollectionExerciseUpdateDTO();
+    collectionExerciseUpdate.setCollectionExerciseId(collectionExercise.getId());
+    collectionExerciseUpdate.setName(collectionExercise.getName());
+    collectionExerciseUpdate.setSurveyId(collectionExercise.getSurvey().getId());
+    collectionExerciseUpdate.setReference(collectionExercise.getReference());
+    collectionExerciseUpdate.setStartDate(collectionExercise.getStartDate());
+    collectionExerciseUpdate.setEndDate(collectionExercise.getEndDate());
+    collectionExerciseUpdate.setMetadata(collectionExercise.getMetadata());
+
+    PayloadDTO payloadDTO = new PayloadDTO();
+    payloadDTO.setCollectionExerciseUpdate(collectionExerciseUpdate);
+
+    EventDTO event = new EventDTO();
+
+    EventHeaderDTO eventHeader =
+        EventHelper.createEventDTO(collectionExerciseUpdateEventTopic, userEmail);
+    event.setHeader(eventHeader);
+    event.setPayload(payloadDTO);
+
+    String topic =
+        toProjectTopicName(collectionExerciseUpdateEventTopic, sharedPubsubProject).toString();
+    ListenableFuture<String> future = pubSubTemplate.publish(topic, event);
+
+    try {
+      future.get(publishTimeout, TimeUnit.SECONDS);
+    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      throw new RuntimeException(e);
+    }
+
     return new ResponseEntity<>(collectionExercise.getId(), HttpStatus.CREATED);
   }
 }
