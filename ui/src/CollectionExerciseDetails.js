@@ -314,7 +314,11 @@ class CollectionExerciseDetails extends Component {
   };
 
   render() {
-    const actionRuleTableRows = this.state.actionRules.map(
+    const sortedActionRules = this.state.actionRules.sort((first, second) =>
+      first.triggerDateTime.localeCompare(second.triggerDateTime)
+    );
+
+    const actionRuleTableRows = sortedActionRules.map(
       (actionRule, index) => {
         return (
           <TableRow key={index}>
