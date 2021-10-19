@@ -4,6 +4,7 @@ import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityTyp
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_FACE_TO_FACE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_ACTION_RULE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_SHARE_WITH_RASRM_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_SMS_ACTION_RULE;
 import static uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper.getColumns;
 
@@ -156,6 +157,9 @@ public class ActionRuleEndpoint {
           throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Phone number column does not exist");
         }
+        break;
+      case SHARE_WITH_RASRM:
+        userActivity = CREATE_SHARE_WITH_RASRM_ACTION_RULE;
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());

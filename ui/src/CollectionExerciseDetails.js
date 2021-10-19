@@ -410,6 +410,16 @@ class CollectionExerciseDetails extends Component {
       );
     }
 
+    if (
+      this.state.authorisedActivities.includes(
+        "CREATE_SHARE_WITH_RASRM_ACTION_RULE"
+      )
+    ) {
+      allowedActionRuleTypeMenuItems.push(
+        <MenuItem value={"SHARE_WITH_RASRM"}>Share with RAS-RM</MenuItem>
+      );
+    }
+
     return (
       <div style={{ padding: 20 }}>
         <Link to={`/survey?surveyId=${this.props.surveyId}`}>
@@ -520,6 +530,20 @@ class CollectionExerciseDetails extends Component {
                         style={{ minWidth: 200 }}
                         error={this.state.uacQidMetadataValidationError}
                         label="UAC QID Metadata"
+                        onChange={this.onNewActionRuleUacQidMetadataChange}
+                        value={this.state.newUacQidMetadata}
+                      />
+                    </FormControl>
+                  </>
+                )}
+                {this.state.newActionRuleType === "SHARE_WITH_RASRM" && (
+                  <>
+                    <FormControl fullWidth={true}>
+                      <TextField
+                        required
+                        style={{ minWidth: 200 }}
+                        error={this.state.uacQidMetadataValidationError}
+                        label="Required Metadata"
                         onChange={this.onNewActionRuleUacQidMetadataChange}
                         value={this.state.newUacQidMetadata}
                       />
