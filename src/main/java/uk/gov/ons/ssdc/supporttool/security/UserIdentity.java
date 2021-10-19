@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.security;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
 import java.util.Optional;
@@ -17,28 +19,40 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
 public class UserIdentity {
+  private static final Logger log = LoggerFactory.getLogger(UserIdentity.class);
   private static final String IAP_ISSUER_URL = "https://cloud.google.com/iap";
 
   private final UserRepository userRepository;
   private final String iapAudience;
+  private final boolean dummyUserIdentityAllowed;
   private final String dummyUserIdentity;
+  private final String dummySuperUserIdentity;
 
   private TokenVerifier tokenVerifier = null;
 
   public UserIdentity(
       UserRepository userRepository,
       @Value("${iapaudience}") String iapAudience,
-      @Value("${dummyuseridentity}") String dummyUserIdentity) {
+      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed,
+      @Value("${dummyuseridentity}") String dummyUserIdentity,
+      @Value("${dummysuperuseridentity}") String dummySuperUserIdentity) {
     this.userRepository = userRepository;
     this.iapAudience = iapAudience;
+    this.dummyUserIdentityAllowed = dummyUserIdentityAllowed;
     this.dummyUserIdentity = dummyUserIdentity;
+    this.dummySuperUserIdentity = dummySuperUserIdentity;
+
+    if (dummyUserIdentityAllowed) {
+      log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
+    }
   }
 
   public void checkUserPermission(
       String userEmail, Survey survey, UserGroupAuthorisedActivityType activity) {
-    // TODO: Remove this before releasing to production!
-    if (userEmail.equals("dummy@fake-email.com")) {
-      return; // User is authorised - hack workaround for ease of dev/testing... remember to remove!
+    if (dummyUserIdentityAllowed && userEmail.equals(dummySuperUserIdentity)) {
+      // Dummy test super user is fully authorised, bypassing all security
+      // This is **STRICTLY** for ease of dev/testing in non-production environments
+      return;
     }
 
     Optional<User> userOpt = userRepository.findByEmail(userEmail);
@@ -76,9 +90,10 @@ public class UserIdentity {
   public void checkGlobalUserPermission(
       String userEmail, UserGroupAuthorisedActivityType activity) {
 
-    // TODO: Remove this before releasing to production!
-    if (userEmail.equals("dummy@fake-email.com")) {
-      return; // User is authorised - hack workaround for ease of dev/testing... remember to remove!
+    if (dummyUserIdentityAllowed && userEmail.equals(dummySuperUserIdentity)) {
+      // Dummy test super user is fully authorised, bypassing all security
+      // This is **STRICTLY** for ease of dev/testing in non-production environments
+      return;
     }
 
     Optional<User> userOpt = userRepository.findByEmail(userEmail);
@@ -107,11 +122,14 @@ public class UserIdentity {
   }
 
   public String getUserEmail(String jwtToken) {
-    if (!StringUtils.hasText(jwtToken)) {
-      // This should throw an exception if we're running in GCP
-      // We are faking the email address so that we can test locally
-      // TODO: remove this before releasing to production!
+    if (dummyUserIdentityAllowed && !StringUtils.hasText(jwtToken)) {
+      // If there's no JWT header and dummy test user is enabled, use it
+      // This is **STRICTLY** for ease of dev/testing in non-production environments
       return dummyUserIdentity;
+    } else if (!StringUtils.hasText(jwtToken)) {
+      // This request must have come from __inside__ the firewall/cluster, and should not be allowed
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, String.format("Requests bypassing IAP are strictly forbidden"));
     } else {
       return verifyJwtAndGetEmail(jwtToken);
     }

@@ -67,8 +67,9 @@ notifyservice:
 
 iapaudience: DUMMY
 
-# TODO: Remove this before releasing to prod
+dummyuseridentity-allowed: false # This ** MUST ALWAYS!! ** be false in production!!!
 dummyuseridentity: dummy@fake-email.com
+dummysuperuseridentity: dummy@fake-email.com
 
 printsupplierconfigfile: dummy-print-supplier-config.json
 
