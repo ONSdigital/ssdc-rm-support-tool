@@ -72,6 +72,4 @@ public class PrintTemplateEndpoint {
 
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
-
-  public void checkIfPackeNameAlreadyExists() {}
 }
