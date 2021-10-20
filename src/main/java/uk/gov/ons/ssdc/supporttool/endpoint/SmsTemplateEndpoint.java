@@ -57,10 +57,10 @@ public class SmsTemplateEndpoint {
     smsTemplateRepository
         .findPrintTemplateByPackCode(smsTemplateDto.getPackCode())
         .ifPresent(
-            s -> {
+            smsTemplate -> {
               throw new ResponseStatusException(
                   HttpStatus.CONFLICT,
-                  String.format("Packcode '%s' already exists", smsTemplateDto.getPackCode()));
+                  String.format("Packcode '%s' already exists", smsTemplate.getPackCode()));
             });
 
     SmsTemplate smsTemplate = new SmsTemplate();

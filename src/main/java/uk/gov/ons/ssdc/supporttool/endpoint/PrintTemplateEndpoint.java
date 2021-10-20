@@ -57,10 +57,10 @@ public class PrintTemplateEndpoint {
     printTemplateRepository
         .findPrintTemplateByPackCode(printTemplateDto.getPackCode())
         .ifPresent(
-            s -> {
+            printTemplate -> {
               throw new ResponseStatusException(
                   HttpStatus.CONFLICT,
-                  String.format("Packcode '%s' already exists", printTemplateDto.getPackCode()));
+                  String.format("Packcode '%s' already exists", printTemplate.getPackCode()));
             });
 
     PrintTemplate printTemplate = new PrintTemplate();
