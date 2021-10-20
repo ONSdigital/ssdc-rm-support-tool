@@ -237,7 +237,9 @@ class CollectionExerciseDetails extends Component {
 
     if (
       !this.state.newActionRulePrintPackCode &&
-      this.state.newActionRuleType === "PRINT"
+      ["PRINT", "RASRM_MAIN_PRINT_SELECTION"].includes(
+        this.state.newActionRuleType
+      )
     ) {
       this.setState({ printPackCodeValidationError: true });
       failedValidation = true;
@@ -283,7 +285,11 @@ class CollectionExerciseDetails extends Component {
     let newActionRulePackCode = "";
     let newActionRuleSmsPhoneNumberColumn = null;
 
-    if (this.state.newActionRuleType === "PRINT") {
+    if (
+      ["PRINT", "RASRM_MAIN_PRINT_SELECTION"].includes(
+        this.state.newActionRuleType
+      )
+    ) {
       newActionRulePackCode = this.state.newActionRulePrintPackCode;
     }
 
@@ -412,11 +418,13 @@ class CollectionExerciseDetails extends Component {
 
     if (
       this.state.authorisedActivities.includes(
-        "CREATE_SHARE_WITH_RASRM_ACTION_RULE"
+        "CREATE_RASRM_MAIN_PRINT_SELECTION_ACTION_RULE"
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"SHARE_WITH_RASRM"}>Share with RAS-RM</MenuItem>
+        <MenuItem value={"RASRM_MAIN_PRINT_SELECTION"}>
+          RAS-RM Main Print Selection
+        </MenuItem>
       );
     }
 
@@ -536,8 +544,19 @@ class CollectionExerciseDetails extends Component {
                     </FormControl>
                   </>
                 )}
-                {this.state.newActionRuleType === "SHARE_WITH_RASRM" && (
+                {this.state.newActionRuleType ===
+                  "RASRM_MAIN_PRINT_SELECTION" && (
                   <>
+                    <FormControl required fullWidth={true}>
+                      <InputLabel>Pack Code</InputLabel>
+                      <Select
+                        onChange={this.onNewActionRulePrintPackCodeChange}
+                        value={this.state.newActionRulePrintPackCode}
+                        error={this.state.printPackCodeValidationError}
+                      >
+                        {printPackCodeMenuItems}
+                      </Select>
+                    </FormControl>
                     <FormControl fullWidth={true}>
                       <TextField
                         required
