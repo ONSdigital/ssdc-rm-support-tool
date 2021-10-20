@@ -245,7 +245,7 @@ class LandingPage extends Component {
   closePrintTemplateDialog = () => {
     this.setState({
       createPrintTemplateDialogDisplayed: false,
-      createPrintTemplateError: ""
+      createPrintTemplateError: "",
     });
   };
 
@@ -456,7 +456,11 @@ class LandingPage extends Component {
       failedValidation = true;
     }
 
-    if (this.state.printTemplates.some(printTemplate => printTemplate.packCode === this.state.packCode)) {
+    if (
+      this.state.printTemplates.some(
+        (printTemplate) => printTemplate.packCode === this.state.packCode
+      )
+    ) {
       this.setState({ packCodeValidationError: true });
       this.setState({ createPrintTemplateError: "Pack code already in use" });
       failedValidation = true;
@@ -500,7 +504,7 @@ class LandingPage extends Component {
       const errorMessage = JSON.parse(error).message;
       this.setState({
         createPrintTemplateError: errorMessage,
-        packCodeValidationError: true
+        packCodeValidationError: true,
       });
     } else {
       this.setState({ createPrintTemplateDialogDisplayed: false });
@@ -521,7 +525,11 @@ class LandingPage extends Component {
       failedValidation = true;
     }
 
-    if (this.state.smsTemplates.some(smsTemplate => smsTemplate.packCode === this.state.packCode)) {
+    if (
+      this.state.smsTemplates.some(
+        (smsTemplate) => smsTemplate.packCode === this.state.packCode
+      )
+    ) {
       this.setState({ createSmsTemplateError: "PackCode already in use" });
       this.setState({ packCodeValidationError: true });
       failedValidation = true;
@@ -578,7 +586,7 @@ class LandingPage extends Component {
 
     if (!response.ok) {
       const error = await response.text();
-      const errorMessage = JSON.parse(error).message
+      const errorMessage = JSON.parse(error).message;
       this.setState({
         createSmsTemplateError: errorMessage,
         packCodeValidationError: true,
@@ -730,16 +738,16 @@ class LandingPage extends Component {
         {this.state.authorisedActivities.includes(
           "CONFIGURE_FULFILMENT_TRIGGER"
         ) && (
-            <div>
-              <Button
-                variant="contained"
-                onClick={this.openFulfilmentTriggerDialog}
-                style={{ marginTop: 20 }}
-              >
-                Configure fulfilment trigger
-              </Button>
-            </div>
-          )}
+          <div>
+            <Button
+              variant="contained"
+              onClick={this.openFulfilmentTriggerDialog}
+              style={{ marginTop: 20 }}
+            >
+              Configure fulfilment trigger
+            </Button>
+          </div>
+        )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
             <div style={{ marginTop: 20 }}>
@@ -757,12 +765,12 @@ class LandingPage extends Component {
         {this.state.authorisedActivities.includes(
           "EXCEPTION_MANAGER_VIEWER"
         ) && (
-            <>
-              <div style={{ marginTop: 20 }}>
-                <Link to="/exceptionManager">Exception Manager</Link>
-              </div>
-            </>
-          )}
+          <>
+            <div style={{ marginTop: 20 }}>
+              <Link to="/exceptionManager">Exception Manager</Link>
+            </div>
+          </>
+        )}
         <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>
