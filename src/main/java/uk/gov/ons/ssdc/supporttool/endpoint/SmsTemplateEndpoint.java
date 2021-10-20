@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsTemplateDto;
@@ -52,6 +53,15 @@ public class SmsTemplateEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_SMS_TEMPLATE);
+
+    smsTemplateRepository
+        .findPrintTemplateByPackCode(smsTemplateDto.getPackCode())
+        .ifPresent(
+            s -> {
+              throw new ResponseStatusException(
+                  HttpStatus.CONFLICT,
+                  String.format("Packcode '%s' already exists", smsTemplateDto.getPackCode()));
+            });
 
     SmsTemplate smsTemplate = new SmsTemplate();
     smsTemplate.setTemplate(smsTemplateDto.getTemplate());

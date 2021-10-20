@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintTemplateDto;
@@ -53,6 +54,15 @@ public class PrintTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE);
 
+    printTemplateRepository
+        .findPrintTemplateByPackCode(printTemplateDto.getPackCode())
+        .ifPresent(
+            s -> {
+              throw new ResponseStatusException(
+                  HttpStatus.CONFLICT,
+                  String.format("Packcode '%s' already exists", printTemplateDto.getPackCode()));
+            });
+
     PrintTemplate printTemplate = new PrintTemplate();
     printTemplate.setTemplate(printTemplateDto.getTemplate());
     printTemplate.setPrintSupplier(printTemplateDto.getPrintSupplier()); // TODO: check it exists
@@ -62,4 +72,6 @@ public class PrintTemplateEndpoint {
 
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
+
+  public void checkIfPackeNameAlreadyExists() {}
 }

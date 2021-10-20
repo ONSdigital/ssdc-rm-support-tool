@@ -37,6 +37,7 @@ class LandingPage extends Component {
     printTemplates: [],
     smsTemplates: [],
     createPrintTemplateDialogDisplayed: false,
+    createPrintTemplateError: "",
     createSmsTemplateDialogDisplayed: false,
     createSmsTemplateError: "",
     printSuppliers: [],
@@ -242,8 +243,12 @@ class LandingPage extends Component {
   };
 
   closePrintTemplateDialog = () => {
-    this.setState({ createPrintTemplateDialogDisplayed: false });
+    this.setState({
+      createPrintTemplateDialogDisplayed: false,
+      createPrintTemplateError: ""
+    });
   };
+
   closeSmsTemplateDialog = () => {
     this.setState({
       createSmsTemplateDialogDisplayed: false,
@@ -430,6 +435,8 @@ class LandingPage extends Component {
       return;
     }
 
+    this.setState({ createPrintTemplateError: "" });
+
     this.createPrintTemplateInProgress = true;
 
     var failedValidation = false;
@@ -446,6 +453,12 @@ class LandingPage extends Component {
 
     if (!this.state.packCode.trim()) {
       this.setState({ packCodeValidationError: true });
+      failedValidation = true;
+    }
+
+    if (this.state.printTemplates.some(printTemplate => printTemplate.packCode === this.state.packCode)) {
+      this.setState({ packCodeValidationError: true });
+      this.setState({ createPrintTemplateError: "Pack code already in use" });
       failedValidation = true;
     }
 
@@ -476,13 +489,22 @@ class LandingPage extends Component {
       template: JSON.parse(this.state.template),
     };
 
-    await fetch("/api/printTemplates", {
+    const response = await fetch("/api/printTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newPrintTemplate),
     });
 
-    this.setState({ createPrintTemplateDialogDisplayed: false });
+    if (!response.ok) {
+      const error = await response.text();
+      const errorMessage = JSON.parse(error).message;
+      this.setState({
+        createPrintTemplateError: errorMessage,
+        packCodeValidationError: true
+      });
+    } else {
+      this.setState({ createPrintTemplateDialogDisplayed: false });
+    }
   };
 
   onCreateSmsTemplate = async () => {
@@ -498,6 +520,13 @@ class LandingPage extends Component {
       this.setState({ packCodeValidationError: true });
       failedValidation = true;
     }
+
+    if (this.state.smsTemplates.some(smsTemplate => smsTemplate.packCode === this.state.packCode)) {
+      this.setState({ createSmsTemplateError: "PackCode already in use" });
+      this.setState({ packCodeValidationError: true });
+      failedValidation = true;
+    }
+
     if (!this.state.notifyTemplateId) {
       this.setState({
         notifyTemplateIdValidationError: true,
@@ -548,11 +577,10 @@ class LandingPage extends Component {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text();
+      const error = await response.text();
+      const errorMessage = JSON.parse(error).message
       this.setState({
         createSmsTemplateError: errorMessage,
-        notifyTemplateIdValidationError: true,
-        templateValidationError: true,
         packCodeValidationError: true,
       });
     } else {
@@ -702,16 +730,16 @@ class LandingPage extends Component {
         {this.state.authorisedActivities.includes(
           "CONFIGURE_FULFILMENT_TRIGGER"
         ) && (
-          <div>
-            <Button
-              variant="contained"
-              onClick={this.openFulfilmentTriggerDialog}
-              style={{ marginTop: 20 }}
-            >
-              Configure fulfilment trigger
-            </Button>
-          </div>
-        )}
+            <div>
+              <Button
+                variant="contained"
+                onClick={this.openFulfilmentTriggerDialog}
+                style={{ marginTop: 20 }}
+              >
+                Configure fulfilment trigger
+              </Button>
+            </div>
+          )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
             <div style={{ marginTop: 20 }}>
@@ -729,12 +757,12 @@ class LandingPage extends Component {
         {this.state.authorisedActivities.includes(
           "EXCEPTION_MANAGER_VIEWER"
         ) && (
-          <>
-            <div style={{ marginTop: 20 }}>
-              <Link to="/exceptionManager">Exception Manager</Link>
-            </div>
-          </>
-        )}
+            <>
+              <div style={{ marginTop: 20 }}>
+                <Link to="/exceptionManager">Exception Manager</Link>
+              </div>
+            </>
+          )}
         <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>
@@ -870,6 +898,11 @@ class LandingPage extends Component {
           fullWidth={true}
         >
           <DialogContent style={{ padding: 30 }}>
+            {this.state.createPrintTemplateError && (
+              <div style={{ color: "red" }}>
+                {this.state.createPrintTemplateError}
+              </div>
+            )}
             <div>
               <div>
                 <FormControl required fullWidth={true}>
@@ -949,7 +982,6 @@ class LandingPage extends Component {
                   label="Notify Template ID (UUID)"
                   onChange={this.onNotifyTemplateIdChange}
                   value={this.state.notifyTemplateId}
-                  helperText={this.state.notifyTemplateIdErrorMessage}
                 />
                 <TextField
                   fullWidth={true}
