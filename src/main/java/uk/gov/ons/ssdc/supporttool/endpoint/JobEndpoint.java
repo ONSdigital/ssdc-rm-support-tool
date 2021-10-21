@@ -11,7 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,6 +36,7 @@ import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.supporttool.client.RasRmSampleServiceClient;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobStatusDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
@@ -45,11 +48,14 @@ import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 @RestController
 @RequestMapping(value = "/api/job")
 public class JobEndpoint {
+  private static final Set<String> MANDATORY_RAS_RM_BUSINESS_COLLEX_METADATA =
+      Set.of("rasRmCollectionExerciseId", "rasRmCollectionInstrumentId");
 
   private final JobRepository jobRepository;
   private final JobRowRepository jobRowRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final UserIdentity userIdentity;
+  private final RasRmSampleServiceClient rasRmSampleServiceClient;
 
   @Value("${file-upload-storage-path}")
   private String fileUploadStoragePath;
@@ -58,11 +64,13 @@ public class JobEndpoint {
       JobRepository jobRepository,
       JobRowRepository jobRowRepository,
       CollectionExerciseRepository collectionExerciseRepository,
-      UserIdentity userIdentity) {
+      UserIdentity userIdentity,
+      RasRmSampleServiceClient rasRmSampleServiceClient) {
     this.jobRepository = jobRepository;
     this.jobRowRepository = jobRowRepository;
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.userIdentity = userIdentity;
+    this.rasRmSampleServiceClient = rasRmSampleServiceClient;
   }
 
   @GetMapping
@@ -191,6 +199,43 @@ public class JobEndpoint {
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
+
+      if (job.getCollectionExercise()
+          .getSurvey()
+          .getSampleDefinitionUrl()
+          .endsWith("ras-rm-business.json")) {
+
+        CollectionExercise collex = job.getCollectionExercise();
+        Object metadataObject = collex.getMetadata();
+
+        if (metadataObject == null) {
+          throw new RuntimeException(
+              "Unexpected null metadata. Metadata is required for RAS-RM business.");
+        }
+
+        if (!(metadataObject instanceof Map)) {
+          throw new RuntimeException(
+              "Unexpected metadata type. Wanted Map but got "
+                  + metadataObject.getClass().getSimpleName());
+        }
+
+        Map metadata = (Map) metadataObject;
+
+        if (!metadata.keySet().containsAll(MANDATORY_RAS_RM_BUSINESS_COLLEX_METADATA)) {
+          throw new RuntimeException("Metadata does not contain mandatory values");
+        }
+
+        // TODO: has been hard-coded to 1 collection instrument, for now
+        UUID rasRmSampleSummaryId =
+            rasRmSampleServiceClient.createSampleSummary(job.getFileRowCount(), 1).getId();
+
+        // Now store the rasRmSampleSummaryId into the metadata for later use
+        metadata.put("rasRmSampleSummaryId", rasRmSampleSummaryId.toString());
+
+        collex.setMetadata(metadata);
+        collectionExerciseRepository.saveAndFlush(collex);
+      }
+
       job.setJobStatus(JobStatus.PROCESSING_IN_PROGRESS);
       job.setProcessedBy(userEmail);
       job.setProcessedAt(OffsetDateTime.now());

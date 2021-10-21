@@ -4,7 +4,6 @@ import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityTyp
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_FACE_TO_FACE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_ACTION_RULE;
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_RASRM_MAIN_PRINT_SELECTION_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_SMS_ACTION_RULE;
 import static uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper.getColumns;
 
@@ -157,16 +156,6 @@ public class ActionRuleEndpoint {
           throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Phone number column does not exist");
         }
-        break;
-      case RASRM_MAIN_PRINT_SELECTION:
-        userActivity = CREATE_RASRM_MAIN_PRINT_SELECTION_ACTION_RULE;
-        printTemplate =
-            printTemplateRepository
-                .findById(actionRuleDTO.getPackCode())
-                .orElseThrow(
-                    () ->
-                        new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "Print template not found"));
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());

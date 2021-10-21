@@ -237,9 +237,7 @@ class CollectionExerciseDetails extends Component {
 
     if (
       !this.state.newActionRulePrintPackCode &&
-      ["PRINT", "RASRM_MAIN_PRINT_SELECTION"].includes(
-        this.state.newActionRuleType
-      )
+      this.state.newActionRuleType === "PRINT"
     ) {
       this.setState({ printPackCodeValidationError: true });
       failedValidation = true;
@@ -285,11 +283,7 @@ class CollectionExerciseDetails extends Component {
     let newActionRulePackCode = "";
     let newActionRuleSmsPhoneNumberColumn = null;
 
-    if (
-      ["PRINT", "RASRM_MAIN_PRINT_SELECTION"].includes(
-        this.state.newActionRuleType
-      )
-    ) {
+    if (this.state.newActionRuleType === "PRINT") {
       newActionRulePackCode = this.state.newActionRulePrintPackCode;
     }
 
@@ -416,18 +410,6 @@ class CollectionExerciseDetails extends Component {
       );
     }
 
-    if (
-      this.state.authorisedActivities.includes(
-        "CREATE_RASRM_MAIN_PRINT_SELECTION_ACTION_RULE"
-      )
-    ) {
-      allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"RASRM_MAIN_PRINT_SELECTION"}>
-          RAS-RM Main Print Selection
-        </MenuItem>
-      );
-    }
-
     return (
       <div style={{ padding: 20 }}>
         <Link to={`/survey?surveyId=${this.props.surveyId}`}>
@@ -538,31 +520,6 @@ class CollectionExerciseDetails extends Component {
                         style={{ minWidth: 200 }}
                         error={this.state.uacQidMetadataValidationError}
                         label="UAC QID Metadata"
-                        onChange={this.onNewActionRuleUacQidMetadataChange}
-                        value={this.state.newUacQidMetadata}
-                      />
-                    </FormControl>
-                  </>
-                )}
-                {this.state.newActionRuleType ===
-                  "RASRM_MAIN_PRINT_SELECTION" && (
-                  <>
-                    <FormControl required fullWidth={true}>
-                      <InputLabel>Pack Code</InputLabel>
-                      <Select
-                        onChange={this.onNewActionRulePrintPackCodeChange}
-                        value={this.state.newActionRulePrintPackCode}
-                        error={this.state.printPackCodeValidationError}
-                      >
-                        {printPackCodeMenuItems}
-                      </Select>
-                    </FormControl>
-                    <FormControl fullWidth={true}>
-                      <TextField
-                        required
-                        style={{ minWidth: 200 }}
-                        error={this.state.uacQidMetadataValidationError}
-                        label="Required Metadata"
                         onChange={this.onNewActionRuleUacQidMetadataChange}
                         value={this.state.newUacQidMetadata}
                       />
