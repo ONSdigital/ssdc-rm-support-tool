@@ -203,7 +203,7 @@ public class JobEndpoint {
       if (job.getCollectionExercise()
           .getSurvey()
           .getSampleDefinitionUrl()
-          .endsWith("ras-rm-business.json")) {
+          .endsWith("business.json")) {
 
         CollectionExercise collex = job.getCollectionExercise();
         Object metadataObject = collex.getMetadata();
