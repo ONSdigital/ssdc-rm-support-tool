@@ -55,7 +55,7 @@ public class SmsTemplateEndpoint {
         userEmail, UserGroupAuthorisedActivityType.CREATE_SMS_TEMPLATE);
 
     smsTemplateRepository
-        .findPrintTemplateByPackCode(smsTemplateDto.getPackCode())
+        .findById(smsTemplateDto.getPackCode())
         .ifPresent(
             smsTemplate -> {
               throw new ResponseStatusException(
