@@ -55,7 +55,7 @@
     <dependency>
       <groupId>uk.gov.ons.ssdc</groupId>
       <artifactId>ssdc-rm-common-entity-model</artifactId>
-      <version>3.5.0-SNAPSHOT</version>
+      <version>3.6.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>uk.gov.ons.ssdc</groupId>
@@ -69,8 +69,8 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-rest</artifactId>
-
+      <!-- NEVER NEVER NEVER revert this to spring-boot-starter-data-rest because of SECURITY -->
+      <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
