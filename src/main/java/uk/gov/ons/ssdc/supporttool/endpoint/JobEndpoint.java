@@ -319,6 +319,7 @@ public class JobEndpoint {
     jobDto.setLastUpdatedAt(job.getLastUpdatedAt());
     jobDto.setFileName(job.getFileName());
     jobDto.setFileRowCount(job.getFileRowCount());
+    jobDto.setSampleWithHeaderRow(job.getCollectionExercise().getSurvey().isSampleWithHeaderRow());
     jobDto.setJobStatus(JobStatusDto.valueOf(job.getJobStatus().name()));
     jobDto.setStagedRowCount(job.getStagingRowNumber());
     jobDto.setValidatedRowCount(job.getValidatingRowNumber());
