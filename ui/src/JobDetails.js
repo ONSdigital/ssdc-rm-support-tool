@@ -13,14 +13,14 @@ import { convertStatusText } from "./common";
 class JobDetails extends Component {
   render() {
     var jobDetailsFragment;
-    let headerRowCorrection = 1;
-
-    if (this.props.job.sampleWithHeaderRow) {
-      headerRowCorrection = 0;
-    }
+    let headerRowCorrection = 0;
 
     if (this.props.job) {
-      jobDetailsFragment = (
+        if (this.props.job.sampleWithHeaderRow) {
+          headerRowCorrection = 1;
+        }
+
+        jobDetailsFragment = (
         <Grid container spacing={1}>
           <Grid container item xs={12} spacing={3}>
             <Typography
