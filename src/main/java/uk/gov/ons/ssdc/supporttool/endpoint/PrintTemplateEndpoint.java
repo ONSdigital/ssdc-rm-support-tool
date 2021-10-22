@@ -55,7 +55,7 @@ public class PrintTemplateEndpoint {
         userEmail, UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE);
 
     printTemplateRepository
-        .findPrintTemplateByPackCode(printTemplateDto.getPackCode())
+        .findById(printTemplateDto.getPackCode())
         .ifPresent(
             printTemplate -> {
               throw new ResponseStatusException(
