@@ -69,8 +69,8 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-rest</artifactId>
-
+      <!-- NEVER NEVER NEVER revert this to spring-boot-starter-data-rest because of SECURITY -->
+      <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
