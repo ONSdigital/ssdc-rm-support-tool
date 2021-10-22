@@ -16,11 +16,11 @@ class JobDetails extends Component {
     let headerRowCorrection = 0;
 
     if (this.props.job) {
-        if (this.props.job.sampleWithHeaderRow) {
-          headerRowCorrection = 1;
-        }
+      if (this.props.job.sampleWithHeaderRow) {
+        headerRowCorrection = 1;
+      }
 
-        jobDetailsFragment = (
+      jobDetailsFragment = (
         <Grid container spacing={1}>
           <Grid container item xs={12} spacing={3}>
             <Typography
