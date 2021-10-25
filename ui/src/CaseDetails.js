@@ -225,7 +225,7 @@ class CaseDetails extends Component {
                       "CREATE_CASE_INVALID_CASE"
                     ) && <InvalidCase caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_PRINT_FULFILMENT"
+                      "CREATE_CASE_EXPORT_FILE_FULFILMENT"
                     ) && (
                       <PrintFulfilment
                         caseId={this.props.caseId}

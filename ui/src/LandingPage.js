@@ -34,17 +34,17 @@ class LandingPage extends Component {
     newSurveyValidationRules: "",
     newSurveySampleDefintionUrl: "",
     newSurveyMetadata: "",
-    printTemplates: [],
+    exportFileTemplates: [],
     smsTemplates: [],
-    createPrintTemplateDialogDisplayed: false,
+    createExportFileTemplateDialogDisplayed: false,
     createSmsTemplateDialogDisplayed: false,
     createSmsTemplateError: "",
-    printSuppliers: [],
-    printSupplier: "",
+    exportFileDestinations: [],
+    exportFileDestination: "",
     packCode: "",
     template: "",
     notifyTemplateId: "",
-    printSupplierValidationError: false,
+    exportFileDestinationValidationError: false,
     packCodeValidationError: false,
     templateValidationError: false,
     notifyTemplateIdValidationError: false,
@@ -66,7 +66,7 @@ class LandingPage extends Component {
   getAuthorisedBackendData = async () => {
     this.getThisUserAdminGroups(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getPrintSuppliers(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    this.getExportFileDestinations(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
     this.refreshDataFromBackend(authorisedActivities);
 
@@ -106,18 +106,18 @@ class LandingPage extends Component {
 
   refreshDataFromBackend = (authorisedActivities) => {
     this.getSurveys(authorisedActivities);
-    this.getPrintTemplates(authorisedActivities);
+    this.getExportFileTemplates(authorisedActivities);
     this.getSmsTemplates(authorisedActivities);
   };
 
-  getPrintSuppliers = async (authorisedActivities) => {
-    if (!authorisedActivities.includes("LIST_PRINT_SUPPLIERS")) return;
+  getExportFileDestinations = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_EXPORT_FILE_DESTINATIONS")) return;
 
-    const supplierResponse = await fetch("/api/printsuppliers");
+    const supplierResponse = await fetch("/api/exportFileDestinations");
     const supplierJson = await supplierResponse.json();
 
     this.setState({
-      printSuppliers: supplierJson,
+      exportFileDestinations: supplierJson,
     });
   };
 
@@ -159,13 +159,13 @@ class LandingPage extends Component {
     }
   };
 
-  getPrintTemplates = async (authorisedActivities) => {
-    if (!authorisedActivities.includes("LIST_PRINT_TEMPLATES")) return;
+  getExportFileTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return;
 
-    const response = await fetch("/api/printTemplates");
+    const response = await fetch("/api/exportFileTemplates");
     const templateJson = await response.json();
 
-    this.setState({ printTemplates: templateJson });
+    this.setState({ exportFileTemplates: templateJson });
   };
 
   getSmsTemplates = async (authorisedActivities) => {
@@ -204,17 +204,17 @@ class LandingPage extends Component {
     });
   };
 
-  openPrintTemplateDialog = () => {
-    this.createPrintTemplateInProgress = false;
+  openExportFileTemplateDialog = () => {
+    this.createExportFileTemplateInProgress = false;
 
     this.setState({
-      printSupplier: "",
+      exportFileDestination: "",
       packCode: "",
       template: "",
-      printSupplierValidationError: false,
+      exportFileDestinationValidationError: false,
       packCodeValidationError: false,
       templateValidationError: false,
-      createPrintTemplateDialogDisplayed: true,
+      createExportFileTemplateDialogDisplayed: true,
     });
   };
 
@@ -241,8 +241,8 @@ class LandingPage extends Component {
     this.setState({ configureNextTriggerDisplayed: false });
   };
 
-  closePrintTemplateDialog = () => {
-    this.setState({ createPrintTemplateDialogDisplayed: false });
+  closeExportFileTemplateDialog = () => {
+    this.setState({ createExportFileTemplateDialogDisplayed: false });
   };
   closeSmsTemplateDialog = () => {
     this.setState({
@@ -391,10 +391,10 @@ class LandingPage extends Component {
     }
   };
 
-  onPrintSupplierChange = (event) => {
+  onexportFileDestinationChange = (event) => {
     this.setState({
-      printSupplier: event.target.value,
-      printSupplierValidationError: false,
+      exportFileDestination: event.target.value,
+      exportFileDestinationValidationError: false,
     });
   };
 
@@ -425,22 +425,22 @@ class LandingPage extends Component {
     });
   };
 
-  onCreatePrintTemplate = async () => {
-    if (this.createPrintTemplateInProgress) {
+  onCreateExportFileTemplate = async () => {
+    if (this.createExportFileTemplateInProgress) {
       return;
     }
 
-    this.createPrintTemplateInProgress = true;
+    this.createExportFileTemplateInProgress = true;
 
     var failedValidation = false;
 
-    if (!this.state.printSupplier.trim()) {
-      this.setState({ printSupplierValidationError: true });
+    if (!this.state.exportFileDestination.trim()) {
+      this.setState({ exportFileDestinationValidationError: true });
       failedValidation = true;
     }
 
-    if (!this.state.printSupplier.trim()) {
-      this.setState({ printSupplierValidationError: true });
+    if (!this.state.exportFileDestination.trim()) {
+      this.setState({ exportFileDestinationValidationError: true });
       failedValidation = true;
     }
 
@@ -466,23 +466,23 @@ class LandingPage extends Component {
     }
 
     if (failedValidation) {
-      this.createPrintTemplateInProgress = false;
+      this.createExportFileTemplateInProgress = false;
       return;
     }
 
-    const newPrintTemplate = {
+    const newExportFileTemplate = {
       packCode: this.state.packCode,
-      printSupplier: this.state.printSupplier,
+      exportFileDestination: this.state.exportFileDestination,
       template: JSON.parse(this.state.template),
     };
 
-    await fetch("/api/printTemplates", {
+    await fetch("/api/exportFileTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newPrintTemplate),
+      body: JSON.stringify(newExportFileTemplate),
     });
 
-    this.setState({ createPrintTemplateDialogDisplayed: false });
+    this.setState({ createExportFileTemplateDialogDisplayed: false });
   };
 
   onCreateSmsTemplate = async () => {
@@ -577,16 +577,16 @@ class LandingPage extends Component {
       </TableRow>
     ));
 
-    const printTemplateRows = this.state.printTemplates.map((printTemplate) => (
-      <TableRow key={printTemplate.packCode}>
+    const exportFileTemplateRows = this.state.exportFileTemplates.map((exportFileTemplate) => (
+      <TableRow key={exportFileTemplate.packCode}>
         <TableCell component="th" scope="row">
-          {printTemplate.packCode}
+          {exportFileTemplate.packCode}
         </TableCell>
         <TableCell component="th" scope="row">
-          {printTemplate.printSupplier}
+          {exportFileTemplate.exportFileDestination}
         </TableCell>
         <TableCell component="th" scope="row">
-          {JSON.stringify(printTemplate.template)}
+          {JSON.stringify(exportFileTemplate.template)}
         </TableCell>
       </TableRow>
     ));
@@ -604,7 +604,7 @@ class LandingPage extends Component {
       </TableRow>
     ));
 
-    const printSupplierMenuItems = this.state.printSuppliers.map((supplier) => (
+    const exportFileDestinationMenuItems = this.state.exportFileDestinations.map((supplier) => (
       <MenuItem key={supplier} value={supplier}>
         {supplier}
       </MenuItem>
@@ -641,32 +641,32 @@ class LandingPage extends Component {
           </Button>
         )}
 
-        {this.state.authorisedActivities.includes("LIST_PRINT_TEMPLATES") && (
+        {this.state.authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES") && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-              Print Templates
+              Export File Templates
             </Typography>
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableCell>Pack Code</TableCell>
-                    <TableCell>Print Supplier</TableCell>
+                    <TableCell>Export File Destination</TableCell>
                     <TableCell>Template</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>{printTemplateRows}</TableBody>
+                <TableBody>{exportFileTemplateRows}</TableBody>
               </Table>
             </TableContainer>
           </>
         )}
-        {this.state.authorisedActivities.includes("CREATE_PRINT_TEMPLATE") && (
+        {this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_TEMPLATE") && (
           <Button
             variant="contained"
-            onClick={this.openPrintTemplateDialog}
+            onClick={this.openExportFileTemplateDialog}
             style={{ marginTop: 10 }}
           >
-            Create Print Template
+            Create Export File Template
           </Button>
         )}
 
@@ -866,20 +866,20 @@ class LandingPage extends Component {
           </DialogContent>
         </Dialog>
         <Dialog
-          open={this.state.createPrintTemplateDialogDisplayed}
+          open={this.state.createExportFileTemplateDialogDisplayed}
           fullWidth={true}
         >
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
                 <FormControl required fullWidth={true}>
-                  <InputLabel>Print Supplier</InputLabel>
+                  <InputLabel>Export File Supplier</InputLabel>
                   <Select
-                    onChange={this.onPrintSupplierChange}
-                    value={this.state.printSupplier}
-                    error={this.state.printSupplierValidationError}
+                    onChange={this.onexportFileDestinationChange}
+                    value={this.state.exportFileDestination}
+                    error={this.state.exportFileDestinationValidationError}
                   >
-                    {printSupplierMenuItems}
+                    {exportFileDestinationMenuItems}
                   </Select>
                 </FormControl>
                 <TextField
@@ -903,14 +903,14 @@ class LandingPage extends Component {
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button
-                  onClick={this.onCreatePrintTemplate}
+                  onClick={this.onCreateExportFileTemplate}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
-                  Create print template
+                  Create export file template
                 </Button>
                 <Button
-                  onClick={this.closePrintTemplateDialog}
+                  onClick={this.closeExportFileTemplateDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >

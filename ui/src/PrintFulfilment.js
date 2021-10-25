@@ -10,12 +10,12 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getFulfilmentPrintTemplates } from "./Utils";
+import { getFulfilmentExportFileTemplates } from "./Utils";
 
 class PrintFulfilment extends Component {
   state = {
     packCode: "",
-    allowableFulfilmentPrintTemplates: [],
+    allowableFulfilmentExportFileTemplates: [],
     packCodeValidationError: false,
     printUacQidMetadataValidationError: false,
     showDialog: false,
@@ -117,7 +117,7 @@ class PrintFulfilment extends Component {
     };
 
     const response = await fetch(
-      `/api/cases/${this.props.caseId}/action/print-fulfilment`,
+      `/api/cases/${this.props.caseId}/action/printFulfilment`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -139,19 +139,19 @@ class PrintFulfilment extends Component {
     )
       return;
 
-    const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
+    const fulfilmentPrintTemplates = await getFulfilmentExportFileTemplates(
       authorisedActivities,
       this.props.surveyId
     );
 
     this.setState({
-      allowableFulfilmentPrintTemplates: fulfilmentPrintTemplates,
+      allowableFulfilmentExportFileTemplates: fulfilmentPrintTemplates,
     });
   };
 
   render() {
     const fulfilmentPrintTemplateMenuItems =
-      this.state.allowableFulfilmentPrintTemplates.map((packCode) => (
+      this.state.allowableFulfilmentExportFileTemplates.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>
@@ -170,7 +170,7 @@ class PrintFulfilment extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <FormControl required fullWidth={true}>
-                <InputLabel>Print Template</InputLabel>
+                <InputLabel>Export File Template</InputLabel>
                 <Select
                   onChange={this.onPrintTemplateChange}
                   value={this.state.packCode}

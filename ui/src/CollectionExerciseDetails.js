@@ -20,7 +20,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import SampleUpload from "./SampleUpload";
 import {
-  getActionRulePrintTemplates,
+  getActionRuleExportFileTemplates,
   getActionRuleSmsTemplates,
   getSensitiveSampleColumns,
 } from "./Utils";
@@ -30,17 +30,17 @@ class CollectionExerciseDetails extends Component {
   state = {
     authorisedActivities: [],
     actionRules: [],
-    printPackCodes: [],
+    exportFilePackCodes: [],
     sensitiveSampleColumns: [],
     smsPackCodes: [],
     createActionRulesDialogDisplayed: false,
-    printPackCodeValidationError: false,
+    exportFilePackCodeValidationError: false,
     smsPackCodeValidationError: false,
     smsPhoneNumberColumnValidationError: false,
     actionRuleTypeValidationError: false,
     uacQidMetadataValidationError: false,
     collectionExerciseName: "",
-    newActionRulePrintPackCode: "",
+    newActionRuleExportFilePackCode: "",
     newActionRuleSmsPackCode: "",
     newActionRuleSmsPhoneNumberColumn: "",
     newActionRuleClassifiers: "",
@@ -60,7 +60,7 @@ class CollectionExerciseDetails extends Component {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCollectionExerciseName(authorisedActivities);
     this.getActionRules(authorisedActivities);
-    this.getPrintTemplates(authorisedActivities);
+    this.getExportFileTemplates(authorisedActivities);
     this.getSmsTemplates(authorisedActivities);
     this.getSensitiveSampleColumns(authorisedActivities);
 
@@ -123,19 +123,19 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
-  getPrintTemplates = async (authorisedActivities) => {
+  getExportFileTemplates = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+        "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES"
       )
     )
       return;
 
-    const packCodes = await getActionRulePrintTemplates(
+    const packCodes = await getActionRuleExportFileTemplates(
       authorisedActivities,
       this.props.surveyId
     );
-    this.setState({ printPackCodes: packCodes });
+    this.setState({ exportFilePackCodes: packCodes });
   };
 
   getSmsTemplates = async (authorisedActivities) => {
@@ -159,7 +159,7 @@ class CollectionExerciseDetails extends Component {
     this.setState({
       newActionRuleType: "",
       actionRuleTypeValidationError: false,
-      newActionRulePrintPackCode: "",
+      newActionRuleExportFilePackCode: "",
       newActionRuleSmsPackCode: "",
       newActionRuleSmsPhoneNumberColumn: "",
       packCodeValidationError: false,
@@ -176,10 +176,10 @@ class CollectionExerciseDetails extends Component {
     this.setState({ createActionRulesDialogDisplayed: false });
   };
 
-  onNewActionRulePrintPackCodeChange = (event) => {
+  onNewActionRuleExportFilePackCodeChange = (event) => {
     this.setState({
-      printPackCodeValidationError: false,
-      newActionRulePrintPackCode: event.target.value,
+      exportFilePackCodeValidationError: false,
+      newActionRuleExportFilePackCode: event.target.value,
     });
   };
 
@@ -236,10 +236,10 @@ class CollectionExerciseDetails extends Component {
     }
 
     if (
-      !this.state.newActionRulePrintPackCode &&
-      this.state.newActionRuleType === "PRINT"
+      !this.state.newActionRuleExportFilePackCode &&
+      this.state.newActionRuleType === "EXPORT_FILE"
     ) {
-      this.setState({ printPackCodeValidationError: true });
+      this.setState({ exportFilePackCodeValidationError: true });
       failedValidation = true;
     }
 
@@ -283,8 +283,8 @@ class CollectionExerciseDetails extends Component {
     let newActionRulePackCode = "";
     let newActionRuleSmsPhoneNumberColumn = null;
 
-    if (this.state.newActionRuleType === "PRINT") {
-      newActionRulePackCode = this.state.newActionRulePrintPackCode;
+    if (this.state.newActionRuleType === "EXPORT_FILE") {
+      newActionRulePackCode = this.state.newActionRuleExportFilePackCode;
     }
 
     if (this.state.newActionRuleType === "SMS") {
@@ -352,7 +352,7 @@ class CollectionExerciseDetails extends Component {
       );
     });
 
-    const printPackCodeMenuItems = this.state.printPackCodes.map((packCode) => (
+    const exportFilePackCodeMenuItems = this.state.exportFilePackCodes.map((packCode) => (
       <MenuItem key={packCode} value={packCode}>
         {packCode}
       </MenuItem>
@@ -372,9 +372,9 @@ class CollectionExerciseDetails extends Component {
       ));
 
     let allowedActionRuleTypeMenuItems = [];
-    if (this.state.authorisedActivities.includes("CREATE_PRINT_ACTION_RULE")) {
+    if (this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_ACTION_RULE")) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"PRINT"}>Print</MenuItem>
+        <MenuItem value={"EXPORT_FILE"}>EXPORT_FILE</MenuItem>
       );
     }
     if (this.state.authorisedActivities.includes("CREATE_SMS_ACTION_RULE")) {
@@ -470,16 +470,16 @@ class CollectionExerciseDetails extends Component {
                     {allowedActionRuleTypeMenuItems}
                   </Select>
                 </FormControl>
-                {this.state.newActionRuleType === "PRINT" && (
+                {this.state.newActionRuleType === "EXPORT_FILE" && (
                   <>
                     <FormControl required fullWidth={true}>
                       <InputLabel>Pack Code</InputLabel>
                       <Select
-                        onChange={this.onNewActionRulePrintPackCodeChange}
-                        value={this.state.newActionRulePrintPackCode}
-                        error={this.state.printPackCodeValidationError}
+                        onChange={this.onNewActionRuleExportFilePackCodeChange}
+                        value={this.state.newActionRuleExportFilePackCode}
+                        error={this.state.exportFilePackCodeValidationError}
                       >
-                        {printPackCodeMenuItems}
+                        {exportFilePackCodeMenuItems}
                       </Select>
                     </FormControl>
                     <FormControl fullWidth={true}>
