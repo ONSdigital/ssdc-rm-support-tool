@@ -35,14 +35,14 @@ public class ValidatedJobProcessor {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.PROCESSING_IN_PROGRESS);
 
     for (Job job : jobs) {
-      while (jobRowRepository.existsByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK)) {
+      while (jobRowRepository.existsByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK)) {
         rowChunkProcessor.processChunk(job);
       }
 
       job.setJobStatus(JobStatus.PROCESSED);
       jobRepository.save(job);
 
-      jobRowRepository.deleteByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED);
+      jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.PROCESSED);
     }
   }
 }
