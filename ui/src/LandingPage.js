@@ -745,16 +745,16 @@ class LandingPage extends Component {
         {this.state.authorisedActivities.includes(
           "CONFIGURE_FULFILMENT_TRIGGER"
         ) && (
-          <div>
-            <Button
-              variant="contained"
-              onClick={this.openFulfilmentTriggerDialog}
-              style={{ marginTop: 20 }}
-            >
-              Configure fulfilment trigger
-            </Button>
-          </div>
-        )}
+            <div>
+              <Button
+                variant="contained"
+                onClick={this.openFulfilmentTriggerDialog}
+                style={{ marginTop: 20 }}
+              >
+                Configure fulfilment trigger
+              </Button>
+            </div>
+          )}
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
             <div style={{ marginTop: 20 }}>
@@ -772,12 +772,12 @@ class LandingPage extends Component {
         {this.state.authorisedActivities.includes(
           "EXCEPTION_MANAGER_VIEWER"
         ) && (
-          <>
-            <div style={{ marginTop: 20 }}>
-              <Link to="/exceptionManager">Exception Manager</Link>
-            </div>
-          </>
-        )}
+            <>
+              <div style={{ marginTop: 20 }}>
+                <Link to="/exceptionManager">Exception Manager</Link>
+              </div>
+            </>
+          )}
         <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
           <DialogContent style={{ padding: 30 }}>
             <div>
@@ -947,6 +947,7 @@ class LandingPage extends Component {
                   label="Template"
                   onChange={this.onTemplateChange}
                   value={this.state.template}
+                  helperText={this.state.notifyTemplateIdErrorMessage}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
