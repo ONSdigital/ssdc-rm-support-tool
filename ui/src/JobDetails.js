@@ -13,7 +13,13 @@ import { convertStatusText } from "./common";
 class JobDetails extends Component {
   render() {
     var jobDetailsFragment;
+    let headerRowCorrection = 0;
+
     if (this.props.job) {
+      if (this.props.job.sampleWithHeaderRow) {
+        headerRowCorrection = 1;
+      }
+
       jobDetailsFragment = (
         <Grid container spacing={1}>
           <Grid container item xs={12} spacing={3}>
@@ -64,7 +70,7 @@ class JobDetails extends Component {
               variant="determinate"
               value={Math.round(
                 (this.props.job.stagedRowCount /
-                  (this.props.job.fileRowCount - 1)) *
+                  (this.props.job.fileRowCount - headerRowCorrection)) *
                   100
               )}
               style={{ marginTop: 20, marginBottom: 20, width: 300 }}
@@ -84,7 +90,7 @@ class JobDetails extends Component {
                   variant="determinate"
                   value={Math.round(
                     (this.props.job.validatedRowCount /
-                      (this.props.job.fileRowCount - 1)) *
+                      (this.props.job.fileRowCount - headerRowCorrection)) *
                       100
                   )}
                   style={{ marginTop: 20, marginBottom: 20, width: 300 }}
@@ -103,7 +109,7 @@ class JobDetails extends Component {
                   value={Math.round(
                     (this.props.job.processedRowCount /
                       (this.props.job.fileRowCount -
-                        1 -
+                        headerRowCorrection -
                         this.props.job.rowErrorCount)) *
                       100
                   )}
