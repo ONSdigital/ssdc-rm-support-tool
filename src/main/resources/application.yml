@@ -1,7 +1,5 @@
 server:
   port: 9999
-  error:
-    include-message: always
 
 info:
   app:

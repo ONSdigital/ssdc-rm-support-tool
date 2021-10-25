@@ -55,12 +55,12 @@ public class PrintTemplateEndpoint {
         userEmail, UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE);
 
     printTemplateRepository
-        .findPrintTemplateByPackCode(printTemplateDto.getPackCode())
-        .ifPresent(
+        .findAll()
+        .forEach(
             printTemplate -> {
-              throw new ResponseStatusException(
-                  HttpStatus.CONFLICT,
-                  String.format("Packcode '%s' already exists", printTemplate.getPackCode()));
+              if (printTemplate.getPackCode().equalsIgnoreCase(printTemplateDto.getPackCode())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+              }
             });
 
     PrintTemplate printTemplate = new PrintTemplate();

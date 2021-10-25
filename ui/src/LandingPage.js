@@ -435,10 +435,12 @@ class LandingPage extends Component {
       return;
     }
 
-    this.setState({ createPrintTemplateError: "" });
+    this.setState({
+      createPrintTemplateError: "",
+      packCodeValidationError: false,
+    });
 
     this.createPrintTemplateInProgress = true;
-
     var failedValidation = false;
 
     if (!this.state.printSupplier.trim()) {
@@ -458,11 +460,16 @@ class LandingPage extends Component {
 
     if (
       this.state.printTemplates.some(
-        (printTemplate) => printTemplate.packCode === this.state.packCode
+        (printTemplate) =>
+          printTemplate.packCode.toUpperCase() ===
+          this.state.packCode.toUpperCase()
       )
     ) {
-      this.setState({ packCodeValidationError: true });
-      this.setState({ createPrintTemplateError: "Pack code already in use" });
+      this.setState({
+        packCodeValidationError: true,
+        createPrintTemplateError: "Pack code already in use",
+      });
+
       failedValidation = true;
     }
 
@@ -500,12 +507,10 @@ class LandingPage extends Component {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      const errorMessage = JSON.parse(error).message;
       this.setState({
-        createPrintTemplateError: errorMessage,
-        packCodeValidationError: true,
+        createPrintTemplateError: "Error creating printTemplate",
       });
+      this.createPrintTemplateInProgress = false;
     } else {
       this.setState({ createPrintTemplateDialogDisplayed: false });
     }
@@ -527,11 +532,15 @@ class LandingPage extends Component {
 
     if (
       this.state.smsTemplates.some(
-        (smsTemplate) => smsTemplate.packCode === this.state.packCode
+        (smsTemplate) =>
+          smsTemplate.packCode.toUpperCase() ===
+          this.state.packCode.toUpperCase()
       )
     ) {
-      this.setState({ createSmsTemplateError: "PackCode already in use" });
-      this.setState({ packCodeValidationError: true });
+      this.setState({
+        createSmsTemplateError: "PackCode already in use",
+        packCodeValidationError: true,
+      });
       failedValidation = true;
     }
 
@@ -585,12 +594,10 @@ class LandingPage extends Component {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      const errorMessage = JSON.parse(error).message;
       this.setState({
-        createSmsTemplateError: errorMessage,
-        packCodeValidationError: true,
+        createSmsTemplateError: "Error Creating SMSTemplate",
       });
+      this.createSmsTemplateInProgress = false;
     } else {
       this.setState({ createSmsTemplateDialogDisplayed: false });
     }

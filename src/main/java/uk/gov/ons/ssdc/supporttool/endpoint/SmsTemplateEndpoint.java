@@ -55,12 +55,12 @@ public class SmsTemplateEndpoint {
         userEmail, UserGroupAuthorisedActivityType.CREATE_SMS_TEMPLATE);
 
     smsTemplateRepository
-        .findById(smsTemplateDto.getPackCode())
-        .ifPresent(
+        .findAll()
+        .forEach(
             smsTemplate -> {
-              throw new ResponseStatusException(
-                  HttpStatus.CONFLICT,
-                  String.format("Packcode '%s' already exists", smsTemplate.getPackCode()));
+              if (smsTemplate.getPackCode().equalsIgnoreCase(smsTemplateDto.getPackCode())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+              }
             });
 
     SmsTemplate smsTemplate = new SmsTemplate();
