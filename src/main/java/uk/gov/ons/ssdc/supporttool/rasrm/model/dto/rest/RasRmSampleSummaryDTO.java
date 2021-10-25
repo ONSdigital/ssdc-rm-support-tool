@@ -1,9 +1,9 @@
-package uk.gov.ons.ssdc.supporttool.model.dto.rest;
+package uk.gov.ons.ssdc.supporttool.rasrm.model.dto.rest;
 
 import lombok.Data;
 
 @Data
-public class SampleSummaryDTO {
+public class RasRmSampleSummaryDTO {
   private int totalSampleUnits;
   private int expectedCollectionInstruments;
 }

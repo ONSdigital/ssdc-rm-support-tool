@@ -1,12 +1,12 @@
-package uk.gov.ons.ssdc.supporttool.client;
+package uk.gov.ons.ssdc.supporttool.rasrm.client;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.gov.ons.ssdc.supporttool.model.dto.rest.SampleSummaryDTO;
-import uk.gov.ons.ssdc.supporttool.model.dto.rest.SampleSummaryResponseDTO;
+import uk.gov.ons.ssdc.supporttool.rasrm.model.dto.rest.RasRmSampleSummaryDTO;
+import uk.gov.ons.ssdc.supporttool.rasrm.model.dto.rest.RasRmSampleSummaryResponseDTO;
 
 @Component
 public class RasRmSampleServiceClient {
@@ -20,9 +20,9 @@ public class RasRmSampleServiceClient {
   @Value("${ras-rm-sample-service.connection.port}")
   private String port;
 
-  public SampleSummaryResponseDTO createSampleSummary(
+  public RasRmSampleSummaryResponseDTO createSampleSummary(
       int totalSampleUnits, int expectedCollectionInstruments) {
-    SampleSummaryDTO sampleSummaryDTO = new SampleSummaryDTO();
+    RasRmSampleSummaryDTO sampleSummaryDTO = new RasRmSampleSummaryDTO();
     sampleSummaryDTO.setTotalSampleUnits(totalSampleUnits);
     sampleSummaryDTO.setExpectedCollectionInstruments(expectedCollectionInstruments);
 
@@ -30,7 +30,7 @@ public class RasRmSampleServiceClient {
     UriComponents uriComponents = createUriComponents("samples/samplesummary");
 
     return restTemplate.postForObject(
-        uriComponents.toUri(), sampleSummaryDTO, SampleSummaryResponseDTO.class);
+        uriComponents.toUri(), sampleSummaryDTO, RasRmSampleSummaryResponseDTO.class);
   }
 
   private UriComponents createUriComponents(String path) {
