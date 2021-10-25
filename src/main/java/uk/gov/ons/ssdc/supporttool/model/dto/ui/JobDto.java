@@ -14,6 +14,7 @@ public class JobDto {
 
   private String fileName;
   private int fileRowCount;
+  private boolean sampleWithHeaderRow;
   private int stagedRowCount;
   private int validatedRowCount;
   private int processedRowCount;
