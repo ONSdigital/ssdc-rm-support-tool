@@ -17,32 +17,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import uk.gov.ons.ssdc.common.model.entity.ActionRuleSurveyPrintTemplate;
-import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
+import uk.gov.ons.ssdc.common.model.entity.ExportFileTemplate;
+import uk.gov.ons.ssdc.common.model.entity.FulfilmentSurveyExportFileTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
-import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleSurveyPrintTemplateRepository;
-import uk.gov.ons.ssdc.supporttool.model.repository.PrintTemplateRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveyExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
 @RestController
-@RequestMapping(value = "/api/actionRuleSurveyPrintTemplates")
-public class ActionRuleSurveyPrintTemplateEndpoint {
-  private final ActionRuleSurveyPrintTemplateRepository actionRuleSurveyPrintTemplateRepository;
+@RequestMapping(value = "/api/fulfilmentSurveyExportFileTemplates")
+public class FulfilmentSurveyExportFileTemplateEndpoint {
+  private final FulfilmentSurveyExportFileTemplateRepository
+      fulfilmentSurveyExportFileTemplateRepository;
   private final SurveyRepository surveyRepository;
-  private final PrintTemplateRepository printTemplateRepository;
+  private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final UserIdentity userIdentity;
 
-  public ActionRuleSurveyPrintTemplateEndpoint(
-      ActionRuleSurveyPrintTemplateRepository actionRuleSurveyPrintTemplateRepository,
+  public FulfilmentSurveyExportFileTemplateEndpoint(
+      FulfilmentSurveyExportFileTemplateRepository fulfilmentSurveyExportFileTemplateRepository,
       SurveyRepository surveyRepository,
-      PrintTemplateRepository printTemplateRepository,
+      ExportFileTemplateRepository exportFileTemplateRepository,
       UserIdentity userIdentity) {
-    this.actionRuleSurveyPrintTemplateRepository = actionRuleSurveyPrintTemplateRepository;
+    this.fulfilmentSurveyExportFileTemplateRepository =
+        fulfilmentSurveyExportFileTemplateRepository;
     this.surveyRepository = surveyRepository;
-    this.printTemplateRepository = printTemplateRepository;
+    this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.userIdentity = userIdentity;
   }
 
@@ -60,15 +62,15 @@ public class ActionRuleSurveyPrintTemplateEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         survey,
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES);
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS);
 
-    return actionRuleSurveyPrintTemplateRepository.findBySurvey(survey).stream()
-        .map(arspt -> arspt.getPrintTemplate().getPackCode())
+    return fulfilmentSurveyExportFileTemplateRepository.findBySurvey(survey).stream()
+        .map(fspt -> fspt.getExportFileTemplate().getPackCode())
         .collect(Collectors.toList());
   }
 
   @PostMapping
-  public ResponseEntity<String> createActionRuleSurveyPrintTemplate(
+  public ResponseEntity<String> createFulfilmentSurveyPrintTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Survey survey =
@@ -78,28 +80,30 @@ public class ActionRuleSurveyPrintTemplateEndpoint {
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
 
     userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_PRINT_TEMPLATE_ON_ACTION_RULE);
+        userEmail,
+        survey,
+        UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT);
 
-    PrintTemplate printTemplate =
-        printTemplateRepository
+    ExportFileTemplate exportFileTemplate =
+        exportFileTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
                 () ->
                     new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Print template not found"));
+                        HttpStatus.BAD_REQUEST, "Export file template not found"));
 
-    Optional<String> errorOpt = validate(survey, Set.of(printTemplate.getTemplate()));
+    Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 
-    ActionRuleSurveyPrintTemplate actionRuleSurveyPrintTemplate =
-        new ActionRuleSurveyPrintTemplate();
-    actionRuleSurveyPrintTemplate.setId(UUID.randomUUID());
-    actionRuleSurveyPrintTemplate.setSurvey(survey);
-    actionRuleSurveyPrintTemplate.setPrintTemplate(printTemplate);
+    FulfilmentSurveyExportFileTemplate fulfilmentSurveyExportFileTemplate =
+        new FulfilmentSurveyExportFileTemplate();
+    fulfilmentSurveyExportFileTemplate.setId(UUID.randomUUID());
+    fulfilmentSurveyExportFileTemplate.setSurvey(survey);
+    fulfilmentSurveyExportFileTemplate.setExportFileTemplate(exportFileTemplate);
 
-    actionRuleSurveyPrintTemplateRepository.save(actionRuleSurveyPrintTemplate);
+    fulfilmentSurveyExportFileTemplateRepository.save(fulfilmentSurveyExportFileTemplate);
 
     return new ResponseEntity<>("OK", HttpStatus.CREATED);
   }

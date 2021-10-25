@@ -73,7 +73,7 @@ export const getActionRulePrintTemplates = async (
     return [];
 
   const response = await fetch(
-    `/api/actionRuleSurveyPrintTemplates/?surveyId=${surveyId}`
+    `/api/actionRuleSurveyExportFileTemplates/?surveyId=${surveyId}`
   );
   const printTemplatesJson = await response.json();
 

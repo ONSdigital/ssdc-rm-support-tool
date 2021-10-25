@@ -385,7 +385,7 @@ class SurveyDetails extends Component {
       packCode: this.state.printTemplateToAllow,
     };
 
-    const response = await fetch("/api/actionRuleSurveyPrintTemplates", {
+    const response = await fetch("/api/actionRuleSurveyExportFileTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newAllowPrintTemplate),
