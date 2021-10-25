@@ -37,9 +37,10 @@ class LandingPage extends Component {
     printTemplates: [],
     smsTemplates: [],
     createPrintTemplateDialogDisplayed: false,
-    createPrintTemplateError: "",
+    createPrintTemplatePackCodeError: "",
     createSmsTemplateDialogDisplayed: false,
     createSmsTemplateError: "",
+    createSMSTemplatePackCodeError: "",
     printSuppliers: [],
     printSupplier: "",
     packCode: "",
@@ -245,13 +246,14 @@ class LandingPage extends Component {
   closePrintTemplateDialog = () => {
     this.setState({
       createPrintTemplateDialogDisplayed: false,
-      createPrintTemplateError: "",
+      createPrintTemplatePackCodeError: "",
     });
   };
 
   closeSmsTemplateDialog = () => {
     this.setState({
       createSmsTemplateDialogDisplayed: false,
+      createSMSTemplatePackCodeError: ""
     });
   };
 
@@ -436,7 +438,7 @@ class LandingPage extends Component {
     }
 
     this.setState({
-      createPrintTemplateError: "",
+      createPrintTemplatePackCodeError: "",
       packCodeValidationError: false,
     });
 
@@ -467,7 +469,7 @@ class LandingPage extends Component {
     ) {
       this.setState({
         packCodeValidationError: true,
-        createPrintTemplateError: "Pack code already in use",
+        createPrintTemplatePackCodeError: "Pack code already in use",
       });
 
       failedValidation = true;
@@ -507,9 +509,6 @@ class LandingPage extends Component {
     });
 
     if (!response.ok) {
-      this.setState({
-        createPrintTemplateError: "Error creating printTemplate",
-      });
       this.createPrintTemplateInProgress = false;
     } else {
       this.setState({ createPrintTemplateDialogDisplayed: false });
@@ -521,8 +520,12 @@ class LandingPage extends Component {
       return;
     }
 
-    this.createSmsTemplateInProgress = true;
+    this.setState({
+      createSMSTemplatePackCodeError: "",
+      packCodeValidationError: false,
+    });
 
+    this.createSmsTemplateInProgress = true;
     var failedValidation = false;
 
     if (!this.state.packCode.trim()) {
@@ -538,7 +541,7 @@ class LandingPage extends Component {
       )
     ) {
       this.setState({
-        createSmsTemplateError: "PackCode already in use",
+        createSMSTemplatePackCodeError: "PackCode already in use",
         packCodeValidationError: true,
       });
       failedValidation = true;
@@ -913,11 +916,6 @@ class LandingPage extends Component {
           fullWidth={true}
         >
           <DialogContent style={{ padding: 30 }}>
-            {this.state.createPrintTemplateError && (
-              <div style={{ color: "red" }}>
-                {this.state.createPrintTemplateError}
-              </div>
-            )}
             <div>
               <div>
                 <FormControl required fullWidth={true}>
@@ -938,6 +936,7 @@ class LandingPage extends Component {
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
                   value={this.state.packCode}
+                  helperText={this.state.createPrintTemplatePackCodeError}
                 />
                 <TextField
                   required
@@ -989,6 +988,7 @@ class LandingPage extends Component {
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
                   value={this.state.packCode}
+                  helperText={this.state.createSMSTemplatePackCodeError}
                 />
                 <TextField
                   required
