@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.*;
+
 import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +44,6 @@ import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.*;
-
 @RestController
 @RequestMapping(value = "/api/job")
 public class JobEndpoint {
@@ -70,6 +70,7 @@ public class JobEndpoint {
   @GetMapping
   public List<JobDto> findCollexJobs(
       @RequestParam(value = "collectionExercise") UUID collectionExerciseId,
+      @RequestParam(value = "jobType") JobType jobType,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Optional<CollectionExercise> collexOpt =
         collectionExerciseRepository.findById(collectionExerciseId);
@@ -79,8 +80,7 @@ public class JobEndpoint {
     }
 
     CollectionExercise collx = collexOpt.get();
-
-    userIdentity.checkUserPermission(userEmail, collx.getSurvey(), VIEW_SAMPLE_LOAD_PROGRESS);
+    checkUserViewProgressPermissionByJobType(userEmail, collx.getSurvey(), jobType);
 
     return jobRepository.findByCollectionExerciseOrderByCreatedAtDesc(collx).stream()
         .map(this::mapJob)
@@ -92,8 +92,7 @@ public class JobEndpoint {
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
-    userIdentity.checkUserPermission(
-        userEmail, job.getCollectionExercise().getSurvey(), VIEW_SAMPLE_LOAD_PROGRESS);
+    checkUserViewProgressPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     return mapJob(jobRepository.findById(id).get());
   }
@@ -106,7 +105,8 @@ public class JobEndpoint {
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
 
-    checkUserPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+    checkUserLoadFilePermissionByJobType(
+        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -146,7 +146,8 @@ public class JobEndpoint {
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
 
-    checkUserPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+    checkUserLoadFilePermissionByJobType(
+        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -189,7 +190,8 @@ public class JobEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
 
-    checkUserPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+    checkUserLoadFilePermissionByJobType(
+        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
@@ -209,7 +211,8 @@ public class JobEndpoint {
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
-    checkUserPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+    checkUserLoadFilePermissionByJobType(
+        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
@@ -240,7 +243,7 @@ public class JobEndpoint {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
-    checkUserPermissionByJobType(userEmail, collexOpt.get().getSurvey(), jobType);
+    checkUserLoadFilePermissionByJobType(userEmail, collexOpt.get().getSurvey(), jobType);
 
     File file = new File(fileUploadStoragePath + fileId);
     int rowCount;
@@ -267,19 +270,39 @@ public class JobEndpoint {
     return new ResponseEntity<>(jobId, HttpStatus.CREATED);
   }
 
-  private void checkUserPermissionByJobType(String userEmail, Survey survey, JobType jobType) {
+  private void checkUserLoadFilePermissionByJobType(
+      String userEmail, Survey survey, JobType jobType) {
     switch (jobType) {
       case SAMPLE:
-        userIdentity.checkUserPermission(userEmail, survey, UserGroupAuthorisedActivityType.LOAD_SAMPLE);
+        userIdentity.checkUserPermission(
+            userEmail, survey, UserGroupAuthorisedActivityType.LOAD_SAMPLE);
         break;
 
       case BULK_REFUSAL:
-        userIdentity.checkUserPermission(userEmail, survey, UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
+        userIdentity.checkUserPermission(
+            userEmail, survey, UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
         break;
 
       default:
         throw new ResponseStatusException(
-            HttpStatus.FORBIDDEN, String.format("JobType %s not applicable", jobType));
+            HttpStatus.FORBIDDEN,
+            String.format("JobType %s not applicable to Load Permissions", jobType));
+    }
+  }
+
+  private void checkUserViewProgressPermissionByJobType(
+      String userEmail, Survey survey, JobType jobType) {
+    switch (jobType) {
+      case SAMPLE:
+        userIdentity.checkUserPermission(userEmail, survey, VIEW_SAMPLE_LOAD_PROGRESS);
+        break;
+      case BULK_REFUSAL:
+        userIdentity.checkUserPermission(userEmail, survey, VIEW_BULK_REFUSAL_PROGRESS);
+        break;
+      default:
+        throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            String.format("JobType %s not applicable to Load Permissions", jobType));
     }
   }
 
