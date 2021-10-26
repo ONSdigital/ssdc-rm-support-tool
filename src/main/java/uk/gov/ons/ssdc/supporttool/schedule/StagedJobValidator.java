@@ -34,7 +34,7 @@ public class StagedJobValidator {
     for (Job job : jobs) {
       JobStatus jobStatus = JobStatus.VALIDATED_OK;
 
-      while (jobRowRepository.existsByJobAndAndJobRowStatus(job, JobRowStatus.STAGED)) {
+      while (jobRowRepository.existsByJobAndJobRowStatus(job, JobRowStatus.STAGED)) {
         if (rowChunkValidator.processChunk(job)) {
           jobStatus = JobStatus.VALIDATED_WITH_ERRORS;
         }
