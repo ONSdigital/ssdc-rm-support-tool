@@ -437,12 +437,13 @@ class LandingPage extends Component {
       return;
     }
 
+    this.createPrintTemplateInProgress = true;
+
     this.setState({
       createPrintTemplatePackCodeError: "",
       packCodeValidationError: false,
     });
 
-    this.createPrintTemplateInProgress = true;
     var failedValidation = false;
 
     if (!this.state.printSupplier.trim()) {
