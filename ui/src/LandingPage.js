@@ -520,12 +520,13 @@ class LandingPage extends Component {
       return;
     }
 
+    this.createSmsTemplateInProgress = true;
+
     this.setState({
       createSMSTemplatePackCodeError: "",
       packCodeValidationError: false,
     });
 
-    this.createSmsTemplateInProgress = true;
     var failedValidation = false;
 
     if (!this.state.packCode.trim()) {
