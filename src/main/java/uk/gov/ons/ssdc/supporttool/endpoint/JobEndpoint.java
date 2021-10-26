@@ -1,8 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LOAD_SAMPLE;
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.VIEW_SAMPLE_LOAD_PROGRESS;
-
 import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.IOException;
@@ -33,14 +30,19 @@ import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.common.model.entity.JobStatus;
+import uk.gov.ons.ssdc.common.model.entity.JobType;
+import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobStatusDto;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobTypeDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
+
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.*;
 
 @RestController
 @RequestMapping(value = "/api/job")
@@ -103,8 +105,8 @@ public class JobEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail,
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
-    userIdentity.checkUserPermission(
-        userEmail, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
+
+    checkUserPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -143,8 +145,8 @@ public class JobEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail,
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
-    userIdentity.checkUserPermission(
-        userEmail, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
+
+    checkUserPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -186,8 +188,8 @@ public class JobEndpoint {
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
-    userIdentity.checkUserPermission(
-        userEmail, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
+
+    checkUserPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
@@ -207,8 +209,7 @@ public class JobEndpoint {
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
-    userIdentity.checkUserPermission(
-        userEmail, job.getCollectionExercise().getSurvey(), LOAD_SAMPLE);
+    checkUserPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
@@ -229,6 +230,7 @@ public class JobEndpoint {
       @RequestParam(value = "fileId") UUID fileId,
       @RequestParam(value = "fileName") String fileName,
       @RequestParam(value = "collectionExerciseId") UUID collectionExerciseId,
+      @RequestParam(value = "jobType") JobType jobType,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
     // Check that collex exists
@@ -238,9 +240,7 @@ public class JobEndpoint {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
-    // Check user is authorised to submit job for this survey
-    userIdentity.checkUserPermission(
-        userEmail, collexOpt.get().getSurvey(), UserGroupAuthorisedActivityType.LOAD_SAMPLE);
+    checkUserPermissionByJobType(userEmail, collexOpt.get().getSurvey(), jobType);
 
     File file = new File(fileUploadStoragePath + fileId);
     int rowCount;
@@ -260,10 +260,27 @@ public class JobEndpoint {
     job.setCreatedBy(userEmail);
     job.setCollectionExercise(collexOpt.get());
     job.setFileRowCount(rowCount);
+    job.setJobType(jobType);
 
     jobRepository.saveAndFlush(job);
 
     return new ResponseEntity<>(jobId, HttpStatus.CREATED);
+  }
+
+  private void checkUserPermissionByJobType(String userEmail, Survey survey, JobType jobType) {
+    switch (jobType) {
+      case SAMPLE:
+        userIdentity.checkUserPermission(userEmail, survey, UserGroupAuthorisedActivityType.LOAD_SAMPLE);
+        break;
+
+      case BULK_REFUSAL:
+        userIdentity.checkUserPermission(userEmail, survey, UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
+        break;
+
+      default:
+        throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN, String.format("JobType %s not applicable", jobType));
+    }
   }
 
   private JobDto mapJob(Job job) {
@@ -285,6 +302,7 @@ public class JobEndpoint {
     jobDto.setProcessedAt(job.getProcessedAt());
     jobDto.setCancelledBy(job.getCancelledBy());
     jobDto.setCancelledAt(job.getCancelledAt());
+    jobDto.setJobType(JobTypeDto.valueOf(job.getJobType().name()));
     return jobDto;
   }
 }
