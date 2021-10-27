@@ -75,7 +75,7 @@ public class JobEndpoint {
     Optional<CollectionExercise> collexOpt =
         collectionExerciseRepository.findById(collectionExerciseId);
 
-    if (!collexOpt.isPresent()) {
+    if (collexOpt.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
@@ -239,7 +239,7 @@ public class JobEndpoint {
     // Check that collex exists
     Optional<CollectionExercise> collexOpt =
         collectionExerciseRepository.findById(collectionExerciseId);
-    if (!collexOpt.isPresent()) {
+    if (collexOpt.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 

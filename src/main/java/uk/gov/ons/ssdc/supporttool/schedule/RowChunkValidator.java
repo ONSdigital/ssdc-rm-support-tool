@@ -12,22 +12,29 @@ import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
 
 @Component
 public class RowChunkValidator {
   private final JobRowRepository jobRowRepository;
   private final JobRepository jobRepository;
+  private final JobTypeHelper jobTypeHelper;
 
-  public RowChunkValidator(JobRowRepository jobRowRepository, JobRepository jobRepository) {
+  public RowChunkValidator(
+      JobRowRepository jobRowRepository, JobRepository jobRepository, JobTypeHelper jobTypeHelper) {
     this.jobRowRepository = jobRowRepository;
     this.jobRepository = jobRepository;
+    this.jobTypeHelper = jobTypeHelper;
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean processChunk(Job job) {
     boolean hadErrors = false;
+
     ColumnValidator[] columnValidators =
-        job.getCollectionExercise().getSurvey().getSampleValidationRules();
+        jobTypeHelper.getTransformerValidationAndTopic(job).getColumnValidators();
+
+    job.getCollectionExercise().getSurvey().getSampleValidationRules();
 
     List<JobRow> jobRows =
         jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED);
