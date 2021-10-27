@@ -37,8 +37,10 @@ class LandingPage extends Component {
     printTemplates: [],
     smsTemplates: [],
     createPrintTemplateDialogDisplayed: false,
+    createPrintTemplatePackCodeError: "",
     createSmsTemplateDialogDisplayed: false,
     createSmsTemplateError: "",
+    createSMSTemplatePackCodeError: "",
     printSuppliers: [],
     printSupplier: "",
     packCode: "",
@@ -242,11 +244,16 @@ class LandingPage extends Component {
   };
 
   closePrintTemplateDialog = () => {
-    this.setState({ createPrintTemplateDialogDisplayed: false });
+    this.setState({
+      createPrintTemplateDialogDisplayed: false,
+      createPrintTemplatePackCodeError: "",
+    });
   };
+
   closeSmsTemplateDialog = () => {
     this.setState({
       createSmsTemplateDialogDisplayed: false,
+      createSMSTemplatePackCodeError: "",
     });
   };
 
@@ -432,6 +439,11 @@ class LandingPage extends Component {
 
     this.createPrintTemplateInProgress = true;
 
+    this.setState({
+      createPrintTemplatePackCodeError: "",
+      packCodeValidationError: false,
+    });
+
     var failedValidation = false;
 
     if (!this.state.printSupplier.trim()) {
@@ -446,6 +458,21 @@ class LandingPage extends Component {
 
     if (!this.state.packCode.trim()) {
       this.setState({ packCodeValidationError: true });
+      failedValidation = true;
+    }
+
+    if (
+      this.state.printTemplates.some(
+        (printTemplate) =>
+          printTemplate.packCode.toUpperCase() ===
+          this.state.packCode.toUpperCase()
+      )
+    ) {
+      this.setState({
+        packCodeValidationError: true,
+        createPrintTemplatePackCodeError: "Pack code already in use",
+      });
+
       failedValidation = true;
     }
 
@@ -476,13 +503,17 @@ class LandingPage extends Component {
       template: JSON.parse(this.state.template),
     };
 
-    await fetch("/api/printTemplates", {
+    const response = await fetch("/api/printTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newPrintTemplate),
     });
 
-    this.setState({ createPrintTemplateDialogDisplayed: false });
+    if (!response.ok) {
+      this.createPrintTemplateInProgress = false;
+    } else {
+      this.setState({ createPrintTemplateDialogDisplayed: false });
+    }
   };
 
   onCreateSmsTemplate = async () => {
@@ -492,12 +523,32 @@ class LandingPage extends Component {
 
     this.createSmsTemplateInProgress = true;
 
+    this.setState({
+      createSMSTemplatePackCodeError: "",
+      packCodeValidationError: false,
+    });
+
     var failedValidation = false;
 
     if (!this.state.packCode.trim()) {
       this.setState({ packCodeValidationError: true });
       failedValidation = true;
     }
+
+    if (
+      this.state.smsTemplates.some(
+        (smsTemplate) =>
+          smsTemplate.packCode.toUpperCase() ===
+          this.state.packCode.toUpperCase()
+      )
+    ) {
+      this.setState({
+        createSMSTemplatePackCodeError: "PackCode already in use",
+        packCodeValidationError: true,
+      });
+      failedValidation = true;
+    }
+
     if (!this.state.notifyTemplateId) {
       this.setState({
         notifyTemplateIdValidationError: true,
@@ -548,13 +599,10 @@ class LandingPage extends Component {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text();
       this.setState({
-        createSmsTemplateError: errorMessage,
-        notifyTemplateIdValidationError: true,
-        templateValidationError: true,
-        packCodeValidationError: true,
+        createSmsTemplateError: "Error Creating SMSTemplate",
       });
+      this.createSmsTemplateInProgress = false;
     } else {
       this.setState({ createSmsTemplateDialogDisplayed: false });
     }
@@ -890,6 +938,7 @@ class LandingPage extends Component {
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
                   value={this.state.packCode}
+                  helperText={this.state.createPrintTemplatePackCodeError}
                 />
                 <TextField
                   required
@@ -899,6 +948,7 @@ class LandingPage extends Component {
                   label="Template"
                   onChange={this.onTemplateChange}
                   value={this.state.template}
+                  helperText={this.state.notifyTemplateIdErrorMessage}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
@@ -940,6 +990,7 @@ class LandingPage extends Component {
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
                   value={this.state.packCode}
+                  helperText={this.state.createSMSTemplatePackCodeError}
                 />
                 <TextField
                   required
@@ -949,7 +1000,6 @@ class LandingPage extends Component {
                   label="Notify Template ID (UUID)"
                   onChange={this.onNotifyTemplateIdChange}
                   value={this.state.notifyTemplateId}
-                  helperText={this.state.notifyTemplateIdErrorMessage}
                 />
                 <TextField
                   fullWidth={true}

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintTemplateDto;
@@ -52,6 +53,15 @@ public class PrintTemplateEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE);
+
+    printTemplateRepository
+        .findAll()
+        .forEach(
+            printTemplate -> {
+              if (printTemplate.getPackCode().equalsIgnoreCase(printTemplateDto.getPackCode())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+              }
+            });
 
     PrintTemplate printTemplate = new PrintTemplate();
     printTemplate.setTemplate(printTemplateDto.getTemplate());
