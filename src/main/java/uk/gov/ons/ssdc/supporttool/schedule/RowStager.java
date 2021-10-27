@@ -49,10 +49,12 @@ public class RowStager {
               new CSVReader(reader, job.getCollectionExercise().getSurvey().getSampleSeparator())) {
 
         String[] headerRow;
+        int headerRowCorrection = 1;
         if (job.getCollectionExercise().getSurvey().isSampleWithHeaderRow()) {
           headerRow = csvReader.readNext();
         } else {
           headerRow = SampleColumnHelper.getExpectedColumns(job);
+          headerRowCorrection = 0;
         }
 
         // Skip lines which we don't need, until we reach progress point
@@ -62,7 +64,7 @@ public class RowStager {
 
         // Stage all the rows
         JobStatus jobStatus = JobStatus.VALIDATION_IN_PROGRESS;
-        while (job.getStagingRowNumber() < job.getFileRowCount() - 1) {
+        while (job.getStagingRowNumber() < job.getFileRowCount() - headerRowCorrection) {
           jobStatus = rowChunkStager.stageChunk(job, headerRow, csvReader);
           if (jobStatus == JobStatus.VALIDATED_TOTAL_FAILURE) {
             break;

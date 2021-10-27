@@ -11,18 +11,18 @@ import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 
 public interface JobRowRepository extends JpaRepository<JobRow, UUID> {
-  int countByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
+  int countByJobAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 
-  boolean existsByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
+  boolean existsByJobAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 
-  List<JobRow> findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
+  List<JobRow> findByJobAndJobRowStatusOrderByOriginalRowLineNumber(
       Job job, JobRowStatus jobRowStatus);
 
   // This is required because otherwise Hibernate will attempt to read ALL the JobRows, which
   // could number in the millions, causing an out of memory crash
   @Modifying
   @Query("delete from JobRow r where r.job = :job and r.jobRowStatus = :rowStatus")
-  void deleteByJobAndAndJobRowStatus(
+  void deleteByJobAndJobRowStatus(
       @Param("job") Job job, @Param("rowStatus") JobRowStatus rowStatus);
 
   // This is required because otherwise Hibernate will attempt to read ALL the JobRows, which
@@ -31,5 +31,5 @@ public interface JobRowRepository extends JpaRepository<JobRow, UUID> {
   @Query("delete from JobRow r where r.job = :job")
   void deleteByJob(@Param("job") Job job);
 
-  List<JobRow> findTop500ByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
+  List<JobRow> findTop500ByJobAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 }

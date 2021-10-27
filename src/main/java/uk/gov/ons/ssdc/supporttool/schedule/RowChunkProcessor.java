@@ -52,7 +52,7 @@ public class RowChunkProcessor {
         job.getCollectionExercise().getSurvey().getSampleValidationRules();
 
     List<JobRow> jobRows =
-        jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
+        jobRowRepository.findTop500ByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
 
     for (JobRow jobRow : jobRows) {
       try {

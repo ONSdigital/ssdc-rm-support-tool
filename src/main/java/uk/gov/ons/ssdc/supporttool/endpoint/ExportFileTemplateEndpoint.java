@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.ExportFileTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.ExportFileTemplateDto;
@@ -54,6 +55,15 @@ public class ExportFileTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_TEMPLATE);
 
+    exportFileTemplateRepository
+            .findAll()
+            .forEach(
+                    exportFileTemplate -> {
+                      if (exportFileTemplate.getPackCode().equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                      }
+                    });
+    
     ExportFileTemplate exportFileTemplate = new ExportFileTemplate();
     exportFileTemplate.setTemplate(exportFileTemplateDto.getTemplate());
     exportFileTemplate.setExportFileDestination(
