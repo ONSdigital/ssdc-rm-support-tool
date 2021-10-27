@@ -378,7 +378,7 @@ class CollectionExerciseDetails extends Component {
       this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_ACTION_RULE")
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"EXPORT_FILE"}>EXPORT_FILE</MenuItem>
+        <MenuItem value={"EXPORT_FILE"}>Export File</MenuItem>
       );
     }
     if (this.state.authorisedActivities.includes("CREATE_SMS_ACTION_RULE")) {

@@ -880,7 +880,7 @@ class LandingPage extends Component {
             <div>
               <div>
                 <FormControl required fullWidth={true}>
-                  <InputLabel>Export File Supplier</InputLabel>
+                  <InputLabel>Export File Destination</InputLabel>
                   <Select
                     onChange={this.onexportFileDestinationChange}
                     value={this.state.exportFileDestination}
