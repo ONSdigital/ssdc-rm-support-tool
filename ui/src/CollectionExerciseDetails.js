@@ -352,11 +352,13 @@ class CollectionExerciseDetails extends Component {
       );
     });
 
-    const exportFilePackCodeMenuItems = this.state.exportFilePackCodes.map((packCode) => (
-      <MenuItem key={packCode} value={packCode}>
-        {packCode}
-      </MenuItem>
-    ));
+    const exportFilePackCodeMenuItems = this.state.exportFilePackCodes.map(
+      (packCode) => (
+        <MenuItem key={packCode} value={packCode}>
+          {packCode}
+        </MenuItem>
+      )
+    );
 
     const smsPackCodeMenuItems = this.state.smsPackCodes.map((packCode) => (
       <MenuItem key={packCode} value={packCode}>
@@ -372,7 +374,9 @@ class CollectionExerciseDetails extends Component {
       ));
 
     let allowedActionRuleTypeMenuItems = [];
-    if (this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_ACTION_RULE")) {
+    if (
+      this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_ACTION_RULE")
+    ) {
       allowedActionRuleTypeMenuItems.push(
         <MenuItem value={"EXPORT_FILE"}>EXPORT_FILE</MenuItem>
       );

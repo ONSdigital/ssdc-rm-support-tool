@@ -119,20 +119,22 @@ class SurveyDetails extends Component {
       authorisedActivities
     );
 
-    const actionRuleExportFileTemplates = await getActionRuleExportFileTemplates(
-      authorisedActivities,
-      this.props.surveyId
-    );
+    const actionRuleExportFileTemplates =
+      await getActionRuleExportFileTemplates(
+        authorisedActivities,
+        this.props.surveyId
+      );
 
     const actionRuleSmsTemplates = await getActionRuleSmsTemplates(
       authorisedActivities,
       this.props.surveyId
     );
 
-    const fulfilmentExportFileTemplates = await getFulfilmentExportFileTemplates(
-      authorisedActivities,
-      this.props.surveyId
-    );
+    const fulfilmentExportFileTemplates =
+      await getFulfilmentExportFileTemplates(
+        authorisedActivities,
+        this.props.surveyId
+      );
     const smsFulfilmentTemplates = await getSmsFulfilmentTemplates(
       authorisedActivities,
       this.props.surveyId
@@ -166,9 +168,11 @@ class SurveyDetails extends Component {
       actionRuleSmsTemplates: actionRuleSmsTemplates,
       fulfilmentExportFileTemplates: fulfilmentExportFileTemplates,
       smsFulfilmentTemplates: smsFulfilmentTemplates,
-      allowableActionRuleExportFileTemplates: allowableActionRuleExportFileTemplates,
+      allowableActionRuleExportFileTemplates:
+        allowableActionRuleExportFileTemplates,
       allowableActionRuleSmsTemplates: allowableActionRuleSmsTemplates,
-      allowableFulfilmentExportFileTemplates: allowableFulfilmentExportFileTemplates,
+      allowableFulfilmentExportFileTemplates:
+        allowableFulfilmentExportFileTemplates,
       allowableSmsFulfilmentTemplates: allowableSmsFulfilmentTemplates,
     });
   };
@@ -392,7 +396,9 @@ class SurveyDetails extends Component {
     });
 
     if (response.ok) {
-      this.setState({ allowActionRuleExportFileTemplateDialogDisplayed: false });
+      this.setState({
+        allowActionRuleExportFileTemplateDialogDisplayed: false,
+      });
     } else {
       const errorMessage = await response.text();
       this.setState({
@@ -468,7 +474,9 @@ class SurveyDetails extends Component {
     });
 
     if (response.ok) {
-      this.setState({ allowFulfilmentExportFileTemplateDialogDisplayed: false });
+      this.setState({
+        allowFulfilmentExportFileTemplateDialogDisplayed: false,
+      });
     } else {
       const errorMessage = await response.text();
       this.setState({
@@ -880,7 +888,9 @@ class SurveyDetails extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        <Dialog open={this.state.allowActionRuleExportFileTemplateDialogDisplayed}>
+        <Dialog
+          open={this.state.allowActionRuleExportFileTemplateDialogDisplayed}
+        >
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
@@ -962,7 +972,9 @@ class SurveyDetails extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        <Dialog open={this.state.allowFulfilmentExportFileTemplateDialogDisplayed}>
+        <Dialog
+          open={this.state.allowFulfilmentExportFileTemplateDialogDisplayed}
+        >
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>

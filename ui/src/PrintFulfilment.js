@@ -134,7 +134,7 @@ class PrintFulfilment extends Component {
   refreshDataFromBackend = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
+        "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS"
       )
     )
       return;

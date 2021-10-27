@@ -358,7 +358,7 @@ class CaseDetails extends Component {
                     id="json-pretty"
                     data={this.state.eventToShow.payload}
                     style={{ margin: 10, padding: 10 }}
-                  ></JSONPretty>
+                  />
                 </Typography>
               </div>
               <Button

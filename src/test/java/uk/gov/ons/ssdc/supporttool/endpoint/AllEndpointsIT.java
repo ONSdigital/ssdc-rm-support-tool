@@ -256,7 +256,7 @@ class AllEndpointsIT {
   }
 
   @Test
-  void testPrintSuppliersEndpoints() {
+  void testExportFileDestinationsEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.LIST_EXPORT_FILE_DESTINATIONS,
@@ -264,7 +264,7 @@ class AllEndpointsIT {
   }
 
   @Test
-  void testPrintTemplateEndpoints() {
+  void testExportFileTemplateEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.LIST_EXPORT_FILE_TEMPLATES,

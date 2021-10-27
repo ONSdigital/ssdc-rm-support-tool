@@ -577,19 +577,21 @@ class LandingPage extends Component {
       </TableRow>
     ));
 
-    const exportFileTemplateRows = this.state.exportFileTemplates.map((exportFileTemplate) => (
-      <TableRow key={exportFileTemplate.packCode}>
-        <TableCell component="th" scope="row">
-          {exportFileTemplate.packCode}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {exportFileTemplate.exportFileDestination}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {JSON.stringify(exportFileTemplate.template)}
-        </TableCell>
-      </TableRow>
-    ));
+    const exportFileTemplateRows = this.state.exportFileTemplates.map(
+      (exportFileTemplate) => (
+        <TableRow key={exportFileTemplate.packCode}>
+          <TableCell component="th" scope="row">
+            {exportFileTemplate.packCode}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {exportFileTemplate.exportFileDestination}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(exportFileTemplate.template)}
+          </TableCell>
+        </TableRow>
+      )
+    );
     const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) => (
       <TableRow key={smsTemplate.packCode}>
         <TableCell component="th" scope="row">
@@ -604,11 +606,12 @@ class LandingPage extends Component {
       </TableRow>
     ));
 
-    const exportFileDestinationMenuItems = this.state.exportFileDestinations.map((supplier) => (
-      <MenuItem key={supplier} value={supplier}>
-        {supplier}
-      </MenuItem>
-    ));
+    const exportFileDestinationMenuItems =
+      this.state.exportFileDestinations.map((supplier) => (
+        <MenuItem key={supplier} value={supplier}>
+          {supplier}
+        </MenuItem>
+      ));
 
     return (
       <div style={{ padding: 20 }}>
@@ -641,7 +644,9 @@ class LandingPage extends Component {
           </Button>
         )}
 
-        {this.state.authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES") && (
+        {this.state.authorisedActivities.includes(
+          "LIST_EXPORT_FILE_TEMPLATES"
+        ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
               Export File Templates
@@ -660,7 +665,9 @@ class LandingPage extends Component {
             </TableContainer>
           </>
         )}
-        {this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_TEMPLATE") && (
+        {this.state.authorisedActivities.includes(
+          "CREATE_EXPORT_FILE_TEMPLATE"
+        ) && (
           <Button
             variant="contained"
             onClick={this.openExportFileTemplateDialog}
