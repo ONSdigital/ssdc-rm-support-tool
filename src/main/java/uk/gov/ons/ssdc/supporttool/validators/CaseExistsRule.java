@@ -1,12 +1,11 @@
 package uk.gov.ons.ssdc.supporttool.validators;
 
+import java.util.Optional;
+import java.util.UUID;
 import org.springframework.context.ApplicationContext;
 import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.config.ApplicationContextProvider;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public class CaseExistsRule implements Rule {
   private CaseRepository caseRepository = null;

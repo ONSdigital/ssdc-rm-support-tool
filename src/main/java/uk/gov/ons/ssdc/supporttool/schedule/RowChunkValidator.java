@@ -32,9 +32,9 @@ public class RowChunkValidator {
     boolean hadErrors = false;
 
     ColumnValidator[] columnValidators =
-        jobTypeHelper.getTransformerValidationAndTopic(job).getColumnValidators();
-
-    job.getCollectionExercise().getSurvey().getSampleValidationRules();
+        jobTypeHelper
+            .getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey())
+            .getColumnValidators();
 
     List<JobRow> jobRows =
         jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED);
@@ -45,6 +45,7 @@ public class RowChunkValidator {
 
       for (ColumnValidator columnValidator : columnValidators) {
         Optional<String> columnValidationErrors = columnValidator.validateRow(jobRow.getRowData());
+
         if (columnValidationErrors.isPresent()) {
           rowStatus = JobRowStatus.VALIDATED_ERROR;
           rowValidationErrors.add(columnValidationErrors.get());

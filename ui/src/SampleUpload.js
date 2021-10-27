@@ -82,6 +82,9 @@ class SampleUpload extends Component {
         jobData.append("fileName", fileName);
         jobData.append("collectionExerciseId", this.props.collectionExerciseId);
 
+        // Temp hardcoded to SAMPLE
+        jobData.append("jobType", 'SAMPLE');
+
         const response = fetch(`/api/job`, {
           method: "POST",
           body: jobData,
@@ -171,8 +174,8 @@ class SampleUpload extends Component {
               "VALIDATION_IN_PROGRESS",
               "PROCESSING_IN_PROGRESS",
             ].includes(job.jobStatus) && (
-              <CircularProgress size={15} style={{ marginLeft: 10 }} />
-            )}
+                <CircularProgress size={15} style={{ marginLeft: 10 }} />
+              )}
           </Button>
         </TableCell>
       </TableRow>
@@ -183,24 +186,24 @@ class SampleUpload extends Component {
         {this.props.authorisedActivities.includes(
           "VIEW_SAMPLE_LOAD_PROGRESS"
         ) && (
-          <>
-            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-              Uploaded Sample Files
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>File Name</TableCell>
-                    <TableCell>Date Uploaded</TableCell>
-                    <TableCell align="right">Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{jobTableRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+                Uploaded Sample Files
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>File Name</TableCell>
+                      <TableCell>Date Uploaded</TableCell>
+                      <TableCell align="right">Status</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{jobTableRows}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
         {this.props.authorisedActivities.includes("LOAD_SAMPLE") && (
           <>
             <input

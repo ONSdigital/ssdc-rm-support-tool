@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.transformer;
 
+import java.util.Map;
+import java.util.UUID;
 import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
@@ -10,9 +12,6 @@ import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalTypeDTO;
 import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
-
-import java.util.Map;
-import java.util.UUID;
 
 public class BulkRefusalTransformer implements Transformer {
 

@@ -3,10 +3,8 @@ package uk.gov.ons.ssdc.supporttool.schedule;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
-
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +15,7 @@ import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
-import uk.gov.ons.ssdc.supporttool.utility.TransformerValidationAndTopic;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeSettings;
 
 @Component
 public class RowChunkProcessor {
@@ -42,8 +40,8 @@ public class RowChunkProcessor {
   public boolean processChunk(Job job) {
     boolean hadErrors = false;
 
-    TransformerValidationAndTopic transformerValidationAndTopic =
-        jobTypeHelper.getTransformerValidationAndTopic(job);
+    JobTypeSettings transformerValidationAndTopic =
+        jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey());
 
     List<JobRow> jobRows =
         jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);

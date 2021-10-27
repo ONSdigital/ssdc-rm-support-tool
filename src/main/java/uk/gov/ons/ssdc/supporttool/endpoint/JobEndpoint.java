@@ -34,7 +34,6 @@ import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
-import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobStatusDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobTypeDto;
@@ -42,6 +41,8 @@ import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeSettings;
 import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
 
 @RestController
@@ -52,6 +53,7 @@ public class JobEndpoint {
   private final JobRowRepository jobRowRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final UserIdentity userIdentity;
+  private final JobTypeHelper jobTypeHelper;
 
   @Value("${file-upload-storage-path}")
   private String fileUploadStoragePath;
@@ -60,11 +62,13 @@ public class JobEndpoint {
       JobRepository jobRepository,
       JobRowRepository jobRowRepository,
       CollectionExerciseRepository collectionExerciseRepository,
-      UserIdentity userIdentity) {
+      UserIdentity userIdentity,
+      JobTypeHelper jobTypeHelper) {
     this.jobRepository = jobRepository;
     this.jobRowRepository = jobRowRepository;
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.userIdentity = userIdentity;
+    this.jobTypeHelper = jobTypeHelper;
   }
 
   @GetMapping
@@ -80,6 +84,9 @@ public class JobEndpoint {
     }
 
     CollectionExercise collx = collexOpt.get();
+
+    //    jobTypeHelper.getJobTypeSettings()
+
     checkUserViewProgressPermissionByJobType(userEmail, collx.getSurvey(), jobType);
 
     return jobRepository.findByCollectionExerciseOrderByCreatedAtDesc(collx).stream()
@@ -92,7 +99,8 @@ public class JobEndpoint {
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
-    checkUserViewProgressPermissionByJobType(userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+    checkUserViewProgressPermissionByJobType(
+        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     return mapJob(jobRepository.findById(id).get());
   }
@@ -272,38 +280,17 @@ public class JobEndpoint {
 
   private void checkUserLoadFilePermissionByJobType(
       String userEmail, Survey survey, JobType jobType) {
-    switch (jobType) {
-      case SAMPLE:
-        userIdentity.checkUserPermission(
-            userEmail, survey, UserGroupAuthorisedActivityType.LOAD_SAMPLE);
-        break;
+    JobTypeSettings jobTypeSettings = jobTypeHelper.getJobTypeSettings(jobType, survey);
 
-      case BULK_REFUSAL:
-        userIdentity.checkUserPermission(
-            userEmail, survey, UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
-        break;
-
-      default:
-        throw new ResponseStatusException(
-            HttpStatus.FORBIDDEN,
-            String.format("JobType %s not applicable to Load Permissions", jobType));
-    }
+    userIdentity.checkUserPermission(userEmail, survey, jobTypeSettings.getFileLoadPermission());
   }
 
   private void checkUserViewProgressPermissionByJobType(
       String userEmail, Survey survey, JobType jobType) {
-    switch (jobType) {
-      case SAMPLE:
-        userIdentity.checkUserPermission(userEmail, survey, VIEW_SAMPLE_LOAD_PROGRESS);
-        break;
-      case BULK_REFUSAL:
-        userIdentity.checkUserPermission(userEmail, survey, VIEW_BULK_REFUSAL_PROGRESS);
-        break;
-      default:
-        throw new ResponseStatusException(
-            HttpStatus.FORBIDDEN,
-            String.format("JobType %s not applicable to Load Permissions", jobType));
-    }
+    JobTypeSettings jobTypeSettings = jobTypeHelper.getJobTypeSettings(jobType, survey);
+
+    userIdentity.checkUserPermission(
+        userEmail, survey, jobTypeSettings.getFileViewProgressPersmission());
   }
 
   private JobDto mapJob(Job job) {
