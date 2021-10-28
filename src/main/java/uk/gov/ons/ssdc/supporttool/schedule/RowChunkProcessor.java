@@ -40,7 +40,7 @@ public class RowChunkProcessor {
   public boolean processChunk(Job job) {
     boolean hadErrors = false;
 
-    JobTypeSettings transformerValidationAndTopic =
+    JobTypeSettings jobTypeSettings =
         jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey());
 
     List<JobRow> jobRows =
@@ -50,14 +50,14 @@ public class RowChunkProcessor {
       try {
         ListenableFuture<String> future =
             pubSubTemplate.publish(
-                transformerValidationAndTopic.getTopic(),
-                transformerValidationAndTopic
+                jobTypeSettings.getTopic(),
+                jobTypeSettings
                     .getTransformer()
                     .transformRow(
                         job,
                         jobRow,
-                        transformerValidationAndTopic.getColumnValidators(),
-                        transformerValidationAndTopic.getTopic()));
+                        jobTypeSettings.getColumnValidators(),
+                        jobTypeSettings.getTopic()));
 
         // Wait for up to 30 seconds to confirm that message was published
         future.get(30, TimeUnit.SECONDS);
