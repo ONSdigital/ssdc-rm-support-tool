@@ -1,20 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.*;
-
 import com.opencsv.CSVWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +30,19 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeSettings;
 import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(value = "/api/job")
@@ -84,9 +83,6 @@ public class JobEndpoint {
     }
 
     CollectionExercise collx = collexOpt.get();
-
-    //    jobTypeHelper.getJobTypeSettings()
-
     checkUserViewProgressPermissionByJobType(userEmail, collx.getSurvey(), jobType);
 
     return jobRepository.findByCollectionExerciseOrderByCreatedAtDesc(collx).stream()

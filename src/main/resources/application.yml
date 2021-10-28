@@ -45,12 +45,6 @@ spring:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
 
-  cloud:
-    gcp:
-      pubsub:
-        emulator-host: localhost:8538
-        project-id: our-project
-
 logging:
   level:
     ROOT: INFO
@@ -73,7 +67,7 @@ notifyservice:
 
 iapaudience: DUMMY
 
-dummyuseridentity-allowed: true # This ** MUST ALWAYS!! ** be false in production!!!
+dummyuseridentity-allowed: false # This ** MUST ALWAYS!! ** be false in production!!!
 dummyuseridentity: dummy@fake-email.com
 dummysuperuseridentity: dummy@fake-email.com
 
@@ -89,7 +83,7 @@ queueconfig:
   survey-update-event-topic: event_survey-update
   collection-exercise-update-event-topic: event_collection-exercise-update
   publishtimeout: 30  # In seconds
-  shared-pubsub-project: shared-project
+  shared-pubsub-project: REPLACEME
 
 file-upload-storage-path: /tmp/
 

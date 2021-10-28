@@ -59,7 +59,7 @@ public class JobTypeHelper {
         //    This code should be unreachable, providing we have a case for every JobType
         throw new RuntimeException(
             String.format(
-                "In getTransformerValidationAndTopic the jobType %s wasn't matched", jobType));
+                "In getJobTypeSettings the jobType %s wasn't matched", jobType));
     }
   }
 
