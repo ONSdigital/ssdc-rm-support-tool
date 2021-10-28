@@ -113,7 +113,7 @@ public class JobEndpoint {
         userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     List<JobRow> jobRows =
-        jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
+        jobRowRepository.findByJobAndJobRowStatusOrderByOriginalRowLineNumber(
             job, JobRowStatus.VALIDATED_ERROR);
 
     String csvFileName = "ERROR_" + job.getFileName();
@@ -154,7 +154,7 @@ public class JobEndpoint {
         userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
 
     List<JobRow> jobRows =
-        jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
+        jobRowRepository.findByJobAndJobRowStatusOrderByOriginalRowLineNumber(
             job, JobRowStatus.VALIDATED_ERROR);
 
     String csvFileName = "ERROR_DETAIL_" + job.getFileName();
@@ -225,7 +225,7 @@ public class JobEndpoint {
       job.setCancelledAt(OffsetDateTime.now());
       jobRepository.saveAndFlush(job);
 
-      jobRowRepository.deleteByJobAndAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
+      jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
     } else {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't cancel a job which isn't validated");

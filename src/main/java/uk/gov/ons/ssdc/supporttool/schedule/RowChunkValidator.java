@@ -37,7 +37,7 @@ public class RowChunkValidator {
             .getColumnValidators();
 
     List<JobRow> jobRows =
-        jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED);
+        jobRowRepository.findTop500ByJobAndJobRowStatus(job, JobRowStatus.STAGED);
 
     for (JobRow jobRow : jobRows) {
       JobRowStatus rowStatus = JobRowStatus.VALIDATED_OK;
