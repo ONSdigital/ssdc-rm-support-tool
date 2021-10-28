@@ -8,12 +8,6 @@ import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 
 public class SampleColumnHelper {
-  private final JobTypeHelper jobTypeHelper;
-
-  public SampleColumnHelper(JobTypeHelper jobTypeHelper) {
-    this.jobTypeHelper = jobTypeHelper;
-  }
-
   public static String[] getExpectedColumns(Job job) {
     return getExpectedColumns(job.getCollectionExercise().getSurvey());
   }
