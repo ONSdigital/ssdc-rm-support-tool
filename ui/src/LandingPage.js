@@ -244,8 +244,10 @@ class LandingPage extends Component {
   };
 
   closeExportFileTemplateDialog = () => {
-    this.setState({ createExportFileTemplateDialogDisplayed: false,
-      createExportFileTemplatePackCodeError: "",});
+    this.setState({
+      createExportFileTemplateDialogDisplayed: false,
+      createExportFileTemplatePackCodeError: "",
+    });
   };
 
   closeSmsTemplateDialog = () => {

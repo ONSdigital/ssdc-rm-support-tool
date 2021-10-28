@@ -56,14 +56,16 @@ public class ExportFileTemplateEndpoint {
         userEmail, UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_TEMPLATE);
 
     exportFileTemplateRepository
-            .findAll()
-            .forEach(
-                    exportFileTemplate -> {
-                      if (exportFileTemplate.getPackCode().equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
-                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-                      }
-                    });
-    
+        .findAll()
+        .forEach(
+            exportFileTemplate -> {
+              if (exportFileTemplate
+                  .getPackCode()
+                  .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+              }
+            });
+
     ExportFileTemplate exportFileTemplate = new ExportFileTemplate();
     exportFileTemplate.setTemplate(exportFileTemplateDto.getTemplate());
     exportFileTemplate.setExportFileDestination(
