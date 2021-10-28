@@ -21,6 +21,7 @@ import uk.gov.ons.ssdc.common.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.client.NotifyServiceClient;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSample;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestHeaderDTO;
@@ -137,6 +138,33 @@ public class CaseEndpoint {
     }
 
     caseService.buildAndSendUpdateSensitiveSampleEvent(updateSampleSensitive, userEmail);
+
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping("{caseId}/action/updateSampleField")
+  public ResponseEntity<?> updateSampleField(
+      @PathVariable(value = "caseId") UUID caseId,
+      @RequestBody UpdateSample updateSample,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    Case caze = caseService.getCaseByCaseId(caseId);
+
+    userIdentity.checkUserPermission(
+        userEmail,
+        caze.getCollectionExercise().getSurvey(),
+        UserGroupAuthorisedActivityType.UPDATE_SAMPLE);
+
+    List<String> validationErrors = validateFieldToUpdate(caze, updateSample.getSample());
+
+    if (validationErrors.size() > 0) {
+      String validationErrorStr = String.join(", ", validationErrors);
+      Map<String, String> body = Map.of("errors", validationErrorStr);
+
+      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    caseService.buildAndSendUpdateSampleEvent(updateSample, userEmail);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

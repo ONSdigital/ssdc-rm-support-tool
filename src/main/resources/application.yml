@@ -41,6 +41,12 @@ spring:
       pool:
         size: 10
 
+  cloud:
+    gcp:
+      pubsub:
+        emulator-host: localhost:8538
+        project-id: our-project
+
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
@@ -79,11 +85,12 @@ queueconfig:
   deactivate-uac-topic: event_deactivate-uac
   refusal-event-topic: event_refusal
   invalid-case-event-topic: event_invalid-case
+  update-sample-topic: event_update-sample
   update-sample-sensitive-topic: event_update-sample-sensitive
   survey-update-event-topic: event_survey-update
   collection-exercise-update-event-topic: event_collection-exercise-update
   publishtimeout: 30  # In seconds
-  shared-pubsub-project: REPLACEME
+  shared-pubsub-project: shared-topic
 
 file-upload-storage-path: /tmp/
 
