@@ -14,7 +14,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Case;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
-import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
+import uk.gov.ons.ssdc.common.model.entity.ExportFileTemplate;
 import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UacQidLink;
@@ -28,7 +28,7 @@ import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
-import uk.gov.ons.ssdc.supporttool.model.repository.PrintTemplateRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UacQidLinkRepository;
@@ -45,7 +45,7 @@ public class IntegrationTestHelper {
 
   private final SurveyRepository surveyRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
-  private final PrintTemplateRepository printTemplateRepository;
+  private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final SmsTemplateRepository smsTemplateRepository;
   private final CaseRepository caseRepository;
   private final UacQidLinkRepository uacQidLinkRepository;
@@ -62,7 +62,7 @@ public class IntegrationTestHelper {
   public IntegrationTestHelper(
       SurveyRepository surveyRepository,
       CollectionExerciseRepository collectionExerciseRepository,
-      PrintTemplateRepository printTemplateRepository,
+      ExportFileTemplateRepository exportFileTemplateRepository,
       SmsTemplateRepository smsTemplateRepository,
       CaseRepository caseRepository,
       UacQidLinkRepository uacQidLinkRepository,
@@ -73,7 +73,7 @@ public class IntegrationTestHelper {
       UserGroupPermissionRepository userGroupPermissionRepository) {
     this.surveyRepository = surveyRepository;
     this.collectionExerciseRepository = collectionExerciseRepository;
-    this.printTemplateRepository = printTemplateRepository;
+    this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.smsTemplateRepository = smsTemplateRepository;
     this.caseRepository = caseRepository;
     this.uacQidLinkRepository = uacQidLinkRepository;
@@ -195,11 +195,11 @@ public class IntegrationTestHelper {
     uacQidLink.setCaze(caze);
     uacQidLink = uacQidLinkRepository.saveAndFlush(uacQidLink);
 
-    PrintTemplate printTemplate = new PrintTemplate();
-    printTemplate.setPackCode("TEST_PRINT_PACK_CODE_" + UUID.randomUUID());
-    printTemplate.setTemplate(new String[] {"foo", "bar"});
-    printTemplate.setPrintSupplier("SUPPLIER_A");
-    printTemplate = printTemplateRepository.saveAndFlush(printTemplate);
+    ExportFileTemplate exportFileTemplate = new ExportFileTemplate();
+    exportFileTemplate.setPackCode("TEST_PRINT_PACK_CODE_" + UUID.randomUUID());
+    exportFileTemplate.setTemplate(new String[] {"foo", "bar"});
+    exportFileTemplate.setExportFileDestination("SUPPLIER_A");
+    exportFileTemplate = exportFileTemplateRepository.saveAndFlush(exportFileTemplate);
 
     SmsTemplate smsTemplate = new SmsTemplate();
     smsTemplate.setPackCode("TEST_SMS_PACK_CODE_" + UUID.randomUUID());
@@ -219,7 +219,7 @@ public class IntegrationTestHelper {
     bundle.setCollexId(collectionExercise.getId());
     bundle.setCaseId(caze.getId());
     bundle.setQid(uacQidLink.getQid());
-    bundle.setPrintTemplatePackCode(printTemplate.getPackCode());
+    bundle.setExportFileTemplatePackCode(exportFileTemplate.getPackCode());
     bundle.setSmsTemplatePackCode(smsTemplate.getPackCode());
     bundle.setUserId(user.getId());
     bundle.setGroupId(group.getId());
