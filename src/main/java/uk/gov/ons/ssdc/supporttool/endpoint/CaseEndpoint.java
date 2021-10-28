@@ -215,7 +215,7 @@ public class CaseEndpoint {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PostMapping(value = "/{caseId}/action/print-fulfilment")
+  @PostMapping(value = "/{caseId}/action/printFulfilment")
   public ResponseEntity<?> handlePrintFulfilment(
       @PathVariable("caseId") UUID caseId,
       @RequestBody PrintFulfilment printFulfilment,
@@ -227,7 +227,7 @@ public class CaseEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         caze.getCollectionExercise().getSurvey(),
-        UserGroupAuthorisedActivityType.CREATE_CASE_PRINT_FULFILMENT);
+        UserGroupAuthorisedActivityType.CREATE_CASE_EXPORT_FILE_FULFILMENT);
 
     caseService.buildAndSendPrintFulfilmentCaseEvent(printFulfilment, caze, userEmail);
 

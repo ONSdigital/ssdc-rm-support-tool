@@ -17,7 +17,7 @@ import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.ActionRuleDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CollectionExerciseDto;
-import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintTemplateDto;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.ExportFileTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SurveyDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserDto;
@@ -50,7 +50,7 @@ import uk.gov.ons.ssdc.supporttool.testhelper.IntegrationTestHelper;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class AllEndpointsIT {
+class AllEndpointsIT {
   @Autowired private IntegrationTestHelper integrationTestHelper;
 
   @LocalServerPort private int port;
@@ -59,7 +59,7 @@ public class AllEndpointsIT {
       Map.of("TEST_COLLECTION_EXERCISE_UPDATE_METADATA", "TEST");
 
   @Test
-  public void testActionRuleEndpoints() {
+  void testActionRuleEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.LIST_ACTION_RULES,
@@ -67,14 +67,14 @@ public class AllEndpointsIT {
 
     integrationTestHelper.testPost(
         port,
-        UserGroupAuthorisedActivityType.CREATE_PRINT_ACTION_RULE,
+        UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_ACTION_RULE,
         (bundle) -> "actionRules",
         (bundle) -> {
           ActionRuleDto actionRuleDto = new ActionRuleDto();
-          actionRuleDto.setType(ActionRuleType.PRINT);
+          actionRuleDto.setType(ActionRuleType.EXPORT_FILE);
           actionRuleDto.setCollectionExerciseId(bundle.getCollexId());
           actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
-          actionRuleDto.setPackCode(bundle.getPrintTemplatePackCode());
+          actionRuleDto.setPackCode(bundle.getExportFileTemplatePackCode());
           return actionRuleDto;
         });
 
@@ -130,27 +130,28 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testActionRuleSurveyPrintTemplateEndpoints() {
+  void testActionRuleSurveyExportFileTemplateEndpoints() {
     integrationTestHelper.testGet(
         port,
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES,
         (bundle) ->
-            String.format("actionRuleSurveyPrintTemplates/?surveyId=%s", bundle.getSurveyId()));
+            String.format(
+                "actionRuleSurveyExportFileTemplates/?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
-        UserGroupAuthorisedActivityType.ALLOW_PRINT_TEMPLATE_ON_ACTION_RULE,
-        (bundle) -> "actionRuleSurveyPrintTemplates",
+        UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_ACTION_RULE,
+        (bundle) -> "actionRuleSurveyExportFileTemplates",
         (bundle) -> {
           AllowTemplateOnSurvey allowTemplateOnSurvey = new AllowTemplateOnSurvey();
           allowTemplateOnSurvey.setSurveyId(bundle.getSurveyId());
-          allowTemplateOnSurvey.setPackCode(bundle.getPrintTemplatePackCode());
+          allowTemplateOnSurvey.setPackCode(bundle.getExportFileTemplatePackCode());
           return allowTemplateOnSurvey;
         });
   }
 
   @Test
-  public void testActionRuleSurveySmsTemplateEndpoints() {
+  void testActionRuleSurveySmsTemplateEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES,
@@ -170,7 +171,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testCaseEndpoints() {
+  void testCaseEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.VIEW_CASE_DETAILS,
@@ -178,7 +179,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testCollectionExerciseEndpoints() {
+  void testCollectionExerciseEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.VIEW_COLLECTION_EXERCISE,
@@ -206,7 +207,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testDeactivateUacEndpoints() {
+  void testDeactivateUacEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.DEACTIVATE_UAC,
@@ -214,27 +215,28 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testFulfilmentSurveyPrintTemplateEndpoints() {
+  void testFulfilmentSurveyPrintTemplateEndpoints() {
     integrationTestHelper.testGet(
         port,
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS,
         (bundle) ->
-            String.format("fulfilmentSurveyPrintTemplates/?surveyId=%s", bundle.getSurveyId()));
+            String.format(
+                "fulfilmentSurveyExportFileTemplates/?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
-        UserGroupAuthorisedActivityType.ALLOW_PRINT_TEMPLATE_ON_FULFILMENT,
-        (bundle) -> "fulfilmentSurveyPrintTemplates",
+        UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT,
+        (bundle) -> "fulfilmentSurveyExportFileTemplates",
         (bundle) -> {
           AllowTemplateOnSurvey allowTemplateOnSurvey = new AllowTemplateOnSurvey();
           allowTemplateOnSurvey.setSurveyId(bundle.getSurveyId());
-          allowTemplateOnSurvey.setPackCode(bundle.getPrintTemplatePackCode());
+          allowTemplateOnSurvey.setPackCode(bundle.getExportFileTemplatePackCode());
           return allowTemplateOnSurvey;
         });
   }
 
   @Test
-  public void testFulfilmentSurveySmsTemplateEndpoints() {
+  void testFulfilmentSurveySmsTemplateEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS,
@@ -254,31 +256,35 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testPrintSuppliersEndpoints() {
+  void testExportFileDestinationsEndpoints() {
     integrationTestHelper.testGet(
-        port, UserGroupAuthorisedActivityType.LIST_PRINT_SUPPLIERS, (bundle) -> "printsuppliers");
+        port,
+        UserGroupAuthorisedActivityType.LIST_EXPORT_FILE_DESTINATIONS,
+        (bundle) -> "exportFileDestinations");
   }
 
   @Test
-  public void testPrintTemplateEndpoints() {
+  void testExportFileTemplateEndpoints() {
     integrationTestHelper.testGet(
-        port, UserGroupAuthorisedActivityType.LIST_PRINT_TEMPLATES, (bundle) -> "printTemplates");
+        port,
+        UserGroupAuthorisedActivityType.LIST_EXPORT_FILE_TEMPLATES,
+        (bundle) -> "exportFileTemplates");
 
     integrationTestHelper.testPost(
         port,
-        UserGroupAuthorisedActivityType.CREATE_PRINT_TEMPLATE,
-        (bundle) -> "printTemplates",
+        UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_TEMPLATE,
+        (bundle) -> "exportFileTemplates",
         (bundle) -> {
-          PrintTemplateDto printTemplateDto = new PrintTemplateDto();
-          printTemplateDto.setTemplate(new String[] {"foo"});
-          printTemplateDto.setPrintSupplier("SUPPLIER_A");
-          printTemplateDto.setPackCode("TEST_" + UUID.randomUUID());
-          return printTemplateDto;
+          ExportFileTemplateDto exportFileTemplateDto = new ExportFileTemplateDto();
+          exportFileTemplateDto.setTemplate(new String[] {"foo"});
+          exportFileTemplateDto.setExportFileDestination("SUPPLIER_A");
+          exportFileTemplateDto.setPackCode("TEST_" + UUID.randomUUID());
+          return exportFileTemplateDto;
         });
   }
 
   @Test
-  public void testSmsTemplateEndpoints() {
+  void testSmsTemplateEndpoints() {
     integrationTestHelper.testGet(
         port, UserGroupAuthorisedActivityType.LIST_SMS_TEMPLATES, (bundle) -> "smsTemplates");
 
@@ -296,7 +302,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testSurveyEndpoints() {
+  void testSurveyEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.VIEW_SURVEY,
@@ -318,7 +324,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testUserEndpoints() {
+  void testUserEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.SUPER_USER,
@@ -339,7 +345,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testUserGroupAdminEndpoints() {
+  void testUserGroupAdminEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.SUPER_USER,
@@ -363,7 +369,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testUserGroupEndpoints() {
+  void testUserGroupEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.SUPER_USER,
@@ -386,7 +392,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testUserGroupMemberEndpoints() {
+  void testUserGroupMemberEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.SUPER_USER,
@@ -415,7 +421,7 @@ public class AllEndpointsIT {
   }
 
   @Test
-  public void testUserGroupPermissionEndpoints() {
+  void testUserGroupPermissionEndpoints() {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.SUPER_USER,

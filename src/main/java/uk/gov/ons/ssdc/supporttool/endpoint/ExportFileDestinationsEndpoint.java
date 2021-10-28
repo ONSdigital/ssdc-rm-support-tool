@@ -1,6 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LIST_PRINT_SUPPLIERS;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LIST_EXPORT_FILE_DESTINATIONS;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,35 +18,35 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
-@RequestMapping(value = "/api/printsuppliers")
-public class PrintSuppliersEndpoint {
+@RequestMapping(value = "/api/exportFileDestinations")
+public class ExportFileDestinationsEndpoint {
 
   public static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
 
   private final UserIdentity userIdentity;
 
-  @Value("${printsupplierconfigfile}")
+  @Value("${exportfiledestinationconfigfile}")
   private String configFile;
 
-  private Set<String> printSuppliers = null;
+  private Set<String> exportFileDestinations = null;
 
-  public PrintSuppliersEndpoint(UserIdentity userIdentity) {
+  public ExportFileDestinationsEndpoint(UserIdentity userIdentity) {
     this.userIdentity = userIdentity;
   }
 
   @GetMapping
-  public Set<String> getPrintSuppliers(
+  public Set<String> getExportFileDestinations(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, LIST_PRINT_SUPPLIERS);
+    userIdentity.checkGlobalUserPermission(userEmail, LIST_EXPORT_FILE_DESTINATIONS);
 
-    if (printSuppliers != null) {
-      return printSuppliers;
+    if (exportFileDestinations != null) {
+      return exportFileDestinations;
     }
 
     try (InputStream configFileStream = new FileInputStream(configFile)) {
       Map map = OBJECT_MAPPER.readValue(configFileStream, Map.class);
-      printSuppliers = map.keySet();
-      return printSuppliers;
+      exportFileDestinations = map.keySet();
+      return exportFileDestinations;
     } catch (JsonProcessingException | FileNotFoundException e) {
       throw new RuntimeException(e);
     } catch (IOException e) {

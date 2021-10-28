@@ -226,7 +226,7 @@ class CaseDetails extends Component {
                       "CREATE_CASE_INVALID_CASE"
                     ) && <InvalidCase caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_PRINT_FULFILMENT"
+                      "CREATE_CASE_EXPORT_FILE_FULFILMENT"
                     ) && (
                       <PrintFulfilment
                         caseId={this.props.caseId}
@@ -367,7 +367,7 @@ class CaseDetails extends Component {
                     id="json-pretty"
                     data={this.state.eventToShow.payload}
                     style={{ margin: 10, padding: 10 }}
-                  ></JSONPretty>
+                  />
                 </Typography>
               </div>
               <Button
