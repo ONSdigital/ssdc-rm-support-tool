@@ -1,8 +1,8 @@
-export const getAllPrintTemplates = async (authorisedActivities) => {
+export const getAllExportFileTemplates = async (authorisedActivities) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
-  if (!authorisedActivities.includes("LIST_PRINT_TEMPLATES")) return [];
+  if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return [];
 
-  const response = await fetch("/api/printTemplates");
+  const response = await fetch("/api/exportFileTemplates");
   const templateJson = await response.json();
 
   const templatePackCodes = templateJson.map((template) => template.packCode);
@@ -22,24 +22,24 @@ export const getAllSmsTemplates = async (authorisedActivities) => {
   return templatePackCodes;
 };
 
-export const getFulfilmentPrintTemplates = async (
+export const getFulfilmentExportFileTemplates = async (
   authorisedActivities,
   surveyId
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (
     !authorisedActivities.includes(
-      "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
+      "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS"
     )
   )
     return [];
 
   const response = await fetch(
-    `/api/fulfilmentSurveyPrintTemplates/?surveyId=${surveyId}`
+    `/api/fulfilmentSurveyExportFileTemplates/?surveyId=${surveyId}`
   );
-  const printTemplatesJson = await response.json();
+  const exportFileTemplatesJson = await response.json();
 
-  return printTemplatesJson;
+  return exportFileTemplatesJson;
 };
 
 export const getSmsFulfilmentTemplates = async (
@@ -60,24 +60,24 @@ export const getSmsFulfilmentTemplates = async (
   return smsFulfilmentTemplatesJson;
 };
 
-export const getActionRulePrintTemplates = async (
+export const getActionRuleExportFileTemplates = async (
   authorisedActivities,
   surveyId
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (
     !authorisedActivities.includes(
-      "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+      "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES"
     )
   )
     return [];
 
   const response = await fetch(
-    `/api/actionRuleSurveyPrintTemplates/?surveyId=${surveyId}`
+    `/api/actionRuleSurveyExportFileTemplates/?surveyId=${surveyId}`
   );
-  const printTemplatesJson = await response.json();
+  const exportFileTemplatesJson = await response.json();
 
-  return printTemplatesJson;
+  return exportFileTemplatesJson;
 };
 
 export const getActionRuleSmsTemplates = async (

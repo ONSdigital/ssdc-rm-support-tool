@@ -19,10 +19,10 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
-  getActionRulePrintTemplates,
+  getActionRuleExportFileTemplates,
   getActionRuleSmsTemplates,
-  getAllPrintTemplates,
-  getFulfilmentPrintTemplates,
+  getAllExportFileTemplates,
+  getFulfilmentExportFileTemplates,
   getSmsFulfilmentTemplates,
   getAllSmsTemplates,
 } from "./Utils";
@@ -43,23 +43,23 @@ class SurveyDetails extends Component {
     newCollectionExerciseDateError: "",
     newCollectionExerciseMetadata: "",
     newCollectionExerciseMetadataError: false,
-    allowActionRulePrintTemplateDialogDisplayed: false,
+    allowActionRuleExportFileTemplateDialogDisplayed: false,
     allowActionRuleSmsTemplateDialogDisplayed: false,
-    allowFulfilmentPrintTemplateDialogDisplayed: false,
+    allowFulfilmentExportFileTemplateDialogDisplayed: false,
     allowSmsFulfilmentTemplateDialogDisplayed: false,
-    actionRulePrintTemplates: [],
+    actionRuleExportFileTemplates: [],
     actionRuleSmsTemplates: [],
-    fulfilmentPrintTemplates: [],
+    fulfilmentExportFileTemplates: [],
     smsFulfilmentTemplates: [],
-    allowableActionRulePrintTemplates: [],
+    allowableActionRuleExportFileTemplates: [],
     allowableActionRuleSmsTemplates: [],
-    allowableFulfilmentPrintTemplates: [],
+    allowableFulfilmentExportFileTemplates: [],
     allowableSmsFulfilmentTemplates: [],
-    printTemplateToAllow: "",
+    exportFileTemplateToAllow: "",
     smsTemplateToAllow: "",
-    printTemplateValidationError: false,
+    exportFileTemplateValidationError: false,
     smsTemplateValidationError: false,
-    allowPrintTemplateError: "",
+    allowExportFileTemplateError: "",
     allowSmsTemplateError: "",
   };
 
@@ -112,43 +112,45 @@ class SurveyDetails extends Component {
 
     // TODO: The security of this is a nightmare, because the method assumes the user has a ton of permissions. Will work for now, but refactor in future.
 
-    const allPrintFulfilmentTemplates = await getAllPrintTemplates(
+    const allExportFileFulfilmentTemplates = await getAllExportFileTemplates(
       authorisedActivities
     );
     const allSmsFulfilmentTemplates = await getAllSmsTemplates(
       authorisedActivities
     );
 
-    const actionRulePrintTemplates = await getActionRulePrintTemplates(
-      authorisedActivities,
-      this.props.surveyId
-    );
+    const actionRuleExportFileTemplates =
+      await getActionRuleExportFileTemplates(
+        authorisedActivities,
+        this.props.surveyId
+      );
 
     const actionRuleSmsTemplates = await getActionRuleSmsTemplates(
       authorisedActivities,
       this.props.surveyId
     );
 
-    const fulfilmentPrintTemplates = await getFulfilmentPrintTemplates(
-      authorisedActivities,
-      this.props.surveyId
-    );
+    const fulfilmentExportFileTemplates =
+      await getFulfilmentExportFileTemplates(
+        authorisedActivities,
+        this.props.surveyId
+      );
     const smsFulfilmentTemplates = await getSmsFulfilmentTemplates(
       authorisedActivities,
       this.props.surveyId
     );
 
-    let allowableActionRulePrintTemplates = [];
+    let allowableActionRuleExportFileTemplates = [];
     let allowableActionRuleSmsTemplates = [];
-    let allowableFulfilmentPrintTemplates = [];
+    let allowableFulfilmentExportFileTemplates = [];
     let allowableSmsFulfilmentTemplates = [];
-    allPrintFulfilmentTemplates.forEach((packCode) => {
-      if (!actionRulePrintTemplates.includes(packCode)) {
-        allowableActionRulePrintTemplates.push(packCode);
+    allExportFileFulfilmentTemplates.forEach((packCode) => {
+      if (!actionRuleExportFileTemplates.includes(packCode)) {
+        allowableActionRuleExportFileTemplates.push(packCode);
       }
 
-      if (!fulfilmentPrintTemplates.includes(packCode)) {
-        allowableFulfilmentPrintTemplates.push(packCode);
+      if (!fulfilmentExportFileTemplates.includes(packCode)) {
+        allowableFulfilmentExportFileTemplates.push(packCode);
       }
     });
     allSmsFulfilmentTemplates.forEach((packCode) => {
@@ -162,13 +164,15 @@ class SurveyDetails extends Component {
     });
 
     this.setState({
-      actionRulePrintTemplates: actionRulePrintTemplates,
+      actionRuleExportFileTemplates: actionRuleExportFileTemplates,
       actionRuleSmsTemplates: actionRuleSmsTemplates,
-      fulfilmentPrintTemplates: fulfilmentPrintTemplates,
+      fulfilmentExportFileTemplates: fulfilmentExportFileTemplates,
       smsFulfilmentTemplates: smsFulfilmentTemplates,
-      allowableActionRulePrintTemplates: allowableActionRulePrintTemplates,
+      allowableActionRuleExportFileTemplates:
+        allowableActionRuleExportFileTemplates,
       allowableActionRuleSmsTemplates: allowableActionRuleSmsTemplates,
-      allowableFulfilmentPrintTemplates: allowableFulfilmentPrintTemplates,
+      allowableFulfilmentExportFileTemplates:
+        allowableFulfilmentExportFileTemplates,
       allowableSmsFulfilmentTemplates: allowableSmsFulfilmentTemplates,
     });
   };
@@ -320,14 +324,14 @@ class SurveyDetails extends Component {
     return dateNow.toJSON().slice(0, 16);
   };
 
-  openActionRulePrintTemplateDialog = () => {
-    this.allowActionRulePrintTemplateInProgress = false;
+  openActionRuleExportFileTemplateDialog = () => {
+    this.allowActionRuleExportFileTemplateInProgress = false;
 
     this.setState({
-      allowActionRulePrintTemplateDialogDisplayed: true,
-      printTemplateToAllow: "",
-      printTemplateValidationError: false,
-      allowPrintTemplateError: "",
+      allowActionRuleExportFileTemplateDialogDisplayed: true,
+      exportFileTemplateToAllow: "",
+      exportFileTemplateValidationError: false,
+      allowExportFileTemplateError: "",
     });
   };
 
@@ -342,14 +346,14 @@ class SurveyDetails extends Component {
     });
   };
 
-  openFulfilmentPrintTemplateDialog = () => {
-    this.allowFulfilmentPrintTemplateInProgress = false;
+  openFulfilmentExportFileTemplateDialog = () => {
+    this.allowFulfilmentExportFileTemplateInProgress = false;
 
     this.setState({
-      allowFulfilmentPrintTemplateDialogDisplayed: true,
-      printTemplateToAllow: "",
-      printTemplateValidationError: false,
-      allowPrintTemplateError: "",
+      allowFulfilmentExportFileTemplateDialogDisplayed: true,
+      exportFileTemplateToAllow: "",
+      exportFileTemplateValidationError: false,
+      allowExportFileTemplateError: "",
     });
   };
 
@@ -359,46 +363,48 @@ class SurveyDetails extends Component {
     this.setState({
       allowSmsFulfilmentTemplateDialogDisplayed: true,
       smsTemplateToAllow: "",
-      printTemplateValidationError: false,
-      allowPrintTemplateError: "",
+      exportFileTemplateValidationError: false,
+      allowExportFileTemplateError: "",
     });
   };
 
-  onAllowActionRulePrintTemplate = async () => {
-    if (this.allowActionRulePrintTemplateInProgress) {
+  onAllowActionRuleExportFileTemplate = async () => {
+    if (this.allowActionRuleExportFileTemplateInProgress) {
       return;
     }
 
-    this.allowActionRulePrintTemplateInProgress = true;
+    this.allowActionRuleExportFileTemplateInProgress = true;
 
-    if (!this.state.printTemplateToAllow) {
+    if (!this.state.exportFileTemplateToAllow) {
       this.setState({
-        printTemplateValidationError: true,
+        exportFileTemplateValidationError: true,
       });
 
-      this.allowActionRulePrintTemplateInProgress = false;
+      this.allowActionRuleExportFileTemplateInProgress = false;
       return;
     }
 
-    const newAllowPrintTemplate = {
+    const newAllowExportFileTemplate = {
       surveyId: this.props.surveyId,
-      packCode: this.state.printTemplateToAllow,
+      packCode: this.state.exportFileTemplateToAllow,
     };
 
-    const response = await fetch("/api/actionRuleSurveyPrintTemplates", {
+    const response = await fetch("/api/actionRuleSurveyExportFileTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newAllowPrintTemplate),
+      body: JSON.stringify(newAllowExportFileTemplate),
     });
 
     if (response.ok) {
-      this.setState({ allowActionRulePrintTemplateDialogDisplayed: false });
+      this.setState({
+        allowActionRuleExportFileTemplateDialogDisplayed: false,
+      });
     } else {
       const errorMessage = await response.text();
       this.setState({
-        allowPrintTemplateError: errorMessage,
+        allowExportFileTemplateError: errorMessage,
       });
-      this.allowActionRulePrintTemplateInProgress = false;
+      this.allowActionRuleExportFileTemplateInProgress = false;
     }
   };
 
@@ -440,41 +446,43 @@ class SurveyDetails extends Component {
     }
   };
 
-  onAllowFulfilmentPrintTemplate = async () => {
-    if (this.allowFulfilmentPrintTemplateInProgress) {
+  onAllowFulfilmentExportFileTemplate = async () => {
+    if (this.allowFulfilmentExportFileTemplateInProgress) {
       return;
     }
 
-    this.allowFulfilmentPrintTemplateInProgress = true;
+    this.allowFulfilmentExportFileTemplateInProgress = true;
 
-    if (!this.state.printTemplateToAllow) {
+    if (!this.state.exportFileTemplateToAllow) {
       this.setState({
-        printTemplateValidationError: true,
+        exportFileTemplateValidationError: true,
       });
 
-      this.allowFulfilmentPrintTemplateInProgress = false;
+      this.allowFulfilmentExportFileTemplateInProgress = false;
       return;
     }
 
-    const newAllowPrintTemplate = {
+    const newAllowExportFileTemplate = {
       surveyId: this.props.surveyId,
-      packCode: this.state.printTemplateToAllow,
+      packCode: this.state.exportFileTemplateToAllow,
     };
 
-    const response = await fetch("/api/fulfilmentSurveyPrintTemplates", {
+    const response = await fetch("/api/fulfilmentSurveyExportFileTemplates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newAllowPrintTemplate),
+      body: JSON.stringify(newAllowExportFileTemplate),
     });
 
     if (response.ok) {
-      this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false });
+      this.setState({
+        allowFulfilmentExportFileTemplateDialogDisplayed: false,
+      });
     } else {
       const errorMessage = await response.text();
       this.setState({
-        allowPrintTemplateError: errorMessage,
+        allowExportFileTemplateError: errorMessage,
       });
-      this.allowFulfilmentPrintTemplateInProgress = false;
+      this.allowFulfilmentExportFileTemplateInProgress = false;
     }
   };
 
@@ -487,7 +495,7 @@ class SurveyDetails extends Component {
 
     if (!this.state.smsTemplateToAllow) {
       this.setState({
-        printTemplateValidationError: true,
+        exportFileTemplateValidationError: true,
       });
 
       this.allowSmsFulfilmentTemplateInProgress = false;
@@ -510,30 +518,30 @@ class SurveyDetails extends Component {
     } else {
       const errorMessage = await response.text();
       this.setState({
-        allowPrintTemplateError: errorMessage,
+        allowExportFileTemplateError: errorMessage,
       });
       this.allowSmsFulfilmentTemplateInProgress = false;
     }
   };
 
-  closeAllowActionRulePrintTemplateDialog = () => {
-    this.setState({ allowActionRulePrintTemplateDialogDisplayed: false });
+  closeAllowActionRuleExportFileTemplateDialog = () => {
+    this.setState({ allowActionRuleExportFileTemplateDialogDisplayed: false });
   };
 
   closeAllowActionRuleSmsTemplateDialog = () => {
     this.setState({ allowActionRuleSmsTemplateDialogDisplayed: false });
   };
 
-  closeAllowFulfilmentPrintTemplateDialog = () => {
-    this.setState({ allowFulfilmentPrintTemplateDialogDisplayed: false });
+  closeAllowFulfilmentExportFileTemplateDialog = () => {
+    this.setState({ allowFulfilmentExportFileTemplateDialogDisplayed: false });
   };
 
   closeAllowSmsFulfilmentTemplateDialog = () => {
     this.setState({ allowSmsFulfilmentTemplateDialogDisplayed: false });
   };
 
-  onPrintTemplateChange = (event) => {
-    this.setState({ printTemplateToAllow: event.target.value });
+  onExportFileTemplateChange = (event) => {
+    this.setState({ exportFileTemplateToAllow: event.target.value });
   };
 
   onSmsTemplateChange = (event) => {
@@ -567,11 +575,11 @@ class SurveyDetails extends Component {
       )
     );
 
-    const actionRulePrintTemplateTableRows =
-      this.state.actionRulePrintTemplates.map((printTemplate) => (
-        <TableRow key={printTemplate}>
+    const actionRuleExportFileTemplateTableRows =
+      this.state.actionRuleExportFileTemplates.map((exportFileTemplate) => (
+        <TableRow key={exportFileTemplate}>
           <TableCell component="th" scope="row">
-            {printTemplate}
+            {exportFileTemplate}
           </TableCell>
         </TableRow>
       ));
@@ -585,26 +593,26 @@ class SurveyDetails extends Component {
         </TableRow>
       ));
 
-    const fulfilmentPrintTemplateTableRows =
-      this.state.fulfilmentPrintTemplates.map((printTemplate) => (
-        <TableRow key={printTemplate}>
+    const fulfilmentExportFileTemplateTableRows =
+      this.state.fulfilmentExportFileTemplates.map((exportFileTemplate) => (
+        <TableRow key={exportFileTemplate}>
           <TableCell component="th" scope="row">
-            {printTemplate}
+            {exportFileTemplate}
           </TableCell>
         </TableRow>
       ));
 
     const smsFulfilmentTemplateTableRows =
-      this.state.smsFulfilmentTemplates.map((printTemplate) => (
-        <TableRow key={printTemplate}>
+      this.state.smsFulfilmentTemplates.map((smsTemplate) => (
+        <TableRow key={smsTemplate}>
           <TableCell component="th" scope="row">
-            {printTemplate}
+            {smsTemplate}
           </TableCell>
         </TableRow>
       ));
 
-    const actionRulePrintTemplateMenuItems =
-      this.state.allowableActionRulePrintTemplates.map((packCode) => (
+    const actionRuleExportFileTemplateMenuItems =
+      this.state.allowableActionRuleExportFileTemplates.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>
@@ -617,8 +625,8 @@ class SurveyDetails extends Component {
         </MenuItem>
       ));
 
-    const fulfilmentPrintTemplateMenuItems =
-      this.state.allowableFulfilmentPrintTemplates.map((packCode) => (
+    const fulfilmentExportFileTemplateMenuItems =
+      this.state.allowableFulfilmentExportFileTemplates.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>
@@ -680,11 +688,11 @@ class SurveyDetails extends Component {
         )}
 
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_PRINT_TEMPLATES_ON_ACTION_RULES"
+          "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES"
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-              Print Templates Allowed on Action Rules
+              Export File Templates Allowed on Action Rules
             </Typography>
             <TableContainer component={Paper}>
               <Table>
@@ -693,20 +701,20 @@ class SurveyDetails extends Component {
                     <TableCell>Pack Code</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>{actionRulePrintTemplateTableRows}</TableBody>
+                <TableBody>{actionRuleExportFileTemplateTableRows}</TableBody>
               </Table>
             </TableContainer>
           </>
         )}
         {this.state.authorisedActivities.includes(
-          "ALLOW_PRINT_TEMPLATE_ON_ACTION_RULE"
+          "ALLOW_EXPORT_FILE_TEMPLATE_ON_ACTION_RULE"
         ) && (
           <Button
             variant="contained"
-            onClick={this.openActionRulePrintTemplateDialog}
+            onClick={this.openActionRuleExportFileTemplateDialog}
             style={{ marginTop: 10 }}
           >
-            Allow Print Template on Action Rule
+            Allow Export File Template on Action Rule
           </Button>
         )}
 
@@ -742,11 +750,11 @@ class SurveyDetails extends Component {
         )}
 
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_PRINT_TEMPLATES_ON_FULFILMENTS"
+          "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS"
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-              Print Templates Allowed on Fulfilments
+              Export File Templates Allowed on Fulfilments
             </Typography>
             <TableContainer component={Paper}>
               <Table>
@@ -755,20 +763,20 @@ class SurveyDetails extends Component {
                     <TableCell>Pack Code</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>{fulfilmentPrintTemplateTableRows}</TableBody>
+                <TableBody>{fulfilmentExportFileTemplateTableRows}</TableBody>
               </Table>
             </TableContainer>
           </>
         )}
         {this.state.authorisedActivities.includes(
-          "ALLOW_PRINT_TEMPLATE_ON_FULFILMENT"
+          "ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT"
         ) && (
           <Button
             variant="contained"
-            onClick={this.openFulfilmentPrintTemplateDialog}
+            onClick={this.openFulfilmentExportFileTemplateDialog}
             style={{ marginTop: 10 }}
           >
-            Allow Print Template on Fulfilment
+            Allow Export File Template on Fulfilment
           </Button>
         )}
 
@@ -880,38 +888,40 @@ class SurveyDetails extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        <Dialog open={this.state.allowActionRulePrintTemplateDialogDisplayed}>
+        <Dialog
+          open={this.state.allowActionRuleExportFileTemplateDialogDisplayed}
+        >
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
                 <FormControl required fullWidth={true}>
-                  <InputLabel>Print Template</InputLabel>
+                  <InputLabel>Export File Template</InputLabel>
                   <Select
-                    onChange={this.onPrintTemplateChange}
-                    value={this.state.printTemplateToAllow}
-                    error={this.state.printTemplateValidationError}
+                    onChange={this.onExportFileTemplateChange}
+                    value={this.state.exportFileTemplateToAllow}
+                    error={this.state.exportFileTemplateValidationError}
                   >
-                    {actionRulePrintTemplateMenuItems}
+                    {actionRuleExportFileTemplateMenuItems}
                   </Select>
                 </FormControl>
               </div>
-              {this.state.allowPrintTemplateError && (
+              {this.state.allowExportFileTemplateError && (
                 <div>
                   <p style={{ color: "red" }}>
-                    {this.state.allowPrintTemplateError}
+                    {this.state.allowExportFileTemplateError}
                   </p>
                 </div>
               )}
               <div style={{ marginTop: 10 }}>
                 <Button
-                  onClick={this.onAllowActionRulePrintTemplate}
+                  onClick={this.onAllowActionRuleExportFileTemplate}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
                   Allow
                 </Button>
                 <Button
-                  onClick={this.closeAllowActionRulePrintTemplateDialog}
+                  onClick={this.closeAllowActionRuleExportFileTemplateDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
@@ -962,38 +972,40 @@ class SurveyDetails extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        <Dialog open={this.state.allowFulfilmentPrintTemplateDialogDisplayed}>
+        <Dialog
+          open={this.state.allowFulfilmentExportFileTemplateDialogDisplayed}
+        >
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
                 <FormControl required fullWidth={true}>
-                  <InputLabel>Print Template</InputLabel>
+                  <InputLabel>Export File Template</InputLabel>
                   <Select
-                    onChange={this.onPrintTemplateChange}
-                    value={this.state.printTemplateToAllow}
-                    error={this.state.printTemplateValidationError}
+                    onChange={this.onExportFileTemplateChange}
+                    value={this.state.exportFileTemplateToAllow}
+                    error={this.state.exportFileTemplateValidationError}
                   >
-                    {fulfilmentPrintTemplateMenuItems}
+                    {fulfilmentExportFileTemplateMenuItems}
                   </Select>
                 </FormControl>
               </div>
-              {this.state.allowPrintTemplateError && (
+              {this.state.allowExportFileTemplateError && (
                 <div>
                   <p style={{ color: "red" }}>
-                    {this.state.allowPrintTemplateError}
+                    {this.state.allowExportFileTemplateError}
                   </p>
                 </div>
               )}
               <div style={{ marginTop: 10 }}>
                 <Button
-                  onClick={this.onAllowFulfilmentPrintTemplate}
+                  onClick={this.onAllowFulfilmentExportFileTemplate}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
                   Allow
                 </Button>
                 <Button
-                  onClick={this.closeAllowFulfilmentPrintTemplateDialog}
+                  onClick={this.closeAllowFulfilmentExportFileTemplateDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
@@ -1012,15 +1024,15 @@ class SurveyDetails extends Component {
                   <Select
                     onChange={this.onSmsTemplateChange}
                     value={this.state.smsTemplateToAllow}
-                    error={this.state.printTemplateValidationError}
+                    error={this.state.exportFileTemplateValidationError}
                   >
                     {smsFulfilmentTemplateMenuItems}
                   </Select>
                 </FormControl>
               </div>
-              {this.state.allowPrintTemplateError && (
+              {this.state.allowExportFileTemplateError && (
                 <p style={{ color: "red" }}>
-                  {this.state.allowPrintTemplateError}
+                  {this.state.allowExportFileTemplateError}
                 </p>
               )}
               <div style={{ marginTop: 10 }}>

@@ -1,9 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_DEACTIVATE_UAC_ACTION_RULE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_FACE_TO_FACE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE;
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_PRINT_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_SMS_ACTION_RULE;
 import static uk.gov.ons.ssdc.supporttool.utility.ColumnHelper.getSurveyColumns;
 
@@ -24,13 +24,13 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.ActionRule;
 import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
-import uk.gov.ons.ssdc.common.model.entity.PrintTemplate;
+import uk.gov.ons.ssdc.common.model.entity.ExportFileTemplate;
 import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.ActionRuleDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
-import uk.gov.ons.ssdc.supporttool.model.repository.PrintTemplateRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 
@@ -41,19 +41,19 @@ public class ActionRuleEndpoint {
   private final ActionRuleRepository actionRuleRepository;
   private final UserIdentity userIdentity;
   private final CollectionExerciseRepository collectionExerciseRepository;
-  private final PrintTemplateRepository printTemplateRepository;
+  private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final SmsTemplateRepository smsTemplateRepository;
 
   public ActionRuleEndpoint(
       ActionRuleRepository actionRuleRepository,
       UserIdentity userIdentity,
       CollectionExerciseRepository collectionExerciseRepository,
-      PrintTemplateRepository printTemplateRepository,
+      ExportFileTemplateRepository exportFileTemplateRepository,
       SmsTemplateRepository smsTemplateRepository) {
     this.actionRuleRepository = actionRuleRepository;
     this.userIdentity = userIdentity;
     this.collectionExerciseRepository = collectionExerciseRepository;
-    this.printTemplateRepository = printTemplateRepository;
+    this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.smsTemplateRepository = smsTemplateRepository;
   }
 
@@ -85,8 +85,8 @@ public class ActionRuleEndpoint {
                   ActionRuleDto actionRuleDTO = new ActionRuleDto();
                   actionRuleDTO.setClassifiers(actionRule.getClassifiers());
 
-                  if (actionRule.getType() == ActionRuleType.PRINT) {
-                    actionRuleDTO.setPackCode(actionRule.getPrintTemplate().getPackCode());
+                  if (actionRule.getType() == ActionRuleType.EXPORT_FILE) {
+                    actionRuleDTO.setPackCode(actionRule.getExportFileTemplate().getPackCode());
                   } else if (actionRule.getType() == ActionRuleType.SMS) {
                     actionRuleDTO.setPackCode(actionRule.getSmsTemplate().getPackCode());
                   }
@@ -120,18 +120,18 @@ public class ActionRuleEndpoint {
 
     UserGroupAuthorisedActivityType userActivity;
 
-    PrintTemplate printTemplate = null;
+    ExportFileTemplate exportFileTemplate = null;
     SmsTemplate smsTemplate = null;
     switch (actionRuleDTO.getType()) {
-      case PRINT:
-        userActivity = CREATE_PRINT_ACTION_RULE;
-        printTemplate =
-            printTemplateRepository
+      case EXPORT_FILE:
+        userActivity = CREATE_EXPORT_FILE_ACTION_RULE;
+        exportFileTemplate =
+            exportFileTemplateRepository
                 .findById(actionRuleDTO.getPackCode())
                 .orElseThrow(
                     () ->
                         new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "Print template not found"));
+                            HttpStatus.BAD_REQUEST, "Export file template not found"));
         break;
       case OUTBOUND_TELEPHONE:
         userActivity = CREATE_OUTBOUND_PHONE_ACTION_RULE;
@@ -166,7 +166,7 @@ public class ActionRuleEndpoint {
     ActionRule actionRule = new ActionRule();
     actionRule.setId(UUID.randomUUID());
     actionRule.setClassifiers(actionRuleDTO.getClassifiers());
-    actionRule.setPrintTemplate(printTemplate);
+    actionRule.setExportFileTemplate(exportFileTemplate);
     actionRule.setCollectionExercise(collectionExercise);
     actionRule.setType(actionRuleDTO.getType());
     actionRule.setTriggerDateTime(actionRuleDTO.getTriggerDateTime());
