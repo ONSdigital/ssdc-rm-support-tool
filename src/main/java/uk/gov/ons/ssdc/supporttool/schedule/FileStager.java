@@ -15,7 +15,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
+import uk.gov.ons.ssdc.supporttool.utility.ColumnHelper;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeSettings;
 
 @Component
 public class FileStager {
@@ -56,10 +58,11 @@ public class FileStager {
 
       // Validate the header row has the right number of columns
       String[] headerRow = csvReader.readNext();
-      String[] expectedColumns =
-          jobTypeHelper
-              .getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey())
-              .getExpectedColumns();
+
+      JobTypeSettings jobTypeSettings = jobTypeHelper
+              .getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey());
+
+      String[] expectedColumns = ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());
 
       if (headerRow.length != expectedColumns.length) {
         // The header row doesn't have enough columns

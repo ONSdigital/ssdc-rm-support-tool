@@ -29,7 +29,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeSettings;
-import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
+import uk.gov.ons.ssdc.supporttool.utility.ColumnHelper;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -128,7 +128,9 @@ public class JobEndpoint {
 
     try (StringWriter stringWriter = new StringWriter();
         CSVWriter csvWriter = new CSVWriter(stringWriter)) {
-      csvWriter.writeNext(SampleColumnHelper.getExpectedColumns(job));
+
+      JobTypeSettings jobTypeSettings = jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey());
+      csvWriter.writeNext(ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators()));
 
       for (JobRow jobRow : jobRows) {
         csvWriter.writeNext(jobRow.getOriginalRowData());

@@ -38,7 +38,6 @@ public class JobTypeHelper {
         jobTypeSettings.setTransformer(SAMPLE_LOAD_TRANSFORMER);
         jobTypeSettings.setColumnValidators(survey.getSampleValidationRules());
         jobTypeSettings.setTopic(toProjectTopicName(newCaseTopic, sharedPubsubProject).toString());
-        jobTypeSettings.setExpectedColumns(SampleColumnHelper.getExpectedColumns(survey));
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_SAMPLE);
         jobTypeSettings.setFileViewProgressPersmission(
             UserGroupAuthorisedActivityType.VIEW_SAMPLE_LOAD_PROGRESS);
@@ -49,7 +48,6 @@ public class JobTypeHelper {
         jobTypeSettings.setColumnValidators(getBulkProcessorValidationRules());
         jobTypeSettings.setTopic(
             toProjectTopicName(refusalEventTopic, sharedPubsubProject).toString());
-        jobTypeSettings.setExpectedColumns(new String[] {"caseId", "refusalType"});
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
         jobTypeSettings.setFileViewProgressPersmission(
             UserGroupAuthorisedActivityType.VIEW_BULK_REFUSAL_PROGRESS);

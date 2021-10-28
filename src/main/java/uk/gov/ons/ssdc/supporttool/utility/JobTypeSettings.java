@@ -10,7 +10,7 @@ public class JobTypeSettings {
   private Transformer transformer;
   private ColumnValidator[] columnValidators;
   private String topic;
-  private String[] expectedColumns;
   private UserGroupAuthorisedActivityType fileLoadPermission;
   private UserGroupAuthorisedActivityType fileViewProgressPersmission;
+
 }
