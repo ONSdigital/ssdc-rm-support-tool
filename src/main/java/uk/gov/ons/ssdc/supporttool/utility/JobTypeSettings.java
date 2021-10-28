@@ -12,5 +12,4 @@ public class JobTypeSettings {
   private String topic;
   private UserGroupAuthorisedActivityType fileLoadPermission;
   private UserGroupAuthorisedActivityType fileViewProgressPersmission;
-
 }

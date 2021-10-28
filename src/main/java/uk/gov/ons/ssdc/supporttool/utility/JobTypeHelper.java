@@ -56,8 +56,7 @@ public class JobTypeHelper {
       default:
         //    This code should be unreachable, providing we have a case for every JobType
         throw new RuntimeException(
-            String.format(
-                "In getJobTypeSettings the jobType %s wasn't matched", jobType));
+            String.format("In getJobTypeSettings the jobType %s wasn't matched", jobType));
     }
   }
 

@@ -1,11 +1,10 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
-import uk.gov.ons.ssdc.common.model.entity.Survey;
-import uk.gov.ons.ssdc.common.validation.ColumnValidator;
-
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import uk.gov.ons.ssdc.common.model.entity.Survey;
+import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 
 public class ColumnHelper {
   public static String[] getExpectedColumns(ColumnValidator[] validationRules) {

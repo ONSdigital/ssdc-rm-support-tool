@@ -59,10 +59,12 @@ public class FileStager {
       // Validate the header row has the right number of columns
       String[] headerRow = csvReader.readNext();
 
-      JobTypeSettings jobTypeSettings = jobTypeHelper
-              .getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey());
+      JobTypeSettings jobTypeSettings =
+          jobTypeHelper.getJobTypeSettings(
+              job.getJobType(), job.getCollectionExercise().getSurvey());
 
-      String[] expectedColumns = ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());
+      String[] expectedColumns =
+          ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());
 
       if (headerRow.length != expectedColumns.length) {
         // The header row doesn't have enough columns
