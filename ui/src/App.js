@@ -16,6 +16,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+import BulkUploads from "./BulkUploads";
 
 class App extends Component {
   render() {
@@ -81,6 +82,11 @@ function QueryRouting() {
       </Route>
       <Route path="/myGroupUserAdmin">
         <MyGroupUserAdmin groupId={query.get("groupId")} />
+      </Route>
+      <Route path="/bulkUploads">
+      <BulkUploads
+          surveyId={query.get("surveyId")}
+          collectionExerciseId={query.get("collexId")} />
       </Route>
     </Switch>
   );
