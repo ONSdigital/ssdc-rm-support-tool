@@ -199,12 +199,14 @@ public class IntegrationTestHelper {
     exportFileTemplate.setPackCode("TEST_PRINT_PACK_CODE_" + UUID.randomUUID());
     exportFileTemplate.setTemplate(new String[] {"foo", "bar"});
     exportFileTemplate.setExportFileDestination("SUPPLIER_A");
+    exportFileTemplate.setDescription("Test description");
     exportFileTemplate = exportFileTemplateRepository.saveAndFlush(exportFileTemplate);
 
     SmsTemplate smsTemplate = new SmsTemplate();
     smsTemplate.setPackCode("TEST_SMS_PACK_CODE_" + UUID.randomUUID());
     smsTemplate.setTemplate(new String[] {"foo", "bar"});
     smsTemplate.setNotifyTemplateId(UUID.randomUUID());
+    smsTemplate.setDescription("Test description");
     smsTemplate = smsTemplateRepository.saveAndFlush(smsTemplate);
 
     User user = setupDummyUser(UUID.randomUUID());

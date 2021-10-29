@@ -67,6 +67,8 @@ public class SmsTemplateEndpoint {
     smsTemplate.setTemplate(smsTemplateDto.getTemplate());
     smsTemplate.setPackCode(smsTemplateDto.getPackCode());
     smsTemplate.setNotifyTemplateId(smsTemplateDto.getNotifyTemplateId());
+    smsTemplate.setDescription(smsTemplateDto.getDescription());
+    smsTemplate.setMetadata(smsTemplateDto.getMetadata());
 
     smsTemplateRepository.saveAndFlush(smsTemplate);
 

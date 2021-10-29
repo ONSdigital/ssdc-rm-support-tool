@@ -71,6 +71,8 @@ public class ExportFileTemplateEndpoint {
     exportFileTemplate.setExportFileDestination(
         exportFileTemplateDto.getExportFileDestination()); // TODO: check it exists
     exportFileTemplate.setPackCode(exportFileTemplateDto.getPackCode());
+    exportFileTemplate.setDescription(exportFileTemplateDto.getDescription());
+    exportFileTemplate.setMetadata(exportFileTemplateDto.getMetadata());
 
     exportFileTemplateRepository.saveAndFlush(exportFileTemplate);
 
