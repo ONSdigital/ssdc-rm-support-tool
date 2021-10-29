@@ -128,12 +128,13 @@ class SampleData extends Component {
   };
 
   render() {
-    const sampleDataColumnMenuItems =
-      this.state.allowableSampleDataColumns.map((columnName) => (
+    const sampleDataColumnMenuItems = this.state.allowableSampleDataColumns.map(
+      (columnName) => (
         <MenuItem key={columnName} value={columnName}>
           {columnName}
         </MenuItem>
-      ));
+      )
+    );
 
     return (
       <div>

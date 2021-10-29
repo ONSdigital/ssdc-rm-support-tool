@@ -118,10 +118,7 @@ export const getSensitiveSampleColumns = async (
   return sensitiveColumns;
 };
 
-export const getSampleColumns = async (
-  authorisedActivities,
-  surveyId
-) => {
+export const getSampleColumns = async (authorisedActivities, surveyId) => {
   if (!authorisedActivities.includes("VIEW_SURVEY")) return [];
 
   const response = await fetch(`/api/surveys/${surveyId}`);
