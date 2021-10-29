@@ -81,6 +81,8 @@ class SampleUpload extends Component {
         jobData.append("fileId", fileId);
         jobData.append("fileName", fileName);
         jobData.append("collectionExerciseId", this.props.collectionExerciseId);
+        // TODO: Temp hardcoded to SAMPLE
+        jobData.append("jobType", "SAMPLE");
 
         const response = fetch(`/api/job`, {
           method: "POST",
@@ -115,8 +117,9 @@ class SampleUpload extends Component {
   };
 
   getJobs = async () => {
+    // TODO: Job Type Temp hardcoded to SAMPLE
     const response = await fetch(
-      `/api/job?collectionExercise=${this.props.collectionExerciseId}`
+      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=SAMPLE`
     );
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily

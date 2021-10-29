@@ -21,6 +21,7 @@ public class JobDto {
   private int rowErrorCount;
 
   private JobStatusDto jobStatus;
+  private JobTypeDto jobType;
 
   private String fatalErrorDescription;
 

@@ -1,6 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
-import static uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper.getColumns;
+import static uk.gov.ons.ssdc.supporttool.utility.ColumnHelper.getSurveyColumns;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -13,9 +13,9 @@ public class AllowTemplateOnSurveyValidator {
       Set.of("__uac__", "__qid__", "__caseref__");
 
   public static Optional<String> validate(Survey survey, Set<String> templateColumns) {
-    Set<String> surveyColumns = getColumns(survey, false);
+    Set<String> surveyColumns = getSurveyColumns(survey, false);
     Set<String> sensitiveSurveyColumns =
-        getColumns(survey, true).stream()
+        getSurveyColumns(survey, true).stream()
             .map(column -> "__sensitive__." + column)
             .collect(Collectors.toSet());
     Set<String> surveyColumnsPlusOtherAllowableColumns = new HashSet<>();

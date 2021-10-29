@@ -17,12 +17,15 @@ import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
-import uk.gov.ons.ssdc.supporttool.utility.SampleColumnHelper;
+import uk.gov.ons.ssdc.supporttool.utility.ColumnHelper;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeSettings;
 
 @Component
 public class RowStager {
   private final JobRepository jobRepository;
   private final JobRowRepository jobRowRepository;
+  private final JobTypeHelper jobTypeHelper;
   private final RowChunkStager rowChunkStager;
 
   @Value("${file-upload-storage-path}")
@@ -31,10 +34,12 @@ public class RowStager {
   public RowStager(
       JobRepository jobRepository,
       JobRowRepository jobRowRepository,
-      RowChunkStager rowChunkStager) {
+      RowChunkStager rowChunkStager,
+      JobTypeHelper jobTypeHelper) {
     this.jobRepository = jobRepository;
     this.jobRowRepository = jobRowRepository;
     this.rowChunkStager = rowChunkStager;
+    this.jobTypeHelper = jobTypeHelper;
   }
 
   @Scheduled(fixedDelayString = "1000")
@@ -53,7 +58,11 @@ public class RowStager {
         if (job.getCollectionExercise().getSurvey().isSampleWithHeaderRow()) {
           headerRow = csvReader.readNext();
         } else {
-          headerRow = SampleColumnHelper.getExpectedColumns(job);
+          JobTypeSettings jobTypeSettings =
+              jobTypeHelper.getJobTypeSettings(
+                  job.getJobType(), job.getCollectionExercise().getSurvey());
+
+          headerRow = ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());
           headerRowCorrection = 0;
         }
 
