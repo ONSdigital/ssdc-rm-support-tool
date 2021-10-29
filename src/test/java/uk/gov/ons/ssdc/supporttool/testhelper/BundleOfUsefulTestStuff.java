@@ -9,7 +9,7 @@ public class BundleOfUsefulTestStuff {
   private UUID collexId;
   private UUID caseId;
   private String qid;
-  private String printTemplatePackCode;
+  private String exportFileTemplatePackCode;
   private String smsTemplatePackCode;
   private UUID userId;
   private UUID groupId;
