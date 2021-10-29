@@ -1,13 +1,10 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
-import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
-
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,52 +12,52 @@ import org.springframework.util.concurrent.ListenableFuture;
 import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
-import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
-import uk.gov.ons.ssdc.supporttool.transformer.NewCaseTransformer;
-import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
+import uk.gov.ons.ssdc.supporttool.utility.JobTypeSettings;
 
 @Component
 public class RowChunkProcessor {
   private static final Logger log = LoggerFactory.getLogger(RowChunkProcessor.class);
-  private static final Transformer TRANSFORMER = new NewCaseTransformer();
-
   private final JobRowRepository jobRowRepository;
   private final PubSubTemplate pubSubTemplate;
   private final JobRepository jobRepository;
-
-  @Value("${queueconfig.shared-pubsub-project}")
-  private String sharedPubsubProject;
-
-  @Value("${queueconfig.new-case-topic}")
-  private String newCaseTopic;
+  private final JobTypeHelper jobTypeHelper;
 
   public RowChunkProcessor(
       JobRowRepository jobRowRepository,
       PubSubTemplate pubSubTemplate,
-      JobRepository jobRepository) {
+      JobRepository jobRepository,
+      JobTypeHelper jobTypeHelper) {
     this.jobRowRepository = jobRowRepository;
     this.pubSubTemplate = pubSubTemplate;
     this.jobRepository = jobRepository;
+    this.jobTypeHelper = jobTypeHelper;
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean processChunk(Job job) {
     boolean hadErrors = false;
-    ColumnValidator[] columnValidators =
-        job.getCollectionExercise().getSurvey().getSampleValidationRules();
+
+    JobTypeSettings jobTypeSettings =
+        jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey());
 
     List<JobRow> jobRows =
         jobRowRepository.findTop500ByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
 
     for (JobRow jobRow : jobRows) {
       try {
-        String topic = toProjectTopicName(newCaseTopic, sharedPubsubProject).toString();
-
         ListenableFuture<String> future =
             pubSubTemplate.publish(
-                topic, TRANSFORMER.transformRow(job, jobRow, columnValidators, newCaseTopic));
+                jobTypeSettings.getTopic(),
+                jobTypeSettings
+                    .getTransformer()
+                    .transformRow(
+                        job,
+                        jobRow,
+                        jobTypeSettings.getColumnValidators(),
+                        jobTypeSettings.getTopic()));
 
         // Wait for up to 30 seconds to confirm that message was published
         future.get(30, TimeUnit.SECONDS);
