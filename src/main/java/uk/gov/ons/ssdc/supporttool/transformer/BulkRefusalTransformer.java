@@ -5,7 +5,6 @@ import java.util.UUID;
 import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
@@ -19,9 +18,6 @@ public class BulkRefusalTransformer implements Transformer {
   public Object transformRow(
       Job job, JobRow jobRow, ColumnValidator[] columnValidators, String topic) {
     Map<String, String> rowData = jobRow.getRowData();
-
-    CollectionCase collectionCase = new CollectionCase();
-    collectionCase.setCaseId(UUID.fromString(rowData.get("caseId")));
 
     RefusalDTO refusalDTO = new RefusalDTO();
     refusalDTO.setCaseId(UUID.fromString(rowData.get("caseId")));
