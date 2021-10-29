@@ -19,6 +19,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import SampleUpload from "./SampleUpload";
+import BulkUploads from "./BulkUploads";
 import {
   getActionRuleExportFileTemplates,
   getActionRuleSmsTemplates,
@@ -568,13 +569,14 @@ class CollectionExerciseDetails extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        {this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (
+        {/*{this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (*/}
           <>
             <div style={{ marginTop: 20 }}>
-              <Link to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}>Bulk Uploads</Link>
+              {/*<Link to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}>Bulk Uploads</Link>*/}
+              <Link to={`/bulkUploads`}>Bulk Uploads</Link>
             </div>
           </>
-        )}
+        {/*)}*/}
       </div>
     );
   }

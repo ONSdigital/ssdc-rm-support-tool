@@ -179,7 +179,7 @@ class BulkUploads extends Component {
 
     return (
       <div style={{ marginTop: 20 }}>
-        {this.props.authorisedActivities.includes(
+        {this.state.authorisedActivities.includes(
           "LOAD_BULK_REFUSAL"
         ) && (
           <>

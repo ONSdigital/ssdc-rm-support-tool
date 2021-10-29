@@ -10,13 +10,13 @@ import GroupDetails from "./GroupDetails";
 import ExceptionManager from "./ExceptionManager";
 import MyGroupsAdmin from "./MyGroupsAdmin";
 import MyGroupUserAdmin from "./MyGroupUserAdmin";
+import BulkUploads from "./BulkUploads";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   useLocation,
 } from "react-router-dom";
-import BulkUploads from "./BulkUploads";
 
 class App extends Component {
   render() {
@@ -84,9 +84,7 @@ function QueryRouting() {
         <MyGroupUserAdmin groupId={query.get("groupId")} />
       </Route>
       <Route path="/bulkUploads">
-      <BulkUploads
-          surveyId={query.get("surveyId")}
-          collectionExerciseId={query.get("collexId")} />
+        <BulkUploads />
       </Route>
     </Switch>
   );
