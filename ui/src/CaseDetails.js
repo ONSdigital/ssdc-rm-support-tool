@@ -234,7 +234,7 @@ class CaseDetails extends Component {
                       />
                     )}
                     {this.state.authorisedActivities.includes(
-                      "UPDATE_SAMPLE_SENSITIVE"
+                      "UPDATE_SAMPLE"
                     ) && (
                       <SampleData
                         caseId={this.props.caseId}
