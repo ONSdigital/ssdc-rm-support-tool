@@ -10,8 +10,10 @@ import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.InSetRule;
+import uk.gov.ons.ssdc.common.validation.MandatoryRule;
 import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalTypeDTO;
+import uk.gov.ons.ssdc.supporttool.transformer.BulkInvalidCaseTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.BulkRefusalTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.NewCaseTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
@@ -21,6 +23,7 @@ import uk.gov.ons.ssdc.supporttool.validators.CaseExistsRule;
 public class JobTypeHelper {
   private static final Transformer SAMPLE_LOAD_TRANSFORMER = new NewCaseTransformer();
   private static final Transformer BULK_REFUSAL_TRANSFORMER = new BulkRefusalTransformer();
+  private static final Transformer BULK_INVALID_TRANSFORMER = new BulkInvalidCaseTransformer();
 
   @Value("${queueconfig.shared-pubsub-project}")
   private String sharedPubsubProject;
@@ -30,6 +33,9 @@ public class JobTypeHelper {
 
   @Value("${queueconfig.refusal-event-topic}")
   private String refusalEventTopic;
+
+  @Value("${queueconfig. invalid-case-event-topic}")
+  private String invalidCaseTopic;
 
   public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey) {
     JobTypeSettings jobTypeSettings = new JobTypeSettings();
@@ -45,12 +51,22 @@ public class JobTypeHelper {
 
       case BULK_REFUSAL:
         jobTypeSettings.setTransformer(BULK_REFUSAL_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkProcessorValidationRules());
+        jobTypeSettings.setColumnValidators(getBulkRefusalProcessorValidationRules());
         jobTypeSettings.setTopic(
             toProjectTopicName(refusalEventTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
         jobTypeSettings.setFileViewProgressPersmission(
             UserGroupAuthorisedActivityType.VIEW_BULK_REFUSAL_PROGRESS);
+        return jobTypeSettings;
+
+      case BULK_INVALID:
+        jobTypeSettings.setTransformer(BULK_INVALID_TRANSFORMER);
+        jobTypeSettings.setColumnValidators(getBulkInvalidCaseValidationRules());
+        jobTypeSettings.setTopic(
+                toProjectTopicName(invalidCaseTopic, sharedPubsubProject).toString());
+        jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_INVALID);
+        jobTypeSettings.setFileViewProgressPersmission(
+                UserGroupAuthorisedActivityType.VIEW_BULK_INVALID_PROGRESS);
         return jobTypeSettings;
 
       default:
@@ -60,7 +76,18 @@ public class JobTypeHelper {
     }
   }
 
-  private ColumnValidator[] getBulkProcessorValidationRules() {
+  private ColumnValidator[] getBulkInvalidCaseValidationRules() {
+    Rule[] caseExistsRules = {new CaseExistsRule()};
+    ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
+
+    Rule[] reasonRule = {new MandatoryRule()};
+    ColumnValidator reasonRuleValidator =
+            new ColumnValidator("reason", false, reasonRule);
+
+    return new ColumnValidator[] {caseExistsValidator, reasonRuleValidator};
+  }
+
+  private ColumnValidator[] getBulkRefusalProcessorValidationRules() {
     Rule[] caseExistsRules = {new CaseExistsRule()};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
