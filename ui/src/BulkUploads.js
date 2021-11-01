@@ -159,6 +159,7 @@ class BulkUploads extends Component {
           {job.fileName}
         </TableCell>
         <TableCell>{job.createdAt}</TableCell>
+        <TableCell>{job.jobType}</TableCell>
         <TableCell align="right">
           <Button
             onClick={() => this.handleOpenDetails(job)}   //TODO: Add this in
@@ -192,6 +193,7 @@ class BulkUploads extends Component {
                   <TableRow>
                     <TableCell>File Name</TableCell>
                     <TableCell>Date Uploaded</TableCell>
+                    <TableCell>Job Type</TableCell>
                     <TableCell align="right">Status</TableCell>
                   </TableRow>
                 </TableHead>

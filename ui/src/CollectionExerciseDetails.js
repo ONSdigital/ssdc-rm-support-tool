@@ -569,14 +569,14 @@ class CollectionExerciseDetails extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        {/*{this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (*/}
+        {/* TODO: Add an 'OR' for VIEW_BULK_REFUSAL_PROGRESS here (similar to sample stuff on line 455*/}
+        {this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (
           <>
             <div style={{ marginTop: 20 }}>
               <Link to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}>Bulk Uploads</Link>
-              {/*<Link to={`/bulkUploads`}>Bulk Uploads</Link>*/}
             </div>
           </>
-        {/*)}*/}
+        )}
       </div>
     );
   }
