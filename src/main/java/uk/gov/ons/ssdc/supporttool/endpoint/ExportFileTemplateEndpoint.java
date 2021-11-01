@@ -43,6 +43,8 @@ public class ExportFileTemplateEndpoint {
               exportFileTemplateDto.setExportFileDestination(
                   exportFileTemplate.getExportFileDestination());
               exportFileTemplateDto.setPackCode(exportFileTemplate.getPackCode());
+              exportFileTemplateDto.setDescription(exportFileTemplate.getDescription());
+              exportFileTemplateDto.setMetadata(exportFileTemplate.getMetadata());
               return exportFileTemplateDto;
             })
         .collect(Collectors.toList());

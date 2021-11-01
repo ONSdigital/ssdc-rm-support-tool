@@ -43,12 +43,16 @@ class LandingPage extends Component {
     createSMSTemplatePackCodeError: "",
     exportFileDestinations: [],
     exportFileDestination: "",
+    description: "",
     packCode: "",
     template: "",
+    newTemplateMetadata: "",
     notifyTemplateId: "",
     exportFileDestinationValidationError: false,
+    descriptionValidationError: false,
     packCodeValidationError: false,
     templateValidationError: false,
+    newTemplateMetadataValidationError: false,
     notifyTemplateIdValidationError: false,
     notifyTemplateIdErrorMessage: "",
     newSurveyHeaderRow: true,
@@ -209,13 +213,19 @@ class LandingPage extends Component {
   openExportFileTemplateDialog = () => {
     this.createExportFileTemplateInProgress = false;
 
+    // Yes. Yes here. Here is the one and ONLY place where you should be preparing the dialog
     this.setState({
       exportFileDestination: "",
+      description: "",
       packCode: "",
       template: "",
+      newTemplateMetadata: "",
       exportFileDestinationValidationError: false,
+      descriptionValidationError: false,
       packCodeValidationError: false,
       templateValidationError: false,
+      newTemplateMetadataValidationError: false,
+      createExportFileTemplatePackCodeError: "",
       createExportFileTemplateDialogDisplayed: true,
     });
   };
@@ -223,37 +233,47 @@ class LandingPage extends Component {
   openSmsTemplateDialog = () => {
     this.createSmsTemplateInProgress = false;
 
+    // Yes. Yes here. Here is the one and ONLY place where you should be preparing the dialog
     this.setState({
+      description: "",
       packCode: "",
       template: "",
+      newTemplateMetadata: "",
       notifyTemplateId: "",
       packCodeValidationError: false,
+      descriptionValidationError: false,
       templateValidationError: false,
+      newTemplateMetadataValidationError: false,
+      notifyTemplateIdValidationError: false,
       createSmsTemplateDialogDisplayed: true,
       createSmsTemplateError: "",
       notifyTemplateIdErrorMessage: "",
+      createSMSTemplatePackCodeError: "",
+      createSMSTemplateDescriptionError: "",
     });
   };
 
   closeDialog = () => {
+    // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
     this.setState({ createSurveyDialogDisplayed: false });
   };
 
   closeNextTriggerDialog = () => {
+    // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
     this.setState({ configureNextTriggerDisplayed: false });
   };
 
   closeExportFileTemplateDialog = () => {
+    // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
     this.setState({
       createExportFileTemplateDialogDisplayed: false,
-      createExportFileTemplatePackCodeError: "",
     });
   };
 
   closeSmsTemplateDialog = () => {
+    // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
     this.setState({
       createSmsTemplateDialogDisplayed: false,
-      createSMSTemplatePackCodeError: "",
     });
   };
 
@@ -405,6 +425,15 @@ class LandingPage extends Component {
     });
   };
 
+  onDescriptionChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+
+    this.setState({
+      description: event.target.value,
+      descriptionValidationError: resetValidation,
+    });
+  };
+
   onPackCodeChange = (event) => {
     const resetValidation = !event.target.value.trim();
 
@@ -420,6 +449,15 @@ class LandingPage extends Component {
     this.setState({
       template: event.target.value,
       templateValidationError: resetValidation,
+    });
+  };
+
+  onNewTemplateMetadataChange = (event) => {
+    const resetValidation = !event.target.value.trim();
+
+    this.setState({
+      newTemplateMetadata: event.target.value,
+      newTemplateMetadataValidationError: resetValidation,
     });
   };
 
@@ -453,6 +491,11 @@ class LandingPage extends Component {
 
     if (!this.state.exportFileDestination.trim()) {
       this.setState({ exportFileDestinationValidationError: true });
+      failedValidation = true;
+    }
+
+    if (!this.state.description.trim()) {
+      this.setState({ descriptionValidationError: true });
       failedValidation = true;
     }
 
@@ -492,15 +535,35 @@ class LandingPage extends Component {
       }
     }
 
+    let metadata = null;
+
+    if (!this.state.newTemplateMetadata.trim()) {
+      this.setState({ newTemplateMetadataValidationError: true });
+      failedValidation = true;
+    } else {
+      try {
+        metadata = JSON.parse(this.state.newTemplateMetadata);
+        if (Object.keys(metadata).length === 0) {
+          this.setState({ newTemplateMetadataValidationError: true });
+          failedValidation = true;
+        }
+      } catch (err) {
+        this.setState({ newTemplateMetadataValidationError: true });
+        failedValidation = true;
+      }
+    }
+
     if (failedValidation) {
       this.createExportFileTemplateInProgress = false;
       return;
     }
 
     const newExportFileTemplate = {
+      description: this.state.description,
       packCode: this.state.packCode,
       exportFileDestination: this.state.exportFileDestination,
       template: JSON.parse(this.state.template),
+      metadata: metadata,
     };
 
     const response = await fetch("/api/exportFileTemplates", {
@@ -532,6 +595,11 @@ class LandingPage extends Component {
 
     if (!this.state.packCode.trim()) {
       this.setState({ packCodeValidationError: true });
+      failedValidation = true;
+    }
+
+    if (!this.state.description.trim()) {
+      this.setState({ descriptionValidationError: true });
       failedValidation = true;
     }
 
@@ -581,6 +649,24 @@ class LandingPage extends Component {
       }
     }
 
+    let metadata = null;
+
+    if (!this.state.newTemplateMetadata.trim()) {
+      this.setState({ newTemplateMetadataValidationError: true });
+      failedValidation = true;
+    } else {
+      try {
+        metadata = JSON.parse(this.state.newTemplateMetadata);
+        if (Object.keys(metadata).length === 0) {
+          this.setState({ newTemplateMetadataValidationError: true });
+          failedValidation = true;
+        }
+      } catch (err) {
+        this.setState({ newTemplateMetadataValidationError: true });
+        failedValidation = true;
+      }
+    }
+
     if (failedValidation) {
       this.createSmsTemplateInProgress = false;
       return;
@@ -589,7 +675,9 @@ class LandingPage extends Component {
     const newSmsTemplate = {
       notifyTemplateId: this.state.notifyTemplateId,
       packCode: this.state.packCode,
+      description: this.state.description,
       template: JSON.parse(this.state.template),
+      metadata: metadata,
     };
 
     const response = await fetch("/api/smsTemplates", {
@@ -632,10 +720,16 @@ class LandingPage extends Component {
             {exportFileTemplate.packCode}
           </TableCell>
           <TableCell component="th" scope="row">
+            {exportFileTemplate.description}
+          </TableCell>
+          <TableCell component="th" scope="row">
             {exportFileTemplate.exportFileDestination}
           </TableCell>
           <TableCell component="th" scope="row">
             {JSON.stringify(exportFileTemplate.template)}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(exportFileTemplate.metadata)}
           </TableCell>
         </TableRow>
       )
@@ -646,10 +740,16 @@ class LandingPage extends Component {
           {smsTemplate.packCode}
         </TableCell>
         <TableCell component="th" scope="row">
+          {smsTemplate.description}
+        </TableCell>
+        <TableCell component="th" scope="row">
           {JSON.stringify(smsTemplate.template)}
         </TableCell>
         <TableCell component="th" scope="row">
           {smsTemplate.notifyTemplateId}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(smsTemplate.metadata)}
         </TableCell>
       </TableRow>
     ));
@@ -704,8 +804,10 @@ class LandingPage extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Pack Code</TableCell>
+                    <TableCell>Description</TableCell>
                     <TableCell>Export File Destination</TableCell>
                     <TableCell>Template</TableCell>
+                    <TableCell>Metadata</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{exportFileTemplateRows}</TableBody>
@@ -735,8 +837,10 @@ class LandingPage extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Pack Code</TableCell>
+                    <TableCell>Description</TableCell>
                     <TableCell>Template</TableCell>
                     <TableCell>Gov Notify Template ID</TableCell>
+                    <TableCell>Metadata</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{smsTemplateRows}</TableBody>
@@ -927,7 +1031,29 @@ class LandingPage extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl required fullWidth={true}>
+                <TextField
+                  required
+                  fullWidth={true}
+                  error={this.state.packCodeValidationError}
+                  label="Pack Code"
+                  onChange={this.onPackCodeChange}
+                  value={this.state.packCode}
+                  helperText={this.state.createExportFileTemplatePackCodeError}
+                />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.descriptionValidationError}
+                  label="Description"
+                  onChange={this.onDescriptionChange}
+                  value={this.state.description}
+                />
+                <FormControl
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                >
                   <InputLabel>Export File Destination</InputLabel>
                   <Select
                     onChange={this.onexportFileDestinationChange}
@@ -940,22 +1066,20 @@ class LandingPage extends Component {
                 <TextField
                   required
                   fullWidth={true}
-                  style={{ marginTop: 20 }}
-                  error={this.state.packCodeValidationError}
-                  label="Pack Code"
-                  onChange={this.onPackCodeChange}
-                  value={this.state.packCode}
-                  helperText={this.state.createExportFileTemplatePackCodeError}
-                />
-                <TextField
-                  required
-                  fullWidth={true}
-                  style={{ marginTop: 20 }}
+                  style={{ marginTop: 10 }}
                   error={this.state.templateValidationError}
                   label="Template"
                   onChange={this.onTemplateChange}
                   value={this.state.template}
                   helperText={this.state.notifyTemplateIdErrorMessage}
+                />
+                <TextField
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.newTemplateMetadataValidationError}
+                  label="Metadata"
+                  onChange={this.onNewTemplateMetadataChange}
+                  value={this.state.newTemplateMetadata}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
@@ -992,7 +1116,6 @@ class LandingPage extends Component {
                 <TextField
                   required
                   fullWidth={true}
-                  style={{ marginTop: 20 }}
                   error={this.state.packCodeValidationError}
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
@@ -1002,7 +1125,17 @@ class LandingPage extends Component {
                 <TextField
                   required
                   fullWidth={true}
-                  style={{ marginTop: 20 }}
+                  style={{ marginTop: 10 }}
+                  error={this.state.descriptionValidationError}
+                  label="Description"
+                  onChange={this.onDescriptionChange}
+                  value={this.state.description}
+                  helperText={this.state.createSMSTemplateDescriptionError}
+                />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
                   error={this.state.notifyTemplateIdValidationError}
                   label="Notify Template ID (UUID)"
                   onChange={this.onNotifyTemplateIdChange}
@@ -1010,11 +1143,19 @@ class LandingPage extends Component {
                 />
                 <TextField
                   fullWidth={true}
-                  style={{ marginTop: 20 }}
+                  style={{ marginTop: 10 }}
                   error={this.state.templateValidationError}
                   label="Template"
                   onChange={this.onTemplateChange}
                   value={this.state.template}
+                />
+                <TextField
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.newTemplateMetadataValidationError}
+                  label="Metadata"
+                  onChange={this.onNewTemplateMetadataChange}
+                  value={this.state.newTemplateMetadata}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
