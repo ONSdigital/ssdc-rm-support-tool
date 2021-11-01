@@ -34,7 +34,7 @@ public class JobTypeHelper {
   @Value("${queueconfig.refusal-event-topic}")
   private String refusalEventTopic;
 
-  @Value("${queueconfig. invalid-case-event-topic}")
+  @Value("${queueconfig.invalid-case-event-topic}")
   private String invalidCaseTopic;
 
   public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey) {
@@ -63,10 +63,10 @@ public class JobTypeHelper {
         jobTypeSettings.setTransformer(BULK_INVALID_TRANSFORMER);
         jobTypeSettings.setColumnValidators(getBulkInvalidCaseValidationRules());
         jobTypeSettings.setTopic(
-                toProjectTopicName(invalidCaseTopic, sharedPubsubProject).toString());
+            toProjectTopicName(invalidCaseTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_INVALID);
         jobTypeSettings.setFileViewProgressPersmission(
-                UserGroupAuthorisedActivityType.VIEW_BULK_INVALID_PROGRESS);
+            UserGroupAuthorisedActivityType.VIEW_BULK_INVALID_PROGRESS);
         return jobTypeSettings;
 
       default:
@@ -81,8 +81,7 @@ public class JobTypeHelper {
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     Rule[] reasonRule = {new MandatoryRule()};
-    ColumnValidator reasonRuleValidator =
-            new ColumnValidator("reason", false, reasonRule);
+    ColumnValidator reasonRuleValidator = new ColumnValidator("reason", false, reasonRule);
 
     return new ColumnValidator[] {caseExistsValidator, reasonRuleValidator};
   }
