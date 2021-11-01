@@ -15,4 +15,5 @@ public class PayloadDTO {
   private NewCase newCase;
   private SurveyUpdateDto surveyUpdate;
   private CollectionExerciseUpdateDTO collectionExerciseUpdate;
+  private UpdateSample updateSample;
 }

@@ -5,6 +5,7 @@ import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectT
 import java.util.EnumSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
@@ -15,6 +16,7 @@ import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalTypeDTO;
 import uk.gov.ons.ssdc.supporttool.transformer.BulkInvalidCaseTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.BulkRefusalTransformer;
+import uk.gov.ons.ssdc.supporttool.transformer.BulkUpdateSampleTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.NewCaseTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
 import uk.gov.ons.ssdc.supporttool.validators.CaseExistsRule;
@@ -24,6 +26,8 @@ public class JobTypeHelper {
   private static final Transformer SAMPLE_LOAD_TRANSFORMER = new NewCaseTransformer();
   private static final Transformer BULK_REFUSAL_TRANSFORMER = new BulkRefusalTransformer();
   private static final Transformer BULK_INVALID_TRANSFORMER = new BulkInvalidCaseTransformer();
+  private static final Transformer BULK_SAMPLE_UPDATE_TRANSFORMER =
+      new BulkUpdateSampleTransformer();
 
   @Value("${queueconfig.shared-pubsub-project}")
   private String sharedPubsubProject;
@@ -37,7 +41,14 @@ public class JobTypeHelper {
   @Value("${queueconfig.invalid-case-event-topic}")
   private String invalidCaseTopic;
 
+  @Value("${queueconfig.update-sample-topic}")
+  private String updateSampleTopic;
+
   public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey) {
+    return getJobTypeSettings(jobType, survey, null);
+  }
+
+  public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey, Job job) {
     JobTypeSettings jobTypeSettings = new JobTypeSettings();
     switch (jobType) {
       case SAMPLE:
@@ -68,6 +79,17 @@ public class JobTypeHelper {
         jobTypeSettings.setFileViewProgressPersmission(
             UserGroupAuthorisedActivityType.VIEW_BULK_INVALID_PROGRESS);
         return jobTypeSettings;
+
+      case BULK_UPDATE_SAMPLE_SENSITIVE:
+        jobTypeSettings.setTransformer(BULK_SAMPLE_UPDATE_TRANSFORMER);
+        // These are all the sample validation rules for survey, will need to be clever in use.
+        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules());
+        jobTypeSettings.setTopic(
+            toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString());
+        jobTypeSettings.setFileLoadPermission(
+            UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE);
+        jobTypeSettings.setFileViewProgressPersmission(
+            UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_PROGRESS);
 
       default:
         // This code should be unreachable, providing we have a case for every JobType
