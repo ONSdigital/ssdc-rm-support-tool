@@ -205,12 +205,12 @@ class BulkUploads extends Component {
     ));
 
     return (
-        <div style={{ marginTop: 20 }}>
+        <div style={{ padding: 20 }}>
           {this.state.authorisedActivities.includes(
               "VIEW_BULK_REFUSAL_PROGRESS"
           ) && (
               <>
-                <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+                <Typography variant="h4" color="inherit" style={{ marginTop: 20 }}>
                   Uploaded Bulk Process Files
                 </Typography>
                 <TableContainer component={Paper}>

@@ -9,9 +9,11 @@ import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
 
 public interface JobRepository extends JpaRepository<Job, UUID> {
-  List<Job> findByCollectionExerciseOrderByCreatedAtDesc(CollectionExercise collectionExercise);  // TODO: Remove this now?
+  List<Job> findByCollectionExerciseOrderByCreatedAtDesc(
+      CollectionExercise collectionExercise); // TODO: Remove this now?
 
-  List<Job> findByCollectionExerciseAndJobTypeOrderByCreatedAtDesc(CollectionExercise collectionExercise, JobType jobType);
+  List<Job> findByCollectionExerciseAndJobTypeOrderByCreatedAtDesc(
+      CollectionExercise collectionExercise, JobType jobType);
 
   List<Job> findByJobStatus(JobStatus jobStatus);
 }
