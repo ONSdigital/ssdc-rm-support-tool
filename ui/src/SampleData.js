@@ -49,12 +49,12 @@ class SampleData extends Component {
   getSampleColumns = async (authorisedActivities) => {
     if (!authorisedActivities.includes("VIEW_SURVEY")) return;
 
-    const sensitiveColumns = await getSampleColumns(
+    const nonSensitiveColumns = await getSampleColumns(
       authorisedActivities,
       this.props.surveyId
     );
     this.setState({
-      allowableSampleDataColumns: sensitiveColumns,
+      allowableSampleDataColumns: nonSensitiveColumns,
     });
   };
 

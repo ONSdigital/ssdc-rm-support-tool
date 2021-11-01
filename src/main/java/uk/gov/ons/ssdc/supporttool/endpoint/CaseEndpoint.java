@@ -128,7 +128,7 @@ public class CaseEndpoint {
         UserGroupAuthorisedActivityType.UPDATE_SAMPLE_SENSITIVE);
 
     List<String> validationErrors =
-        validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive());
+        validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive(), true);
 
     if (validationErrors.size() > 0) {
       String validationErrorStr = String.join(", ", validationErrors);
@@ -155,7 +155,7 @@ public class CaseEndpoint {
         caze.getCollectionExercise().getSurvey(),
         UserGroupAuthorisedActivityType.UPDATE_SAMPLE);
 
-    List<String> validationErrors = validateFieldToUpdate(caze, updateSample.getSample());
+    List<String> validationErrors = validateFieldToUpdate(caze, updateSample.getSample(), false);
 
     if (validationErrors.size() > 0) {
       String validationErrorStr = String.join(", ", validationErrors);
@@ -170,14 +170,14 @@ public class CaseEndpoint {
   }
 
   private List<String> validateFieldToUpdate(
-      Case caze, Map<String, String> fieldAndValueToValidate) {
+      Case caze, Map<String, String> fieldAndValueToValidate, boolean sensitiveData) {
     ColumnValidator[] columnValidators =
         caze.getCollectionExercise().getSurvey().getSampleValidationRules();
     List<String> allValidationErrors = new LinkedList<>();
 
     for (var dataToValidate : fieldAndValueToValidate.entrySet()) {
 
-      if (dataToValidate.getValue().length() == 0) {
+      if (dataToValidate.getValue().length() == 0 && sensitiveData == true) {
         // Blanking out the sensitive PII data is allowed, for GDPR reasons
         continue;
       }
