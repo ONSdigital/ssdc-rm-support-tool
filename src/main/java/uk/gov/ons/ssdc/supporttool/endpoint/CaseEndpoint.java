@@ -177,7 +177,7 @@ public class CaseEndpoint {
 
     for (var dataToValidate : fieldAndValueToValidate.entrySet()) {
 
-      if (dataToValidate.getValue().length() == 0 && sensitiveData == true) {
+      if (dataToValidate.getValue().length() == 0 && sensitiveData) {
         // Blanking out the sensitive PII data is allowed, for GDPR reasons
         continue;
       }
