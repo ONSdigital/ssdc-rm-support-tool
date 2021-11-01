@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.ssdc.common.model.entity.Case;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.InvalidCaseDTO;
@@ -62,9 +61,6 @@ public class CaseService {
   }
 
   public void buildAndSendRefusalEvent(Refusal refusal, Case caze, String userEmail) {
-    CollectionCase collectionCase = new CollectionCase();
-    collectionCase.setCaseId(caze.getId());
-
     RefusalDTO refusalDTO = new RefusalDTO();
     refusalDTO.setCaseId(caze.getId());
     refusalDTO.setType(refusal.getType());
