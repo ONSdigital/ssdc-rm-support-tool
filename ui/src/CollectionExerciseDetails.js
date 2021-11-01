@@ -572,8 +572,8 @@ class CollectionExerciseDetails extends Component {
         {/*{this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (*/}
           <>
             <div style={{ marginTop: 20 }}>
-              {/*<Link to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}>Bulk Uploads</Link>*/}
-              <Link to={`/bulkUploads`}>Bulk Uploads</Link>
+              <Link to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}>Bulk Uploads</Link>
+              {/*<Link to={`/bulkUploads`}>Bulk Uploads</Link>*/}
             </div>
           </>
         {/*)}*/}

@@ -84,7 +84,9 @@ function QueryRouting() {
         <MyGroupUserAdmin groupId={query.get("groupId")} />
       </Route>
       <Route path="/bulkUploads">
-        <BulkUploads />
+        <BulkUploads
+          surveyId={query.get("surveyId")}
+          collectionExerciseId={query.get("collexId")} />
       </Route>
     </Switch>
   );
