@@ -1,15 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import lombok.Data;
+import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.InSetRule;
@@ -24,6 +18,7 @@ public class JobTypeSettings {
   private Map<String, ColumnValidator[]> sampleColumnValidators;
   private Map<String, ColumnValidator[]> sensitiveColumnValidators;
   private String[] allowedSampleColumnNames;
+  private String[] allowedSensitiveColumns;
   private String topic;
   private UserGroupAuthorisedActivityType fileLoadPermission;
   private UserGroupAuthorisedActivityType fileViewProgressPersmission;
@@ -32,6 +27,10 @@ public class JobTypeSettings {
     return columnValidators;
   }
 
+  //  TODO: This can be split into  one for each.  Any Job will only need one or the other.
+  // Or we just an 'allowedColumns single validator based on sensitive param.
+  // Other option is to set up a nice pre populated Map of all the columns and their rules
+  // here? Then just access that, rather than configure on the fly, potentially 1000s of times
   public void setSampleAndSensitiveDataColumnMaps(ColumnValidator[] columnValidators) {
     sampleColumnValidators = new HashMap<>();
     sensitiveColumnValidators = new HashMap<>();
@@ -48,28 +47,39 @@ public class JobTypeSettings {
 
     allowedSampleColumnNames =
         sampleColumnValidators.keySet().toArray(new String[sampleColumnValidators.size()]);
+
+    allowedSensitiveColumns =
+        sensitiveColumnValidators.keySet().toArray(new String[sensitiveColumnValidators.size()]);
   }
 
   public ColumnValidator[] getColumnValidatorForSampleOrSensitive(
-      String fieldToUpdate, boolean sensitive) {
-    // There's 2 stages of validation here.  We'll return the actual validation rules.
-    // 1st we must validate whether or not the column actually exists. will return null if column
-    // not where expected
+      String fieldToUpdate, boolean sensitive, CollectionExercise collectionExercise) {
+
     if (sensitive) {
-      return sensitiveColumnValidators.get(fieldToUpdate);
+      return getColumnValidatorForColumnNameAndItsValidators(
+          allowedSensitiveColumns, sensitiveColumnValidators, fieldToUpdate, collectionExercise);
     } else {
-      Rule[] caseExistsRules = {new CaseExistsRule()};
-      ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
-
-      Rule[] fieldToUpdateRule = {new InSetRule(allowedSampleColumnNames)};
-      ColumnValidator fieldToUpdateValidator =
-          new ColumnValidator("fieldToUpdate", false, fieldToUpdateRule);
-
-      ColumnValidator[] validatorsForField = sampleColumnValidators.get(fieldToUpdate);
-      ColumnValidator newValueValidator =
-          new ColumnValidator("newValue", false, validatorsForField[0].getRules());
-
-      return new ColumnValidator[] {caseExistsValidator, fieldToUpdateValidator, newValueValidator};
+      return getColumnValidatorForColumnNameAndItsValidators(
+          allowedSampleColumnNames, sampleColumnValidators, fieldToUpdate, collectionExercise);
     }
+  }
+
+  private ColumnValidator[] getColumnValidatorForColumnNameAndItsValidators(
+      String[] allowedColumns,
+      Map<String, ColumnValidator[]> allValidators,
+      String fieldToUpdate,
+      CollectionExercise collectionExercise) {
+    Rule[] caseExistsRules = {new CaseExistsRule(collectionExercise)};
+    ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
+
+    Rule[] fieldToUpdateRule = {new InSetRule(allowedColumns)};
+    ColumnValidator fieldToUpdateValidator =
+        new ColumnValidator("fieldToUpdate", false, fieldToUpdateRule);
+
+    ColumnValidator[] validatorsForField = allValidators.get(fieldToUpdate);
+    ColumnValidator newValueValidator =
+        new ColumnValidator("newValue", false, validatorsForField[0].getRules());
+
+    return new ColumnValidator[] {caseExistsValidator, fieldToUpdateValidator, newValueValidator};
   }
 }

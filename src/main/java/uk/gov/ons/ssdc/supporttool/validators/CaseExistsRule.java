@@ -3,12 +3,19 @@ package uk.gov.ons.ssdc.supporttool.validators;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.context.ApplicationContext;
+import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.config.ApplicationContextProvider;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 
 public class CaseExistsRule implements Rule {
+  private final CollectionExercise collectionExercise;
   private CaseRepository caseRepository = null;
+
+  public CaseExistsRule(CollectionExercise collectionExercise) {
+
+    this.collectionExercise = collectionExercise;
+  }
 
   @Override
   public Optional<String> checkValidity(String data) {

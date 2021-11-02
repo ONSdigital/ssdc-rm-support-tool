@@ -5,6 +5,7 @@ import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectT
 import java.util.EnumSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.Job;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
@@ -17,6 +18,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalTypeDTO;
 import uk.gov.ons.ssdc.supporttool.transformer.BulkInvalidCaseTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.BulkRefusalTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.BulkUpdateSampleTransformer;
+import uk.gov.ons.ssdc.supporttool.transformer.BulkUpdateSensitiveTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.NewCaseTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
 import uk.gov.ons.ssdc.supporttool.validators.CaseExistsRule;
@@ -28,6 +30,8 @@ public class JobTypeHelper {
   private static final Transformer BULK_INVALID_TRANSFORMER = new BulkInvalidCaseTransformer();
   private static final Transformer BULK_SAMPLE_UPDATE_TRANSFORMER =
       new BulkUpdateSampleTransformer();
+  private static final Transformer BULK_SENSITIVE_UPDATE_TRANSFORMER =
+      new BulkUpdateSensitiveTransformer();
 
   @Value("${queueconfig.shared-pubsub-project}")
   private String sharedPubsubProject;
@@ -43,6 +47,9 @@ public class JobTypeHelper {
 
   @Value("${queueconfig.update-sample-topic}")
   private String updateSampleTopic;
+
+  @Value("${queueconfig.update-sample-sensitive-topic}")
+  private String updateSensitiveSampleTopic;
 
   public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey) {
     return getJobTypeSettings(jobType, survey, null);
@@ -62,7 +69,8 @@ public class JobTypeHelper {
 
       case BULK_REFUSAL:
         jobTypeSettings.setTransformer(BULK_REFUSAL_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkRefusalProcessorValidationRules());
+        jobTypeSettings.setColumnValidators(
+            getBulkRefusalProcessorValidationRules(job.getCollectionExercise()));
         jobTypeSettings.setTopic(
             toProjectTopicName(refusalEventTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
@@ -72,7 +80,8 @@ public class JobTypeHelper {
 
       case BULK_INVALID:
         jobTypeSettings.setTransformer(BULK_INVALID_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkInvalidCaseValidationRules());
+        jobTypeSettings.setColumnValidators(
+            getBulkInvalidCaseValidationRules(job.getCollectionExercise()));
         jobTypeSettings.setTopic(
             toProjectTopicName(invalidCaseTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_INVALID);
@@ -82,7 +91,7 @@ public class JobTypeHelper {
 
       case BULK_UPDATE_SAMPLE:
         jobTypeSettings.setTransformer(BULK_SAMPLE_UPDATE_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly());
+        jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly(job));
         jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules());
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString());
@@ -93,6 +102,19 @@ public class JobTypeHelper {
 
         return jobTypeSettings;
 
+      case BULK_UPDATE_SAMPLE_SENSITIVE:
+        jobTypeSettings.setTransformer(BULK_SENSITIVE_UPDATE_TRANSFORMER);
+        jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly(job));
+        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules());
+        jobTypeSettings.setTopic(
+            toProjectTopicName(updateSensitiveSampleTopic, sharedPubsubProject).toString());
+        jobTypeSettings.setFileLoadPermission(
+            UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE_SENSITIVE);
+        jobTypeSettings.setFileViewProgressPersmission(
+            UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_SENSITIVE_PROGRESS);
+
+        return jobTypeSettings;
+
       default:
         // This code should be unreachable, providing we have a case for every JobType
         throw new RuntimeException(
@@ -100,8 +122,8 @@ public class JobTypeHelper {
     }
   }
 
-  private ColumnValidator[] getBulkSampleValidçationRulesHeaderRowOnly() {
-    Rule[] caseExistsRules = {new CaseExistsRule()};
+  private ColumnValidator[] getBulkSampleValidçationRulesHeaderRowOnly(Job job) {
+    Rule[] caseExistsRules = {new CaseExistsRule(job.getCollectionExercise())};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     Rule[] fieldToUpdateRules = {new MandatoryRule()};
@@ -116,8 +138,9 @@ public class JobTypeHelper {
     };
   }
 
-  private ColumnValidator[] getBulkInvalidCaseValidationRules() {
-    Rule[] caseExistsRules = {new CaseExistsRule()};
+  private ColumnValidator[] getBulkInvalidCaseValidationRules(
+      CollectionExercise collectionExercise) {
+    Rule[] caseExistsRules = {new CaseExistsRule(collectionExercise)};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     Rule[] reasonRule = {new MandatoryRule()};
@@ -126,8 +149,9 @@ public class JobTypeHelper {
     return new ColumnValidator[] {caseExistsValidator, reasonRuleValidator};
   }
 
-  private ColumnValidator[] getBulkRefusalProcessorValidationRules() {
-    Rule[] caseExistsRules = {new CaseExistsRule()};
+  private ColumnValidator[] getBulkRefusalProcessorValidationRules(
+      CollectionExercise collectionExercise) {
+    Rule[] caseExistsRules = {new CaseExistsRule(collectionExercise)};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     String[] refusalTypes =
