@@ -80,9 +80,9 @@ public class JobTypeHelper {
             UserGroupAuthorisedActivityType.VIEW_BULK_INVALID_PROGRESS);
         return jobTypeSettings;
 
-      case BULK_UPDATE_SAMPLE_SENSITIVE:
+      case BULK_UPDATE_SAMPLE:
         jobTypeSettings.setTransformer(BULK_SAMPLE_UPDATE_TRANSFORMER);
-        // These are all the sample validation rules for survey, will need to be clever in use.
+        jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly());
         jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules());
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString());
@@ -91,11 +91,29 @@ public class JobTypeHelper {
         jobTypeSettings.setFileViewProgressPersmission(
             UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_PROGRESS);
 
+        return jobTypeSettings;
+
       default:
         // This code should be unreachable, providing we have a case for every JobType
         throw new RuntimeException(
             String.format("In getJobTypeSettings the jobType %s wasn't matched", jobType));
     }
+  }
+
+  private ColumnValidator[] getBulkSampleValidçationRulesHeaderRowOnly() {
+    Rule[] caseExistsRules = {new CaseExistsRule()};
+    ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
+
+    Rule[] fieldToUpdateRules = {new MandatoryRule()};
+    ColumnValidator fieldToUpdateRuleValidator =
+        new ColumnValidator("fieldToUpdate", false, fieldToUpdateRules);
+
+    Rule[] newValueRule = {new MandatoryRule()};
+    ColumnValidator newValueRuleValidator = new ColumnValidator("newValue", false, newValueRule);
+
+    return new ColumnValidator[] {
+      caseExistsValidator, fieldToUpdateRuleValidator, newValueRuleValidator
+    };
   }
 
   private ColumnValidator[] getBulkInvalidCaseValidationRules() {

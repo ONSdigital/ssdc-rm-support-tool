@@ -1,18 +1,29 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import lombok.Data;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
+import uk.gov.ons.ssdc.common.validation.InSetRule;
+import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
+import uk.gov.ons.ssdc.supporttool.validators.CaseExistsRule;
 
 @Data
 public class JobTypeSettings {
   private Transformer transformer;
   private ColumnValidator[] columnValidators;
   private Map<String, ColumnValidator[]> sampleColumnValidators;
-  private Map<String, ColumnValidator[]> sensitiveeColumnValidators;
+  private Map<String, ColumnValidator[]> sensitiveColumnValidators;
+  private String[] allowedSampleColumnNames;
   private String topic;
   private UserGroupAuthorisedActivityType fileLoadPermission;
   private UserGroupAuthorisedActivityType fileViewProgressPersmission;
@@ -23,17 +34,20 @@ public class JobTypeSettings {
 
   public void setSampleAndSensitiveDataColumnMaps(ColumnValidator[] columnValidators) {
     sampleColumnValidators = new HashMap<>();
-    sensitiveeColumnValidators = new HashMap<>();
+    sensitiveColumnValidators = new HashMap<>();
 
     for (ColumnValidator columnValidator : columnValidators) {
       if (columnValidator.isSensitive()) {
-        sensitiveeColumnValidators.put(
+        sensitiveColumnValidators.put(
             columnValidator.getColumnName(), new ColumnValidator[] {columnValidator});
       } else {
         sampleColumnValidators.put(
             columnValidator.getColumnName(), new ColumnValidator[] {columnValidator});
       }
     }
+
+    allowedSampleColumnNames =
+        sampleColumnValidators.keySet().toArray(new String[sampleColumnValidators.size()]);
   }
 
   public ColumnValidator[] getColumnValidatorForSampleOrSensitive(
@@ -42,9 +56,20 @@ public class JobTypeSettings {
     // 1st we must validate whether or not the column actually exists. will return null if column
     // not where expected
     if (sensitive) {
-      return sensitiveeColumnValidators.get(fieldToUpdate);
+      return sensitiveColumnValidators.get(fieldToUpdate);
     } else {
-      return sampleColumnValidators.get(fieldToUpdate);
+      Rule[] caseExistsRules = {new CaseExistsRule()};
+      ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
+
+      Rule[] fieldToUpdateRule = {new InSetRule(allowedSampleColumnNames)};
+      ColumnValidator fieldToUpdateValidator =
+          new ColumnValidator("fieldToUpdate", false, fieldToUpdateRule);
+
+      ColumnValidator[] validatorsForField = sampleColumnValidators.get(fieldToUpdate);
+      ColumnValidator newValueValidator =
+          new ColumnValidator("newValue", false, validatorsForField[0].getRules());
+
+      return new ColumnValidator[] {caseExistsValidator, fieldToUpdateValidator, newValueValidator};
     }
   }
 }
