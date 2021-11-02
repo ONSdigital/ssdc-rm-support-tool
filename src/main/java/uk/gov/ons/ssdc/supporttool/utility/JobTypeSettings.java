@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Data;
+import uk.gov.ons.ssdc.common.model.entity.JobType;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.InSetRule;
@@ -14,6 +15,7 @@ import uk.gov.ons.ssdc.supporttool.validators.CaseExistsRule;
 
 @Data
 public class JobTypeSettings {
+  private final JobType jobType;
   private Transformer transformer;
   private ColumnValidator[] columnValidators;
   private String topic;
@@ -22,14 +24,20 @@ public class JobTypeSettings {
 
   private Map<String, ColumnValidator[]> sampleOrSensitiveValidationsMap;
 
+  public JobTypeSettings(JobType jobType) {
+    this.jobType = jobType;
+  }
 
   public ColumnValidator[] getColumnValidators() {
     return columnValidators;
   }
 
-  public void setSampleAndSensitiveDataColumnMaps(ColumnValidator[] columnValidators, boolean jobSensitive) {
+  public void setSampleAndSensitiveDataColumnMaps(ColumnValidator[] columnValidators) {
+    // decide which column types we want based on jobType
+    boolean jobSensitive = jobType == JobType.BULK_UPDATE_SAMPLE_SENSITIVE;
+
     sampleOrSensitiveValidationsMap = new HashMap<>();
-    String[] allValidateColumns = Arrays.stream(columnValidators)
+    String[] allValidColumns = Arrays.stream(columnValidators)
             .filter(columnValidator -> columnValidator.isSensitive() == jobSensitive)
             .map(ColumnValidator::getColumnName)
             .toArray(String[]::new);
@@ -37,7 +45,7 @@ public class JobTypeSettings {
     for (ColumnValidator columnValidator : columnValidators) {
       if(jobSensitive == columnValidator.isSensitive()) {
         sampleOrSensitiveValidationsMap.put(columnValidator.getColumnName(),
-                createColumnValidation(allValidateColumns, columnValidator.getRules()));
+                createColumnValidation(allValidColumns, columnValidator.getRules()));
       }
     }
   }
