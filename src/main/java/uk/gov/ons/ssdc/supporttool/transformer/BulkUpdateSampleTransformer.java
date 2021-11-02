@@ -1,5 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.transformer;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import uk.gov.ons.ssdc.common.model.entity.Job;
@@ -20,7 +21,10 @@ public class BulkUpdateSampleTransformer implements Transformer {
 
     UpdateSample updateSample = new UpdateSample();
     updateSample.setCaseId(UUID.fromString(rowData.get("caseId")));
-    //    updateSample.setSample(rowData.get("sample")));
+
+    Map<String, String> sampleUpdateMap = new HashMap<>();
+    sampleUpdateMap.put(jobRow.getRowData().get("fieldToUpdate"), jobRow.getRowData().get("newValue"));
+    updateSample.setSample(sampleUpdateMap);
 
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setUpdateSample(updateSample);
