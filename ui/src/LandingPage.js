@@ -453,11 +453,9 @@ class LandingPage extends Component {
   };
 
   onNewTemplateMetadataChange = (event) => {
-    const resetValidation = !event.target.value.trim();
-
     this.setState({
       newTemplateMetadata: event.target.value,
-      newTemplateMetadataValidationError: resetValidation,
+      newTemplateMetadataValidationError: false,
     });
   };
 
