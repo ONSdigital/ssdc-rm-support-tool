@@ -13,15 +13,13 @@ public class CaseExistsRule implements Rule {
   private CaseRepository caseRepository = null;
 
   public CaseExistsRule(CollectionExercise collectionExercise) {
-
     this.collectionExercise = collectionExercise;
   }
 
   @Override
   public Optional<String> checkValidity(String data) {
-    try {
-      getCaseRepository().existsById(UUID.fromString(data));
-    } catch (Exception e) {
+
+    if(getCaseRepository().existsById(UUID.fromString(data))) {
       return Optional.of(String.format("Case Id %s not recognised", data));
     }
 

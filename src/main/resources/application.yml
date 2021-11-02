@@ -90,7 +90,6 @@ queueconfig:
   update-sample-sensitive-topic: event_update-sample-sensitive
   survey-update-event-topic: event_survey-update
   collection-exercise-update-event-topic: event_collection-exercise-update
-  update-sample-topic: event_update-sample
   publishtimeout: 30  # In seconds
   shared-pubsub-project: shared-project
 
