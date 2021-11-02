@@ -9,17 +9,12 @@ import uk.gov.ons.ssdc.supporttool.config.ApplicationContextProvider;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 
 public class CaseExistsRule implements Rule {
-  private final CollectionExercise collectionExercise;
   private CaseRepository caseRepository = null;
-
-  public CaseExistsRule(CollectionExercise collectionExercise) {
-    this.collectionExercise = collectionExercise;
-  }
 
   @Override
   public Optional<String> checkValidity(String data) {
 
-    if(getCaseRepository().existsById(UUID.fromString(data))) {
+    if (!getCaseRepository().existsById(UUID.fromString(data))) {
       return Optional.of(String.format("Case Id %s not recognised", data));
     }
 

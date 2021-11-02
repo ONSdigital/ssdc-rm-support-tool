@@ -69,7 +69,7 @@ public class JobTypeSettings {
       Map<String, ColumnValidator[]> allValidators,
       String fieldToUpdate,
       CollectionExercise collectionExercise) {
-    Rule[] caseExistsRules = {new CaseExistsRule(collectionExercise)};
+    Rule[] caseExistsRules = {new CaseExistsRule()};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     Rule[] fieldToUpdateRule = {new InSetRule(allowedColumns)};
