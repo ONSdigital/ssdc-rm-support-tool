@@ -11,6 +11,7 @@ public class PayloadDTO {
   private RefusalDTO refusal;
   private InvalidCaseDTO invalidCase;
   private PrintFulfilmentDTO printFulfilment;
+  private UpdateSample updateSample;
   private UpdateSampleSensitive updateSampleSensitive;
   private NewCase newCase;
   private SurveyUpdateDto surveyUpdate;

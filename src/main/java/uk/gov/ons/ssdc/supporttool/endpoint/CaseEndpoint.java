@@ -21,6 +21,7 @@ import uk.gov.ons.ssdc.common.model.entity.UacQidLink;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.client.NotifyServiceClient;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSample;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestHeaderDTO;
@@ -127,7 +128,7 @@ public class CaseEndpoint {
         UserGroupAuthorisedActivityType.UPDATE_SAMPLE_SENSITIVE);
 
     List<String> validationErrors =
-        validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive());
+        validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive(), true);
 
     if (validationErrors.size() > 0) {
       String validationErrorStr = String.join(", ", validationErrors);
@@ -141,15 +142,42 @@ public class CaseEndpoint {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @PostMapping("{caseId}/action/updateSampleField")
+  public ResponseEntity<?> updateSampleField(
+      @PathVariable(value = "caseId") UUID caseId,
+      @RequestBody UpdateSample updateSample,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    Case caze = caseService.getCaseByCaseId(caseId);
+
+    userIdentity.checkUserPermission(
+        userEmail,
+        caze.getCollectionExercise().getSurvey(),
+        UserGroupAuthorisedActivityType.UPDATE_SAMPLE);
+
+    List<String> validationErrors = validateFieldToUpdate(caze, updateSample.getSample(), false);
+
+    if (validationErrors.size() > 0) {
+      String validationErrorStr = String.join(", ", validationErrors);
+      Map<String, String> body = Map.of("errors", validationErrorStr);
+
+      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    caseService.buildAndSendUpdateSampleEvent(updateSample, userEmail);
+
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   private List<String> validateFieldToUpdate(
-      Case caze, Map<String, String> fieldAndValueToValidate) {
+      Case caze, Map<String, String> fieldAndValueToValidate, boolean sensitiveData) {
     ColumnValidator[] columnValidators =
         caze.getCollectionExercise().getSurvey().getSampleValidationRules();
     List<String> allValidationErrors = new LinkedList<>();
 
     for (var dataToValidate : fieldAndValueToValidate.entrySet()) {
 
-      if (dataToValidate.getValue().length() == 0) {
+      if (dataToValidate.getValue().length() == 0 && sensitiveData) {
         // Blanking out the sensitive PII data is allowed, for GDPR reasons
         continue;
       }

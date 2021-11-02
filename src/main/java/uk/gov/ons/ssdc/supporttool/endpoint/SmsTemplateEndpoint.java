@@ -42,6 +42,8 @@ public class SmsTemplateEndpoint {
               smsTemplateDto.setTemplate(smsTemplate.getTemplate());
               smsTemplateDto.setPackCode(smsTemplate.getPackCode());
               smsTemplateDto.setNotifyTemplateId(smsTemplate.getNotifyTemplateId());
+              smsTemplateDto.setDescription(smsTemplate.getDescription());
+              smsTemplateDto.setMetadata(smsTemplate.getMetadata());
               return smsTemplateDto;
             })
         .collect(Collectors.toList());
@@ -67,6 +69,8 @@ public class SmsTemplateEndpoint {
     smsTemplate.setTemplate(smsTemplateDto.getTemplate());
     smsTemplate.setPackCode(smsTemplateDto.getPackCode());
     smsTemplate.setNotifyTemplateId(smsTemplateDto.getNotifyTemplateId());
+    smsTemplate.setDescription(smsTemplateDto.getDescription());
+    smsTemplate.setMetadata(smsTemplateDto.getMetadata());
 
     smsTemplateRepository.saveAndFlush(smsTemplate);
 

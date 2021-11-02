@@ -86,6 +86,7 @@ queueconfig:
   deactivate-uac-topic: event_deactivate-uac
   refusal-event-topic: event_refusal
   invalid-case-event-topic: event_invalid-case
+  update-sample-topic: event_update-sample
   update-sample-sensitive-topic: event_update-sample-sensitive
   survey-update-event-topic: event_survey-update
   collection-exercise-update-event-topic: event_collection-exercise-update
