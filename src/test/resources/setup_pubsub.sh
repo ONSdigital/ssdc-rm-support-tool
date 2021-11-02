@@ -18,6 +18,9 @@ curl -X PUT http://$PUBSUB_SETUP_HOST/v1/projects/shared-project/subscriptions/e
 curl -X PUT http://$PUBSUB_SETUP_HOST/v1/projects/shared-project/topics/event_update-sample-sensitive
 curl -X PUT http://$PUBSUB_SETUP_HOST/v1/projects/shared-project/subscriptions/event_update-sample-sensitive_rm-case-processor -H 'Content-Type: application/json' -d '{"topic": "projects/shared-project/topics/event_update-sample-sensitive"}'
 
+curl -X PUT http://$PUBSUB_SETUP_HOST/v1/projects/shared-project/topics/event_update-sample
+curl -X PUT http://$PUBSUB_SETUP_HOST/v1/projects/shared-project/subscriptions/event_update-sample_rm-case-processor -H 'Content-Type: application/json' -d '{"topic": "projects/shared-project/topics/event_update-sample"}'
+
 curl -X PUT http://$PUBSUB_SETUP_HOST/v1/projects/shared-project/topics/event_survey-update
 curl -X PUT http://$PUBSUB_SETUP_HOST/v1/projects/shared-project/subscriptions/event_survey-update_rh -H 'Content-Type: application/json' -d '{"topic": "projects/shared-project/topics/event_survey-update"}'
 

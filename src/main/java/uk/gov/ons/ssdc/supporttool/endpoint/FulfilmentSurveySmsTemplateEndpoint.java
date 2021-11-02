@@ -26,6 +26,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveySmsTemplateR
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 
 @RestController
 @RequestMapping(value = "/api/fulfilmentSurveySmsTemplates")
@@ -34,16 +35,19 @@ public class FulfilmentSurveySmsTemplateEndpoint {
   private final SurveyRepository surveyRepository;
   private final SmsTemplateRepository smsTemplateRepository;
   private final UserIdentity userIdentity;
+  private final SurveyService surveyService;
 
   public FulfilmentSurveySmsTemplateEndpoint(
       FulfilmentSurveySmsTemplateRepository fulfilmentSurveySmsTemplateRepository,
       SurveyRepository surveyRepository,
       SmsTemplateRepository smsTemplateRepository,
-      UserIdentity userIdentity) {
+      UserIdentity userIdentity,
+      SurveyService surveyService) {
     this.fulfilmentSurveySmsTemplateRepository = fulfilmentSurveySmsTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.smsTemplateRepository = smsTemplateRepository;
     this.userIdentity = userIdentity;
+    this.surveyService = surveyService;
   }
 
   @GetMapping
@@ -98,7 +102,10 @@ public class FulfilmentSurveySmsTemplateEndpoint {
     fulfilmentSurveySmsTemplate.setSurvey(survey);
     fulfilmentSurveySmsTemplate.setSmsTemplate(smsTemplate);
 
-    fulfilmentSurveySmsTemplateRepository.save(fulfilmentSurveySmsTemplate);
+    fulfilmentSurveySmsTemplate =
+        fulfilmentSurveySmsTemplateRepository.saveAndFlush(fulfilmentSurveySmsTemplate);
+
+    surveyService.publishSurveyUpdate(fulfilmentSurveySmsTemplate.getSurvey(), userEmail);
 
     return new ResponseEntity<>("OK", HttpStatus.CREATED);
   }
