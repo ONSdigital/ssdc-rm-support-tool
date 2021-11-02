@@ -43,7 +43,6 @@ class BulkUploads extends Component {
 
   getAuthorisedBackendData = async () => {
     await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-
   };
 
   getAuthorisedActivities = async () => {
@@ -80,51 +79,51 @@ class BulkUploads extends Component {
 
     // Send the file data to the backend
     axios
-        .request({
-          method: "post",
-          url: "/api/upload",
-          data: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (p) => {
-            console.log(p);
+      .request({
+        method: "post",
+        url: "/api/upload",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (p) => {
+          console.log(p);
 
-            // Update file upload progress
-            this.setState({
-              fileProgress: p.loaded / p.total,
-            });
-          },
-        })
-        .then((data) => {
-          // send the job details
-          const fileId = data.data;
-          const jobData = new FormData();
-          jobData.append("fileId", fileId);
-          jobData.append("fileName", fileName);
-          jobData.append("collectionExerciseId", this.props.collectionExerciseId);
-          // TODO: Temp hardcoded to BULK_REFUSAL
-          jobData.append("jobType", "BULK_REFUSAL");
-
-          const response = fetch(`/api/job`, {
-            method: "POST",
-            body: jobData,
-          });
-
-          if (!response.ok) {
-            // TODO - nice error handling
-            // If we check it, it's is currently buggy and leaves the popup on the screen for unknown reasons - need to raise a defect
-          }
-
-          // Hide the progress dialog and flash the snackbar message
+          // Update file upload progress
           this.setState({
-            fileProgress: 1.0,
-            fileUploadSuccess: true,
-            uploadInProgress: false,
+            fileProgress: p.loaded / p.total,
           });
+        },
+      })
+      .then((data) => {
+        // send the job details
+        const fileId = data.data;
+        const jobData = new FormData();
+        jobData.append("fileId", fileId);
+        jobData.append("fileName", fileName);
+        jobData.append("collectionExerciseId", this.props.collectionExerciseId);
+        // TODO: Temp hardcoded to BULK_REFUSAL
+        jobData.append("jobType", "BULK_REFUSAL");
 
-          this.getJobs();
+        const response = fetch(`/api/job`, {
+          method: "POST",
+          body: jobData,
         });
+
+        if (!response.ok) {
+          // TODO - nice error handling
+          // If we check it, it's is currently buggy and leaves the popup on the screen for unknown reasons - need to raise a defect
+        }
+
+        // Hide the progress dialog and flash the snackbar message
+        this.setState({
+          fileProgress: 1.0,
+          fileUploadSuccess: true,
+          uploadInProgress: false,
+        });
+
+        this.getJobs();
+      });
   };
 
   handleClose = (event, reason) => {
@@ -141,7 +140,7 @@ class BulkUploads extends Component {
   getJobs = async () => {
     // TODO: Job Type Temp hardcoded to BULD_REFUSAL
     const response = await fetch(
-        `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=BULK_REFUSAL`
+      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=BULK_REFUSAL`
     );
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
@@ -176,120 +175,120 @@ class BulkUploads extends Component {
 
   render() {
     const selectedJob = this.state.jobs.find(
-        (job) => job.id === this.state.selectedJob
+      (job) => job.id === this.state.selectedJob
     );
 
     const jobTableRows = this.state.jobs.map((job, index) => (
-        <TableRow key={job.createdAt}>
-          <TableCell component="th" scope="row">
-            {job.fileName}
-          </TableCell>
-          <TableCell>{job.createdAt}</TableCell>
-          <TableCell>{job.jobType}</TableCell>
-          <TableCell align="right">
-            <Button
-                onClick={() => this.handleOpenDetails(job)}
-                variant="contained"
-            >
-              {convertStatusText(job.jobStatus)}{" "}
-              {[
-                "STAGING_IN_PROGRESS",
-                "VALIDATION_IN_PROGRESS",
-                "PROCESSING_IN_PROGRESS",
-              ].includes(job.jobStatus) && (
-                  <CircularProgress size={15} style={{ marginLeft: 10 }} />
-              )}
-            </Button>
-          </TableCell>
-        </TableRow>
+      <TableRow key={job.createdAt}>
+        <TableCell component="th" scope="row">
+          {job.fileName}
+        </TableCell>
+        <TableCell>{job.createdAt}</TableCell>
+        <TableCell>{job.jobType}</TableCell>
+        <TableCell align="right">
+          <Button
+            onClick={() => this.handleOpenDetails(job)}
+            variant="contained"
+          >
+            {convertStatusText(job.jobStatus)}{" "}
+            {[
+              "STAGING_IN_PROGRESS",
+              "VALIDATION_IN_PROGRESS",
+              "PROCESSING_IN_PROGRESS",
+            ].includes(job.jobStatus) && (
+              <CircularProgress size={15} style={{ marginLeft: 10 }} />
+            )}
+          </Button>
+        </TableCell>
+      </TableRow>
     ));
 
     return (
-        <div style={{ padding: 20 }}>
-          {this.state.authorisedActivities.includes(
-              "VIEW_BULK_REFUSAL_PROGRESS"
-          ) && (
-              <>
-                <Typography variant="h4" color="inherit" style={{ marginTop: 20 }}>
-                  Uploaded Bulk Process Files
-                </Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>File Name</TableCell>
-                        <TableCell>Date Uploaded</TableCell>
-                        <TableCell>Job Type</TableCell>
-                        <TableCell align="right">Status</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>{jobTableRows}</TableBody>
-                  </Table>
-                </TableContainer>
-              </>
-          )}
-          {this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (
-              <>
-                <input
-                    accept=".csv"
-                    style={{ display: "none" }}
-                    id="contained-button-file"
-                    type="file"
-                    onChange={(e) => {
-                      this.handleUpload(e);
-                    }}
-                />
-                <label htmlFor="contained-button-file">
-                  <Button
-                      variant="contained"
-                      component="span"
-                      style={{ marginTop: 10 }}
-                  >
-                    Upload Bulk Processing File
-                  </Button>
-                </label>
-              </>
-          )}
-          <Dialog open={this.state.uploadInProgress}>
-            <DialogContent style={{ padding: 30 }}>
-              <Typography variant="h6" color="inherit">
-                Uploading file...
-              </Typography>
-              <LinearProgress
-                  variant="determinate"
-                  value={this.state.fileProgress * 100}
-                  style={{ marginTop: 20, marginBottom: 20, width: 400 }}
-              />
-              <Typography variant="h6" color="inherit">
-                {Math.round(this.state.fileProgress * 100)}%
-              </Typography>
-            </DialogContent>
-          </Dialog>
-          <Snackbar
-              open={this.state.fileUploadSuccess}
-              autoHideDuration={6000}
-              onClose={this.handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
+      <div style={{ padding: 20 }}>
+        {this.state.authorisedActivities.includes(
+          "VIEW_BULK_REFUSAL_PROGRESS"
+        ) && (
+          <>
+            <Typography variant="h4" color="inherit" style={{ marginTop: 20 }}>
+              Uploaded Bulk Process Files
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>File Name</TableCell>
+                    <TableCell>Date Uploaded</TableCell>
+                    <TableCell>Job Type</TableCell>
+                    <TableCell align="right">Status</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{jobTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
+        {this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (
+          <>
+            <input
+              accept=".csv"
+              style={{ display: "none" }}
+              id="contained-button-file"
+              type="file"
+              onChange={(e) => {
+                this.handleUpload(e);
               }}
-          >
-            <SnackbarContent
-                style={{ backgroundColor: "#4caf50" }}
-                message={"File upload successful!"}
             />
-          </Snackbar>
-          <JobDetails
-              jobTitle={"Bulk Refusal"}
-              job={selectedJob}
-              showDetails={this.state.showDetails}
-              handleClosedDetails={this.handleClosedDetails}
-              onClickAway={this.handleClosedDetails}
-              onProcessJob={this.onProcessJob}
-              onCancelJob={this.onCancelJob}
-              authorisedActivities={this.state.authorisedActivities}
-          ></JobDetails>
-        </div>
+            <label htmlFor="contained-button-file">
+              <Button
+                variant="contained"
+                component="span"
+                style={{ marginTop: 10 }}
+              >
+                Upload Bulk Processing File
+              </Button>
+            </label>
+          </>
+        )}
+        <Dialog open={this.state.uploadInProgress}>
+          <DialogContent style={{ padding: 30 }}>
+            <Typography variant="h6" color="inherit">
+              Uploading file...
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={this.state.fileProgress * 100}
+              style={{ marginTop: 20, marginBottom: 20, width: 400 }}
+            />
+            <Typography variant="h6" color="inherit">
+              {Math.round(this.state.fileProgress * 100)}%
+            </Typography>
+          </DialogContent>
+        </Dialog>
+        <Snackbar
+          open={this.state.fileUploadSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          <SnackbarContent
+            style={{ backgroundColor: "#4caf50" }}
+            message={"File upload successful!"}
+          />
+        </Snackbar>
+        <JobDetails
+          jobTitle={"Bulk Refusal"}
+          job={selectedJob}
+          showDetails={this.state.showDetails}
+          handleClosedDetails={this.handleClosedDetails}
+          onClickAway={this.handleClosedDetails}
+          onProcessJob={this.onProcessJob}
+          onCancelJob={this.onCancelJob}
+          authorisedActivities={this.state.authorisedActivities}
+        ></JobDetails>
+      </div>
     );
   }
 }

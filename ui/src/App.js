@@ -86,7 +86,8 @@ function QueryRouting() {
       <Route path="/bulkUploads">
         <BulkUploads
           surveyId={query.get("surveyId")}
-          collectionExerciseId={query.get("collexId")} />
+          collectionExerciseId={query.get("collexId")}
+        />
       </Route>
     </Switch>
   );

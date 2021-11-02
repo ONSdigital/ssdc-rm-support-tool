@@ -569,10 +569,17 @@ class CollectionExerciseDetails extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        {(this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") || this.state.authorisedActivities.includes("VIEW_BULK_REFUSAL_PROGRESS")) && (
+        {(this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") ||
+          this.state.authorisedActivities.includes(
+            "VIEW_BULK_REFUSAL_PROGRESS"
+          )) && (
           <>
             <div style={{ marginTop: 20 }}>
-              <Link to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}>Bulk Uploads</Link>
+              <Link
+                to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}
+              >
+                Bulk Uploads
+              </Link>
             </div>
           </>
         )}

@@ -219,10 +219,10 @@ class JobDetails extends Component {
         "CANCELLED",
       ].includes(this.props.job.jobStatus) &&
       this.props.job.rowErrorCount > 0 &&
-        ((["SAMPLE"].includes(this.props.job.jobType) &&
-                this.props.authorisedActivities.includes("LOAD_SAMPLE")) ||
-            (["BULK_REFUSAL"].includes(this.props.job.jobType) &&
-                this.props.authorisedActivities.includes("LOAD_BULK_REFUSAL")))
+      ((["SAMPLE"].includes(this.props.job.jobType) &&
+        this.props.authorisedActivities.includes("LOAD_SAMPLE")) ||
+        (["BULK_REFUSAL"].includes(this.props.job.jobType) &&
+          this.props.authorisedActivities.includes("LOAD_BULK_REFUSAL")))
     ) {
       buttonFragment = (
         <Grid container spacing={1}>
@@ -257,10 +257,13 @@ class JobDetails extends Component {
           <Grid container spacing={1}>
             {jobDetailsFragment}
             {buttonFragment}
-            {this.props.job && ((["SAMPLE"].includes(this.props.job.jobType) &&
-              this.props.authorisedActivities.includes("LOAD_SAMPLE")) ||
-            (["BULK_REFUSAL"].includes(this.props.job.jobType) &&
-              this.props.authorisedActivities.includes("LOAD_BULK_REFUSAL"))) &&
+            {this.props.job &&
+              ((["SAMPLE"].includes(this.props.job.jobType) &&
+                this.props.authorisedActivities.includes("LOAD_SAMPLE")) ||
+                (["BULK_REFUSAL"].includes(this.props.job.jobType) &&
+                  this.props.authorisedActivities.includes(
+                    "LOAD_BULK_REFUSAL"
+                  ))) &&
               ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
                 this.props.job.jobStatus
               ) && (

@@ -85,7 +85,7 @@ public class JobEndpoint {
     checkUserViewProgressPermissionByJobType(userEmail, collx.getSurvey(), jobType);
 
     return jobRepository.findByCollectionExerciseAndJobTypeOrderByCreatedAtDesc(collx, jobType)
-        .stream() // TODO: Update the tests for this
+        .stream()
         .map(this::mapJob)
         .collect(Collectors.toList());
   }
