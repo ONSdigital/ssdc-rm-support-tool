@@ -26,6 +26,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository
 import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveyExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 
 @RestController
 @RequestMapping(value = "/api/fulfilmentSurveyExportFileTemplates")
@@ -35,17 +36,20 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
   private final SurveyRepository surveyRepository;
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final UserIdentity userIdentity;
+  private final SurveyService surveyService;
 
   public FulfilmentSurveyExportFileTemplateEndpoint(
       FulfilmentSurveyExportFileTemplateRepository fulfilmentSurveyExportFileTemplateRepository,
       SurveyRepository surveyRepository,
       ExportFileTemplateRepository exportFileTemplateRepository,
-      UserIdentity userIdentity) {
+      UserIdentity userIdentity,
+      SurveyService surveyService) {
     this.fulfilmentSurveyExportFileTemplateRepository =
         fulfilmentSurveyExportFileTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.userIdentity = userIdentity;
+    this.surveyService = surveyService;
   }
 
   @GetMapping
@@ -103,7 +107,11 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
     fulfilmentSurveyExportFileTemplate.setSurvey(survey);
     fulfilmentSurveyExportFileTemplate.setExportFileTemplate(exportFileTemplate);
 
-    fulfilmentSurveyExportFileTemplateRepository.save(fulfilmentSurveyExportFileTemplate);
+    fulfilmentSurveyExportFileTemplate =
+        fulfilmentSurveyExportFileTemplateRepository.saveAndFlush(
+            fulfilmentSurveyExportFileTemplate);
+
+    surveyService.publishSurveyUpdate(fulfilmentSurveyExportFileTemplate.getSurvey(), userEmail);
 
     return new ResponseEntity<>("OK", HttpStatus.CREATED);
   }

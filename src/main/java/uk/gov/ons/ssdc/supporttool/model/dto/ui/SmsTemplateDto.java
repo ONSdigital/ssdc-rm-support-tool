@@ -8,4 +8,6 @@ public class SmsTemplateDto {
   private String packCode;
   private String[] template;
   private UUID notifyTemplateId;
+  private String description;
+  private Object metadata;
 }

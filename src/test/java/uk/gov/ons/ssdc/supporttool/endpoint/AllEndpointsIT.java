@@ -279,6 +279,8 @@ class AllEndpointsIT {
           exportFileTemplateDto.setTemplate(new String[] {"foo"});
           exportFileTemplateDto.setExportFileDestination("SUPPLIER_A");
           exportFileTemplateDto.setPackCode("TEST_" + UUID.randomUUID());
+          exportFileTemplateDto.setDescription("Test description");
+          exportFileTemplateDto.setMetadata(Map.of("foo", "bar"));
           return exportFileTemplateDto;
         });
   }
@@ -297,6 +299,8 @@ class AllEndpointsIT {
           smsTemplateDto.setTemplate(new String[] {"foo"});
           smsTemplateDto.setNotifyTemplateId(UUID.randomUUID());
           smsTemplateDto.setPackCode("TEST_" + UUID.randomUUID());
+          smsTemplateDto.setDescription("Test description");
+          smsTemplateDto.setMetadata(Map.of("foo", "bar"));
           return smsTemplateDto;
         });
   }
