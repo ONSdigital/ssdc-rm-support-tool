@@ -90,7 +90,7 @@ public class JobTypeHelper {
       case BULK_UPDATE_SAMPLE:
         jobTypeSettings.setTransformer(BULK_SAMPLE_UPDATE_TRANSFORMER);
         jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly());
-        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules());
+        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules(), false);
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(
@@ -103,7 +103,7 @@ public class JobTypeHelper {
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         jobTypeSettings.setTransformer(BULK_SENSITIVE_UPDATE_TRANSFORMER);
         jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly());
-        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules());
+        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules(), true);
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSensitiveSampleTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(

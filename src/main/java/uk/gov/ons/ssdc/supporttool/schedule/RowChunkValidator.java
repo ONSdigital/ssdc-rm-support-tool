@@ -60,8 +60,7 @@ public class RowChunkValidator {
       if (getValidationRulesPerRow) {
         String fieldToUpdate = jobRow.getRowData().get("fieldToUpdate");
         columnValidators =
-            jobTypeSettings.getColumnValidatorForSampleOrSensitive(
-                fieldToUpdate, isSensitive, job.getCollectionExercise());
+            jobTypeSettings.getColumnValidatorForSampleOrSensitiveDataRows(fieldToUpdate);
 
         if (columnValidators == null) {
           rowStatus = JobRowStatus.VALIDATED_ERROR;
