@@ -42,7 +42,7 @@ class BulkUploads extends Component {
   }
 
   getAuthorisedBackendData = async () => {
-    const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
+    await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
   };
 
