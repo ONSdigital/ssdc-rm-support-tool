@@ -5,9 +5,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class CollectionCase {
+public class UpdateSample {
   private UUID caseId;
-  private boolean invalidAddress;
-  private RefusalTypeDTO refusalReceived;
   private Map<String, String> sample;
 }

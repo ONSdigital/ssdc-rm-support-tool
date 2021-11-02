@@ -16,6 +16,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Refusal from "./Refusal";
 import InvalidCase from "./InvalidCase";
 import PrintFulfilment from "./PrintFulfilment";
+import SampleData from "./SampleData";
 import SensitiveData from "./SensitiveData";
 import { Link } from "react-router-dom";
 import SmsFulfilment from "./SmsFulfilment";
@@ -228,6 +229,14 @@ class CaseDetails extends Component {
                       "CREATE_CASE_EXPORT_FILE_FULFILMENT"
                     ) && (
                       <PrintFulfilment
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                      />
+                    )}
+                    {this.state.authorisedActivities.includes(
+                      "UPDATE_SAMPLE"
+                    ) && (
+                      <SampleData
                         caseId={this.props.caseId}
                         surveyId={this.props.surveyId}
                       />

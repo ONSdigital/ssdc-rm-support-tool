@@ -8,13 +8,13 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.ssdc.common.model.entity.Case;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.InvalidCaseDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PrintFulfilmentDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalDTO;
+import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSample;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
@@ -40,6 +40,9 @@ public class CaseService {
   @Value("${queueconfig.update-sample-sensitive-topic}")
   private String updateSampleSensitiveTopic;
 
+  @Value("${queueconfig.update-sample-topic}")
+  private String updateSampleTopic;
+
   @Value("${queueconfig.shared-pubsub-project}")
   private String sharedPubsubProject;
 
@@ -58,9 +61,6 @@ public class CaseService {
   }
 
   public void buildAndSendRefusalEvent(Refusal refusal, Case caze, String userEmail) {
-    CollectionCase collectionCase = new CollectionCase();
-    collectionCase.setCaseId(caze.getId());
-
     RefusalDTO refusalDTO = new RefusalDTO();
     refusalDTO.setCaseId(caze.getId());
     refusalDTO.setType(refusal.getType());
@@ -90,6 +90,20 @@ public class CaseService {
     event.setPayload(payloadDTO);
 
     String topic = toProjectTopicName(updateSampleSensitiveTopic, sharedPubsubProject).toString();
+    pubSubTemplate.publish(topic, event);
+  }
+
+  public void buildAndSendUpdateSampleEvent(UpdateSample updateSample, String userEmail) {
+    PayloadDTO payloadDTO = new PayloadDTO();
+    payloadDTO.setUpdateSample(updateSample);
+
+    EventDTO event = new EventDTO();
+
+    EventHeaderDTO eventHeader = EventHelper.createEventDTO(updateSampleTopic, userEmail);
+    event.setHeader(eventHeader);
+    event.setPayload(payloadDTO);
+
+    String topic = toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString();
     pubSubTemplate.publish(topic, event);
   }
 
