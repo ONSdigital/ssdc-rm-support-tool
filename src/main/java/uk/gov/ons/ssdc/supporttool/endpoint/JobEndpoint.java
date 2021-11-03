@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import static uk.gov.ons.ssdc.supporttool.rasrm.constants.RasRmConstants.BUSINESS_SAMPLE_DEFINITION_URL_SUFFIX;
+
 import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.IOException;
@@ -209,7 +211,7 @@ public class JobEndpoint {
       if (job.getCollectionExercise()
           .getSurvey()
           .getSampleDefinitionUrl()
-          .endsWith("business.json")) {
+          .endsWith(BUSINESS_SAMPLE_DEFINITION_URL_SUFFIX)) {
         rasRmSampleSetupService.setupSampleSummary(
             job.getCollectionExercise(), job.getFileRowCount());
       }
