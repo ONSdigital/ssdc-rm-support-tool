@@ -10,7 +10,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 
 public class CaseExistsInCollectionExerciseRule implements Rule {
   private final CollectionExercise collectionExercise;
-  private CaseRepository caseRepository = null;
+  private static CaseRepository caseRepository = null;
 
   public CaseExistsInCollectionExerciseRule(CollectionExercise collectionExercise) {
     this.collectionExercise = collectionExercise;

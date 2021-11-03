@@ -34,7 +34,7 @@ public class JobTypeSettings {
 
   public void setSampleAndSensitiveDataColumnMaps(
       ColumnValidator[] columnValidators, CollectionExercise collectionExercise) {
-    // decide which column types we want based on jobType
+
     boolean jobSensitive = jobType == JobType.BULK_UPDATE_SAMPLE_SENSITIVE;
 
     sampleOrSensitiveValidationsMap = new HashMap<>();
