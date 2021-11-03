@@ -89,7 +89,7 @@ public class JobTypeHelper {
 
       case BULK_UPDATE_SAMPLE:
         jobTypeSettings.setTransformer(BULK_SAMPLE_UPDATE_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkSampleValidationRulesHeaderRowOnly(collectionExercise));
+        jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly(collectionExercise));
         jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules(), collectionExercise);
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString());
@@ -102,7 +102,7 @@ public class JobTypeHelper {
 
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         jobTypeSettings.setTransformer(BULK_SENSITIVE_UPDATE_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkSampleValidationRulesHeaderRowOnly(collectionExercise));
+        jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly(collectionExercise));
         jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules(), collectionExercise);
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSensitiveSampleTopic, sharedPubsubProject).toString());
@@ -120,7 +120,7 @@ public class JobTypeHelper {
     }
   }
 
-  private ColumnValidator[] getBulkSampleValidationRulesHeaderRowOnly(CollectionExercise collectionExercise) {
+  private ColumnValidator[] getBulkSampleValidçationRulesHeaderRowOnly(CollectionExercise collectionExercise) {
     Rule[] caseExistsRules = {new CaseExistsInCollectionExerciseRule(collectionExercise)};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
