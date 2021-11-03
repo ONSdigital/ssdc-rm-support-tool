@@ -60,9 +60,7 @@ public class FileStager {
       String[] headerRow = csvReader.readNext();
 
       JobTypeSettings jobTypeSettings =
-          jobTypeHelper.getJobTypeSettings(
-              job.getJobType(),
-              job.getCollectionExercise());
+          jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise());
 
       String[] expectedColumns =
           ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());

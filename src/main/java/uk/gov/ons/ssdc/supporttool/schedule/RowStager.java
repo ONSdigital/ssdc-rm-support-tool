@@ -59,9 +59,7 @@ public class RowStager {
           headerRow = csvReader.readNext();
         } else {
           JobTypeSettings jobTypeSettings =
-              jobTypeHelper.getJobTypeSettings(
-                  job.getJobType(),
-                  job.getCollectionExercise());
+              jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise());
 
           headerRow = ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());
           headerRowCorrection = 0;

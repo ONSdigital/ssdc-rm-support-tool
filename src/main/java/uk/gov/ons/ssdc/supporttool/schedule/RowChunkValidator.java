@@ -34,8 +34,7 @@ public class RowChunkValidator {
     boolean hadErrors = false;
 
     JobTypeSettings jobTypeSettings =
-        jobTypeHelper.getJobTypeSettings(
-            job.getJobType(), job.getCollectionExercise());
+        jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise());
 
     List<JobRow> jobRows =
         jobRowRepository.findTop500ByJobAndJobRowStatus(job, JobRowStatus.STAGED);
