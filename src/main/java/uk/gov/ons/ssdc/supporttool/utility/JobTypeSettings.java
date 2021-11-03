@@ -20,7 +20,7 @@ public class JobTypeSettings {
   private ColumnValidator[] columnValidators;
   private String topic;
   private UserGroupAuthorisedActivityType fileLoadPermission;
-  private UserGroupAuthorisedActivityType fileViewProgressPersmission;
+  private UserGroupAuthorisedActivityType fileViewProgressPermission;
 
   private Map<String, ColumnValidator[]> sampleOrSensitiveValidationsMap;
 
