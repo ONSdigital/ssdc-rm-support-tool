@@ -258,7 +258,7 @@ class JobDetails extends Component {
             {jobDetailsFragment}
             {buttonFragment}
             {this.props.job &&
-              ((["SAMPLE"].includes(this.props.job.jobType) &&
+              (this.props.job.jobType === "SAMPLE" &&
                 this.props.authorisedActivities.includes("LOAD_SAMPLE")) ||
                 (["BULK_REFUSAL"].includes(this.props.job.jobType) &&
                   this.props.authorisedActivities.includes(
