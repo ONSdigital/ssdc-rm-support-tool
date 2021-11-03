@@ -129,7 +129,6 @@ public class JobEndpoint {
       JobTypeSettings jobTypeSettings =
           jobTypeHelper.getJobTypeSettings(
               job.getJobType(),
-              job.getCollectionExercise().getSurvey(),
               job.getCollectionExercise());
       csvWriter.writeNext(ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators()));
 
@@ -278,7 +277,7 @@ public class JobEndpoint {
       String userEmail, CollectionExercise collectionExercise, JobType jobType) {
     JobTypeSettings jobTypeSettings =
         jobTypeHelper.getJobTypeSettings(
-            jobType, collectionExercise.getSurvey(), collectionExercise);
+            jobType, collectionExercise);
 
     userIdentity.checkUserPermission(
         userEmail, collectionExercise.getSurvey(), jobTypeSettings.getFileLoadPermission());
@@ -288,7 +287,7 @@ public class JobEndpoint {
       String userEmail, CollectionExercise collectionExercise, JobType jobType) {
     JobTypeSettings jobTypeSettings =
         jobTypeHelper.getJobTypeSettings(
-            jobType, collectionExercise.getSurvey(), collectionExercise);
+            jobType, collectionExercise);
 
     userIdentity.checkUserPermission(
         userEmail,

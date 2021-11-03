@@ -1,13 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.utility;
 
-import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
-
-import java.util.EnumSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
-import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.InSetRule;
@@ -21,6 +17,10 @@ import uk.gov.ons.ssdc.supporttool.transformer.BulkUpdateSensitiveTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.NewCaseTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
 import uk.gov.ons.ssdc.supporttool.validators.CaseExistsInCollectionExerciseRule;
+
+import java.util.EnumSet;
+
+import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
 
 @Component
 public class JobTypeHelper {
@@ -51,12 +51,17 @@ public class JobTypeHelper {
   private String updateSensitiveSampleTopic;
 
   public JobTypeSettings getJobTypeSettings(
-      JobType jobType, Survey survey, CollectionExercise collectionExercise) {
+      JobType jobType, CollectionExercise collectionExercise) {
+
+    if(collectionExercise == null) {
+      throw new RuntimeException("CollectionExercise is null!");
+    }
+
     JobTypeSettings jobTypeSettings = new JobTypeSettings(jobType);
     switch (jobType) {
       case SAMPLE:
         jobTypeSettings.setTransformer(SAMPLE_LOAD_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(survey.getSampleValidationRules());
+        jobTypeSettings.setColumnValidators(collectionExercise.getSurvey().getSampleValidationRules());
         jobTypeSettings.setTopic(toProjectTopicName(newCaseTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_SAMPLE);
         jobTypeSettings.setFileViewProgressPersmission(
@@ -89,7 +94,7 @@ public class JobTypeHelper {
         jobTypeSettings.setColumnValidators(
             getBulkSampleValidçationRulesHeaderRowOnly(collectionExercise));
         jobTypeSettings.setSampleAndSensitiveDataColumnMaps(
-            survey.getSampleValidationRules(), collectionExercise);
+                collectionExercise.getSurvey().getSampleValidationRules(), collectionExercise);
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(
@@ -104,7 +109,7 @@ public class JobTypeHelper {
         jobTypeSettings.setColumnValidators(
             getBulkSampleValidçationRulesHeaderRowOnly(collectionExercise));
         jobTypeSettings.setSampleAndSensitiveDataColumnMaps(
-            survey.getSampleValidationRules(), collectionExercise);
+                collectionExercise.getSurvey().getSampleValidationRules(), collectionExercise);
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSensitiveSampleTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(

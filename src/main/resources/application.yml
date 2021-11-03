@@ -65,7 +65,7 @@ management:
   health:
     pubsub:
       enabled: false
-      
+
 notifyservice:
   connection:
     scheme: http

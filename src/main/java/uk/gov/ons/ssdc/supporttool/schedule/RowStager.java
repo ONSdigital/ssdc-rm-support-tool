@@ -61,7 +61,6 @@ public class RowStager {
           JobTypeSettings jobTypeSettings =
               jobTypeHelper.getJobTypeSettings(
                   job.getJobType(),
-                  job.getCollectionExercise().getSurvey(),
                   job.getCollectionExercise());
 
           headerRow = ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());

@@ -21,7 +21,9 @@ public class CaseExistsInCollectionExerciseRule implements Rule {
 
     if (!getCaseRepository()
         .existsByIdAndCollectionExercise(UUID.fromString(data), collectionExercise)) {
-      return Optional.of(String.format("Case Id %s does not exist in collection exercise %s",
+      return Optional.of(
+          String.format(
+              "Case Id %s does not exist in collection exercise %s",
               data, collectionExercise.getName()));
     }
 
