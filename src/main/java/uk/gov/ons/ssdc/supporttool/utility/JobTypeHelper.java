@@ -91,8 +91,7 @@ public class JobTypeHelper {
 
       case BULK_UPDATE_SAMPLE:
         jobTypeSettings.setTransformer(BULK_SAMPLE_UPDATE_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(
-            getBulkSampleValidationRulesHeaderRowOnly(collectionExercise));
+        jobTypeSettings.setColumnValidators(getBulkSampleValidationRulesHeaderRowOnly());
         jobTypeSettings.setSampleAndSensitiveDataColumnMaps(
             collectionExercise.getSurvey().getSampleValidationRules(), collectionExercise);
         jobTypeSettings.setTopic(
@@ -106,8 +105,7 @@ public class JobTypeHelper {
 
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         jobTypeSettings.setTransformer(BULK_SENSITIVE_UPDATE_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(
-            getBulkSampleValidationRulesHeaderRowOnly(collectionExercise));
+        jobTypeSettings.setColumnValidators(getBulkSampleValidationRulesHeaderRowOnly());
         jobTypeSettings.setSampleAndSensitiveDataColumnMaps(
             collectionExercise.getSurvey().getSampleValidationRules(), collectionExercise);
         jobTypeSettings.setTopic(
@@ -126,20 +124,11 @@ public class JobTypeHelper {
     }
   }
 
-  private ColumnValidator[] getBulkSampleValidationRulesHeaderRowOnly(
-      CollectionExercise collectionExercise) {
-    Rule[] caseExistsRules = {new CaseExistsInCollectionExerciseRule(collectionExercise)};
-    ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
-
-    Rule[] fieldToUpdateRules = {new MandatoryRule()};
-    ColumnValidator fieldToUpdateRuleValidator =
-        new ColumnValidator("fieldToUpdate", false, fieldToUpdateRules);
-
-    Rule[] newValueRule = {new MandatoryRule()};
-    ColumnValidator newValueRuleValidator = new ColumnValidator("newValue", false, newValueRule);
-
+  private ColumnValidator[] getBulkSampleValidationRulesHeaderRowOnly() {
     return new ColumnValidator[] {
-      caseExistsValidator, fieldToUpdateRuleValidator, newValueRuleValidator
+      new ColumnValidator("caseId", false, new Rule[0]),
+      new ColumnValidator("fieldToUpdate", false, new Rule[0]),
+      new ColumnValidator("newValue", false, new Rule[0])
     };
   }
 
