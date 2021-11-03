@@ -61,8 +61,7 @@ public class RowChunkValidator {
         if (columnValidators == null) {
           rowStatus = JobRowStatus.VALIDATED_ERROR;
           rowValidationErrors.add(
-              String.format(
-                  "Bulk update fieldToUpdate Column %s does not exist", fieldToUpdate));
+              String.format("Bulk update fieldToUpdate Column %s does not exist", fieldToUpdate));
           hadErrors = true;
           columnValidators = new ColumnValidator[0];
         }
