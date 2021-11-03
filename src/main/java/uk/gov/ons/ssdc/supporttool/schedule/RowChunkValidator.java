@@ -41,13 +41,9 @@ public class RowChunkValidator {
         jobRowRepository.findTop500ByJobAndJobRowStatus(job, JobRowStatus.STAGED);
 
     boolean getValidationRulesPerRow = false;
-    boolean isSensitive = false;
     ColumnValidator[] columnValidators = null;
 
-    if (job.getJobType() == JobType.BULK_UPDATE_SAMPLE) {
-      getValidationRulesPerRow = true;
-    } else if (job.getJobType() == JobType.BULK_UPDATE_SAMPLE_SENSITIVE) {
-      isSensitive = true;
+    if (job.getJobType() == JobType.BULK_UPDATE_SAMPLE || job.getJobType() == JobType.BULK_UPDATE_SAMPLE_SENSITIVE) {
       getValidationRulesPerRow = true;
     } else {
       columnValidators = jobTypeSettings.getColumnValidators();
