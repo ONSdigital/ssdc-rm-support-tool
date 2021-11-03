@@ -19,6 +19,7 @@ import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import JobDetails from "./JobDetails";
+import { Link } from "react-router-dom";
 
 class BulkUploads extends Component {
   state = {
@@ -178,55 +179,60 @@ class BulkUploads extends Component {
       (job) => job.id === this.state.selectedJob
     );
 
-    const jobTableRows = this.state.jobs.map((job, index) => (
-      <TableRow key={job.createdAt}>
-        <TableCell component="th" scope="row">
-          {job.fileName}
-        </TableCell>
-        <TableCell>{job.createdAt}</TableCell>
-        <TableCell>{job.jobType}</TableCell>
-        <TableCell align="right">
-          <Button
-            onClick={() => this.handleOpenDetails(job)}
-            variant="contained"
-          >
-            {convertStatusText(job.jobStatus)}{" "}
-            {[
-              "STAGING_IN_PROGRESS",
-              "VALIDATION_IN_PROGRESS",
-              "PROCESSING_IN_PROGRESS",
-            ].includes(job.jobStatus) && (
-              <CircularProgress size={15} style={{ marginLeft: 10 }} />
-            )}
-          </Button>
-        </TableCell>
-      </TableRow>
-    ));
+    const jobTableRows = this.state.jobs.map(
+      (job, index) =>
+        this.state.authorisedActivities.includes(
+          "VIEW_BULK_REFUSAL_PROGRESS"
+        ) && (
+          <TableRow key={job.createdAt}>
+            <TableCell component="th" scope="row">
+              {job.fileName}
+            </TableCell>
+            <TableCell>{job.createdAt}</TableCell>
+            <TableCell align="right">
+              <Button
+                onClick={() => this.handleOpenDetails(job)}
+                variant="contained"
+              >
+                {convertStatusText(job.jobStatus)}{" "}
+                {[
+                  "STAGING_IN_PROGRESS",
+                  "VALIDATION_IN_PROGRESS",
+                  "PROCESSING_IN_PROGRESS",
+                ].includes(job.jobStatus) && (
+                  <CircularProgress size={15} style={{ marginLeft: 10 }} />
+                )}
+              </Button>
+            </TableCell>
+          </TableRow>
+        )
+    );
 
     return (
       <div style={{ padding: 20 }}>
-        {this.state.authorisedActivities.includes(
-          "VIEW_BULK_REFUSAL_PROGRESS"
-        ) && (
-          <>
-            <Typography variant="h4" color="inherit" style={{ marginTop: 20 }}>
-              Uploaded Bulk Process Files
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>File Name</TableCell>
-                    <TableCell>Date Uploaded</TableCell>
-                    <TableCell>Job Type</TableCell>
-                    <TableCell align="right">Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{jobTableRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+        <Link
+          to={`/collex?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}
+        >
+          ← Back to collection exercise details
+        </Link>
+        <Typography variant="h4" color="inherit">
+          Uploaded Bulk Process Files
+        </Typography>
+        <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+          Bulk Refusals
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>File Name</TableCell>
+                <TableCell>Date Uploaded</TableCell>
+                <TableCell align="right">Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{jobTableRows}</TableBody>
+          </Table>
+        </TableContainer>
         {this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (
           <>
             <input
@@ -244,7 +250,7 @@ class BulkUploads extends Component {
                 component="span"
                 style={{ marginTop: 10 }}
               >
-                Upload Bulk Processing File
+                Upload Bulk Refusal File
               </Button>
             </label>
           </>
