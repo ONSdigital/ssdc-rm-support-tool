@@ -230,7 +230,7 @@ class BulkUploads extends Component {
                 <TableCell align="right">Status</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>{jobTableRows}</TableBody>
+            <TableBody>{bulkRefusalTableRows}</TableBody>
           </Table>
         </TableContainer>
         {this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (
