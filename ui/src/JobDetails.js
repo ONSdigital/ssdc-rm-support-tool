@@ -219,7 +219,7 @@ class JobDetails extends Component {
         "CANCELLED",
       ].includes(this.props.job.jobStatus) &&
       this.props.job.rowErrorCount > 0 &&
-      ((["SAMPLE"].includes(this.props.job.jobType) &&
+      (this.props.job.jobType === "SAMPLE" &&
         this.props.authorisedActivities.includes("LOAD_SAMPLE")) ||
         (["BULK_REFUSAL"].includes(this.props.job.jobType) &&
           this.props.authorisedActivities.includes("LOAD_BULK_REFUSAL")))
