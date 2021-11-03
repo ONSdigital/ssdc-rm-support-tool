@@ -5,13 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Data;
+import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.InSetRule;
 import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
-import uk.gov.ons.ssdc.supporttool.validators.CaseExistsRule;
+import uk.gov.ons.ssdc.supporttool.validators.CaseExistsInCollectionExerciseRule;
 
 @Data
 public class JobTypeSettings {
@@ -32,39 +33,41 @@ public class JobTypeSettings {
     return columnValidators;
   }
 
-  public void setSampleAndSensitiveDataColumnMaps(ColumnValidator[] columnValidators) {
+  public void setSampleAndSensitiveDataColumnMaps(ColumnValidator[] columnValidators, CollectionExercise collectionExercise) {
     // decide which column types we want based on jobType
     boolean jobSensitive = jobType == JobType.BULK_UPDATE_SAMPLE_SENSITIVE;
 
     sampleOrSensitiveValidationsMap = new HashMap<>();
-    String[] allValidColumns = Arrays.stream(columnValidators)
+    String[] allValidColumns =
+        Arrays.stream(columnValidators)
             .filter(columnValidator -> columnValidator.isSensitive() == jobSensitive)
             .map(ColumnValidator::getColumnName)
             .toArray(String[]::new);
 
     for (ColumnValidator columnValidator : columnValidators) {
-      if(jobSensitive == columnValidator.isSensitive()) {
-        sampleOrSensitiveValidationsMap.put(columnValidator.getColumnName(),
-                createColumnValidation(allValidColumns, columnValidator.getRules()));
+      if (jobSensitive == columnValidator.isSensitive()) {
+        sampleOrSensitiveValidationsMap.put(
+            columnValidator.getColumnName(),
+            createColumnValidation(allValidColumns, columnValidator.getRules(), collectionExercise));
       }
     }
   }
 
-  private ColumnValidator[] createColumnValidation(String[] allowedColumns, Rule[] newValueRules) {
-    Rule[] caseExistsRules = {new CaseExistsRule()};
+  private ColumnValidator[] createColumnValidation(
+      String[] allowedColumns, Rule[] newValueRules, CollectionExercise collectionExercise) {
+    Rule[] caseExistsRules = {new CaseExistsInCollectionExerciseRule(collectionExercise)};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     Rule[] fieldToUpdateRule = {new InSetRule(allowedColumns)};
     ColumnValidator fieldToUpdateValidator =
-            new ColumnValidator("fieldToUpdate", false, fieldToUpdateRule);
+        new ColumnValidator("fieldToUpdate", false, fieldToUpdateRule);
 
-    ColumnValidator newValueValidator =
-            new ColumnValidator("newValue", false, newValueRules);
+    ColumnValidator newValueValidator = new ColumnValidator("newValue", false, newValueRules);
 
     return new ColumnValidator[] {caseExistsValidator, fieldToUpdateValidator, newValueValidator};
   }
 
   public ColumnValidator[] getColumnValidatorForSampleOrSensitiveDataRows(String columnName) {
-     return sampleOrSensitiveValidationsMap.get(columnName);
+    return sampleOrSensitiveValidationsMap.get(columnName);
   }
 }

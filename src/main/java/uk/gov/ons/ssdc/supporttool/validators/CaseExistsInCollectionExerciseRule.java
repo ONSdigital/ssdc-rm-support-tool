@@ -8,8 +8,13 @@ import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.config.ApplicationContextProvider;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 
-public class CaseExistsRule implements Rule {
+public class CaseExistsInCollectionExerciseRule implements Rule {
+  private final CollectionExercise collectionExercise;
   private CaseRepository caseRepository = null;
+
+  public CaseExistsInCollectionExerciseRule(CollectionExercise collectionExercise) {
+    this.collectionExercise = collectionExercise;
+  }
 
   @Override
   public Optional<String> checkValidity(String data) {

@@ -61,7 +61,9 @@ public class FileStager {
 
       JobTypeSettings jobTypeSettings =
           jobTypeHelper.getJobTypeSettings(
-              job.getJobType(), job.getCollectionExercise().getSurvey());
+              job.getJobType(),
+              job.getCollectionExercise().getSurvey(),
+              job.getCollectionExercise());
 
       String[] expectedColumns =
           ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());

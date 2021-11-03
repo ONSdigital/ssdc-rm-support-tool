@@ -81,10 +81,10 @@ public class JobEndpoint {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
-    CollectionExercise collx = collexOpt.get();
-    checkUserViewProgressPermissionByJobType(userEmail, collx.getSurvey(), jobType);
+    CollectionExercise collectionExercise = collexOpt.get();
+    checkUserViewProgressPermissionByJobType(userEmail, collectionExercise, jobType);
 
-    return jobRepository.findByCollectionExerciseOrderByCreatedAtDesc(collx).stream()
+    return jobRepository.findByCollectionExerciseOrderByCreatedAtDesc(collectionExercise).stream()
         .map(this::mapJob)
         .collect(Collectors.toList());
   }
@@ -95,7 +95,7 @@ public class JobEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
     checkUserViewProgressPermissionByJobType(
-        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+        userEmail, job.getCollectionExercise(), job.getJobType());
 
     return mapJob(jobRepository.findById(id).get());
   }
@@ -109,7 +109,7 @@ public class JobEndpoint {
     Job job = jobRepository.findById(id).get();
 
     checkUserLoadFilePermissionByJobType(
-        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+        userEmail, job.getCollectionExercise(), job.getJobType());
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -130,7 +130,9 @@ public class JobEndpoint {
 
       JobTypeSettings jobTypeSettings =
           jobTypeHelper.getJobTypeSettings(
-              job.getJobType(), job.getCollectionExercise().getSurvey());
+              job.getJobType(),
+              job.getCollectionExercise().getSurvey(),
+              job.getCollectionExercise());
       csvWriter.writeNext(ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators()));
 
       for (JobRow jobRow : jobRows) {
@@ -154,7 +156,7 @@ public class JobEndpoint {
     Job job = jobRepository.findById(id).get();
 
     checkUserLoadFilePermissionByJobType(
-        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+        userEmail, job.getCollectionExercise(), job.getJobType());
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -198,7 +200,7 @@ public class JobEndpoint {
     Job job = jobRepository.findById(id).get();
 
     checkUserLoadFilePermissionByJobType(
-        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+        userEmail, job.getCollectionExercise(), job.getJobType());
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
@@ -219,7 +221,7 @@ public class JobEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
     checkUserLoadFilePermissionByJobType(
-        userEmail, job.getCollectionExercise().getSurvey(), job.getJobType());
+        userEmail, job.getCollectionExercise(), job.getJobType());
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
@@ -250,7 +252,7 @@ public class JobEndpoint {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
-    checkUserLoadFilePermissionByJobType(userEmail, collexOpt.get().getSurvey(), jobType);
+    checkUserLoadFilePermissionByJobType(userEmail, collexOpt.get(), jobType);
 
     File file = new File(fileUploadStoragePath + fileId);
     int rowCount;
@@ -278,18 +280,22 @@ public class JobEndpoint {
   }
 
   private void checkUserLoadFilePermissionByJobType(
-      String userEmail, Survey survey, JobType jobType) {
-    JobTypeSettings jobTypeSettings = jobTypeHelper.getJobTypeSettings(jobType, survey);
+      String userEmail, CollectionExercise collectionExercise, JobType jobType) {
+    JobTypeSettings jobTypeSettings =
+        jobTypeHelper.getJobTypeSettings(
+            jobType, collectionExercise.getSurvey(), collectionExercise);
 
-    userIdentity.checkUserPermission(userEmail, survey, jobTypeSettings.getFileLoadPermission());
+    userIdentity.checkUserPermission(userEmail, collectionExercise.getSurvey(), jobTypeSettings.getFileLoadPermission());
   }
 
   private void checkUserViewProgressPermissionByJobType(
-      String userEmail, Survey survey, JobType jobType) {
-    JobTypeSettings jobTypeSettings = jobTypeHelper.getJobTypeSettings(jobType, survey);
+      String userEmail, CollectionExercise collectionExercise, JobType jobType) {
+    JobTypeSettings jobTypeSettings =
+        jobTypeHelper.getJobTypeSettings(
+            jobType, collectionExercise.getSurvey(), collectionExercise);
 
     userIdentity.checkUserPermission(
-        userEmail, survey, jobTypeSettings.getFileViewProgressPersmission());
+        userEmail, collectionExercise.getSurvey(), jobTypeSettings.getFileViewProgressPersmission());
   }
 
   private JobDto mapJob(Job job) {

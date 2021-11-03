@@ -21,7 +21,7 @@ import uk.gov.ons.ssdc.supporttool.transformer.BulkUpdateSampleTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.BulkUpdateSensitiveTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.NewCaseTransformer;
 import uk.gov.ons.ssdc.supporttool.transformer.Transformer;
-import uk.gov.ons.ssdc.supporttool.validators.CaseExistsRule;
+import uk.gov.ons.ssdc.supporttool.validators.CaseExistsInCollectionExerciseRule;
 
 @Component
 public class JobTypeHelper {
@@ -51,11 +51,11 @@ public class JobTypeHelper {
   @Value("${queueconfig.update-sample-sensitive-topic}")
   private String updateSensitiveSampleTopic;
 
-  public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey) {
-    return getJobTypeSettings(jobType, survey, null);
-  }
+//  public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey) {
+//    return getJobTypeSettings(jobType, survey, null);
+//  }
 
-  public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey, Job job) {
+  public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey, CollectionExercise collectionExercise) {
     JobTypeSettings jobTypeSettings = new JobTypeSettings(jobType);
     switch (jobType) {
       case SAMPLE:
@@ -69,7 +69,7 @@ public class JobTypeHelper {
 
       case BULK_REFUSAL:
         jobTypeSettings.setTransformer(BULK_REFUSAL_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkRefusalProcessorValidationRules());
+        jobTypeSettings.setColumnValidators(getBulkRefusalProcessorValidationRules(collectionExercise));
         jobTypeSettings.setTopic(
             toProjectTopicName(refusalEventTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
@@ -79,7 +79,7 @@ public class JobTypeHelper {
 
       case BULK_INVALID:
         jobTypeSettings.setTransformer(BULK_INVALID_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkInvalidCaseValidationRules());
+        jobTypeSettings.setColumnValidators(getBulkInvalidCaseValidationRules(collectionExercise));
         jobTypeSettings.setTopic(
             toProjectTopicName(invalidCaseTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_INVALID);
@@ -89,8 +89,8 @@ public class JobTypeHelper {
 
       case BULK_UPDATE_SAMPLE:
         jobTypeSettings.setTransformer(BULK_SAMPLE_UPDATE_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly());
-        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules());
+        jobTypeSettings.setColumnValidators(getBulkSampleValidationRulesHeaderRowOnly(collectionExercise));
+        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules(), collectionExercise);
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(
@@ -102,8 +102,8 @@ public class JobTypeHelper {
 
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         jobTypeSettings.setTransformer(BULK_SENSITIVE_UPDATE_TRANSFORMER);
-        jobTypeSettings.setColumnValidators(getBulkSampleValidçationRulesHeaderRowOnly());
-        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules());
+        jobTypeSettings.setColumnValidators(getBulkSampleValidationRulesHeaderRowOnly(collectionExercise));
+        jobTypeSettings.setSampleAndSensitiveDataColumnMaps(survey.getSampleValidationRules(), collectionExercise);
         jobTypeSettings.setTopic(
             toProjectTopicName(updateSensitiveSampleTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(
@@ -120,8 +120,8 @@ public class JobTypeHelper {
     }
   }
 
-  private ColumnValidator[] getBulkSampleValidçationRulesHeaderRowOnly() {
-    Rule[] caseExistsRules = {new CaseExistsRule()};
+  private ColumnValidator[] getBulkSampleValidationRulesHeaderRowOnly(CollectionExercise collectionExercise) {
+    Rule[] caseExistsRules = {new CaseExistsInCollectionExerciseRule(collectionExercise)};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     Rule[] fieldToUpdateRules = {new MandatoryRule()};
@@ -136,8 +136,8 @@ public class JobTypeHelper {
     };
   }
 
-  private ColumnValidator[] getBulkInvalidCaseValidationRules() {
-    Rule[] caseExistsRules = {new CaseExistsRule()};
+  private ColumnValidator[] getBulkInvalidCaseValidationRules(CollectionExercise collectionExercise) {
+    Rule[] caseExistsRules = {new CaseExistsInCollectionExerciseRule(collectionExercise)};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     Rule[] reasonRule = {new MandatoryRule()};
@@ -146,8 +146,8 @@ public class JobTypeHelper {
     return new ColumnValidator[] {caseExistsValidator, reasonRuleValidator};
   }
 
-  private ColumnValidator[] getBulkRefusalProcessorValidationRules() {
-    Rule[] caseExistsRules = {new CaseExistsRule()};
+  private ColumnValidator[] getBulkRefusalProcessorValidationRules(CollectionExercise collectionExercise) {
+    Rule[] caseExistsRules = {new CaseExistsInCollectionExerciseRule(collectionExercise)};
     ColumnValidator caseExistsValidator = new ColumnValidator("caseId", false, caseExistsRules);
 
     String[] refusalTypes =
