@@ -64,6 +64,7 @@ public class RowChunkValidator {
               String.format(
                   "Bulk update fieldToUpdate Column %s has no validation rules", fieldToUpdate));
           hadErrors = true;
+          columnValidators = new ColumnValidator[0];
         }
       }
 
