@@ -3,7 +3,6 @@ package uk.gov.ons.ssdc.supporttool.utility;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import lombok.Data;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
@@ -33,7 +32,8 @@ public class JobTypeSettings {
     return columnValidators;
   }
 
-  public void setSampleAndSensitiveDataColumnMaps(ColumnValidator[] columnValidators, CollectionExercise collectionExercise) {
+  public void setSampleAndSensitiveDataColumnMaps(
+      ColumnValidator[] columnValidators, CollectionExercise collectionExercise) {
     // decide which column types we want based on jobType
     boolean jobSensitive = jobType == JobType.BULK_UPDATE_SAMPLE_SENSITIVE;
 
@@ -48,7 +48,8 @@ public class JobTypeSettings {
       if (jobSensitive == columnValidator.isSensitive()) {
         sampleOrSensitiveValidationsMap.put(
             columnValidator.getColumnName(),
-            createColumnValidation(allValidColumns, columnValidator.getRules(), collectionExercise));
+            createColumnValidation(
+                allValidColumns, columnValidator.getRules(), collectionExercise));
       }
     }
   }

@@ -31,7 +31,6 @@ import uk.gov.ons.ssdc.common.model.entity.JobRow;
 import uk.gov.ons.ssdc.common.model.entity.JobRowStatus;
 import uk.gov.ons.ssdc.common.model.entity.JobStatus;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
-import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobStatusDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobTypeDto;
@@ -108,8 +107,7 @@ public class JobEndpoint {
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
 
-    checkUserLoadFilePermissionByJobType(
-        userEmail, job.getCollectionExercise(), job.getJobType());
+    checkUserLoadFilePermissionByJobType(userEmail, job.getCollectionExercise(), job.getJobType());
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -155,8 +153,7 @@ public class JobEndpoint {
       HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
 
-    checkUserLoadFilePermissionByJobType(
-        userEmail, job.getCollectionExercise(), job.getJobType());
+    checkUserLoadFilePermissionByJobType(userEmail, job.getCollectionExercise(), job.getJobType());
 
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndJobRowStatusOrderByOriginalRowLineNumber(
@@ -199,8 +196,7 @@ public class JobEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
 
-    checkUserLoadFilePermissionByJobType(
-        userEmail, job.getCollectionExercise(), job.getJobType());
+    checkUserLoadFilePermissionByJobType(userEmail, job.getCollectionExercise(), job.getJobType());
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
@@ -220,8 +216,7 @@ public class JobEndpoint {
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Job job = jobRepository.findById(id).get();
-    checkUserLoadFilePermissionByJobType(
-        userEmail, job.getCollectionExercise(), job.getJobType());
+    checkUserLoadFilePermissionByJobType(userEmail, job.getCollectionExercise(), job.getJobType());
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
@@ -285,7 +280,8 @@ public class JobEndpoint {
         jobTypeHelper.getJobTypeSettings(
             jobType, collectionExercise.getSurvey(), collectionExercise);
 
-    userIdentity.checkUserPermission(userEmail, collectionExercise.getSurvey(), jobTypeSettings.getFileLoadPermission());
+    userIdentity.checkUserPermission(
+        userEmail, collectionExercise.getSurvey(), jobTypeSettings.getFileLoadPermission());
   }
 
   private void checkUserViewProgressPermissionByJobType(
@@ -295,7 +291,9 @@ public class JobEndpoint {
             jobType, collectionExercise.getSurvey(), collectionExercise);
 
     userIdentity.checkUserPermission(
-        userEmail, collectionExercise.getSurvey(), jobTypeSettings.getFileViewProgressPersmission());
+        userEmail,
+        collectionExercise.getSurvey(),
+        jobTypeSettings.getFileViewProgressPersmission());
   }
 
   private JobDto mapJob(Job job) {

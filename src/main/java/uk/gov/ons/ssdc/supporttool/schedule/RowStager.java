@@ -60,7 +60,9 @@ public class RowStager {
         } else {
           JobTypeSettings jobTypeSettings =
               jobTypeHelper.getJobTypeSettings(
-                  job.getJobType(), job.getCollectionExercise().getSurvey(), job.getCollectionExercise());
+                  job.getJobType(),
+                  job.getCollectionExercise().getSurvey(),
+                  job.getCollectionExercise());
 
           headerRow = ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators());
           headerRowCorrection = 0;

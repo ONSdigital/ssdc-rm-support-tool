@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
-import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.User;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
@@ -49,7 +48,7 @@ public class UserIdentity {
   }
 
   public void checkUserPermission(
-          String userEmail, Survey survey, UserGroupAuthorisedActivityType activity) {
+      String userEmail, Survey survey, UserGroupAuthorisedActivityType activity) {
     if (dummyUserIdentityAllowed && userEmail.equals(dummySuperUserIdentity)) {
       // Dummy test super user is fully authorised, bypassing all security
       // This is **STRICTLY** for ease of dev/testing in non-production environments

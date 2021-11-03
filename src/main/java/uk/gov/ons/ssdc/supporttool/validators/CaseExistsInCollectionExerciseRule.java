@@ -19,7 +19,8 @@ public class CaseExistsInCollectionExerciseRule implements Rule {
   @Override
   public Optional<String> checkValidity(String data) {
 
-    if (!getCaseRepository().existsByIdAndCollectionExercise(UUID.fromString(data), collectionExercise)) {
+    if (!getCaseRepository()
+        .existsByIdAndCollectionExercise(UUID.fromString(data), collectionExercise)) {
       return Optional.of(String.format("Case Id %s not recognised", data));
     }
 

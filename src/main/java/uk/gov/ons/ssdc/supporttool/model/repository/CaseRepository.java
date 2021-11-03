@@ -16,5 +16,4 @@ public interface CaseRepository extends JpaRepository<Case, UUID> {
       @Param("collexId") UUID collexId, @Param("key") String key, @Param("value") String value);
 
   boolean existsByIdAndCollectionExercise(UUID caseId, CollectionExercise collectionExercise);
-
 }
