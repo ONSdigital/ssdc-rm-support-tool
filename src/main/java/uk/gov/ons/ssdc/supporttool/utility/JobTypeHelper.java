@@ -50,10 +50,6 @@ public class JobTypeHelper {
   @Value("${queueconfig.update-sample-sensitive-topic}")
   private String updateSensitiveSampleTopic;
 
-  //  public JobTypeSettings getJobTypeSettings(JobType jobType, Survey survey) {
-  //    return getJobTypeSettings(jobType, survey, null);
-  //  }
-
   public JobTypeSettings getJobTypeSettings(
       JobType jobType, Survey survey, CollectionExercise collectionExercise) {
     JobTypeSettings jobTypeSettings = new JobTypeSettings(jobType);
