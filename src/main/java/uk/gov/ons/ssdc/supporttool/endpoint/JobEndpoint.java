@@ -286,7 +286,7 @@ public class JobEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         collectionExercise.getSurvey(),
-        jobTypeSettings.getFileViewProgressPersmission());
+        jobTypeSettings.getFileViewProgressPermission());
   }
 
   private JobDto mapJob(Job job) {
