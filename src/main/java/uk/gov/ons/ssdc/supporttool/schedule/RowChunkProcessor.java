@@ -41,7 +41,7 @@ public class RowChunkProcessor {
     boolean hadErrors = false;
 
     JobTypeSettings jobTypeSettings =
-        jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise().getSurvey());
+        jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise());
 
     List<JobRow> jobRows =
         jobRowRepository.findTop500ByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
