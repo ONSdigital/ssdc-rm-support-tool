@@ -568,10 +568,9 @@ class CollectionExerciseDetails extends Component {
             </div>
           </DialogContent>
         </Dialog>
-        {(this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") ||
-          this.state.authorisedActivities.includes(
-            "VIEW_BULK_REFUSAL_PROGRESS"
-          )) && (
+        {["LOAD_BULK_REFUSAL", "VIEW_BULK_REFUSAL_PROGRESS"].some((p) =>
+          this.state.authorisedActivities.includes(p)
+        ) && (
           <>
             <div style={{ marginTop: 20 }}>
               <Link
