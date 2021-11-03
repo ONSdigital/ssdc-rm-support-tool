@@ -179,7 +179,7 @@ class BulkUploads extends Component {
       (job) => job.id === this.state.selectedJob
     );
 
-    const jobTableRows = this.state.jobs.map(
+    const bulkRefusalTableRows = this.state.jobs.map(
       (job, index) =>
         this.state.authorisedActivities.includes(
           "VIEW_BULK_REFUSAL_PROGRESS"
