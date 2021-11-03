@@ -260,7 +260,7 @@ class JobDetails extends Component {
             {this.props.job &&
               (this.props.job.jobType === "SAMPLE" &&
                 this.props.authorisedActivities.includes("LOAD_SAMPLE")) ||
-                (["BULK_REFUSAL"].includes(this.props.job.jobType) &&
+                (this.props.job.jobType === "BULK_REFUSAL" &&
                   this.props.authorisedActivities.includes(
                     "LOAD_BULK_REFUSAL"
                   ))) &&
