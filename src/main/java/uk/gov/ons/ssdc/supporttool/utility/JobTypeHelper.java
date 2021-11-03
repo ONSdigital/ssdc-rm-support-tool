@@ -64,7 +64,7 @@ public class JobTypeHelper {
             collectionExercise.getSurvey().getSampleValidationRules());
         jobTypeSettings.setTopic(toProjectTopicName(newCaseTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_SAMPLE);
-        jobTypeSettings.setFileViewProgressPersmission(
+        jobTypeSettings.setFileViewProgressPermission(
             UserGroupAuthorisedActivityType.VIEW_SAMPLE_LOAD_PROGRESS);
         return jobTypeSettings;
 
@@ -75,7 +75,7 @@ public class JobTypeHelper {
         jobTypeSettings.setTopic(
             toProjectTopicName(refusalEventTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL);
-        jobTypeSettings.setFileViewProgressPersmission(
+        jobTypeSettings.setFileViewProgressPermission(
             UserGroupAuthorisedActivityType.VIEW_BULK_REFUSAL_PROGRESS);
         return jobTypeSettings;
 
@@ -85,7 +85,7 @@ public class JobTypeHelper {
         jobTypeSettings.setTopic(
             toProjectTopicName(invalidCaseTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(UserGroupAuthorisedActivityType.LOAD_BULK_INVALID);
-        jobTypeSettings.setFileViewProgressPersmission(
+        jobTypeSettings.setFileViewProgressPermission(
             UserGroupAuthorisedActivityType.VIEW_BULK_INVALID_PROGRESS);
         return jobTypeSettings;
 
@@ -99,7 +99,7 @@ public class JobTypeHelper {
             toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(
             UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE);
-        jobTypeSettings.setFileViewProgressPersmission(
+        jobTypeSettings.setFileViewProgressPermission(
             UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_PROGRESS);
 
         return jobTypeSettings;
@@ -114,7 +114,7 @@ public class JobTypeHelper {
             toProjectTopicName(updateSensitiveSampleTopic, sharedPubsubProject).toString());
         jobTypeSettings.setFileLoadPermission(
             UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE_SENSITIVE);
-        jobTypeSettings.setFileViewProgressPersmission(
+        jobTypeSettings.setFileViewProgressPermission(
             UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_SENSITIVE_PROGRESS);
 
         return jobTypeSettings;
