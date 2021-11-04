@@ -232,10 +232,6 @@ class BulkUploads extends Component {
     loadPermission,
     viewerPermission
   ) {
-    const selectedJob = bulkJobs.find(
-      (job) => job.id === this.state.selectedJob
-    );
-
     const bulkJobTableRows = bulkJobs.map((job, index) => (
       <TableRow key={job.createdAt}>
         <TableCell component="th" scope="row">
