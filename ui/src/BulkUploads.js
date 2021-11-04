@@ -50,14 +50,7 @@ class BulkUploads extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    if (!authorisedActivities.includes("VIEW_BULK_REFUSAL_PROGRESS")) return;
-
-    const response = await fetch(
-      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=BULK_REFUSAL`
-    );
-    const bulkRefusalJobs = await response.json();
-
-    this.setState({ bulkRefusalJobs: bulkRefusalJobs });
+    this.refreshBulkRefusalsFromBackend(authorisedActivities);
   };
 
   getAuthorisedActivities = async () => {
@@ -75,7 +68,18 @@ class BulkUploads extends Component {
     return authJson;
   };
 
-  handleBulkRefusalUpload = (e) => {
+  refreshBulkRefusalsFromBackend = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("VIEW_BULK_REFUSAL_PROGRESS")) return;
+
+    const response = await fetch(
+      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=BULK_REFUSAL`
+    );
+    const bulkRefusalJobs = await response.json();
+
+    this.setState({ bulkRefusalJobs: bulkRefusalJobs });
+  };
+
+  handleBulkFileUpload = (e, job_type) => {
     if (e.target.files.length === 0) {
       return;
     }
@@ -117,7 +121,7 @@ class BulkUploads extends Component {
         jobData.append("fileId", fileId);
         jobData.append("fileName", fileName);
         jobData.append("collectionExerciseId", this.props.collectionExerciseId);
-        jobData.append("jobType", "BULK_REFUSAL");
+        jobData.append("jobType", job_type);
 
         const response = fetch(`/api/job`, {
           method: "POST",
@@ -135,8 +139,7 @@ class BulkUploads extends Component {
           fileUploadSuccess: true,
           uploadInProgress: false,
         });
-
-        this.getBulkRefusalJobs();
+        this.refreshDataFromBackend(this.state.authorisedActivities);
       });
   };
 
@@ -151,24 +154,12 @@ class BulkUploads extends Component {
     });
   };
 
-  getBulkRefusalJobs = async () => {
-    // TODO: Job Type Temp hardcoded to BULD_REFUSAL
-    const response = await fetch(
-      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=BULK_REFUSAL`
-    );
-
-    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
-    if (!response.ok) {
-      return;
-    }
-
-    const jobsJson = await response.json();
-
-    this.setState({ jobs: jobsJson });
-  };
-
-  handleOpenDetails = (job) => {
-    this.setState({ showDetails: true, selectedJob: job.id });
+  handleOpenDetails = (job, jobType) => {
+    this.setState({
+      showDetails: true,
+      selectedJob: job.id,
+      selectedJobType: jobType,
+    });
   };
 
   handleClosedDetails = () => {
@@ -176,49 +167,31 @@ class BulkUploads extends Component {
   };
 
   onProcessJob = () => {
-    if (!this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL")) return;
     fetch(`/api/job/${this.state.selectedJob}/process`, {
       method: "POST",
     });
   };
 
   onCancelJob = () => {
-    if (!this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL")) return;
     fetch(`/api/job/${this.state.selectedJob}/cancel`, {
       method: "POST",
     });
   };
 
   render() {
-    const selectedJob = this.state.bulkRefusalJobs.find(
-      (job) => job.id === this.state.selectedJob
-    );
-
-    const bulkRefusalTableRows = this.state.bulkRefusalJobs.map(
-      (job, index) => (
-        <TableRow key={job.createdAt}>
-          <TableCell component="th" scope="row">
-            {job.fileName}
-          </TableCell>
-          <TableCell>{job.createdAt}</TableCell>
-          <TableCell align="right">
-            <Button
-              onClick={() => this.handleOpenDetails(job)}
-              variant="contained"
-            >
-              {convertStatusText(job.jobStatus)}{" "}
-              {[
-                "STAGING_IN_PROGRESS",
-                "VALIDATION_IN_PROGRESS",
-                "PROCESSING_IN_PROGRESS",
-              ].includes(job.jobStatus) && (
-                <CircularProgress size={15} style={{ marginLeft: 10 }} />
-              )}
-            </Button>
-          </TableCell>
-        </TableRow>
-      )
-    );
+    var selectedJob;
+    var detailsDialogTitle;
+    var loadPermission;
+    switch (this.state.selectedJobType) {
+      case "BULK_REFUSAL":
+        selectedJob = this.state.bulkRefusalJobs.find(
+          (job) => job.id === this.state.selectedJob
+        );
+        detailsDialogTitle = "Bulk Refusal Detail";
+        loadPermission = "LOAD_BULK_REFUSAL";
+        break;
+      default:
+    }
 
     return (
       <div style={{ padding: 20 }}>
@@ -230,12 +203,69 @@ class BulkUploads extends Component {
         <Typography variant="h4" color="inherit">
           Uploaded Bulk Process Files
         </Typography>
-        {this.state.authorisedActivities.includes(
+        {this.buildBulkProcessTable(
+          this.state.bulkRefusalJobs,
+          "BULK_REFUSAL",
+          "Bulk Refusals",
+          "LOAD_BULK_REFUSAL",
           "VIEW_BULK_REFUSAL_PROGRESS"
-        ) && (
+        )}
+        <JobDetails
+          jobTitle={detailsDialogTitle}
+          job={selectedJob}
+          showDetails={this.state.showDetails}
+          handleClosedDetails={this.handleClosedDetails}
+          onClickAway={this.handleClosedDetails}
+          onProcessJob={this.onProcessJob}
+          onCancelJob={this.onCancelJob}
+          authorisedActivities={this.state.authorisedActivities}
+          loadPermission={loadPermission}
+        ></JobDetails>
+      </div>
+    );
+  }
+
+  buildBulkProcessTable(
+    bulkJobs,
+    jobType,
+    jobTitle,
+    loadPermission,
+    viewerPermission
+  ) {
+    const selectedJob = bulkJobs.find(
+      (job) => job.id === this.state.selectedJob
+    );
+
+    const bulkJobTableRows = bulkJobs.map((job, index) => (
+      <TableRow key={job.createdAt}>
+        <TableCell component="th" scope="row">
+          {job.fileName}
+        </TableCell>
+        <TableCell>{job.createdAt}</TableCell>
+        <TableCell align="right">
+          <Button
+            onClick={() => this.handleOpenDetails(job, jobType)}
+            variant="contained"
+          >
+            {convertStatusText(job.jobStatus)}{" "}
+            {[
+              "STAGING_IN_PROGRESS",
+              "VALIDATION_IN_PROGRESS",
+              "PROCESSING_IN_PROGRESS",
+            ].includes(job.jobStatus) && (
+              <CircularProgress size={15} style={{ marginLeft: 10 }} />
+            )}
+          </Button>
+        </TableCell>
+      </TableRow>
+    ));
+
+    return (
+      <div style={{ padding: 20 }}>
+        {this.state.authorisedActivities.includes(viewerPermission) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-              Bulk Refusals
+              {jobTitle}
             </Typography>
             <TableContainer component={Paper}>
               <Table>
@@ -246,12 +276,12 @@ class BulkUploads extends Component {
                     <TableCell align="right">Status</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>{bulkRefusalTableRows}</TableBody>
+                <TableBody>{bulkJobTableRows}</TableBody>
               </Table>
             </TableContainer>
           </>
         )}
-        {this.state.authorisedActivities.includes("LOAD_BULK_REFUSAL") && (
+        {this.state.authorisedActivities.includes(loadPermission) && (
           <>
             <input
               accept=".csv"
@@ -259,7 +289,7 @@ class BulkUploads extends Component {
               id="contained-button-file"
               type="file"
               onChange={(e) => {
-                this.handleBulkRefusalUpload(e);
+                this.handleBulkFileUpload(e, jobType);
               }}
             />
             <label htmlFor="contained-button-file">
@@ -268,7 +298,7 @@ class BulkUploads extends Component {
                 component="span"
                 style={{ marginTop: 10 }}
               >
-                Upload Bulk Refusal File
+                Upload {jobTitle} File
               </Button>
             </label>
           </>
@@ -302,18 +332,6 @@ class BulkUploads extends Component {
             message={"File upload successful!"}
           />
         </Snackbar>
-        <JobDetails
-          jobTitle={"Bulk Refusal"}
-          job={selectedJob}
-          showDetails={this.state.showDetails}
-          handleClosedDetails={this.handleClosedDetails}
-          onClickAway={this.handleClosedDetails}
-          onProcessJob={this.onProcessJob}
-          onCancelJob={this.onCancelJob}
-          authorisedActivities={this.state.authorisedActivities}
-          loadJobType={"BULK_REFUSAL"}
-          loadPermission={"LOAD_BULK_REFUSAL"}
-        ></JobDetails>
       </div>
     );
   }

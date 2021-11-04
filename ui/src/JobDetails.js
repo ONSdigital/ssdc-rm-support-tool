@@ -219,7 +219,6 @@ class JobDetails extends Component {
         "CANCELLED",
       ].includes(this.props.job.jobStatus) &&
       this.props.job.rowErrorCount > 0 &&
-      this.props.job.jobType === this.props.loadJobType &&
       this.props.authorisedActivities.includes(this.props.loadPermission)
     ) {
       buttonFragment = (
@@ -256,7 +255,6 @@ class JobDetails extends Component {
             {jobDetailsFragment}
             {buttonFragment}
             {this.props.job &&
-              this.props.job.jobType === this.props.loadJobType &&
               this.props.authorisedActivities.includes(
                 this.props.loadPermission
               ) &&
