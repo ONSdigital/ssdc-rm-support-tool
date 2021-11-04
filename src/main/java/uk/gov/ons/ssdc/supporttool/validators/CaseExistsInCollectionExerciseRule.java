@@ -3,19 +3,28 @@ package uk.gov.ons.ssdc.supporttool.validators;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.context.ApplicationContext;
+import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.config.ApplicationContextProvider;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 
-public class CaseExistsRule implements Rule {
-  private CaseRepository caseRepository = null;
+public class CaseExistsInCollectionExerciseRule implements Rule {
+  private final CollectionExercise collectionExercise;
+  private static CaseRepository caseRepository = null;
+
+  public CaseExistsInCollectionExerciseRule(CollectionExercise collectionExercise) {
+    this.collectionExercise = collectionExercise;
+  }
 
   @Override
   public Optional<String> checkValidity(String data) {
-    try {
-      getCaseRepository().existsById(UUID.fromString(data));
-    } catch (Exception e) {
-      return Optional.of(String.format("Case Id %s not recognised", data));
+
+    if (!getCaseRepository()
+        .existsByIdAndCollectionExercise(UUID.fromString(data), collectionExercise)) {
+      return Optional.of(
+          String.format(
+              "Case Id %s does not exist in collection exercise %s",
+              data, collectionExercise.getName()));
     }
 
     return Optional.empty();
