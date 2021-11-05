@@ -219,7 +219,7 @@ class JobDetails extends Component {
         "CANCELLED",
       ].includes(this.props.job.jobStatus) &&
       this.props.job.rowErrorCount > 0 &&
-      this.props.authorisedActivities.includes("LOAD_SAMPLE")
+      this.props.authorisedActivities.includes(this.props.loadPermission)
     ) {
       buttonFragment = (
         <Grid container spacing={1}>
@@ -255,7 +255,9 @@ class JobDetails extends Component {
             {jobDetailsFragment}
             {buttonFragment}
             {this.props.job &&
-              this.props.authorisedActivities.includes("LOAD_SAMPLE") &&
+              this.props.authorisedActivities.includes(
+                this.props.loadPermission
+              ) &&
               ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
                 this.props.job.jobStatus
               ) && (

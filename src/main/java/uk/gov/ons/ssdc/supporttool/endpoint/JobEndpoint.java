@@ -83,7 +83,9 @@ public class JobEndpoint {
     CollectionExercise collectionExercise = collexOpt.get();
     checkUserViewProgressPermissionByJobType(userEmail, collectionExercise, jobType);
 
-    return jobRepository.findByCollectionExerciseOrderByCreatedAtDesc(collectionExercise).stream()
+    return jobRepository
+        .findByCollectionExerciseAndJobTypeOrderByCreatedAtDesc(collectionExercise, jobType)
+        .stream()
         .map(this::mapJob)
         .collect(Collectors.toList());
   }
