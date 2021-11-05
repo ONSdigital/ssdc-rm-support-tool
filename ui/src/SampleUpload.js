@@ -264,7 +264,6 @@ class SampleUpload extends Component {
           onProcessJob={this.onProcessJob}
           onCancelJob={this.onCancelJob}
           authorisedActivities={this.props.authorisedActivities}
-          loadJobType={"SAMPLE"}
           loadPermission={"LOAD_SAMPLE"}
         ></JobDetails>
       </div>

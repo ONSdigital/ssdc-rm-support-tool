@@ -210,6 +210,21 @@ class BulkUploads extends Component {
           "LOAD_BULK_REFUSAL",
           "VIEW_BULK_REFUSAL_PROGRESS"
         )}
+        <Dialog open={this.state.uploadInProgress}>
+          <DialogContent style={{ padding: 30 }}>
+            <Typography variant="h6" color="inherit">
+              Uploading file...
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={this.state.fileProgress * 100}
+              style={{ marginTop: 20, marginBottom: 20, width: 400 }}
+            />
+            <Typography variant="h6" color="inherit">
+              {Math.round(this.state.fileProgress * 100)}%
+            </Typography>
+          </DialogContent>
+        </Dialog>
         <JobDetails
           jobTitle={detailsDialogTitle}
           job={selectedJob}
@@ -257,7 +272,7 @@ class BulkUploads extends Component {
     ));
 
     return (
-      <div style={{ padding: 20 }}>
+      <div>
         {this.state.authorisedActivities.includes(viewerPermission) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
@@ -299,21 +314,6 @@ class BulkUploads extends Component {
             </label>
           </>
         )}
-        <Dialog open={this.state.uploadInProgress}>
-          <DialogContent style={{ padding: 30 }}>
-            <Typography variant="h6" color="inherit">
-              Uploading file...
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={this.state.fileProgress * 100}
-              style={{ marginTop: 20, marginBottom: 20, width: 400 }}
-            />
-            <Typography variant="h6" color="inherit">
-              {Math.round(this.state.fileProgress * 100)}%
-            </Typography>
-          </DialogContent>
-        </Dialog>
         <Snackbar
           open={this.state.fileUploadSuccess}
           autoHideDuration={6000}
