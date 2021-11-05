@@ -1445,7 +1445,7 @@ class LandingPage extends Component {
                   variant="contained"
                   style={{ margin: 10 }}
                 >
-                  Create SMS template
+                  Create Email template
                 </Button>
                 <Button
                   onClick={this.closeEmailTemplateDialog}
