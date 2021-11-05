@@ -10,6 +10,7 @@ import GroupDetails from "./GroupDetails";
 import ExceptionManager from "./ExceptionManager";
 import MyGroupsAdmin from "./MyGroupsAdmin";
 import MyGroupUserAdmin from "./MyGroupUserAdmin";
+import BulkUploads from "./BulkUploads";
 import {
   BrowserRouter as Router,
   Switch,
@@ -81,6 +82,12 @@ function QueryRouting() {
       </Route>
       <Route path="/myGroupUserAdmin">
         <MyGroupUserAdmin groupId={query.get("groupId")} />
+      </Route>
+      <Route path="/bulkUploads">
+        <BulkUploads
+          surveyId={query.get("surveyId")}
+          collectionExerciseId={query.get("collexId")}
+        />
       </Route>
     </Switch>
   );
