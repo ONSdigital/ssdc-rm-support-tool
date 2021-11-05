@@ -226,17 +226,17 @@ class BulkUploads extends Component {
           </DialogContent>
         </Dialog>
         <Snackbar
-            open={this.state.fileUploadSuccess}
-            autoHideDuration={6000}
-            onClose={this.handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
+          open={this.state.fileUploadSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
         >
           <SnackbarContent
-              style={{ backgroundColor: "#4caf50" }}
-              message={"File upload successful!"}
+            style={{ backgroundColor: "#4caf50" }}
+            message={"File upload successful!"}
           />
         </Snackbar>
         <JobDetails
