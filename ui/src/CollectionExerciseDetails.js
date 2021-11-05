@@ -22,6 +22,7 @@ import SampleUpload from "./SampleUpload";
 import {
   getActionRuleExportFileTemplates,
   getActionRuleSmsTemplates,
+  getActionRuleEmailTemplates,
   getSensitiveSampleColumns,
 } from "./Utils";
 import { Link } from "react-router-dom";
@@ -33,16 +34,21 @@ class CollectionExerciseDetails extends Component {
     exportFilePackCodes: [],
     sensitiveSampleColumns: [],
     smsPackCodes: [],
+    emailPackCodes: [],
     createActionRulesDialogDisplayed: false,
     exportFilePackCodeValidationError: false,
     smsPackCodeValidationError: false,
     smsPhoneNumberColumnValidationError: false,
+    emailPackCodeValidationError: false,
+    emailColumnValidationError: false,
     actionRuleTypeValidationError: false,
     uacQidMetadataValidationError: false,
     collectionExerciseName: "",
     newActionRuleExportFilePackCode: "",
     newActionRuleSmsPackCode: "",
     newActionRuleSmsPhoneNumberColumn: "",
+    newActionRuleEmailPackCode: "",
+    newActionRuleEmailColumn: "",
     newActionRuleClassifiers: "",
     newActionRuleType: "",
     newUacQidMetadata: "",
@@ -62,6 +68,7 @@ class CollectionExerciseDetails extends Component {
     this.getActionRules(authorisedActivities);
     this.getExportFileTemplates(authorisedActivities);
     this.getSmsTemplates(authorisedActivities);
+    this.getEmailTemplates(authorisedActivities);
     this.getSensitiveSampleColumns(authorisedActivities);
 
     this.interval = setInterval(
@@ -153,6 +160,21 @@ class CollectionExerciseDetails extends Component {
     this.setState({ smsPackCodes: packCodes });
   };
 
+  getEmailTemplates = async (authorisedActivities) => {
+    if (
+      !authorisedActivities.includes(
+        "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES"
+      )
+    )
+      return;
+
+    const packCodes = await getActionRuleEmailTemplates(
+      authorisedActivities,
+      this.props.surveyId
+    );
+    this.setState({ emailPackCodes: packCodes });
+  };
+
   openDialog = () => {
     this.createActionRuleDisabled = false;
 
@@ -162,8 +184,11 @@ class CollectionExerciseDetails extends Component {
       newActionRuleExportFilePackCode: "",
       newActionRuleSmsPackCode: "",
       newActionRuleSmsPhoneNumberColumn: "",
+      newActionRuleEmailPackCode: "",
+      newActionRuleEmailColumn: "",
       packCodeValidationError: false,
       smsPhoneNumberColumnValidationError: false,
+      emailColumnValidationError: false,
       uacQidMetadataValidationError: false,
       newActionRuleClassifiers: "",
       newUacQidMetadata: "",
@@ -190,6 +215,13 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
+  onNewActionRuleEmailPackCodeChange = (event) => {
+    this.setState({
+      emailPackCodeValidationError: false,
+      newActionRuleEmailPackCode: event.target.value,
+    });
+  };
+
   onNewActionRuleClassifiersChange = (event) => {
     this.setState({
       newActionRuleClassifiers: event.target.value,
@@ -211,6 +243,13 @@ class CollectionExerciseDetails extends Component {
     this.setState({
       newActionRuleSmsPhoneNumberColumn: event.target.value,
       smsPhoneNumberColumnValidationError: false,
+    });
+  };
+
+  onNewActionRuleEmailChange = (event) => {
+    this.setState({
+      newActionRuleEmailColumn: event.target.value,
+      emailColumnValidationError: false,
     });
   };
 
@@ -252,10 +291,26 @@ class CollectionExerciseDetails extends Component {
     }
 
     if (
+      !this.state.newActionRuleEmailPackCode &&
+      this.state.newActionRuleType === "EMAIL"
+    ) {
+      this.setState({ emailPackCodeValidationError: true });
+      failedValidation = true;
+    }
+
+    if (
       !this.state.newActionRuleSmsPhoneNumberColumn &&
       this.state.newActionRuleType === "SMS"
     ) {
       this.setState({ smsPhoneNumberColumnValidationError: true });
+      failedValidation = true;
+    }
+
+    if (
+      !this.state.newActionRuleEmailColumn &&
+      this.state.newActionRuleType === "EMAIL"
+    ) {
+      this.setState({ emailColumnValidationError: true });
       failedValidation = true;
     }
 
@@ -282,6 +337,7 @@ class CollectionExerciseDetails extends Component {
 
     let newActionRulePackCode = "";
     let newActionRuleSmsPhoneNumberColumn = null;
+    let newActionRuleEmailColumn = null;
 
     if (this.state.newActionRuleType === "EXPORT_FILE") {
       newActionRulePackCode = this.state.newActionRuleExportFilePackCode;
@@ -293,6 +349,11 @@ class CollectionExerciseDetails extends Component {
         this.state.newActionRuleSmsPhoneNumberColumn;
     }
 
+    if (this.state.newActionRuleType === "EMAIL") {
+      newActionRulePackCode = this.state.newActionRuleEmailPackCode;
+      newActionRuleEmailColumn = this.state.newActionRuleEmailColumn;
+    }
+
     const newActionRule = {
       type: this.state.newActionRuleType,
       triggerDateTime: new Date(
@@ -302,6 +363,7 @@ class CollectionExerciseDetails extends Component {
       packCode: newActionRulePackCode,
       collectionExerciseId: this.props.collectionExerciseId,
       phoneNumberColumn: newActionRuleSmsPhoneNumberColumn,
+      emailColumn: newActionRuleEmailColumn,
       uacMetadata: uacMetadataJson,
     };
 
@@ -366,6 +428,12 @@ class CollectionExerciseDetails extends Component {
       </MenuItem>
     ));
 
+    const emailPackCodeMenuItems = this.state.emailPackCodes.map((packCode) => (
+      <MenuItem key={packCode} value={packCode}>
+        {packCode}
+      </MenuItem>
+    ));
+
     const sensitiveSampleColumnsMenuItems =
       this.state.sensitiveSampleColumns.map((column) => (
         <MenuItem key={column} value={column}>
@@ -381,11 +449,19 @@ class CollectionExerciseDetails extends Component {
         <MenuItem value={"EXPORT_FILE"}>Export File</MenuItem>
       );
     }
+
     if (this.state.authorisedActivities.includes("CREATE_SMS_ACTION_RULE")) {
       allowedActionRuleTypeMenuItems.push(
         <MenuItem value={"SMS"}>SMS</MenuItem>
       );
     }
+
+    if (this.state.authorisedActivities.includes("CREATE_EMAIL_ACTION_RULE")) {
+      allowedActionRuleTypeMenuItems.push(
+        <MenuItem value={"EMAIL"}>Email</MenuItem>
+      );
+    }
+
     if (
       this.state.authorisedActivities.includes(
         "CREATE_FACE_TO_FACE_ACTION_RULE"
@@ -515,6 +591,39 @@ class CollectionExerciseDetails extends Component {
                         onChange={this.onNewActionRuleSmsPhoneNumberChange}
                         value={this.state.newActionRuleSmsPhoneNumberColumn}
                         error={this.state.smsPhoneNumberColumnValidationError}
+                      >
+                        {sensitiveSampleColumnsMenuItems}
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth={true}>
+                      <TextField
+                        style={{ minWidth: 200 }}
+                        error={this.state.uacQidMetadataValidationError}
+                        label="UAC QID Metadata"
+                        onChange={this.onNewActionRuleUacQidMetadataChange}
+                        value={this.state.newUacQidMetadata}
+                      />
+                    </FormControl>
+                  </>
+                )}
+                {this.state.newActionRuleType === "EMAIL" && (
+                  <>
+                    <FormControl required fullWidth={true}>
+                      <InputLabel>Pack Code</InputLabel>
+                      <Select
+                        onChange={this.onNewActionRuleEmailPackCodeChange}
+                        value={this.state.newActionRuleEmailPackCode}
+                        error={this.state.emailPackCodeValidationError}
+                      >
+                        {emailPackCodeMenuItems}
+                      </Select>
+                    </FormControl>
+                    <FormControl required fullWidth={true}>
+                      <InputLabel>Email Column</InputLabel>
+                      <Select
+                        onChange={this.onNewActionRuleEmailChange}
+                        value={this.state.newActionRuleEmailColumn}
+                        error={this.state.emailColumnValidationError}
                       >
                         {sensitiveSampleColumnsMenuItems}
                       </Select>

@@ -36,11 +36,15 @@ class LandingPage extends Component {
     newSurveyMetadata: "",
     exportFileTemplates: [],
     smsTemplates: [],
+    emailTemplates: [],
     createExportFileTemplatePackCodeError: "",
     createExportFileTemplateDialogDisplayed: false,
     createSmsTemplateDialogDisplayed: false,
     createSmsTemplateError: "",
     createSMSTemplatePackCodeError: "",
+    createEmailTemplateDialogDisplayed: false,
+    createEmailTemplateError: "",
+    createEmailTemplatePackCodeError: "",
     exportFileDestinations: [],
     exportFileDestination: "",
     description: "",
@@ -114,6 +118,7 @@ class LandingPage extends Component {
     this.getSurveys(authorisedActivities);
     this.getExportFileTemplates(authorisedActivities);
     this.getSmsTemplates(authorisedActivities);
+    this.getEmailTemplates(authorisedActivities);
   };
 
   getExportFileDestinations = async (authorisedActivities) => {
@@ -181,6 +186,15 @@ class LandingPage extends Component {
     const templateJson = await response.json();
 
     this.setState({ smsTemplates: templateJson });
+  };
+
+  getEmailTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_EMAIL_TEMPLATES")) return;
+
+    const response = await fetch("/api/emailTemplates");
+    const templateJson = await response.json();
+
+    this.setState({ emailTemplates: templateJson });
   };
 
   openDialog = () => {
@@ -253,6 +267,29 @@ class LandingPage extends Component {
     });
   };
 
+  openEmailTemplateDialog = () => {
+    this.createEmailTemplateInProgress = false;
+
+    // Yes. Yes here. Here is the one and ONLY place where you should be preparing the dialog
+    this.setState({
+      description: "",
+      packCode: "",
+      template: "",
+      newTemplateMetadata: "",
+      notifyTemplateId: "",
+      packCodeValidationError: false,
+      descriptionValidationError: false,
+      templateValidationError: false,
+      newTemplateMetadataValidationError: false,
+      notifyTemplateIdValidationError: false,
+      createEmailTemplateDialogDisplayed: true,
+      createEmailTemplateError: "",
+      notifyTemplateIdErrorMessage: "",
+      createEmailTemplatePackCodeError: "",
+      createEmailTemplateDescriptionError: "",
+    });
+  };
+
   closeDialog = () => {
     // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
     this.setState({ createSurveyDialogDisplayed: false });
@@ -274,6 +311,13 @@ class LandingPage extends Component {
     // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
     this.setState({
       createSmsTemplateDialogDisplayed: false,
+    });
+  };
+
+  closeEmailTemplateDialog = () => {
+    // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
+    this.setState({
+      createEmailTemplateDialogDisplayed: false,
     });
   };
 
@@ -535,10 +579,7 @@ class LandingPage extends Component {
 
     let metadata = null;
 
-    if (!this.state.newTemplateMetadata.trim()) {
-      this.setState({ newTemplateMetadataValidationError: true });
-      failedValidation = true;
-    } else {
+    if (this.state.newTemplateMetadata) {
       try {
         metadata = JSON.parse(this.state.newTemplateMetadata);
         if (Object.keys(metadata).length === 0) {
@@ -649,10 +690,7 @@ class LandingPage extends Component {
 
     let metadata = null;
 
-    if (!this.state.newTemplateMetadata.trim()) {
-      this.setState({ newTemplateMetadataValidationError: true });
-      failedValidation = true;
-    } else {
+    if (this.state.newTemplateMetadata) {
       try {
         metadata = JSON.parse(this.state.newTemplateMetadata);
         if (Object.keys(metadata).length === 0) {
@@ -694,6 +732,121 @@ class LandingPage extends Component {
     }
   };
 
+  onCreateEmailTemplate = async () => {
+    if (this.createEmailTemplateInProgress) {
+      return;
+    }
+
+    this.createEmailTemplateInProgress = true;
+
+    this.setState({
+      createEmailTemplatePackCodeError: "",
+      packCodeValidationError: false,
+    });
+
+    var failedValidation = false;
+
+    if (!this.state.packCode.trim()) {
+      this.setState({ packCodeValidationError: true });
+      failedValidation = true;
+    }
+
+    if (!this.state.description.trim()) {
+      this.setState({ descriptionValidationError: true });
+      failedValidation = true;
+    }
+
+    if (
+      this.state.emailTemplates.some(
+        (emailTemplate) =>
+          emailTemplate.packCode.toUpperCase() ===
+          this.state.packCode.toUpperCase()
+      )
+    ) {
+      this.setState({
+        createEmailTemplatePackCodeError: "Pack code already in use",
+        packCodeValidationError: true,
+      });
+      failedValidation = true;
+    }
+
+    if (!this.state.notifyTemplateId) {
+      this.setState({
+        notifyTemplateIdValidationError: true,
+      });
+      failedValidation = true;
+    } else {
+      const regexExp =
+        /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+      if (!regexExp.test(this.state.notifyTemplateId)) {
+        this.setState({
+          notifyTemplateIdValidationError: true,
+          notifyTemplateIdErrorMessage: "Not a valid UUID",
+        });
+        failedValidation = true;
+      }
+    }
+
+    if (!this.state.template.trim()) {
+      this.setState({ templateValidationError: true });
+      failedValidation = true;
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.template);
+        if (!Array.isArray(parsedJson)) {
+          this.setState({ templateValidationError: true });
+          failedValidation = true;
+        }
+      } catch (err) {
+        this.setState({ templateValidationError: true });
+        failedValidation = true;
+      }
+    }
+
+    let metadata = null;
+
+    if (this.state.newTemplateMetadata) {
+      try {
+        metadata = JSON.parse(this.state.newTemplateMetadata);
+        if (Object.keys(metadata).length === 0) {
+          this.setState({ newTemplateMetadataValidationError: true });
+          failedValidation = true;
+        }
+      } catch (err) {
+        this.setState({ newTemplateMetadataValidationError: true });
+        failedValidation = true;
+      }
+    }
+
+    if (failedValidation) {
+      this.createEmailTemplateInProgress = false;
+      return;
+    }
+
+    const newEmailTemplate = {
+      notifyTemplateId: this.state.notifyTemplateId,
+      packCode: this.state.packCode,
+      description: this.state.description,
+      template: JSON.parse(this.state.template),
+      metadata: metadata,
+    };
+
+    const response = await fetch("/api/emailTemplates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newEmailTemplate),
+    });
+
+    if (!response.ok) {
+      this.setState({
+        createEmailTemplateError: "Error creating email template",
+      });
+      this.createEmailTemplateInProgress = false;
+    } else {
+      this.setState({ createEmailTemplateDialogDisplayed: false });
+    }
+  };
+
   render() {
     const surveyTableRows = this.state.surveys.map((survey) => (
       <TableRow key={survey.name}>
@@ -732,6 +885,7 @@ class LandingPage extends Component {
         </TableRow>
       )
     );
+
     const smsTemplateRows = this.state.smsTemplates.map((smsTemplate) => (
       <TableRow key={smsTemplate.packCode}>
         <TableCell component="th" scope="row">
@@ -748,6 +902,26 @@ class LandingPage extends Component {
         </TableCell>
         <TableCell component="th" scope="row">
           {JSON.stringify(smsTemplate.metadata)}
+        </TableCell>
+      </TableRow>
+    ));
+
+    const emailTemplateRows = this.state.emailTemplates.map((emailTemplate) => (
+      <TableRow key={emailTemplate.packCode}>
+        <TableCell component="th" scope="row">
+          {emailTemplate.packCode}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {emailTemplate.description}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(emailTemplate.template)}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {emailTemplate.notifyTemplateId}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(emailTemplate.metadata)}
         </TableCell>
       </TableRow>
     ));
@@ -846,13 +1020,46 @@ class LandingPage extends Component {
             </TableContainer>
           </>
         )}
+
         {this.state.authorisedActivities.includes("CREATE_SMS_TEMPLATE") && (
           <Button
             variant="contained"
             onClick={this.openSmsTemplateDialog}
             style={{ marginTop: 10 }}
           >
-            Create sms Template
+            Create SMS Template
+          </Button>
+        )}
+
+        {this.state.authorisedActivities.includes("LIST_EMAIL_TEMPLATES") && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              Email Templates
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Template</TableCell>
+                    <TableCell>Gov Notify Template ID</TableCell>
+                    <TableCell>Metadata</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{emailTemplateRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
+
+        {this.state.authorisedActivities.includes("CREATE_EMAIL_TEMPLATE") && (
+          <Button
+            variant="contained"
+            onClick={this.openEmailTemplateDialog}
+            style={{ marginTop: 10 }}
+          >
+            Create Email Template
           </Button>
         )}
 
@@ -1166,6 +1373,82 @@ class LandingPage extends Component {
                 </Button>
                 <Button
                   onClick={this.closeSmsTemplateDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={this.state.createEmailTemplateDialogDisplayed}
+          fullWidth={true}
+        >
+          <DialogContent style={{ padding: 30 }}>
+            {this.state.createEmailTemplateError && (
+              <div style={{ color: "red" }}>
+                {this.state.createEmailTemplateError}
+              </div>
+            )}
+            <div>
+              <div>
+                <TextField
+                  required
+                  fullWidth={true}
+                  error={this.state.packCodeValidationError}
+                  label="Pack Code"
+                  onChange={this.onPackCodeChange}
+                  value={this.state.packCode}
+                  helperText={this.state.createEmailTemplatePackCodeError}
+                />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.descriptionValidationError}
+                  label="Description"
+                  onChange={this.onDescriptionChange}
+                  value={this.state.description}
+                  helperText={this.state.createEmailTemplateDescriptionError}
+                />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.notifyTemplateIdValidationError}
+                  label="Notify Template ID (UUID)"
+                  onChange={this.onNotifyTemplateIdChange}
+                  value={this.state.notifyTemplateId}
+                />
+                <TextField
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.templateValidationError}
+                  label="Template"
+                  onChange={this.onTemplateChange}
+                  value={this.state.template}
+                />
+                <TextField
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.newTemplateMetadataValidationError}
+                  label="Metadata"
+                  onChange={this.onNewTemplateMetadataChange}
+                  value={this.state.newTemplateMetadata}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                  onClick={this.onCreateEmailTemplate}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Create SMS template
+                </Button>
+                <Button
+                  onClick={this.closeEmailTemplateDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >

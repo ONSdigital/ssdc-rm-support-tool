@@ -11,6 +11,7 @@ public class BundleOfUsefulTestStuff {
   private String qid;
   private String exportFileTemplatePackCode;
   private String smsTemplatePackCode;
+  private String emailTemplatePackCode;
   private UUID userId;
   private UUID groupId;
   private UUID groupMemberId;
