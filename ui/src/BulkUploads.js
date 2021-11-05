@@ -262,7 +262,7 @@ class BulkUploads extends Component {
     viewerPermission
   ) {
     const bulkJobTableRows = bulkJobs.map((job, index) => (
-      <TableRow key={job.createdAt}>
+      <TableRow key={index}>
         <TableCell component="th" scope="row">
           {job.fileName}
         </TableCell>
