@@ -158,7 +158,7 @@ class SampleUpload extends Component {
     );
 
     const jobTableRows = this.state.jobs.map((job, index) => (
-      <TableRow key={job.createdAt}>
+      <TableRow key={index}>
         <TableCell component="th" scope="row">
           {job.fileName}
         </TableCell>
