@@ -295,7 +295,7 @@ public class CaseEndpoint {
   }
 
   @PostMapping(value = "/{caseId}/action/email-fulfilment")
-  public ResponseEntity<?> handleSmsFulfilment(
+  public ResponseEntity<?> handleEmailFulfilment(
       @PathVariable("caseId") UUID caseId,
       @RequestBody EmailFulfilmentAction emailFulfilmentAction,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {

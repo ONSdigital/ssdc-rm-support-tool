@@ -72,7 +72,7 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
   }
 
   @PostMapping
-  public ResponseEntity<String> createFulfilmentSurveySmsTemplate(
+  public ResponseEntity<String> createFulfilmentSurveyEmailTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Survey survey =
