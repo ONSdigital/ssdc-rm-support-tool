@@ -14,6 +14,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Case;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
+import uk.gov.ons.ssdc.common.model.entity.EmailTemplate;
 import uk.gov.ons.ssdc.common.model.entity.ExportFileTemplate;
 import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
@@ -28,6 +29,7 @@ import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
@@ -47,6 +49,7 @@ public class IntegrationTestHelper {
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final SmsTemplateRepository smsTemplateRepository;
+  private final EmailTemplateRepository emailTemplateRepository;
   private final CaseRepository caseRepository;
   private final UacQidLinkRepository uacQidLinkRepository;
 
@@ -64,6 +67,7 @@ public class IntegrationTestHelper {
       CollectionExerciseRepository collectionExerciseRepository,
       ExportFileTemplateRepository exportFileTemplateRepository,
       SmsTemplateRepository smsTemplateRepository,
+      EmailTemplateRepository emailTemplateRepository,
       CaseRepository caseRepository,
       UacQidLinkRepository uacQidLinkRepository,
       UserRepository userRepository,
@@ -75,6 +79,7 @@ public class IntegrationTestHelper {
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.smsTemplateRepository = smsTemplateRepository;
+    this.emailTemplateRepository = emailTemplateRepository;
     this.caseRepository = caseRepository;
     this.uacQidLinkRepository = uacQidLinkRepository;
     this.userRepository = userRepository;
@@ -167,7 +172,8 @@ public class IntegrationTestHelper {
         new ColumnValidator[] {
           new ColumnValidator("foo", false, new Rule[] {}),
           new ColumnValidator("bar", false, new Rule[] {}),
-          new ColumnValidator("testPhoneNumber", true, new Rule[] {})
+          new ColumnValidator("testPhoneNumber", true, new Rule[] {}),
+          new ColumnValidator("testEmail", true, new Rule[] {})
         });
     survey.setSampleSeparator(',');
     survey.setSampleDefinitionUrl("http://foo.bar");
@@ -209,6 +215,13 @@ public class IntegrationTestHelper {
     smsTemplate.setDescription("Test description");
     smsTemplate = smsTemplateRepository.saveAndFlush(smsTemplate);
 
+    EmailTemplate emailTemplate = new EmailTemplate();
+    emailTemplate.setPackCode("TEST_EMAIL_PACK_CODE_" + UUID.randomUUID());
+    emailTemplate.setTemplate(new String[] {"foo", "bar"});
+    emailTemplate.setNotifyTemplateId(UUID.randomUUID());
+    emailTemplate.setDescription("Test description");
+    emailTemplate = emailTemplateRepository.saveAndFlush(emailTemplate);
+
     User user = setupDummyUser(UUID.randomUUID());
     UserGroup group = setupDummyGroup(UUID.randomUUID());
     UserGroup secondGroup = setupDummyGroup(UUID.randomUUID());
@@ -223,6 +236,7 @@ public class IntegrationTestHelper {
     bundle.setQid(uacQidLink.getQid());
     bundle.setExportFileTemplatePackCode(exportFileTemplate.getPackCode());
     bundle.setSmsTemplatePackCode(smsTemplate.getPackCode());
+    bundle.setEmailTemplatePackCode(emailTemplate.getPackCode());
     bundle.setUserId(user.getId());
     bundle.setGroupId(group.getId());
     bundle.setGroupMemberId(userGroupMember.getId());

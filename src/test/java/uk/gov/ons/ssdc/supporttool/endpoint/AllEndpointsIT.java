@@ -17,6 +17,7 @@ import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.ActionRuleDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CollectionExerciseDto;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.EmailTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.ExportFileTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SurveyDto;
@@ -94,6 +95,20 @@ class AllEndpointsIT {
 
     integrationTestHelper.testPost(
         port,
+        UserGroupAuthorisedActivityType.CREATE_EMAIL_ACTION_RULE,
+        (bundle) -> "actionRules",
+        (bundle) -> {
+          ActionRuleDto actionRuleDto = new ActionRuleDto();
+          actionRuleDto.setType(ActionRuleType.EMAIL);
+          actionRuleDto.setCollectionExerciseId(bundle.getCollexId());
+          actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
+          actionRuleDto.setPackCode(bundle.getEmailTemplatePackCode());
+          actionRuleDto.setEmailColumn("testEmail");
+          return actionRuleDto;
+        });
+
+    integrationTestHelper.testPost(
+        port,
         UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE,
         (bundle) -> "actionRules",
         (bundle) -> {
@@ -166,6 +181,26 @@ class AllEndpointsIT {
           AllowTemplateOnSurvey allowTemplateOnSurvey = new AllowTemplateOnSurvey();
           allowTemplateOnSurvey.setSurveyId(bundle.getSurveyId());
           allowTemplateOnSurvey.setPackCode(bundle.getSmsTemplatePackCode());
+          return allowTemplateOnSurvey;
+        });
+  }
+
+  @Test
+  void testActionRuleSurveyEmailTemplateEndpoints() {
+    integrationTestHelper.testGet(
+        port,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES,
+        (bundle) ->
+            String.format("actionRuleSurveyEmailTemplates/?surveyId=%s", bundle.getSurveyId()));
+
+    integrationTestHelper.testPost(
+        port,
+        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE,
+        (bundle) -> "actionRuleSurveyEmailTemplates",
+        (bundle) -> {
+          AllowTemplateOnSurvey allowTemplateOnSurvey = new AllowTemplateOnSurvey();
+          allowTemplateOnSurvey.setSurveyId(bundle.getSurveyId());
+          allowTemplateOnSurvey.setPackCode(bundle.getEmailTemplatePackCode());
           return allowTemplateOnSurvey;
         });
   }
@@ -256,6 +291,26 @@ class AllEndpointsIT {
   }
 
   @Test
+  void testFulfilmentSurveyEmailTemplateEndpoints() {
+    integrationTestHelper.testGet(
+        port,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS,
+        (bundle) ->
+            String.format("fulfilmentSurveyEmailTemplates/?surveyId=%s", bundle.getSurveyId()));
+
+    integrationTestHelper.testPost(
+        port,
+        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT,
+        (bundle) -> "fulfilmentSurveyEmailTemplates",
+        (bundle) -> {
+          AllowTemplateOnSurvey allowTemplateOnSurvey = new AllowTemplateOnSurvey();
+          allowTemplateOnSurvey.setSurveyId(bundle.getSurveyId());
+          allowTemplateOnSurvey.setPackCode(bundle.getEmailTemplatePackCode());
+          return allowTemplateOnSurvey;
+        });
+  }
+
+  @Test
   void testExportFileDestinationsEndpoints() {
     integrationTestHelper.testGet(
         port,
@@ -302,6 +357,26 @@ class AllEndpointsIT {
           smsTemplateDto.setDescription("Test description");
           smsTemplateDto.setMetadata(Map.of("foo", "bar"));
           return smsTemplateDto;
+        });
+  }
+
+  @Test
+  void testEmailTemplateEndpoints() {
+    integrationTestHelper.testGet(
+        port, UserGroupAuthorisedActivityType.LIST_EMAIL_TEMPLATES, (bundle) -> "emailTemplates");
+
+    integrationTestHelper.testPost(
+        port,
+        UserGroupAuthorisedActivityType.CREATE_EMAIL_TEMPLATE,
+        (bundle) -> "emailTemplates",
+        (bundle) -> {
+          EmailTemplateDto emailTemplateDto = new EmailTemplateDto();
+          emailTemplateDto.setTemplate(new String[] {"foo"});
+          emailTemplateDto.setNotifyTemplateId(UUID.randomUUID());
+          emailTemplateDto.setPackCode("TEST_" + UUID.randomUUID());
+          emailTemplateDto.setDescription("Test description");
+          emailTemplateDto.setMetadata(Map.of("foo", "bar"));
+          return emailTemplateDto;
         });
   }
 

@@ -9,20 +9,20 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSmsFulfilmentTemplates } from "./Utils";
+import { getEmailFulfilmentTemplates } from "./Utils";
 
-class SmsFulfilment extends Component {
+class EmailFulfilment extends Component {
   state = {
     packCode: "",
-    allowableSmsFulfilmentTemplates: [],
+    allowableEmailFulfilmentTemplates: [],
     packCodeValidationError: false,
     packCodeValidationErrorDesc: "",
-    smsUacQidMetadataValidationError: false,
+    emailUacQidMetadataValidationError: false,
     showDialog: false,
-    phoneNumber: "",
+    email: "",
     newValueValidationError: "",
     validationError: false,
-    newSmsUacQidMetadata: "",
+    newEmailUacQidMetadata: "",
   };
 
   componentDidMount() {
@@ -63,44 +63,44 @@ class SmsFulfilment extends Component {
       packCodeValidationError: false,
       showDialog: false,
       newValueValidationError: "",
-      phoneNumber: "",
+      email: "",
       validationError: false,
-      newSmsUacQidMetadata: "",
+      newEmailUacQidMetadata: "",
     });
   };
 
   onChangeValue = (event) => {
     this.setState({
-      phoneNumber: event.target.value,
+      email: event.target.value,
     });
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
+        "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS"
       )
     )
       return;
 
-    const fulfilmentSmsTemplates = await getSmsFulfilmentTemplates(
+    const fulfilmentEmailTemplates = await getEmailFulfilmentTemplates(
       authorisedActivities,
       this.props.surveyId
     );
 
     this.setState({
-      allowableSmsFulfilmentTemplates: fulfilmentSmsTemplates,
+      allowableEmailFulfilmentTemplates: fulfilmentEmailTemplates,
     });
   };
 
-  onSmsTemplateChange = (event) => {
+  onEmailTemplateChange = (event) => {
     this.setState({ packCode: event.target.value });
   };
 
-  onNewActionRuleSmsUacQidMetadataChange = (event) => {
+  onNewActionRuleEmailUacQidMetadataChange = (event) => {
     this.setState({
-      newSmsUacQidMetadata: event.target.value,
-      smsUacQidMetadataValidationError: false,
+      newEmailUacQidMetadata: event.target.value,
+      emailUacQidMetadataValidationError: false,
     });
   };
 
@@ -120,25 +120,25 @@ class SmsFulfilment extends Component {
       validationFailed = true;
     }
 
-    if (!this.state.phoneNumber) {
+    if (!this.state.email) {
       this.setState({
         validationError: true,
-        newValueValidationError: "Please enter phone number",
+        newValueValidationError: "Please enter email",
       });
       validationFailed = true;
     }
 
     var uacMetadataJson = null;
 
-    if (this.state.newSmsUacQidMetadata.length > 0) {
+    if (this.state.newEmailUacQidMetadata.length > 0) {
       try {
-        uacMetadataJson = JSON.parse(this.state.newSmsUacQidMetadata);
+        uacMetadataJson = JSON.parse(this.state.newEmailUacQidMetadata);
         if (Object.keys(uacMetadataJson).length === 0) {
-          this.setState({ smsUacQidMetadataValidationError: true });
+          this.setState({ emailUacQidMetadataValidationError: true });
           validationFailed = true;
         }
       } catch (err) {
-        this.setState({ smsUacQidMetadataValidationError: true });
+        this.setState({ emailUacQidMetadataValidationError: true });
         validationFailed = true;
       }
     }
@@ -148,18 +148,18 @@ class SmsFulfilment extends Component {
       return;
     }
 
-    const smsFulfilment = {
+    const emailFulfilment = {
       packCode: this.state.packCode,
-      phoneNumber: this.state.phoneNumber,
+      email: this.state.email,
       uacMetadata: uacMetadataJson,
     };
 
     const response = await fetch(
-      `/api/cases/${this.props.caseId}/action/sms-fulfilment`,
+      `/api/cases/${this.props.caseId}/action/email-fulfilment`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(smsFulfilment),
+        body: JSON.stringify(emailFulfilment),
       }
     );
 
@@ -175,8 +175,8 @@ class SmsFulfilment extends Component {
   };
 
   render() {
-    const fulfilmentSmsTemplateMenuItems =
-      this.state.allowableSmsFulfilmentTemplates.map((packCode) => (
+    const fulfilmentEmailTemplateMenuItems =
+      this.state.allowableEmailFulfilmentTemplates.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>
@@ -189,38 +189,38 @@ class SmsFulfilment extends Component {
           onClick={this.openDialog}
           variant="contained"
         >
-          Request SMS fulfilment
+          Request Email fulfilment
         </Button>
         <Dialog open={this.state.showDialog}>
           <DialogContent style={{ padding: 30 }}>
             <div>
               <FormControl required fullWidth={true}>
-                <InputLabel>SMS Template</InputLabel>
+                <InputLabel>Email Template</InputLabel>
                 <Select
-                  onChange={this.onSmsTemplateChange}
+                  onChange={this.onEmailTemplateChange}
                   value={this.state.packCode}
                   error={this.state.packCodeValidationError}
                 >
-                  {fulfilmentSmsTemplateMenuItems}
+                  {fulfilmentEmailTemplateMenuItems}
                 </Select>
               </FormControl>
               <TextField
                 required
                 error={this.state.validationError}
                 style={{ minWidth: 200 }}
-                label="Phone number"
+                label="Email"
                 onChange={this.onChangeValue}
-                value={this.state.phoneNumber}
+                value={this.state.email}
                 helperText={this.state.newValueValidationError}
               />
               <FormControl fullWidth={true}>
                 <TextField
                   style={{ minWidth: 200 }}
-                  error={this.state.smsUacQidMetadataValidationError}
+                  error={this.state.emailUacQidMetadataValidationError}
                   label="UAC QID Metadata"
                   id="standard-required"
-                  onChange={this.onNewActionRuleSmsUacQidMetadataChange}
-                  value={this.state.newSmsUacQidMetadata}
+                  onChange={this.onNewActionRuleEmailUacQidMetadataChange}
+                  value={this.state.newEmailUacQidMetadata}
                 />
               </FormControl>
             </div>
@@ -230,7 +230,7 @@ class SmsFulfilment extends Component {
                 variant="contained"
                 style={{ margin: 10 }}
               >
-                Request SMS fulfilment
+                Request Email fulfilment
               </Button>
               <Button
                 onClick={this.closeDialog}
@@ -247,4 +247,4 @@ class SmsFulfilment extends Component {
   }
 }
 
-export default SmsFulfilment;
+export default EmailFulfilment;

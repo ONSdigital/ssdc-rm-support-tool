@@ -17,35 +17,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import uk.gov.ons.ssdc.common.model.entity.FulfilmentSurveySmsTemplate;
-import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
+import uk.gov.ons.ssdc.common.model.entity.EmailTemplate;
+import uk.gov.ons.ssdc.common.model.entity.FulfilmentSurveyEmailTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
-import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveySmsTemplateRepository;
-import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveyEmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 
 @RestController
-@RequestMapping(value = "/api/fulfilmentSurveySmsTemplates")
-public class FulfilmentSurveySmsTemplateEndpoint {
-  private final FulfilmentSurveySmsTemplateRepository fulfilmentSurveySmsTemplateRepository;
+@RequestMapping(value = "/api/fulfilmentSurveyEmailTemplates")
+public class FulfilmentSurveyEmailTemplateEndpoint {
+  private final FulfilmentSurveyEmailTemplateRepository fulfilmentSurveyEmailTemplateRepository;
   private final SurveyRepository surveyRepository;
-  private final SmsTemplateRepository smsTemplateRepository;
+  private final EmailTemplateRepository emailTemplateRepository;
   private final UserIdentity userIdentity;
   private final SurveyService surveyService;
 
-  public FulfilmentSurveySmsTemplateEndpoint(
-      FulfilmentSurveySmsTemplateRepository fulfilmentSurveySmsTemplateRepository,
+  public FulfilmentSurveyEmailTemplateEndpoint(
+      FulfilmentSurveyEmailTemplateRepository fulfilmentSurveyEmailTemplateRepository,
       SurveyRepository surveyRepository,
-      SmsTemplateRepository smsTemplateRepository,
+      EmailTemplateRepository emailTemplateRepository,
       UserIdentity userIdentity,
       SurveyService surveyService) {
-    this.fulfilmentSurveySmsTemplateRepository = fulfilmentSurveySmsTemplateRepository;
+    this.fulfilmentSurveyEmailTemplateRepository = fulfilmentSurveyEmailTemplateRepository;
     this.surveyRepository = surveyRepository;
-    this.smsTemplateRepository = smsTemplateRepository;
+    this.emailTemplateRepository = emailTemplateRepository;
     this.userIdentity = userIdentity;
     this.surveyService = surveyService;
   }
@@ -64,15 +64,15 @@ public class FulfilmentSurveySmsTemplateEndpoint {
     userIdentity.checkUserPermission(
         userEmail,
         survey,
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS);
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
 
-    return fulfilmentSurveySmsTemplateRepository.findBySurvey(survey).stream()
-        .map(fsst -> fsst.getSmsTemplate().getPackCode())
+    return fulfilmentSurveyEmailTemplateRepository.findBySurvey(survey).stream()
+        .map(fsst -> fsst.getEmailTemplate().getPackCode())
         .collect(Collectors.toList());
   }
 
   @PostMapping
-  public ResponseEntity<String> createFulfilmentSurveySmsTemplate(
+  public ResponseEntity<String> createFulfilmentSurveyEmailTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Survey survey =
@@ -82,29 +82,31 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
 
     userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_FULFILMENT);
+        userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT);
 
-    SmsTemplate smsTemplate =
-        smsTemplateRepository
+    EmailTemplate emailTemplate =
+        emailTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
                 () ->
-                    new ResponseStatusException(HttpStatus.BAD_REQUEST, "SMS template not found"));
+                    new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Email template not found"));
 
-    Optional<String> errorOpt = validate(survey, Set.of(smsTemplate.getTemplate()));
+    Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 
-    FulfilmentSurveySmsTemplate fulfilmentSurveySmsTemplate = new FulfilmentSurveySmsTemplate();
-    fulfilmentSurveySmsTemplate.setId(UUID.randomUUID());
-    fulfilmentSurveySmsTemplate.setSurvey(survey);
-    fulfilmentSurveySmsTemplate.setSmsTemplate(smsTemplate);
+    FulfilmentSurveyEmailTemplate fulfilmentSurveyEmailTemplate =
+        new FulfilmentSurveyEmailTemplate();
+    fulfilmentSurveyEmailTemplate.setId(UUID.randomUUID());
+    fulfilmentSurveyEmailTemplate.setSurvey(survey);
+    fulfilmentSurveyEmailTemplate.setEmailTemplate(emailTemplate);
 
-    fulfilmentSurveySmsTemplate =
-        fulfilmentSurveySmsTemplateRepository.saveAndFlush(fulfilmentSurveySmsTemplate);
+    fulfilmentSurveyEmailTemplate =
+        fulfilmentSurveyEmailTemplateRepository.saveAndFlush(fulfilmentSurveyEmailTemplate);
 
-    surveyService.publishSurveyUpdate(fulfilmentSurveySmsTemplate.getSurvey(), userEmail);
+    surveyService.publishSurveyUpdate(fulfilmentSurveyEmailTemplate.getSurvey(), userEmail);
 
     return new ResponseEntity<>("OK", HttpStatus.CREATED);
   }
