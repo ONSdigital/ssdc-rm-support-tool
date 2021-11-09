@@ -20,6 +20,7 @@ import SampleData from "./SampleData";
 import SensitiveData from "./SensitiveData";
 import { Link } from "react-router-dom";
 import SmsFulfilment from "./SmsFulfilment";
+import EmailFulfilment from "./EmailFulfilment";
 import JSONPretty from "react-json-pretty";
 
 class CaseDetails extends Component {
@@ -253,6 +254,14 @@ class CaseDetails extends Component {
                       "CREATE_CASE_SMS_FULFILMENT"
                     ) && (
                       <SmsFulfilment
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                      />
+                    )}
+                    {this.state.authorisedActivities.includes(
+                      "CREATE_CASE_EMAIL_FULFILMENT"
+                    ) && (
+                      <EmailFulfilment
                         caseId={this.props.caseId}
                         surveyId={this.props.surveyId}
                       />

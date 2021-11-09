@@ -23,11 +23,13 @@ import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.supporttool.client.NotifyServiceClient;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSample;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.UpdateSampleSensitive;
+import uk.gov.ons.ssdc.supporttool.model.dto.rest.EmailFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.RequestPayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.SmsFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseDto;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.EmailFulfilmentAction;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.EventDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.InvalidCase;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
@@ -292,9 +294,57 @@ public class CaseEndpoint {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @PostMapping(value = "/{caseId}/action/email-fulfilment")
+  public ResponseEntity<?> handleEmailFulfilment(
+      @PathVariable("caseId") UUID caseId,
+      @RequestBody EmailFulfilmentAction emailFulfilmentAction,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    Case caze = caseService.getCaseByCaseId(caseId);
+
+    // Check user is authorised to request a fulfilment on a case for this survey
+    userIdentity.checkUserPermission(
+        userEmail,
+        caze.getCollectionExercise().getSurvey(),
+        UserGroupAuthorisedActivityType.CREATE_CASE_EMAIL_FULFILMENT);
+
+    RequestDTO emailFulfilmentRequest = new RequestDTO();
+    RequestHeaderDTO header = new RequestHeaderDTO();
+    header.setSource("SUPPORT_TOOL");
+    header.setChannel("RM");
+    header.setCorrelationId(UUID.randomUUID());
+    header.setOriginatingUser(userEmail);
+
+    RequestPayloadDTO payload = new RequestPayloadDTO();
+    EmailFulfilment emailFulfilment = new EmailFulfilment();
+    emailFulfilment.setCaseId(caze.getId());
+    emailFulfilment.setPackCode(emailFulfilmentAction.getPackCode());
+    emailFulfilment.setEmail(emailFulfilmentAction.getEmail());
+    emailFulfilment.setUacMetadata(emailFulfilmentAction.getUacMetadata());
+
+    emailFulfilmentRequest.setHeader(header);
+    payload.setEmailFulfilment(emailFulfilment);
+    emailFulfilmentRequest.setPayload(payload);
+
+    Optional<String> errorOpt = requestEmailFulfilment(emailFulfilmentRequest);
+    if (errorOpt.isPresent()) {
+      return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   private Optional<String> requestSmsFulfilment(RequestDTO smsFulfilmentRequest) {
     try {
       notifyServiceClient.requestSmsFulfilment(smsFulfilmentRequest);
+    } catch (HttpClientErrorException e) {
+      return Optional.of(e.getResponseBodyAsString());
+    }
+    return Optional.empty();
+  }
+
+  private Optional<String> requestEmailFulfilment(RequestDTO emailFulfilmentRequest) {
+    try {
+      notifyServiceClient.requestEmailFulfilment(emailFulfilmentRequest);
     } catch (HttpClientErrorException e) {
       return Optional.of(e.getResponseBodyAsString());
     }
