@@ -88,6 +88,26 @@ public class SurveyService {
 
     surveyUpdate.setAllowedSmsFulfilments(allowedSmsFulfilments);
 
+    List<AllowedFulfilmentDto> alloweEmailFulfilments;
+    if (survey.getEmailTemplates() == null) {
+      alloweEmailFulfilments = Collections.emptyList();
+    } else {
+      alloweEmailFulfilments =
+          survey.getEmailTemplates().stream()
+              .map(
+                  template -> {
+                    AllowedFulfilmentDto allowedFulfilmentDto = new AllowedFulfilmentDto();
+                    allowedFulfilmentDto.setPackCode(template.getEmailTemplate().getPackCode());
+                    allowedFulfilmentDto.setDescription(
+                        template.getEmailTemplate().getDescription());
+                    allowedFulfilmentDto.setMetadata(template.getEmailTemplate().getMetadata());
+                    return allowedFulfilmentDto;
+                  })
+              .collect(Collectors.toList());
+    }
+
+    surveyUpdate.setAllowedEmailFulfilments(alloweEmailFulfilments);
+
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setSurveyUpdate(surveyUpdate);
 

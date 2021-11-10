@@ -20,6 +20,8 @@ public class ActionRuleDto {
 
   private String phoneNumberColumn;
 
+  private String emailColumn;
+
   private Object uacMetadata;
 
   private boolean hasTriggered;

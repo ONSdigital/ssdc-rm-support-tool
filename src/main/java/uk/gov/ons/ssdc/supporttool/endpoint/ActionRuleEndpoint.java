@@ -1,6 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_DEACTIVATE_UAC_ACTION_RULE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EMAIL_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_FACE_TO_FACE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE;
@@ -24,12 +25,14 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.ActionRule;
 import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
+import uk.gov.ons.ssdc.common.model.entity.EmailTemplate;
 import uk.gov.ons.ssdc.common.model.entity.ExportFileTemplate;
 import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.ActionRuleDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
+import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
@@ -43,18 +46,21 @@ public class ActionRuleEndpoint {
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final SmsTemplateRepository smsTemplateRepository;
+  private final EmailTemplateRepository emailTemplateRepository;
 
   public ActionRuleEndpoint(
       ActionRuleRepository actionRuleRepository,
       UserIdentity userIdentity,
       CollectionExerciseRepository collectionExerciseRepository,
       ExportFileTemplateRepository exportFileTemplateRepository,
-      SmsTemplateRepository smsTemplateRepository) {
+      SmsTemplateRepository smsTemplateRepository,
+      EmailTemplateRepository emailTemplateRepository) {
     this.actionRuleRepository = actionRuleRepository;
     this.userIdentity = userIdentity;
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.smsTemplateRepository = smsTemplateRepository;
+    this.emailTemplateRepository = emailTemplateRepository;
   }
 
   @GetMapping
@@ -89,11 +95,14 @@ public class ActionRuleEndpoint {
                     actionRuleDTO.setPackCode(actionRule.getExportFileTemplate().getPackCode());
                   } else if (actionRule.getType() == ActionRuleType.SMS) {
                     actionRuleDTO.setPackCode(actionRule.getSmsTemplate().getPackCode());
+                  } else if (actionRule.getType() == ActionRuleType.EMAIL) {
+                    actionRuleDTO.setPackCode(actionRule.getEmailTemplate().getPackCode());
                   }
 
                   actionRuleDTO.setType(actionRule.getType());
                   actionRuleDTO.setCollectionExerciseId(actionRule.getCollectionExercise().getId());
                   actionRuleDTO.setPhoneNumberColumn(actionRule.getPhoneNumberColumn());
+                  actionRuleDTO.setEmailColumn(actionRule.getEmailColumn());
                   actionRuleDTO.setTriggerDateTime(actionRule.getTriggerDateTime());
                   actionRuleDTO.setHasTriggered(actionRule.isHasTriggered());
                   actionRuleDTO.setUacMetadata(actionRule.getUacMetadata());
@@ -122,6 +131,7 @@ public class ActionRuleEndpoint {
 
     ExportFileTemplate exportFileTemplate = null;
     SmsTemplate smsTemplate = null;
+    EmailTemplate emailTemplate = null;
     switch (actionRuleDTO.getType()) {
       case EXPORT_FILE:
         userActivity = CREATE_EXPORT_FILE_ACTION_RULE;
@@ -157,6 +167,20 @@ public class ActionRuleEndpoint {
               HttpStatus.BAD_REQUEST, "Phone number column does not exist");
         }
         break;
+      case EMAIL:
+        userActivity = CREATE_EMAIL_ACTION_RULE;
+        emailTemplate =
+            emailTemplateRepository
+                .findById(actionRuleDTO.getPackCode())
+                .orElseThrow(
+                    () ->
+                        new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "Email template not found"));
+        if (!getSurveyColumns(collectionExercise.getSurvey(), true)
+            .contains(actionRuleDTO.getEmailColumn())) {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
+        }
+        break;
       default:
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
     }
@@ -173,6 +197,8 @@ public class ActionRuleEndpoint {
     actionRule.setCreatedBy(createdBy);
     actionRule.setSmsTemplate(smsTemplate);
     actionRule.setPhoneNumberColumn(actionRuleDTO.getPhoneNumberColumn());
+    actionRule.setEmailTemplate(emailTemplate);
+    actionRule.setEmailColumn(actionRuleDTO.getEmailColumn());
     actionRule.setUacMetadata(actionRuleDTO.getUacMetadata());
 
     actionRuleRepository.saveAndFlush(actionRule);

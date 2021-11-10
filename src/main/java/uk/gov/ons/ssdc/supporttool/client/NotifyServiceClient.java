@@ -25,6 +25,12 @@ public class NotifyServiceClient {
         createUri("/sms-fulfilment"), smsFulfilmentRequest, RequestDTO.class);
   }
 
+  public void requestEmailFulfilment(RequestDTO emailFulfilmentRequest) {
+    RestTemplate restTemplate = new RestTemplate();
+    restTemplate.postForObject(
+        createUri("/email-fulfilment"), emailFulfilmentRequest, RequestDTO.class);
+  }
+
   private URI createUri(String path) {
     return UriComponentsBuilder.newInstance()
         .scheme(scheme)

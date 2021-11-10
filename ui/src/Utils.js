@@ -22,6 +22,18 @@ export const getAllSmsTemplates = async (authorisedActivities) => {
   return templatePackCodes;
 };
 
+export const getAllEmailTemplates = async (authorisedActivities) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (!authorisedActivities.includes("LIST_EMAIL_TEMPLATES")) return [];
+
+  const response = await fetch("/api/emailTemplates");
+  const templateJson = await response.json();
+
+  const templatePackCodes = templateJson.map((template) => template.packCode);
+
+  return templatePackCodes;
+};
+
 export const getFulfilmentExportFileTemplates = async (
   authorisedActivities,
   surveyId
@@ -60,6 +72,26 @@ export const getSmsFulfilmentTemplates = async (
   return smsFulfilmentTemplatesJson;
 };
 
+export const getEmailFulfilmentTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (
+    !authorisedActivities.includes(
+      "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS"
+    )
+  )
+    return [];
+
+  const response = await fetch(
+    `/api/fulfilmentSurveyEmailTemplates/?surveyId=${surveyId}`
+  );
+  const emailFulfilmentTemplatesJson = await response.json();
+
+  return emailFulfilmentTemplatesJson;
+};
+
 export const getActionRuleExportFileTemplates = async (
   authorisedActivities,
   surveyId
@@ -96,6 +128,26 @@ export const getActionRuleSmsTemplates = async (
   const smsTemplatesJson = await response.json();
 
   return smsTemplatesJson;
+};
+
+export const getActionRuleEmailTemplates = async (
+  authorisedActivities,
+  surveyId
+) => {
+  // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
+  if (
+    !authorisedActivities.includes(
+      "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES"
+    )
+  )
+    return [];
+
+  const response = await fetch(
+    `/api/actionRuleSurveyEmailTemplates/?surveyId=${surveyId}`
+  );
+  const emailTemplatesJson = await response.json();
+
+  return emailTemplatesJson;
 };
 
 export const getSensitiveSampleColumns = async (

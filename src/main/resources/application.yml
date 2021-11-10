@@ -93,3 +93,9 @@ exceptionmanager:
     scheme: http
     host: localhost
     port: 8666
+
+ras-rm-sample-service:
+  connection:
+    scheme: http
+    host: localhost
+    port: 8125

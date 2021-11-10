@@ -10,7 +10,7 @@ import uk.gov.ons.ssdc.common.model.entity.Survey;
 
 public class AllowTemplateOnSurveyValidator {
   private static final Set<String> OTHER_ALLOWABLE_COLUMNS =
-      Set.of("__uac__", "__qid__", "__caseref__");
+      Set.of("__uac__", "__qid__", "__caseref__", "__ras_rm_iac__");
 
   public static Optional<String> validate(Survey survey, Set<String> templateColumns) {
     Set<String> surveyColumns = getSurveyColumns(survey, false);
