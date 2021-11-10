@@ -6,6 +6,8 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogTitle,
+  DialogContentText,
 } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -32,6 +34,8 @@ class CaseDetails extends Component {
     eventToShow: null,
     surveyName: "",
     collexName: "",
+    showDeactivaveDialog: false,
+    qidToDeactivate: "",
   };
 
   componentDidMount() {
@@ -94,8 +98,34 @@ class CaseDetails extends Component {
     }
   };
 
-  onDeactivate = (qid) => {
-    fetch(`/api/deactivateUac/${qid}`);
+  onClickDeactivate = (qid) => {
+    this.confirmDeactivateInProgress = false;
+
+    this.setState({
+      showDeactivaveDialog: true,
+      qidToDeactivate: qid,
+    });
+  };
+
+  confirmDeactivate = () => {
+    if (this.confirmDeactivateInProgress) {
+      return;
+    }
+
+    this.confirmDeactivateInProgress = true;
+
+    fetch(`/api/deactivateUac/${this.state.qidToDeactivate}`);
+    this.setState({
+      showDeactivaveDialog: false,
+      qidToDeactivate: "",
+    });
+  };
+
+  cancelDeactivate = () => {
+    this.setState({
+      showDeactivaveDialog: false,
+      qidToDeactivate: "",
+    });
   };
 
   openEventPayloadDialog = (event) => {
@@ -168,7 +198,7 @@ class CaseDetails extends Component {
           {this.state.authorisedActivities.includes("DEACTIVATE_UAC") &&
             uacQidLink.active && (
               <Button
-                onClick={() => this.onDeactivate(uacQidLink.qid)}
+                onClick={() => this.onClickDeactivate(uacQidLink.qid)}
                 variant="contained"
               >
                 Deactivate
@@ -389,6 +419,33 @@ class CaseDetails extends Component {
             </DialogContent>
           </Dialog>
         )}
+        <Dialog open={this.state.showDeactivaveDialog}>
+          <DialogTitle id="alert-dialog-title">
+            {"Confirm deactivate?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to deactivate this UAC?
+            </DialogContentText>
+          </DialogContent>
+          <div align="center">
+            <Button
+              onClick={this.confirmDeactivate}
+              variant="contained"
+              style={{ margin: 10 }}
+            >
+              Yes
+            </Button>
+            <Button
+              onClick={this.cancelDeactivate}
+              variant="contained"
+              autoFocus
+              style={{ margin: 10 }}
+            >
+              No
+            </Button>
+          </div>
+        </Dialog>
       </div>
     );
   }
