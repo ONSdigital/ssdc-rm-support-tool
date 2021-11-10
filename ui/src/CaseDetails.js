@@ -115,6 +115,7 @@ class CaseDetails extends Component {
     this.confirmDeactivateInProgress = true;
 
     fetch(`/api/deactivateUac/${this.state.qidToDeactivate}`);
+
     this.setState({
       showDeactivaveDialog: false,
       qidToDeactivate: "",
