@@ -171,6 +171,8 @@ class EmailFulfilment extends Component {
         newValueValidationError: errorMessageJson.error,
         validationError: true,
       });
+
+      this.createInProgress = false;
     }
   };
 
