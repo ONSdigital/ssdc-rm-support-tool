@@ -274,35 +274,33 @@ class ExceptionManager extends Component {
             </DialogContent>
           </Dialog>
         )}
-        {this.state.showQuarantineDialog && (
-          <Dialog open={this.state.showQuarantineDialog}>
-            <DialogTitle id="alert-dialog-title">
-              {"Confirm quarantine?"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                Are you sure you want to quarantine this message?
-              </DialogContentText>
-            </DialogContent>
-            <div align="center">
-              <Button
-                onClick={this.quarantineMessage}
-                variant="contained"
-                style={{ margin: 10 }}
-              >
-                Yes
-              </Button>
-              <Button
-                onClick={this.closeQuarantineDialog}
-                variant="contained"
-                autoFocus
-                style={{ margin: 10 }}
-              >
-                No
-              </Button>
-            </div>
-          </Dialog>
-        )}
+        <Dialog open={this.state.showQuarantineDialog}>
+          <DialogTitle id="alert-dialog-title">
+            {"Confirm quarantine?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to quarantine this message?
+            </DialogContentText>
+          </DialogContent>
+          <div align="center">
+            <Button
+              onClick={this.quarantineMessage}
+              variant="contained"
+              style={{ margin: 10 }}
+            >
+              Yes
+            </Button>
+            <Button
+              onClick={this.closeQuarantineDialog}
+              variant="contained"
+              autoFocus
+              style={{ margin: 10 }}
+            >
+              No
+            </Button>
+          </div>
+        </Dialog>
       </div>
     );
   }
