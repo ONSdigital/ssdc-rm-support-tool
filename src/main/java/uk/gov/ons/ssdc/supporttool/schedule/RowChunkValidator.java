@@ -54,16 +54,23 @@ public class RowChunkValidator {
       List<String> rowValidationErrors = new LinkedList<>();
 
       if (getValidationRulesPerRow) {
-        String fieldToUpdate = jobRow.getRowData().get("fieldToUpdate");
-        columnValidators =
-            jobTypeSettings.getColumnValidatorForSampleOrSensitiveDataRows(fieldToUpdate);
-
-        if (columnValidators == null) {
-          rowStatus = JobRowStatus.VALIDATED_ERROR;
-          rowValidationErrors.add(
-              String.format("fieldToUpdate column %s does not exist", fieldToUpdate));
-          hadErrors = true;
+        // If it's a sensitive data update, and the row is empty then it means "blank out the data"
+        if (job.getJobType() == JobType.BULK_UPDATE_SAMPLE_SENSITIVE
+            && "".equals(jobRow.getRowData().get("newValue"))) {
+          // We should disregard all validation rules if we're blanking out the data
           columnValidators = new ColumnValidator[0];
+        } else {
+          String fieldToUpdate = jobRow.getRowData().get("fieldToUpdate");
+          columnValidators =
+              jobTypeSettings.getColumnValidatorForSampleOrSensitiveDataRows(fieldToUpdate);
+
+          if (columnValidators == null) {
+            rowStatus = JobRowStatus.VALIDATED_ERROR;
+            rowValidationErrors.add(
+                String.format("fieldToUpdate column %s does not exist", fieldToUpdate));
+            hadErrors = true;
+            columnValidators = new ColumnValidator[0];
+          }
         }
       }
 
