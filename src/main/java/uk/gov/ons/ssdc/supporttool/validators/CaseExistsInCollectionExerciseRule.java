@@ -19,12 +19,18 @@ public class CaseExistsInCollectionExerciseRule implements Rule {
   @Override
   public Optional<String> checkValidity(String data) {
 
-    if (!getCaseRepository()
-        .existsByIdAndCollectionExercise(UUID.fromString(data), collectionExercise)) {
+    UUID caseId;
+    try {
+      caseId = UUID.fromString(data);
+    } catch (IllegalArgumentException e) {
+      return Optional.of(String.format("Case Id \"%s\" is not a valid UUID format", data));
+    }
+
+    if (!getCaseRepository().existsByIdAndCollectionExercise(caseId, collectionExercise)) {
       return Optional.of(
           String.format(
               "Case Id %s does not exist in collection exercise %s",
-              data, collectionExercise.getName()));
+              caseId, collectionExercise.getName()));
     }
 
     return Optional.empty();
