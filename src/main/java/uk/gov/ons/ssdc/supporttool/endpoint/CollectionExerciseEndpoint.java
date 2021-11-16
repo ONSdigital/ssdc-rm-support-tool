@@ -137,6 +137,8 @@ public class CollectionExerciseEndpoint {
     collectionExercise.setStartDate(collectionExerciseDto.getStartDate());
     collectionExercise.setEndDate(collectionExerciseDto.getEndDate());
     collectionExercise.setMetadata(collectionExerciseDto.getMetadata());
+    collectionExercise.setCollectionInstrumentSelectionRules(
+        collectionExerciseDto.getCollectionInstrumentSelectionRules());
     collectionExercise = collectionExerciseRepository.saveAndFlush(collectionExercise);
 
     CollectionExerciseUpdateDTO collectionExerciseUpdate = new CollectionExerciseUpdateDTO();
