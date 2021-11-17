@@ -11,6 +11,7 @@ jobs:
       before_install:
         - make format-check-mvn
         - docker login -u "${DOCKER_GCP_USERNAME}" -p "${DOCKER_GCP_PASSWORD}" "${DOCKER_GCP_REGISTRY}";
+        - docker login -u "${DOCKERHUB_USERNAME}" -p "${DOCKERHUB_PASSWORD}";
         - docker network create ssdcrmdockerdev_default
         - echo "$GOOGLE_SERVICE_ACCOUNT_KEY" > ~/google-service-account-key.json
         - export GOOGLE_APPLICATION_CREDENTIALS=~/google-service-account-key.json

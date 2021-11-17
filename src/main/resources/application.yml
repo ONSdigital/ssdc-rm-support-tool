@@ -46,8 +46,9 @@ spring:
       FAIL_ON_EMPTY_BEANS: false
 
 logging:
+  profile: DEV
   level:
-    ROOT: INFO
+    root: INFO
 
 management:
   endpoints:
