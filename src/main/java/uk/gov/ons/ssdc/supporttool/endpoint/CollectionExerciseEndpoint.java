@@ -10,9 +10,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
+import uk.gov.ons.ssdc.common.model.entity.CollectionInstrumentSelectionRule;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.CollectionExerciseUpdateDTO;
@@ -38,6 +42,8 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 @RestController
 @RequestMapping(value = "/api/collectionExercises")
 public class CollectionExerciseEndpoint {
+  private static final ExpressionParser expressionParser = new SpelExpressionParser();
+
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final SurveyRepository surveyRepository;
   private final UserIdentity userIdentity;
@@ -129,6 +135,9 @@ public class CollectionExerciseEndpoint {
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.CREATE_COLLECTION_EXERCISE);
 
+    validateCollectionInstrumentRules(
+        collectionExerciseDto.getCollectionInstrumentSelectionRules());
+
     CollectionExercise collectionExercise = new CollectionExercise();
     collectionExercise.setId(UUID.randomUUID());
     collectionExercise.setName(collectionExerciseDto.getName());
@@ -171,5 +180,42 @@ public class CollectionExerciseEndpoint {
     }
 
     return new ResponseEntity<>(collectionExercise.getId(), HttpStatus.CREATED);
+  }
+
+  private void validateCollectionInstrumentRules(
+      CollectionInstrumentSelectionRule[] collectionInstrumentSelectionRules) {
+    boolean foundDefaultRuleWithNullExpression = false;
+
+    for (CollectionInstrumentSelectionRule collectionInstrumentSelectionRule :
+        collectionInstrumentSelectionRules) {
+      if (!StringUtils.hasText(collectionInstrumentSelectionRule.getCollectionInstrumentUrl())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CI URL cannot be blank");
+      }
+
+      String spelExpression = collectionInstrumentSelectionRule.getSpelExpression();
+
+      if (spelExpression == null) {
+        if (collectionInstrumentSelectionRule.getPriority() == 0) {
+          foundDefaultRuleWithNullExpression = true;
+        }
+
+        continue;
+      } else if (!StringUtils.hasText(spelExpression)) {
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "SPEL expression cannot be blank");
+      }
+
+      try {
+        expressionParser.parseExpression(spelExpression);
+      } catch (Exception e) {
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression);
+      }
+    }
+
+    if (!foundDefaultRuleWithNullExpression) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Rules must include zero priority default with null expression");
+    }
   }
 }
