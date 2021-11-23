@@ -252,7 +252,7 @@ class SurveyDetails extends Component {
       newCollectionExerciseDateError: "",
       newCollectionExerciseCIRules: "",
       newCollectionExerciseCIRulesError: false,
-      });
+    });
   };
 
   closeCreateCollectionExerciseDialog = () => {
@@ -361,7 +361,7 @@ class SurveyDetails extends Component {
     } else {
       this.setState({ newCollectionExerciseCIRulesError: true });
       validationFailed = true;
-  }
+    }
 
     if (validationFailed) {
       this.createCollectionExerciseInProgress = false;
