@@ -14,6 +14,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Case;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
+import uk.gov.ons.ssdc.common.model.entity.CollectionInstrumentSelectionRule;
 import uk.gov.ons.ssdc.common.model.entity.EmailTemplate;
 import uk.gov.ons.ssdc.common.model.entity.ExportFileTemplate;
 import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
@@ -187,6 +188,10 @@ public class IntegrationTestHelper {
     collectionExercise.setStartDate(OffsetDateTime.now());
     collectionExercise.setEndDate(OffsetDateTime.now().plusDays(2));
     collectionExercise.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
+    collectionExercise.setCollectionInstrumentSelectionRules(
+        new CollectionInstrumentSelectionRule[] {
+          new CollectionInstrumentSelectionRule(0, null, "test instrument")
+        });
     collectionExercise = collectionExerciseRepository.saveAndFlush(collectionExercise);
 
     Case caze = new Case();
@@ -198,7 +203,9 @@ public class IntegrationTestHelper {
     uacQidLink.setId(UUID.randomUUID());
     uacQidLink.setQid("TEST_QID_" + UUID.randomUUID());
     uacQidLink.setUac("TEST_UAC_" + UUID.randomUUID());
+    uacQidLink.setUacHash("test fake hash");
     uacQidLink.setCaze(caze);
+    uacQidLink.setCollectionInstrumentUrl("test instrument url");
     uacQidLink = uacQidLinkRepository.saveAndFlush(uacQidLink);
 
     ExportFileTemplate exportFileTemplate = new ExportFileTemplate();

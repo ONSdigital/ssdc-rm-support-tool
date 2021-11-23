@@ -46,6 +46,8 @@ class SurveyDetails extends Component {
     newCollectionExerciseDateError: "",
     newCollectionExerciseMetadata: "",
     newCollectionExerciseMetadataError: false,
+    newCollectionExerciseCIRules: "",
+    newCollectionExerciseCIRulesError: false,
     allowActionRuleExportFileTemplateDialogDisplayed: false,
     allowActionRuleSmsTemplateDialogDisplayed: false,
     allowActionRuleEmailTemplateDialogDisplayed: false,
@@ -248,6 +250,8 @@ class SurveyDetails extends Component {
       createCollectionExerciseDialogDisplayed: true,
       newCollectionExerciseMetadataError: false,
       newCollectionExerciseDateError: "",
+      newCollectionExerciseCIRules: "",
+      newCollectionExerciseCIRulesError: false,
     });
   };
 
@@ -289,6 +293,13 @@ class SurveyDetails extends Component {
     this.setState({
       newCollectionExerciseMetadata: event.target.value,
       newCollectionExerciseMetadataError: false,
+    });
+  };
+
+  onNewCollectionExerciseCIRulesChange = (event) => {
+    this.setState({
+      newCollectionExerciseCIRules: event.target.value,
+      newCollectionExerciseCIRulesError: false,
     });
   };
 
@@ -335,6 +346,23 @@ class SurveyDetails extends Component {
       }
     }
 
+    let ciRulesJson = null;
+    if (this.state.newCollectionExerciseCIRules.length > 0) {
+      try {
+        ciRulesJson = JSON.parse(this.state.newCollectionExerciseCIRules);
+        if (Object.keys(ciRulesJson).length === 0) {
+          this.setState({ newCollectionExerciseCIRulesError: true });
+          validationFailed = true;
+        }
+      } catch (err) {
+        this.setState({ newCollectionExerciseCIRulesError: true });
+        validationFailed = true;
+      }
+    } else {
+      this.setState({ newCollectionExerciseCIRulesError: true });
+      validationFailed = true;
+    }
+
     if (validationFailed) {
       this.createCollectionExerciseInProgress = false;
       return;
@@ -349,6 +377,7 @@ class SurveyDetails extends Component {
       ).toISOString(),
       endDate: new Date(this.state.newCollectionExerciseEndDate).toISOString(),
       metadata: metadataJson,
+      collectionInstrumentSelectionRules: ciRulesJson,
     };
 
     const response = await fetch("/api/collectionExercises", {
@@ -1055,7 +1084,6 @@ class SurveyDetails extends Component {
                   required
                   fullWidth={true}
                   error={this.state.newCollectionExerciseNameError}
-                  id="standard-required"
                   label="Collection exercise name"
                   onChange={this.onNewCollectionExerciseNameChange}
                   value={this.state.newCollectionExerciseName}
@@ -1064,7 +1092,6 @@ class SurveyDetails extends Component {
                   required
                   fullWidth={true}
                   error={this.state.newCollectionExerciseReferenceError}
-                  id="standard-required"
                   label="Reference"
                   onChange={this.onNewCollectionExerciseReferenceChange}
                   value={this.state.newCollectionExerciseReference}
@@ -1099,10 +1126,19 @@ class SurveyDetails extends Component {
                   multiline
                   fullWidth={true}
                   error={this.state.newCollectionExerciseMetadataError}
-                  id="standard-required"
                   label="Metadata"
                   onChange={this.onNewCollectionExerciseMetadataChange}
                   value={this.state.newCollectionExerciseMetadata}
+                />
+                <TextField
+                  style={{ marginTop: 10 }}
+                  multiline
+                  required
+                  fullWidth={true}
+                  error={this.state.newCollectionExerciseCIRulesError}
+                  label="CI Rules"
+                  onChange={this.onNewCollectionExerciseCIRulesChange}
+                  value={this.state.newCollectionExerciseCIRules}
                 />
               </div>
               <div style={{ marginTop: 10 }}>

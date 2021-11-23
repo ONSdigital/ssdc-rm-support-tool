@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.ons.ssdc.common.model.entity.CollectionInstrumentSelectionRule;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CollectionExerciseDto;
@@ -71,6 +72,10 @@ public class CollectionExerciseEndpointIT {
             collectionExerciseDto.setStartDate(collexStartDate);
             collectionExerciseDto.setEndDate(collexEndDate);
             collectionExerciseDto.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
+            collectionExerciseDto.setCollectionInstrumentSelectionRules(
+                new CollectionInstrumentSelectionRule[] {
+                  new CollectionInstrumentSelectionRule(0, null, "dummyUrl")
+                });
             return collectionExerciseDto;
           });
 

@@ -11,6 +11,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
+import uk.gov.ons.ssdc.common.model.entity.CollectionInstrumentSelectionRule;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.Rule;
@@ -237,6 +238,10 @@ class AllEndpointsIT {
           collectionExerciseDto.setStartDate(OffsetDateTime.now());
           collectionExerciseDto.setEndDate(OffsetDateTime.now().plusDays(2));
           collectionExerciseDto.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
+          collectionExerciseDto.setCollectionInstrumentSelectionRules(
+              new CollectionInstrumentSelectionRule[] {
+                new CollectionInstrumentSelectionRule(0, null, "dummyUrl")
+              });
           return collectionExerciseDto;
         });
   }
