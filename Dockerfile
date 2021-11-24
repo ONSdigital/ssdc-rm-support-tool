@@ -1,5 +1,5 @@
-FROM openjdk:11-slim
-CMD ["/usr/local/openjdk-11/bin/java", "-jar", "/opt/ssdc-rm-support-tool.jar"]
+FROM openjdk:17-slim
+CMD ["/usr/local/openjdk-17/bin/java", "-jar", "/opt/ssdc-rm-support-tool.jar"]
 
 RUN groupadd --gid 999 supporttool && \
     useradd --create-home --system --uid 999 --gid supporttool supporttool
