@@ -183,6 +183,10 @@ class UserAdmin extends Component {
   };
 
   onGroupDescriptionChange = (event) => {
+    if (event.target.value.length > 255) {
+      return
+    }
+
     this.setState({
       groupDescription: event.target.value,
     });
