@@ -77,6 +77,7 @@ public class UserGroupEndpoint {
     UserGroupDto userGroupDto = new UserGroupDto();
     userGroupDto.setId(group.getId());
     userGroupDto.setName(group.getName());
+    userGroupDto.setDescription(group.getDescription());
     return userGroupDto;
   }
 
@@ -93,6 +94,7 @@ public class UserGroupEndpoint {
     UserGroup userGroup = new UserGroup();
     userGroup.setId(UUID.randomUUID());
     userGroup.setName(userGroupDto.getName());
+    userGroup.setDescription(userGroupDto.getDescription());
     userGroupRepository.saveAndFlush(userGroup);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
