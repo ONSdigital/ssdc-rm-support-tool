@@ -57,7 +57,7 @@ class MyGroupUserAdmin extends Component {
 
     this.setState({
       groupName: responseJson.name,
-      groupDescription: responseJson.description
+      groupDescription: responseJson.description,
     });
   };
 

@@ -41,7 +41,7 @@ class MyGroupsAdmin extends Component {
             </Link>
           </TableCell>
           <TableCell component="th" scope="row">
-              {group.description}
+            {group.description}
           </TableCell>
         </TableRow>
       );

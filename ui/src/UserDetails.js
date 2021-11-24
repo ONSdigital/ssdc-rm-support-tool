@@ -203,7 +203,7 @@ class UserDetails extends Component {
               </Link>
             </TableCell>
             <TableCell component="th" scope="row">
-                {memberOfGroup.groupDescription}
+              {memberOfGroup.groupDescription}
             </TableCell>
             <TableCell component="th" scope="row">
               <Button

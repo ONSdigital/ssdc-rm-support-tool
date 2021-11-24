@@ -217,7 +217,7 @@ class UserAdmin extends Component {
 
     const newGroup = {
       name: this.state.groupName,
-      description: this.state.groupDescription
+      description: this.state.groupDescription,
     };
 
     await fetch("/api/userGroups", {
