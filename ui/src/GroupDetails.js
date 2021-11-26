@@ -498,6 +498,9 @@ class GroupDetails extends Component {
         <Typography variant="h4" color="inherit">
           Group Details: {this.state.group.name}
         </Typography>
+        <Typography variant="h5" color="inherit">
+          Group Description: {this.state.group.description}
+        </Typography>
         {!this.state.authorisedActivities.includes("SUPER_USER") &&
           !this.state.isLoading && (
             <h1 style={{ color: "red", marginTop: 20 }}>

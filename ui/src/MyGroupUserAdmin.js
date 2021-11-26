@@ -22,6 +22,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 class MyGroupUserAdmin extends Component {
   state = {
     groupName: "",
+    groupDescription: "",
     groupMembers: [],
     showAddUserToGroupDialog: false,
     allUsersAutocompleteOptions: [],
@@ -54,7 +55,10 @@ class MyGroupUserAdmin extends Component {
 
     const responseJson = await response.json();
 
-    this.setState({ groupName: responseJson.name });
+    this.setState({
+      groupName: responseJson.name,
+      groupDescription: responseJson.description,
+    });
   };
 
   getGroupMembers = async () => {
@@ -206,6 +210,9 @@ class MyGroupUserAdmin extends Component {
         <Link to="/myGroupsAdmin">← Back to my groups</Link>
         <Typography variant="h4" color="inherit">
           My Group: {this.state.groupName}
+        </Typography>
+        <Typography variant="h5" color="inherit">
+          My Group Description: {this.state.groupDescription}
         </Typography>
         <TableContainer component={Paper} style={{ marginTop: 10 }}>
           <Table>
