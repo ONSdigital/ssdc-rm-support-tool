@@ -148,6 +148,7 @@ public class UserGroupMemberEndpoint {
     userGroupMemberDto.setUserId(member.getUser().getId());
     userGroupMemberDto.setUserEmail(member.getUser().getEmail());
     userGroupMemberDto.setGroupName(member.getGroup().getName());
+    userGroupMemberDto.setGroupDescription(member.getGroup().getDescription());
     return userGroupMemberDto;
   }
 }

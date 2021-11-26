@@ -7,4 +7,5 @@ import lombok.Data;
 public class UserGroupDto {
   private UUID id;
   private String name;
+  private String description;
 }
