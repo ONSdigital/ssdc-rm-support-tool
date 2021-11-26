@@ -59,6 +59,15 @@ management:
   health:
     pubsub:
       enabled: false
+  metrics:
+    tags:
+      application: Support Tool
+      pod: ${HOSTNAME}
+    export:
+      stackdriver:
+        project-id: dummy-project-id
+        enabled: false
+        step: PT1M
 
 notifyservice:
   connection:
