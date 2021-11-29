@@ -40,6 +40,9 @@ class MyGroupsAdmin extends Component {
               {group.name}
             </Link>
           </TableCell>
+          <TableCell component="th" scope="row">
+            {group.description}
+          </TableCell>
         </TableRow>
       );
     });
@@ -62,6 +65,7 @@ class MyGroupsAdmin extends Component {
                   <TableHead>
                     <TableRow>
                       <TableCell>Name</TableCell>
+                      <TableCell>Description</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>{groupsTableRows}</TableBody>

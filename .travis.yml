@@ -5,7 +5,7 @@ services:
 jobs:
   include:
     - language: java
-      jdk: openjdk11
+      jdk: openjdk17
       name: Java Service Build
 
       before_install:
