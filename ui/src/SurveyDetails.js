@@ -503,6 +503,46 @@ class SurveyDetails extends Component {
     }
   };
 
+  onAllowActionRuleSmsTemplate = async () => {
+    if (this.allowActionRuleSmsTemplateInProgress) {
+      return;
+    }
+
+    this.allowActionRuleSmsTemplateInProgress = true;
+
+    if (!this.state.smsTemplateToAllow) {
+      this.setState({
+        smsTemplateValidationError: true,
+      });
+
+      this.allowActionRuleSmsTemplateInProgress = false;
+      return;
+    }
+
+    const newAllowSmsTemplate = {
+      surveyId: this.props.surveyId,
+      packCode: this.state.smsTemplateToAllow,
+    };
+
+    const response = await fetch("/api/actionRuleSurveySmsTemplates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newAllowSmsTemplate),
+    });
+
+    if (response.ok) {
+      this.setState({
+        allowActionRuleSmsTemplateDialogDisplayed: false,
+      });
+    } else {
+      const errorMessage = await response.text();
+      this.setState({
+        allowSmsTemplateError: errorMessage,
+      });
+      this.allowActionRuleSmsTemplateInProgress = false;
+    }
+  };
+
   onAllowActionRuleEmailTemplate = async () => {
     if (this.allowActionRuleEmailTemplateInProgress) {
       return;

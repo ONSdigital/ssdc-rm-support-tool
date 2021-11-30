@@ -10,4 +10,5 @@ public class UserGroupMemberDto {
   private String userEmail;
   private UUID groupId;
   private String groupName;
+  private String groupDescription;
 }

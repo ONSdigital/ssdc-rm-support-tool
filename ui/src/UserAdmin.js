@@ -27,6 +27,7 @@ class UserAdmin extends Component {
     showGroupDialog: false,
     groupName: "",
     groupNameValidationError: "",
+    groupDescription: "",
   };
 
   componentDidMount() {
@@ -164,6 +165,7 @@ class UserAdmin extends Component {
     this.setState({
       groupName: "",
       groupNameValidationError: "",
+      groupDescription: "",
       showGroupDialog: true,
     });
   };
@@ -177,6 +179,16 @@ class UserAdmin extends Component {
   onGroupNameChange = (event) => {
     this.setState({
       groupName: event.target.value,
+    });
+  };
+
+  onGroupDescriptionChange = (event) => {
+    if (event.target.value.length > 255) {
+      return;
+    }
+
+    this.setState({
+      groupDescription: event.target.value,
     });
   };
 
@@ -209,6 +221,7 @@ class UserAdmin extends Component {
 
     const newGroup = {
       name: this.state.groupName,
+      description: this.state.groupDescription,
     };
 
     await fetch("/api/userGroups", {
@@ -234,6 +247,9 @@ class UserAdmin extends Component {
         <TableRow key={group.id}>
           <TableCell component="th" scope="row">
             <Link to={`/groupDetails?groupId=${group.id}`}>{group.name}</Link>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {group.description}
           </TableCell>
         </TableRow>
       );
@@ -288,6 +304,7 @@ class UserAdmin extends Component {
                   <TableHead>
                     <TableRow>
                       <TableCell>Name</TableCell>
+                      <TableCell>Description</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>{groupsTableRows}</TableBody>
@@ -349,6 +366,12 @@ class UserAdmin extends Component {
                 error={this.state.groupNameValidationError}
                 helperText={this.state.groupNameValidationError}
                 value={this.state.groupName}
+              />
+              <TextField
+                fullWidth={true}
+                label="Description"
+                onChange={this.onGroupDescriptionChange}
+                value={this.state.groupDescription}
               />
             </div>
             <div style={{ marginTop: 10 }}>

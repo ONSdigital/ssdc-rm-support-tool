@@ -471,6 +471,7 @@ class AllEndpointsIT {
         (bundle) -> {
           UserGroupDto userGroupDto = new UserGroupDto();
           userGroupDto.setName("TEST_GROUP_" + UUID.randomUUID());
+          userGroupDto.setDescription("Test description");
           return userGroupDto;
         });
   }

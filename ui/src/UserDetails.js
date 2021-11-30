@@ -203,6 +203,9 @@ class UserDetails extends Component {
               </Link>
             </TableCell>
             <TableCell component="th" scope="row">
+              {memberOfGroup.groupDescription}
+            </TableCell>
+            <TableCell component="th" scope="row">
               <Button
                 variant="contained"
                 onClick={() =>
@@ -256,6 +259,7 @@ class UserDetails extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Group Name</TableCell>
+                    <TableCell>Description</TableCell>
                     <TableCell />
                   </TableRow>
                 </TableHead>
