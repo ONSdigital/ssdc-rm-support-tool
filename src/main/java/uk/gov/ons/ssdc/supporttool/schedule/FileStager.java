@@ -1,9 +1,13 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import com.opencsv.CSVReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -19,6 +23,7 @@ import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
 
 @Component
 public class FileStager {
+  private static final Logger log = LoggerFactory.getLogger(FileStager.class);
 
   private final JobRepository jobRepository;
   private final JobTypeHelper jobTypeHelper;
@@ -26,7 +31,10 @@ public class FileStager {
   @Value("${file-upload-storage-path}")
   private String fileUploadStoragePath;
 
-  public FileStager(JobRepository jobRepository, JobTypeHelper jobTypeHelper) {
+  private final String hostName = InetAddress.getLocalHost().getHostName();
+
+  public FileStager(JobRepository jobRepository, JobTypeHelper jobTypeHelper)
+      throws UnknownHostException {
     this.jobRepository = jobRepository;
     this.jobTypeHelper = jobTypeHelper;
   }
@@ -36,6 +44,13 @@ public class FileStager {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.FILE_UPLOADED);
 
     for (Job job : jobs) {
+      String filePath = fileUploadStoragePath + job.getFileId();
+      if (!new File(filePath).exists()) {
+        log.with("filePath", filePath)
+            .with("hostName", hostName)
+            .info("File can't be seen by this host; probably being handled by a different host");
+        continue; // Skip this job... hopefully another host (pod) is handling it
+      }
 
       JobStatus jobStatus = JobStatus.STAGING_IN_PROGRESS;
 
