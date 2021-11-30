@@ -10,6 +10,4 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class Refusal {
   private RefusalTypeDTO type;
-  private String agentId;
-  private String callId;
 }
