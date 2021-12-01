@@ -38,50 +38,32 @@ public class JobTypeHelper {
   }
 
   public UserGroupAuthorisedActivityType getFileLoadPermission(JobType jobType) {
-    switch (jobType) {
-      case SAMPLE:
-        return UserGroupAuthorisedActivityType.LOAD_SAMPLE;
-
-      case BULK_REFUSAL:
-        return UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL;
-
-      case BULK_INVALID:
-        return UserGroupAuthorisedActivityType.LOAD_BULK_INVALID;
-
-      case BULK_UPDATE_SAMPLE:
-        return UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE;
-
-      case BULK_UPDATE_SAMPLE_SENSITIVE:
-        return UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE_SENSITIVE;
-
-      default:
-        // This code should be unreachable, providing we have a case for every JobType
-        throw new RuntimeException(
-            String.format("In getJobTypeSettings the jobType %s wasn't matched", jobType));
-    }
+    return switch (jobType) {
+      case SAMPLE -> UserGroupAuthorisedActivityType.LOAD_SAMPLE;
+      case BULK_REFUSAL -> UserGroupAuthorisedActivityType.LOAD_BULK_REFUSAL;
+      case BULK_INVALID -> UserGroupAuthorisedActivityType.LOAD_BULK_INVALID;
+      case BULK_UPDATE_SAMPLE -> UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE;
+      case BULK_UPDATE_SAMPLE_SENSITIVE -> UserGroupAuthorisedActivityType
+          .LOAD_BULK_UPDATE_SAMPLE_SENSITIVE;
+      default ->
+      // This code should be unreachable, providing we have a case for every JobType
+      throw new RuntimeException(
+          String.format("In getJobTypeSettings the jobType %s wasn't matched", jobType));
+    };
   }
 
   public UserGroupAuthorisedActivityType getFileViewProgressPermission(JobType jobType) {
-    switch (jobType) {
-      case SAMPLE:
-        return UserGroupAuthorisedActivityType.VIEW_SAMPLE_LOAD_PROGRESS;
-
-      case BULK_REFUSAL:
-        return UserGroupAuthorisedActivityType.VIEW_BULK_REFUSAL_PROGRESS;
-
-      case BULK_INVALID:
-        return UserGroupAuthorisedActivityType.VIEW_BULK_INVALID_PROGRESS;
-
-      case BULK_UPDATE_SAMPLE:
-        return UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_PROGRESS;
-
-      case BULK_UPDATE_SAMPLE_SENSITIVE:
-        return UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_SENSITIVE_PROGRESS;
-
-      default:
-        // This code should be unreachable, providing we have a case for every JobType
-        throw new RuntimeException(
-            String.format("In getJobTypeSettings the jobType %s wasn't matched", jobType));
-    }
+    return switch (jobType) {
+      case SAMPLE -> UserGroupAuthorisedActivityType.VIEW_SAMPLE_LOAD_PROGRESS;
+      case BULK_REFUSAL -> UserGroupAuthorisedActivityType.VIEW_BULK_REFUSAL_PROGRESS;
+      case BULK_INVALID -> UserGroupAuthorisedActivityType.VIEW_BULK_INVALID_PROGRESS;
+      case BULK_UPDATE_SAMPLE -> UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_PROGRESS;
+      case BULK_UPDATE_SAMPLE_SENSITIVE -> UserGroupAuthorisedActivityType
+          .VIEW_BULK_UPDATE_SAMPLE_SENSITIVE_PROGRESS;
+      default ->
+      // This code should be unreachable, providing we have a case for every JobType
+      throw new RuntimeException(
+          String.format("In getJobTypeSettings the jobType %s wasn't matched", jobType));
+    };
   }
 }
