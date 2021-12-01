@@ -7,54 +7,34 @@ import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.JobType;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
-import uk.gov.ons.ssdc.common.validation.Rule;
 
 @Component
 public class JobTypeHelper {
   public String[] getExpectedColumns(JobType jobType, CollectionExercise collectionExercise) {
-    ColumnValidator[] columnValidators;
-
     switch (jobType) {
       case SAMPLE:
-        columnValidators = collectionExercise.getSurvey().getSampleValidationRules();
-        break;
+        ColumnValidator[] columnValidators =
+            collectionExercise.getSurvey().getSampleValidationRules();
+        return Arrays.stream(columnValidators)
+            .map(columnValidator -> columnValidator.getColumnName())
+            .collect(Collectors.toList())
+            .toArray(new String[0]);
 
       case BULK_REFUSAL:
-        columnValidators =
-            new ColumnValidator[] {
-              new ColumnValidator("caseId", false, new Rule[0]),
-              new ColumnValidator("refusalType", false, new Rule[0])
-            };
-        break;
+        return new String[] {"caseId", "refusalType"};
 
       case BULK_INVALID:
-        columnValidators =
-            new ColumnValidator[] {
-              new ColumnValidator("caseId", false, new Rule[0]),
-              new ColumnValidator("reason", false, new Rule[0])
-            };
-        break;
+        return new String[] {"caseId", "reason"};
 
       case BULK_UPDATE_SAMPLE:
       case BULK_UPDATE_SAMPLE_SENSITIVE:
-        columnValidators =
-            new ColumnValidator[] {
-              new ColumnValidator("caseId", false, new Rule[0]),
-              new ColumnValidator("fieldToUpdate", false, new Rule[0]),
-              new ColumnValidator("newValue", false, new Rule[0])
-            };
-        break;
+        return new String[] {"caseId", "fieldToUpdate", "newValue"};
 
       default:
         // This code should be unreachable, providing we have a case for every JobType
         throw new RuntimeException(
             String.format("In getJobTypeSettings the jobType %s wasn't matched", jobType));
     }
-
-    return Arrays.stream(columnValidators)
-        .map(columnValidator -> columnValidator.getColumnName())
-        .collect(Collectors.toList())
-        .toArray(new String[0]);
   }
 
   public UserGroupAuthorisedActivityType getFileLoadPermission(JobType jobType) {
