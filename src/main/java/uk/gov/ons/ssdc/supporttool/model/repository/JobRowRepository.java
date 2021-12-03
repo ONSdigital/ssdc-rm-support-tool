@@ -30,6 +30,4 @@ public interface JobRowRepository extends JpaRepository<JobRow, UUID> {
   @Modifying
   @Query("delete from JobRow r where r.job = :job")
   void deleteByJob(@Param("job") Job job);
-
-  List<JobRow> findTop500ByJobAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 }

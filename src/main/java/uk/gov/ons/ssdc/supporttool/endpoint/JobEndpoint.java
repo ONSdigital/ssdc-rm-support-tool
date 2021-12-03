@@ -41,9 +41,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
 import uk.gov.ons.ssdc.supporttool.rasrm.service.RasRmSampleSetupService;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
-import uk.gov.ons.ssdc.supporttool.utility.ColumnHelper;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
-import uk.gov.ons.ssdc.supporttool.utility.JobTypeSettings;
 
 @RestController
 @RequestMapping(value = "/api/job")
@@ -133,9 +131,9 @@ public class JobEndpoint {
     try (StringWriter stringWriter = new StringWriter();
         CSVWriter csvWriter = new CSVWriter(stringWriter)) {
 
-      JobTypeSettings jobTypeSettings =
-          jobTypeHelper.getJobTypeSettings(job.getJobType(), job.getCollectionExercise());
-      csvWriter.writeNext(ColumnHelper.getExpectedColumns(jobTypeSettings.getColumnValidators()));
+      String[] expectedColumns =
+          jobTypeHelper.getExpectedColumns(job.getJobType(), job.getCollectionExercise());
+      csvWriter.writeNext(expectedColumns);
 
       for (JobRow jobRow : jobRows) {
         csvWriter.writeNext(jobRow.getOriginalRowData());
@@ -289,18 +287,16 @@ public class JobEndpoint {
 
   private void checkUserLoadFilePermissionByJobType(
       String userEmail, CollectionExercise collectionExercise, JobType jobType) {
-    JobTypeSettings jobTypeSettings = jobTypeHelper.getJobTypeSettings(jobType, collectionExercise);
-
     userIdentity.checkUserPermission(
-        userEmail, collectionExercise.getSurvey(), jobTypeSettings.getFileLoadPermission());
+        userEmail, collectionExercise.getSurvey(), jobTypeHelper.getFileLoadPermission(jobType));
   }
 
   private void checkUserViewProgressPermissionByJobType(
       String userEmail, CollectionExercise collectionExercise, JobType jobType) {
-    JobTypeSettings jobTypeSettings = jobTypeHelper.getJobTypeSettings(jobType, collectionExercise);
-
     userIdentity.checkUserPermission(
-        userEmail, collectionExercise.getSurvey(), jobTypeSettings.getFileViewProgressPermission());
+        userEmail,
+        collectionExercise.getSurvey(),
+        jobTypeHelper.getFileViewProgressPermission(jobType));
   }
 
   private JobDto mapJob(Job job) {
