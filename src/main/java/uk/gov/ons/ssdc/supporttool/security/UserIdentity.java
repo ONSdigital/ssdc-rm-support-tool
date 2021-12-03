@@ -72,9 +72,11 @@ public class UserIdentity {
             || (permission.getAuthorisedActivity() == UserGroupAuthorisedActivityType.SUPER_USER
                     && permission.getSurvey() != null
                     && permission.getSurvey().getId().equals(survey.getId())
-                // Otherwise, user must have specific activity/survey combo to be authorised
+                // Otherwise, user must have GLOBAL permission for specific activity
+                // OR the specific activity/survey combo has to be authorised EXACTLY
                 || (permission.getAuthorisedActivity() == activity
                     && (permission.getSurvey() == null
+                        || permission.getAuthorisedActivity().isGlobal()
                         || (permission.getSurvey() != null
                             && permission.getSurvey().getId().equals(survey.getId())))))) {
           return; // User is authorised

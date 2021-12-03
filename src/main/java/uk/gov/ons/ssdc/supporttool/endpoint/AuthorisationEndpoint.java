@@ -4,10 +4,12 @@ import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityTyp
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,8 +71,16 @@ public class AuthorisationEndpoint {
             && (permission.getSurvey() == null
                 || (surveyId.isPresent()
                     && permission.getSurvey().getId().equals(surveyId.get())))) {
-          // User is a global super user or super user on the specified survey: give all permissions
-          return Set.of(UserGroupAuthorisedActivityType.values());
+          if (permission.getSurvey() == null) {
+            // User is a global super user so give ALL permissions
+            return Set.of(UserGroupAuthorisedActivityType.values());
+          } else {
+            // User is a super user ONLY ON ONE SPECIFIC SURVEY so just give non-global permissions
+            result.addAll(
+                Arrays.stream(UserGroupAuthorisedActivityType.values())
+                    .filter(activityType -> !activityType.isGlobal())
+                    .collect(Collectors.toSet()));
+          }
         } else if (permission.getSurvey() != null
             && surveyId.isPresent()
             && permission.getSurvey().getId().equals(surveyId.get())) {

@@ -88,6 +88,12 @@ public class UserGroupPermissionEndpoint {
 
     Survey survey = null;
     if (userGroupPermissionDto.getSurveyId() != null) {
+      if (userGroupPermissionDto.getAuthorisedActivity().isGlobal()) {
+        // Not allowed to use a global permission on a specific survey... doesn't work; nonsensical!
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "Global permissions must be global");
+      }
+
       survey =
           surveyRepository
               .findById(userGroupPermissionDto.getSurveyId())
