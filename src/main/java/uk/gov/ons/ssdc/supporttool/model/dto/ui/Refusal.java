@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.ons.ssdc.supporttool.model.dto.messaging.RefusalTypeDTO;
 
 @Data
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class Refusal {
   private RefusalTypeDTO type;
-  private String agentId;
-  private String callId;
 }
