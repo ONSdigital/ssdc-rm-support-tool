@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.RefusalTypeDTO;
 
 @Data
 @NoArgsConstructor
