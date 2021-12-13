@@ -34,6 +34,7 @@ class GroupDetails extends Component {
     admins: [],
     groupActivities: [],
     allActivities: [],
+    globalActivities: [],
     allSurveys: [],
     allUsersAutocompleteOptions: [],
     allowedSurveys: [],
@@ -65,6 +66,7 @@ class GroupDetails extends Component {
     this.getGroup(authorisedActivities);
     const admins = await this.getAdmins(authorisedActivities);
     this.getAllActivities();
+    this.getGlobalActivities();
     this.getAllSurveys(authorisedActivities);
     this.getUserGroupPermissions(authorisedActivities);
     const allUsers = await this.getAllUsers(authorisedActivities); // Only need to do this once... it's an expensive operation
@@ -177,6 +179,18 @@ class GroupDetails extends Component {
     });
   };
 
+  getGlobalActivities = async () => {
+    // This is not an RBAC protected endpoint
+    const activitiesResponse = await fetch(
+      "/api/authorisedActivityTypes?globalOnly=true"
+    );
+    const activitiesJson = await activitiesResponse.json();
+
+    this.setState({
+      globalActivities: activitiesJson,
+    });
+  };
+
   getAllSurveys = async (authorisedActivities) => {
     if (!authorisedActivities.includes("LIST_SURVEYS")) return;
 
@@ -240,6 +254,13 @@ class GroupDetails extends Component {
   };
 
   onActivityChange = (event) => {
+    // If the selected activity is global, the selected survey HAS to be "all surveys - global"
+    if (this.state.globalActivities.includes(event.target.value)) {
+      this.setState({
+        surveyId: globalSurveyId,
+      });
+    }
+
     const existingPermissionSurveyIds = this.state.groupActivities
       .filter((activity) => activity.authorisedActivity === event.target.value)
       .map((permission) => permission.surveyId);
@@ -488,9 +509,20 @@ class GroupDetails extends Component {
         );
       });
 
-    const surveyMenuItems = this.state.allowedSurveys.map((survey) =>
-      this.buildSurveyMenuItem(survey)
-    );
+    var surveyMenuItems = [];
+    if (this.state.activity) {
+      if (this.state.globalActivities.includes(this.state.activity)) {
+        surveyMenuItems = [
+          <MenuItem key={globalSurveyId} value={globalSurveyId}>
+            <i>{globalSurveyLabel}</i>
+          </MenuItem>,
+        ];
+      } else {
+        surveyMenuItems = this.state.allowedSurveys.map((survey) =>
+          this.buildSurveyMenuItem(survey)
+        );
+      }
+    }
 
     return (
       <div style={{ padding: 20 }}>
