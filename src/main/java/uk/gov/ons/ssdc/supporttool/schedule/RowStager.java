@@ -2,7 +2,10 @@ package uk.gov.ons.ssdc.supporttool.schedule;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -68,9 +71,12 @@ public class RowStager {
   }
 
   private void processJob(Job job) {
+    CSVParser parser =
+        new CSVParserBuilder()
+            .withSeparator(job.getCollectionExercise().getSurvey().getSampleSeparator())
+            .build();
     try (Reader reader = Files.newBufferedReader(Path.of(fileUploadStoragePath + job.getFileId()));
-        CSVReader csvReader =
-            new CSVReader(reader, job.getCollectionExercise().getSurvey().getSampleSeparator())) {
+        CSVReader csvReader = new CSVReaderBuilder(reader).withCSVParser(parser).build()) {
 
       String[] headerRow;
       int headerRowCorrection = 1;
