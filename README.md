@@ -38,5 +38,3 @@ values ('c469377e-680e-4cb1-92a0-5217be2b3a52', -- permission ID
         '8269d75c-bfa1-4930-aca2-10dd9c6a2b42', -- group ID
         null);
 ```
-
-
