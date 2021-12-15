@@ -185,7 +185,7 @@ class ExceptionManager extends Component {
     if (this.state.exceptionDetails) {
       exceptionDetailsSections = this.state.exceptionDetails.map(
         (exceptionDetail, index) => (
-          <div Key={index} style={{ marginTop: 10, marginBottom: 10 }}>
+          <div key={index} style={{ marginTop: 10, marginBottom: 10 }}>
             <div>Index: {index}</div>
             <div>Class: {exceptionDetail.exceptionReport.exceptionClass}</div>
             <div>
