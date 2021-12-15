@@ -260,23 +260,31 @@ class JobDetails extends Component {
               ) &&
               ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
                 this.props.job.jobStatus
+              ) &&
+              this.props.job.rowErrorCount <
+                this.props.job.fileRowCount - headerRowCorrection && (
+                <Button
+                  onClick={this.props.onProcessJob}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Process
+                </Button>
+              )}
+            {this.props.job &&
+              this.props.authorisedActivities.includes(
+                this.props.loadPermission
+              ) &&
+              ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
+                this.props.job.jobStatus
               ) && (
-                <>
-                  <Button
-                    onClick={this.props.onProcessJob}
-                    variant="contained"
-                    style={{ margin: 10 }}
-                  >
-                    Process
-                  </Button>
-                  <Button
-                    onClick={this.props.onCancelJob}
-                    variant="contained"
-                    style={{ margin: 10 }}
-                  >
-                    Cancel
-                  </Button>
-                </>
+                <Button
+                  onClick={this.props.onCancelJob}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
               )}
             <Button
               onClick={this.props.handleClosedDetails}
