@@ -388,6 +388,8 @@ class SurveyDetails extends Component {
 
     if (response.ok) {
       this.setState({ createCollectionExerciseDialogDisplayed: false });
+    } else {
+      this.createCollectionExerciseInProgress = false;
     }
   };
 
