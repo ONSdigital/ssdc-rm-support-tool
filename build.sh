@@ -4,6 +4,12 @@ rm -r src/main/resources/static/* || true
 rm -r ui/build/* || true
 cd ui
 npm install
+
+if ! npx npx eslint .; then
+  echo "ESLint found issues"
+  exit 1
+fi
+
 npm run build
 cd ..
 cp -r ui/build/* src/main/resources/static
