@@ -51,10 +51,10 @@ class CollectionExerciseList extends Component {
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
-    // this.interval = setInterval(
-    //   () => this.getActionRules(authorisedActivities),
-    //   1000
-    // );
+    this.interval = setInterval(
+      () => this.getCollectionExercises(authorisedActivities),
+      1000
+    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {

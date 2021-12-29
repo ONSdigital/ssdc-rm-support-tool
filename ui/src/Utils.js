@@ -199,3 +199,8 @@ export const getAuthorisedActivities = async () => {
 
   return authorisedActivities;
 };
+
+
+// Could we have the interval thing running here? And register call back functions
+// for any interested components,  probably not.
+
