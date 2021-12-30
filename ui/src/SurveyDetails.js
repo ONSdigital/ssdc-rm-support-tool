@@ -18,7 +18,6 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
-  getActionRuleEmailTemplates,
   getAllExportFileTemplates,
   getFulfilmentExportFileTemplates,
   getSmsFulfilmentTemplates,
@@ -30,6 +29,7 @@ import { Link } from "react-router-dom";
 import CollectionExerciseList from "./CollectionExerciseList";
 import AllowedExportFileTemplatesActionRulesList from "./AllowedExportFileTemplatesActionRulesList";
 import AllowedSMSTemplatesActionRulesList from "./AllowedSMSTemplatesActionRulesList";
+import AllowedEmailTemplatesOnActionRulesList from "./AllowedEmailTemplatesOnActionRulesList";
 
 class SurveyDetails extends Component {
   state = {
@@ -42,21 +42,15 @@ class SurveyDetails extends Component {
     allowSmsFulfilmentTemplateDialogDisplayed: false,
     allowEmailFulfilmentTemplateDialogDisplayed: false,
     actionRuleSmsTemplates: [],
-    actionRuleEmailTemplates: [],
     fulfilmentExportFileTemplates: [],
     smsFulfilmentTemplates: [],
     emailFulfilmentTemplates: [],
-    allowableActionRuleSmsTemplates: [],
-    allowableActionRuleEmailTemplates: [],
     allowableFulfilmentExportFileTemplates: [],
     allowableSmsFulfilmentTemplates: [],
     allowableEmailFulfilmentTemplates: [],
     exportFileTemplateToAllow: "",
-    emailTemplateToAllow: "",
     exportFileTemplateValidationError: false,
-    emailTemplateValidationError: false,
     allowExportFileTemplateError: "",
-    allowEmailTemplateError: "",
   };
 
   componentDidMount() {
@@ -119,12 +113,6 @@ class SurveyDetails extends Component {
       authorisedActivities
     );
 
-
-    const actionRuleEmailTemplates = await getActionRuleEmailTemplates(
-      authorisedActivities,
-      this.props.surveyId
-    );
-
     const fulfilmentExportFileTemplates =
       await getFulfilmentExportFileTemplates(
         authorisedActivities,
@@ -140,7 +128,6 @@ class SurveyDetails extends Component {
     );
 
     let allowableActionRuleSmsTemplates = [];
-    let allowableActionRuleEmailTemplates = [];
     let allowableFulfilmentExportFileTemplates = [];
     let allowableSmsFulfilmentTemplates = [];
     let allowableEmailFulfilmentTemplates = [];
@@ -159,22 +146,17 @@ class SurveyDetails extends Component {
     });
 
     allEmailFulfilmentTemplates.forEach((packCode) => {
-      if (!actionRuleEmailTemplates.includes(packCode)) {
-        allowableActionRuleEmailTemplates.push(packCode);
-      }
-
       if (!emailFulfilmentTemplates.includes(packCode)) {
         allowableEmailFulfilmentTemplates.push(packCode);
       }
     });
 
     this.setState({
-      actionRuleEmailTemplates: actionRuleEmailTemplates,
+
       fulfilmentExportFileTemplates: fulfilmentExportFileTemplates,
       smsFulfilmentTemplates: smsFulfilmentTemplates,
       emailFulfilmentTemplates: emailFulfilmentTemplates,
       allowableActionRuleSmsTemplates: allowableActionRuleSmsTemplates,
-      allowableActionRuleEmailTemplates: allowableActionRuleEmailTemplates,
       allowableFulfilmentExportFileTemplates:
         allowableFulfilmentExportFileTemplates,
       allowableSmsFulfilmentTemplates: allowableSmsFulfilmentTemplates,
@@ -187,17 +169,6 @@ class SurveyDetails extends Component {
     var dateNow = new Date();
     dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
     return dateNow.toJSON().slice(0, 16);
-  };
-
-  openActionRuleEmailTemplateDialog = () => {
-    this.allowActionRuleEmailTemplateInProgress = false;
-
-    this.setState({
-      allowActionRuleEmailTemplateDialogDisplayed: true,
-      emailTemplateToAllow: "",
-      emailTemplateValidationError: false,
-      allowEmailTemplateError: "",
-    });
   };
 
   openFulfilmentExportFileTemplateDialog = () => {
@@ -231,46 +202,6 @@ class SurveyDetails extends Component {
       exportFileTemplateValidationError: false,
       allowExportFileTemplateError: "",
     });
-  };
-
-
-
-  onAllowActionRuleEmailTemplate = async () => {
-    if (this.allowActionRuleEmailTemplateInProgress) {
-      return;
-    }
-
-    this.allowActionRuleEmailTemplateInProgress = true;
-
-    if (!this.state.emailTemplateToAllow) {
-      this.setState({
-        emailTemplateValidationError: true,
-      });
-
-      this.allowActionRuleEmailTemplateInProgress = false;
-      return;
-    }
-
-    const newAllowEmailTemplate = {
-      surveyId: this.props.surveyId,
-      packCode: this.state.emailTemplateToAllow,
-    };
-
-    const response = await fetch("/api/actionRuleSurveyEmailTemplates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newAllowEmailTemplate),
-    });
-
-    if (response.ok) {
-      this.setState({ allowActionRuleEmailTemplateDialogDisplayed: false });
-    } else {
-      const errorMessage = await response.text();
-      this.setState({
-        allowEmailTemplateError: errorMessage,
-      });
-      this.allowActionRuleEmailTemplateInProgress = false;
-    }
   };
 
   openSmsFulfilmentTemplateDialog = () => {
@@ -411,10 +342,6 @@ class SurveyDetails extends Component {
     }
   };
 
-  closeAllowActionRuleEmailTemplateDialog = () => {
-    this.setState({ allowActionRuleEmailTemplateDialogDisplayed: false });
-  };
-
   closeAllowFulfilmentExportFileTemplateDialog = () => {
     this.setState({ allowFulfilmentExportFileTemplateDialogDisplayed: false });
   };
@@ -427,20 +354,8 @@ class SurveyDetails extends Component {
     this.setState({ allowEmailFulfilmentTemplateDialogDisplayed: false });
   };
 
-  onEmailTemplateChange = (event) => {
-    this.setState({ emailTemplateToAllow: event.target.value });
-  };
 
   render() {
-
-    const actionRuleEmailTemplateTableRows =
-      this.state.actionRuleEmailTemplates.map((emailTemplate) => (
-        <TableRow key={emailTemplate}>
-          <TableCell component="th" scope="row">
-            {emailTemplate}
-          </TableCell>
-        </TableRow>
-      ));
 
     const fulfilmentExportFileTemplateTableRows =
       this.state.fulfilmentExportFileTemplates.map((exportFileTemplate) => (
@@ -467,13 +382,6 @@ class SurveyDetails extends Component {
             {emailTemplate}
           </TableCell>
         </TableRow>
-      ));
-
-    const actionRuleEmailTemplateMenuItems =
-      this.state.allowableActionRuleEmailTemplates.map((packCode) => (
-        <MenuItem key={packCode} value={packCode}>
-          {packCode}
-        </MenuItem>
       ));
 
     const fulfilmentExportFileTemplateMenuItems =
@@ -514,38 +422,7 @@ class SurveyDetails extends Component {
         <CollectionExerciseList surveyId={this.props.surveyId}></CollectionExerciseList>
         <AllowedExportFileTemplatesActionRulesList surveyId={this.props.surveyId}></AllowedExportFileTemplatesActionRulesList>
         <AllowedSMSTemplatesActionRulesList surveyId={this.props.surveyId}></AllowedSMSTemplatesActionRulesList>
-
-        {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES"
-        ) && (
-            <>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-                Email Templates Allowed on Action Rules
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Pack Code</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{actionRuleEmailTemplateTableRows}</TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          )}
-
-        {this.state.authorisedActivities.includes(
-          "ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE"
-        ) && (
-            <Button
-              variant="contained"
-              onClick={this.openActionRuleEmailTemplateDialog}
-              style={{ marginTop: 10 }}
-            >
-              Allow Email Template on Action Rule
-            </Button>
-          )}
+        <AllowedEmailTemplatesOnActionRulesList surveyId={this.props.surveyId}></AllowedEmailTemplatesOnActionRulesList>
 
         {this.state.authorisedActivities.includes(
           "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS"
@@ -641,48 +518,6 @@ class SurveyDetails extends Component {
               Allow Email Template on Fulfilment
             </Button>
           )}
-
-        <Dialog open={this.state.allowActionRuleEmailTemplateDialogDisplayed}>
-          <DialogContent style={{ padding: 30 }}>
-            <div>
-              <div>
-                <FormControl required fullWidth={true}>
-                  <InputLabel>Email Template</InputLabel>
-                  <Select
-                    onChange={this.onEmailTemplateChange}
-                    value={this.state.emailTemplateToAllow}
-                    error={this.state.emailTemplateValidationError}
-                  >
-                    {actionRuleEmailTemplateMenuItems}
-                  </Select>
-                </FormControl>
-              </div>
-              {this.state.allowEmailTemplateError && (
-                <div>
-                  <p style={{ color: "red" }}>
-                    {this.state.allowEmailTemplateError}
-                  </p>
-                </div>
-              )}
-              <div style={{ marginTop: 10 }}>
-                <Button
-                  onClick={this.onAllowActionRuleEmailTemplate}
-                  variant="contained"
-                  style={{ margin: 10 }}
-                >
-                  Allow
-                </Button>
-                <Button
-                  onClick={this.closeAllowActionRuleEmailTemplateDialog}
-                  variant="contained"
-                  style={{ margin: 10 }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
         <Dialog
           open={this.state.allowFulfilmentExportFileTemplateDialogDisplayed}
         >
