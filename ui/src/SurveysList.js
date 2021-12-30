@@ -46,10 +46,15 @@ class Surveys extends Component {
     getBackEndData = async () => {
         const authorisedActivities = await getAuthorisedActivities();
         this.setState({ authorisedActivities: authorisedActivities });
-        this.getSurveys(this.state.authorisedActivities);
+        this.refreshDataFromBackend(this.state.authorisedActivities);
+
+        this.interval = setInterval(
+            () => this.refreshDataFromBackend(authorisedActivities),
+            1000
+        );
     };
 
-    getSurveys = async (authorisedActivities) => {
+    refreshDataFromBackend = async (authorisedActivities) => {
         if (!authorisedActivities.includes("LIST_SURVEYS")) return;
 
         const response = await fetch("/api/surveys");

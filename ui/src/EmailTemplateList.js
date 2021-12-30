@@ -43,10 +43,15 @@ class EmailTemplateList extends Component {
     getBackEndData = async () => {
         const authorisedActivities = await getAuthorisedActivities();
         this.setState({ authorisedActivities: authorisedActivities });
-        this.getEmailTemplates(authorisedActivities);
+        this.refreshDataFromBackend(authorisedActivities);
+
+        this.interval = setInterval(
+            () => this.refreshDataFromBackend(authorisedActivities),
+            1000
+        );
     };
 
-    getEmailTemplates = async (authorisedActivities) => {
+    refreshDataFromBackend = async (authorisedActivities) => {
         if (!authorisedActivities.includes("LIST_EMAIL_TEMPLATES")) return;
 
         const response = await fetch("/api/emailTemplates");

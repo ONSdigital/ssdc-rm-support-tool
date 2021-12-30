@@ -40,13 +40,22 @@ class SmsTemplatesList extends Component {
         this.getBackEndData();
     }
 
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
     getBackEndData = async () => {
         const authorisedActivities = await getAuthorisedActivities();
         this.setState({ authorisedActivities: authorisedActivities });
-        this.getSmsTemplates(authorisedActivities);
+        this.refreshDataFromBackend(authorisedActivities);
+
+        this.interval = setInterval(
+            () => this.refreshDataFromBackend(authorisedActivities),
+            1000
+        );
     };
 
-    getSmsTemplates = async (authorisedActivities) => {
+    refreshDataFromBackend = async (authorisedActivities) => {
         if (!authorisedActivities.includes("LIST_SMS_TEMPLATES")) return;
 
         const response = await fetch("/api/smsTemplates");
@@ -197,10 +206,7 @@ class SmsTemplatesList extends Component {
         } else {
             this.setState({ createSmsTemplateDialogDisplayed: false });
         }
-
-        this.getSmsTemplates(this.state.authorisedActivities);
-    }
-
+    };
 
     onPackCodeChange = (event) => {
         const resetValidation = !event.target.value.trim();

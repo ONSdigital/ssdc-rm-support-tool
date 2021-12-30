@@ -186,7 +186,7 @@ export const getSampleColumns = async (authorisedActivities, surveyId) => {
   return sampleColumns;
 };
 
-// This is not efficent, but it's a prototype app.  Could probably cache them too.
+// This is not efficent, but it seems to work ok ish
 export const getAuthorisedActivities = async () => {
   const authResponse = await fetch("/api/auth");
 
@@ -199,8 +199,3 @@ export const getAuthorisedActivities = async () => {
 
   return authorisedActivities;
 };
-
-
-// Could we have the interval thing running here? And register call back functions
-// for any interested components,  probably not.
-
