@@ -1,4 +1,6 @@
-test:
+test: test-mvn test-ui
+
+test-mvn:
 	mvn clean verify jacoco:report
 
 build:
@@ -36,4 +38,4 @@ package-audit-ui:
 	$(MAKE) -C ui package-audit
 
 docker-build:
-    SKIP_TESTS=true ./build.sh
+	SKIP_TESTS=true ./build.sh
