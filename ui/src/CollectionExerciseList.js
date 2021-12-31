@@ -93,6 +93,13 @@ class CollectionExerciseList extends Component {
     });
   };
 
+  getTimeNowForDateTimePicker = () => {
+    var dateNow = new Date();
+    dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
+    return dateNow.toJSON().slice(0, 16);
+  };
+
+
   closeCreateCollectionExerciseDialog = () => {
     this.setState({ createCollectionExerciseDialogDisplayed: false });
   };
