@@ -4,7 +4,7 @@ test:
 build:
 	./build.sh
 
-build_no_test:
+build-no-test:
 	SKIP_TESTS=true ./build.sh
 
 test-ui:
@@ -34,3 +34,6 @@ format: format-mvn format-ui
 
 package-audit-ui:
 	$(MAKE) -C ui package-audit
+
+docker-build:
+    SKIP_TESTS=true ./build.sh
