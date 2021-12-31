@@ -197,7 +197,6 @@ class Surveys extends Component {
             body: JSON.stringify(newSurvey),
         });
 
-        this.getSurveys(this.state.authorisedActivities);
         this.setState({ createSurveyDialogDisplayed: false });
     };
 

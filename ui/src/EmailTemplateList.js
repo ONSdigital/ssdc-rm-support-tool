@@ -249,9 +249,7 @@ class EmailTemplateList extends Component {
             this.setState({ createEmailTemplateDialogDisplayed: false });
         }
 
-        this.getEmailTemplates(this.state.authorisedActivities);
     };
-
 
     render() {
         const emailTemplateRows = this.state.emailTemplates.map((emailTemplate) => (
