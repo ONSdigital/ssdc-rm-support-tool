@@ -14,9 +14,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import {
-  getAuthorisedActivities
-} from "./Utils";
+import { getAuthorisedActivities } from "./Utils";
 import { Link } from "react-router-dom";
 
 class CollectionExerciseList extends Component {
@@ -35,7 +33,6 @@ class CollectionExerciseList extends Component {
     newCollectionExerciseMetadataError: false,
     newCollectionExerciseCIRules: "",
     newCollectionExerciseCIRulesError: false,
-
   };
 
   componentDidMount() {
@@ -98,7 +95,6 @@ class CollectionExerciseList extends Component {
     dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
     return dateNow.toJSON().slice(0, 16);
   };
-
 
   closeCreateCollectionExerciseDialog = () => {
     this.setState({ createCollectionExerciseDialogDisplayed: false });
@@ -238,10 +234,7 @@ class CollectionExerciseList extends Component {
     }
   };
 
-
-
   render() {
-
     const collectionExerciseTableRows = this.state.collectionExercises.map(
       (collex) => (
         <TableRow key={collex.name}>
@@ -266,48 +259,44 @@ class CollectionExerciseList extends Component {
           </TableCell>
         </TableRow>
       )
-    )
+    );
 
     return (
       <>
-        {
-          this.state.authorisedActivities.includes(
-            "LIST_COLLECTION_EXERCISES"
-          ) && (
-            <>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-                Collection Exercises
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Collection Exercise Name</TableCell>
-                      <TableCell>Reference</TableCell>
-                      <TableCell>Start Date</TableCell>
-                      <TableCell>End Date</TableCell>
-                      <TableCell>Metadata</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{collectionExerciseTableRows}</TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          )
-        }
-        {
-          this.state.authorisedActivities.includes(
-            "CREATE_COLLECTION_EXERCISE"
-          ) && (
-            <Button
-              variant="contained"
-              onClick={this.openCreateCollectionExerciseDialog}
-              style={{ marginTop: 10 }}
-            >
-              Create Collection Exercise
-            </Button>
-          )
-        }
+        {this.state.authorisedActivities.includes(
+          "LIST_COLLECTION_EXERCISES"
+        ) && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              Collection Exercises
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Collection Exercise Name</TableCell>
+                    <TableCell>Reference</TableCell>
+                    <TableCell>Start Date</TableCell>
+                    <TableCell>End Date</TableCell>
+                    <TableCell>Metadata</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{collectionExerciseTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
+        {this.state.authorisedActivities.includes(
+          "CREATE_COLLECTION_EXERCISE"
+        ) && (
+          <Button
+            variant="contained"
+            onClick={this.openCreateCollectionExerciseDialog}
+            style={{ marginTop: 10 }}
+          >
+            Create Collection Exercise
+          </Button>
+        )}
         <Dialog open={this.state.createCollectionExerciseDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
@@ -392,10 +381,8 @@ class CollectionExerciseList extends Component {
             </div>
           </DialogContent>
         </Dialog>
-
       </>
     );
-
   }
 }
 

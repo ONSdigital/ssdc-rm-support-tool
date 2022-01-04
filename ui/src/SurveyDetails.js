@@ -51,9 +51,7 @@ class SurveyDetails extends Component {
   };
 
   render() {
-
     return (
-
       <div style={{ padding: 20 }}>
         <Link to="/">← Back to home</Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
@@ -67,13 +65,27 @@ class SurveyDetails extends Component {
           </div>
         )}
 
-        <CollectionExerciseList surveyId={this.props.surveyId}></CollectionExerciseList>
-        <AllowedExportFileTemplatesActionRulesList surveyId={this.props.surveyId}></AllowedExportFileTemplatesActionRulesList>
-        <AllowedSMSTemplatesActionRulesList surveyId={this.props.surveyId}></AllowedSMSTemplatesActionRulesList>
-        <AllowedEmailTemplatesOnActionRulesList surveyId={this.props.surveyId}></AllowedEmailTemplatesOnActionRulesList>
-        <AllowedExportFileTemplatesOnFulfilmentsList surveyId={this.props.surveyId}></AllowedExportFileTemplatesOnFulfilmentsList>
-        <AllowedSMSTemplatesOnFulfilmentsList surveyId={this.props.surveyId}></AllowedSMSTemplatesOnFulfilmentsList>
-        <AllowedEmailTemplatesOnFulfilments surveyId={this.props.surveyId}></AllowedEmailTemplatesOnFulfilments>
+        <CollectionExerciseList
+          surveyId={this.props.surveyId}
+        ></CollectionExerciseList>
+        <AllowedExportFileTemplatesActionRulesList
+          surveyId={this.props.surveyId}
+        ></AllowedExportFileTemplatesActionRulesList>
+        <AllowedSMSTemplatesActionRulesList
+          surveyId={this.props.surveyId}
+        ></AllowedSMSTemplatesActionRulesList>
+        <AllowedEmailTemplatesOnActionRulesList
+          surveyId={this.props.surveyId}
+        ></AllowedEmailTemplatesOnActionRulesList>
+        <AllowedExportFileTemplatesOnFulfilmentsList
+          surveyId={this.props.surveyId}
+        ></AllowedExportFileTemplatesOnFulfilmentsList>
+        <AllowedSMSTemplatesOnFulfilmentsList
+          surveyId={this.props.surveyId}
+        ></AllowedSMSTemplatesOnFulfilmentsList>
+        <AllowedEmailTemplatesOnFulfilments
+          surveyId={this.props.surveyId}
+        ></AllowedEmailTemplatesOnFulfilments>
       </div>
     );
   }

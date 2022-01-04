@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
 import { Link } from "react-router-dom";
-import Surveys from "./SurveysList";
-import ExportFileTemplate from "./ExportFileTemplatesList";
+import SurveysList from "./SurveysList";
+import ExportFileTemplateList from "./ExportFileTemplatesList";
 import SmsTemplatesList from "./SmsTemplatesList";
 import EmailTemplateList from "./EmailTemplateList";
 import ConfigureFulfilmentTrigger from "./ConfigureFulfilmentTrigger";
@@ -19,21 +19,10 @@ class LandingPage extends Component {
     this.getAuthorisedBackendData();
   }
 
-  // componentWillUnmount() {
-  //   clearInterval(this.interval);
-  // }
-
   getAuthorisedBackendData = async () => {
     this.getThisUserAdminGroups(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
-
-    // TODO: make this work with the new Components..
-    // Might just need to cut & paste, or stick in Utilities?
-    // this.interval = setInterval(
-    //   () => this.refreshDataFromBackend(authorisedActivities),
-    //   1000
-    // );
   };
 
   getThisUserAdminGroups = async () => {
@@ -49,15 +38,11 @@ class LandingPage extends Component {
     this.setState({ thisUserAdminGroups: responseJson });
   };
 
-
-
   render() {
-
-
     return (
       <div style={{ padding: 20 }}>
-        <Surveys></Surveys>
-        <ExportFileTemplate></ExportFileTemplate>
+        <SurveysList></SurveysList>
+        <ExportFileTemplateList></ExportFileTemplateList>
         <SmsTemplatesList></SmsTemplatesList>
         <EmailTemplateList></EmailTemplateList>
         <ConfigureFulfilmentTrigger></ConfigureFulfilmentTrigger>
@@ -79,12 +64,12 @@ class LandingPage extends Component {
         {this.state.authorisedActivities.includes(
           "EXCEPTION_MANAGER_VIEWER"
         ) && (
-            <>
-              <div style={{ marginTop: 20 }}>
-                <Link to="/exceptionManager">Exception Manager</Link>
-              </div>
-            </>
-          )}
+          <>
+            <div style={{ marginTop: 20 }}>
+              <Link to="/exceptionManager">Exception Manager</Link>
+            </div>
+          </>
+        )}
       </div>
     );
   }

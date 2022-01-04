@@ -6,424 +6,413 @@ import TableRow from "@material-ui/core/TableRow";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import {
-    Button,
-    Dialog,
-    DialogContent,
-    TextField,
-    Paper,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Typography,
+  Button,
+  Dialog,
+  DialogContent,
+  TextField,
+  Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
 } from "@material-ui/core";
 import { getAuthorisedActivities } from "./Utils";
 
-class ExportFileTemplate extends Component {
-    state = {
-        exportFileTemplates: [],
-        createExportFileTemplatePackCodeError: "",
-        createExportFileTemplateDialogDisplayed: false,
-        exportFileDestinations: [],
-        exportFileDestination: "",
-        exportFileDestinationValidationError: false,
-        authorisedActivities: [],
-        description: "",
-        packCode: "",
-        template: "",
-        descriptionValidationError: false,
-        packCodeValidationError: false,
-        templateValidationError: false,
-        newTemplateMetadataValidationError: false,
-    };
+class ExportFileTemplateList extends Component {
+  state = {
+    exportFileTemplates: [],
+    createExportFileTemplatePackCodeError: "",
+    createExportFileTemplateDialogDisplayed: false,
+    exportFileDestinations: [],
+    exportFileDestination: "",
+    exportFileDestinationValidationError: false,
+    authorisedActivities: [],
+    description: "",
+    packCode: "",
+    template: "",
+    descriptionValidationError: false,
+    packCodeValidationError: false,
+    templateValidationError: false,
+    newTemplateMetadataValidationError: false,
+  };
 
-    componentDidMount() {
-        this.getBackEndData();
+  componentDidMount() {
+    this.getBackEndData();
+  }
+
+  getBackEndData = async () => {
+    const authorisedActivities = await getAuthorisedActivities();
+    this.setState({ authorisedActivities: authorisedActivities });
+
+    this.refreshDataFromBackend(authorisedActivities);
+
+    this.interval = setInterval(
+      () => this.refreshDataFromBackend(authorisedActivities),
+      1000
+    );
+  };
+
+  refreshDataFromBackend = async (authorisedActivities) => {
+    this.getExportFileTemplates(authorisedActivities);
+    this.getExportFileDestinations(authorisedActivities);
+  };
+
+  getExportFileTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return;
+
+    const response = await fetch("/api/exportFileTemplates");
+    const templateJson = await response.json();
+
+    this.setState({ exportFileTemplates: templateJson });
+  };
+
+  getExportFileDestinations = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_EXPORT_FILE_DESTINATIONS")) return;
+
+    const supplierResponse = await fetch("/api/exportFileDestinations");
+    const supplierJson = await supplierResponse.json();
+
+    this.setState({
+      exportFileDestinations: supplierJson,
+    });
+  };
+
+  getExportFileTemplates = async (authorisedActivities) => {
+    if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return;
+
+    const response = await fetch("/api/exportFileTemplates");
+    const templateJson = await response.json();
+
+    this.setState({ exportFileTemplates: templateJson });
+  };
+
+  openExportFileTemplateDialog = () => {
+    this.createExportFileTemplateInProgress = false;
+
+    // Yes. Yes here. Here is the one and ONLY place where you should be preparing the dialog
+    this.setState({
+      exportFileDestination: "",
+      description: "",
+      packCode: "",
+      template: "",
+      newTemplateMetadata: "",
+      exportFileDestinationValidationError: false,
+      descriptionValidationError: false,
+      packCodeValidationError: false,
+      templateValidationError: false,
+      newTemplateMetadataValidationError: false,
+      createExportFileTemplatePackCodeError: "",
+      createExportFileTemplateDialogDisplayed: true,
+    });
+  };
+
+  closeExportFileTemplateDialog = () => {
+    // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
+    this.setState({
+      createExportFileTemplateDialogDisplayed: false,
+    });
+
+    this.refresh;
+  };
+
+  onexportFileDestinationChange = (event) => {
+    this.setState({
+      exportFileDestination: event.target.value,
+      exportFileDestinationValidationError: false,
+    });
+  };
+
+  onCreateExportFileTemplate = async () => {
+    if (this.createExportFileTemplateInProgress) {
+      return;
     }
 
-    getBackEndData = async () => {
-        const authorisedActivities = await getAuthorisedActivities();
-        this.setState({ authorisedActivities: authorisedActivities });
+    this.createExportFileTemplateInProgress = true;
 
-        this.refreshDataFromBackend(authorisedActivities);
+    this.setState({
+      createExportFileTemplatePackCodeError: "",
+      packCodeValidationError: false,
+    });
 
-        this.interval = setInterval(
-            () => this.refreshDataFromBackend(authorisedActivities),
-            1000
-        );
-    };
+    var failedValidation = false;
 
-    refreshDataFromBackend = async (authorisedActivities) => {
-        this.getExportFileTemplates(authorisedActivities);
-        this.getExportFileDestinations(authorisedActivities);
-    };
+    if (!this.state.exportFileDestination.trim()) {
+      this.setState({ exportFileDestinationValidationError: true });
+      failedValidation = true;
+    }
 
-    getExportFileTemplates = async (authorisedActivities) => {
-        if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return;
+    if (!this.state.exportFileDestination.trim()) {
+      this.setState({ exportFileDestinationValidationError: true });
+      failedValidation = true;
+    }
 
-        const response = await fetch("/api/exportFileTemplates");
-        const templateJson = await response.json();
+    if (!this.state.description.trim()) {
+      this.setState({ descriptionValidationError: true });
+      failedValidation = true;
+    }
 
-        this.setState({ exportFileTemplates: templateJson });
-    };
+    if (!this.state.packCode.trim()) {
+      this.setState({ packCodeValidationError: true });
+      failedValidation = true;
+    }
 
-    getExportFileDestinations = async (authorisedActivities) => {
-        if (!authorisedActivities.includes("LIST_EXPORT_FILE_DESTINATIONS")) return;
+    if (
+      this.state.exportFileTemplates.some(
+        (exportFileTemplate) =>
+          exportFileTemplate.packCode.toUpperCase() ===
+          this.state.packCode.toUpperCase()
+      )
+    ) {
+      this.setState({
+        packCodeValidationError: true,
+        createPrintTemplatePackCodeError: "Pack code already in use",
+      });
 
-        const supplierResponse = await fetch("/api/exportFileDestinations");
-        const supplierJson = await supplierResponse.json();
+      failedValidation = true;
+    }
 
-        this.setState({
-            exportFileDestinations: supplierJson,
-        });
-    };
-
-
-    getExportFileTemplates = async (authorisedActivities) => {
-        if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return;
-
-        const response = await fetch("/api/exportFileTemplates");
-        const templateJson = await response.json();
-
-        this.setState({ exportFileTemplates: templateJson });
-    };
-
-    openExportFileTemplateDialog = () => {
-        this.createExportFileTemplateInProgress = false;
-
-        // Yes. Yes here. Here is the one and ONLY place where you should be preparing the dialog
-        this.setState({
-            exportFileDestination: "",
-            description: "",
-            packCode: "",
-            template: "",
-            newTemplateMetadata: "",
-            exportFileDestinationValidationError: false,
-            descriptionValidationError: false,
-            packCodeValidationError: false,
-            templateValidationError: false,
-            newTemplateMetadataValidationError: false,
-            createExportFileTemplatePackCodeError: "",
-            createExportFileTemplateDialogDisplayed: true,
-        });
-    };
-
-    closeExportFileTemplateDialog = () => {
-        // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
-        this.setState({
-            createExportFileTemplateDialogDisplayed: false,
-        });
-
-        this.refresh
-    };
-
-
-    onexportFileDestinationChange = (event) => {
-        this.setState({
-            exportFileDestination: event.target.value,
-            exportFileDestinationValidationError: false,
-        });
-    };
-
-    onCreateExportFileTemplate = async () => {
-        if (this.createExportFileTemplateInProgress) {
-            return;
+    if (!this.state.template.trim()) {
+      this.setState({ templateValidationError: true });
+      failedValidation = true;
+    } else {
+      try {
+        const parsedJson = JSON.parse(this.state.template);
+        if (!Array.isArray(parsedJson) || parsedJson.length === 0) {
+          this.setState({ templateValidationError: true });
+          failedValidation = true;
         }
+      } catch (err) {
+        this.setState({ templateValidationError: true });
+        failedValidation = true;
+      }
+    }
 
-        this.createExportFileTemplateInProgress = true;
+    let metadata = null;
 
-        this.setState({
-            createExportFileTemplatePackCodeError: "",
-            packCodeValidationError: false,
-        });
-
-        var failedValidation = false;
-
-        if (!this.state.exportFileDestination.trim()) {
-            this.setState({ exportFileDestinationValidationError: true });
-            failedValidation = true;
+    if (this.state.newTemplateMetadata) {
+      try {
+        metadata = JSON.parse(this.state.newTemplateMetadata);
+        if (Object.keys(metadata).length === 0) {
+          this.setState({ newTemplateMetadataValidationError: true });
+          failedValidation = true;
         }
+      } catch (err) {
+        this.setState({ newTemplateMetadataValidationError: true });
+        failedValidation = true;
+      }
+    }
 
-        if (!this.state.exportFileDestination.trim()) {
-            this.setState({ exportFileDestinationValidationError: true });
-            failedValidation = true;
-        }
+    if (failedValidation) {
+      this.createExportFileTemplateInProgress = false;
+      return;
+    }
 
-        if (!this.state.description.trim()) {
-            this.setState({ descriptionValidationError: true });
-            failedValidation = true;
-        }
-
-        if (!this.state.packCode.trim()) {
-            this.setState({ packCodeValidationError: true });
-            failedValidation = true;
-        }
-
-        if (
-            this.state.exportFileTemplates.some(
-                (exportFileTemplate) =>
-                    exportFileTemplate.packCode.toUpperCase() ===
-                    this.state.packCode.toUpperCase()
-            )
-        ) {
-            this.setState({
-                packCodeValidationError: true,
-                createPrintTemplatePackCodeError: "Pack code already in use",
-            });
-
-            failedValidation = true;
-        }
-
-        if (!this.state.template.trim()) {
-            this.setState({ templateValidationError: true });
-            failedValidation = true;
-        } else {
-            try {
-                const parsedJson = JSON.parse(this.state.template);
-                if (!Array.isArray(parsedJson) || parsedJson.length === 0) {
-                    this.setState({ templateValidationError: true });
-                    failedValidation = true;
-                }
-            } catch (err) {
-                this.setState({ templateValidationError: true });
-                failedValidation = true;
-            }
-        }
-
-        let metadata = null;
-
-        if (this.state.newTemplateMetadata) {
-            try {
-                metadata = JSON.parse(this.state.newTemplateMetadata);
-                if (Object.keys(metadata).length === 0) {
-                    this.setState({ newTemplateMetadataValidationError: true });
-                    failedValidation = true;
-                }
-            } catch (err) {
-                this.setState({ newTemplateMetadataValidationError: true });
-                failedValidation = true;
-            }
-        }
-
-        if (failedValidation) {
-            this.createExportFileTemplateInProgress = false;
-            return;
-        }
-
-        const newExportFileTemplate = {
-            description: this.state.description,
-            packCode: this.state.packCode,
-            exportFileDestination: this.state.exportFileDestination,
-            template: JSON.parse(this.state.template),
-            metadata: metadata,
-        };
-
-        const response = await fetch("/api/exportFileTemplates", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newExportFileTemplate),
-        });
-
-        // TODO: look at this madness some more
-        if (!response.ok) {
-            this.createExportFileTemplateDialogDisplayed = false;
-        } else {
-            this.setState({ createExportFileTemplateDialogDisplayed: false });
-        }
-
-        this.getExportFileTemplates(this.state.authorisedActivities);
+    const newExportFileTemplate = {
+      description: this.state.description,
+      packCode: this.state.packCode,
+      exportFileDestination: this.state.exportFileDestination,
+      template: JSON.parse(this.state.template),
+      metadata: metadata,
     };
 
-    onDescriptionChange = (event) => {
-        const resetValidation = !event.target.value.trim();
+    const response = await fetch("/api/exportFileTemplates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newExportFileTemplate),
+    });
 
-        this.setState({
-            description: event.target.value,
-            descriptionValidationError: resetValidation,
-        });
-    };
+    // TODO: look at this madness some more
+    if (!response.ok) {
+      this.createExportFileTemplateDialogDisplayed = false;
+    } else {
+      this.setState({ createExportFileTemplateDialogDisplayed: false });
+    }
 
-    onPackCodeChange = (event) => {
-        const resetValidation = !event.target.value.trim();
+    this.getExportFileTemplates(this.state.authorisedActivities);
+  };
 
-        this.setState({
-            packCode: event.target.value,
-            packCodeValidationError: resetValidation,
-        });
-    };
+  onDescriptionChange = (event) => {
+    const resetValidation = !event.target.value.trim();
 
-    onTemplateChange = (event) => {
-        const resetValidation = !event.target.value.trim();
+    this.setState({
+      description: event.target.value,
+      descriptionValidationError: resetValidation,
+    });
+  };
 
-        this.setState({
-            template: event.target.value,
-            templateValidationError: resetValidation,
-        });
-    };
+  onPackCodeChange = (event) => {
+    const resetValidation = !event.target.value.trim();
 
-    onNewTemplateMetadataChange = (event) => {
-        this.setState({
-            newTemplateMetadata: event.target.value,
-            newTemplateMetadataValidationError: false,
-        });
-    };
+    this.setState({
+      packCode: event.target.value,
+      packCodeValidationError: resetValidation,
+    });
+  };
 
+  onTemplateChange = (event) => {
+    const resetValidation = !event.target.value.trim();
 
-    render() {
+    this.setState({
+      template: event.target.value,
+      templateValidationError: resetValidation,
+    });
+  };
 
-        const exportFileTemplateRows = this.state.exportFileTemplates.map(
-            (exportFileTemplate) => (
-                <TableRow key={exportFileTemplate.packCode}>
-                    <TableCell component="th" scope="row">
-                        {exportFileTemplate.packCode}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                        {exportFileTemplate.description}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                        {exportFileTemplate.exportFileDestination}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                        {JSON.stringify(exportFileTemplate.template)}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                        {JSON.stringify(exportFileTemplate.metadata)}
-                    </TableCell>
-                </TableRow>
-            )
-        );
+  onNewTemplateMetadataChange = (event) => {
+    this.setState({
+      newTemplateMetadata: event.target.value,
+      newTemplateMetadataValidationError: false,
+    });
+  };
 
-        const exportFileDestinationMenuItems =
-            this.state.exportFileDestinations.map((supplier) => (
-                <MenuItem key={supplier} value={supplier}>
-                    {supplier}
-                </MenuItem>
-            ));
+  render() {
+    const exportFileTemplateRows = this.state.exportFileTemplates.map(
+      (exportFileTemplate) => (
+        <TableRow key={exportFileTemplate.packCode}>
+          <TableCell component="th" scope="row">
+            {exportFileTemplate.packCode}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {exportFileTemplate.description}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {exportFileTemplate.exportFileDestination}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(exportFileTemplate.template)}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(exportFileTemplate.metadata)}
+          </TableCell>
+        </TableRow>
+      )
+    );
 
+    const exportFileDestinationMenuItems =
+      this.state.exportFileDestinations.map((supplier) => (
+        <MenuItem key={supplier} value={supplier}>
+          {supplier}
+        </MenuItem>
+      ));
 
+    return (
+      <>
+        {this.state.authorisedActivities.includes(
+          "LIST_EXPORT_FILE_TEMPLATES"
+        ) && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              Export File Templates
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Export File Destination</TableCell>
+                    <TableCell>Template</TableCell>
+                    <TableCell>Metadata</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{exportFileTemplateRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
+        {this.state.authorisedActivities.includes(
+          "CREATE_EXPORT_FILE_TEMPLATE"
+        ) && (
+          <Button
+            variant="contained"
+            onClick={this.openExportFileTemplateDialog}
+            style={{ marginTop: 10 }}
+          >
+            Create Export File Template
+          </Button>
+        )}
 
-        return (
-            <>
-                {this.state.authorisedActivities.includes(
-                    "LIST_EXPORT_FILE_TEMPLATES"
-                ) && (
-                        <>
-                            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-                                Export File Templates
-                            </Typography>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Pack Code</TableCell>
-                                            <TableCell>Description</TableCell>
-                                            <TableCell>Export File Destination</TableCell>
-                                            <TableCell>Template</TableCell>
-                                            <TableCell>Metadata</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>{exportFileTemplateRows}</TableBody>
-                                </Table>
-                            </TableContainer>
-                        </>
-                    )}
-                {this.state.authorisedActivities.includes(
-                    "CREATE_EXPORT_FILE_TEMPLATE"
-                ) && (
-                        <Button
-                            variant="contained"
-                            onClick={this.openExportFileTemplateDialog}
-                            style={{ marginTop: 10 }}
-                        >
-                            Create Export File Template
-                        </Button>
-                    )}
-
-                <Dialog
-                    open={this.state.createExportFileTemplateDialogDisplayed}
-                    fullWidth={true}
+        <Dialog
+          open={this.state.createExportFileTemplateDialogDisplayed}
+          fullWidth={true}
+        >
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <div>
+                <TextField
+                  required
+                  fullWidth={true}
+                  error={this.state.packCodeValidationError}
+                  label="Pack Code"
+                  onChange={this.onPackCodeChange}
+                  value={this.state.packCode}
+                  helperText={this.state.createExportFileTemplatePackCodeError}
+                />
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.descriptionValidationError}
+                  label="Description"
+                  onChange={this.onDescriptionChange}
+                  value={this.state.description}
+                />
+                <FormControl
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
                 >
-                    <DialogContent style={{ padding: 30 }}>
-                        <div>
-                            <div>
-                                <TextField
-                                    required
-                                    fullWidth={true}
-                                    error={this.state.packCodeValidationError}
-                                    label="Pack Code"
-                                    onChange={this.onPackCodeChange}
-                                    value={this.state.packCode}
-                                    helperText={this.state.createExportFileTemplatePackCodeError}
-                                />
-                                <TextField
-                                    required
-                                    fullWidth={true}
-                                    style={{ marginTop: 10 }}
-                                    error={this.state.descriptionValidationError}
-                                    label="Description"
-                                    onChange={this.onDescriptionChange}
-                                    value={this.state.description}
-                                />
-                                <FormControl
-                                    required
-                                    fullWidth={true}
-                                    style={{ marginTop: 10 }}
-                                >
-                                    <InputLabel>Export File Destination</InputLabel>
-                                    <Select
-                                        onChange={this.onexportFileDestinationChange}
-                                        value={this.state.exportFileDestination}
-                                        error={this.state.exportFileDestinationValidationError}
-                                    >
-                                        {exportFileDestinationMenuItems}
-                                    </Select>
-                                </FormControl>
-                                <TextField
-                                    required
-                                    fullWidth={true}
-                                    style={{ marginTop: 10 }}
-                                    error={this.state.templateValidationError}
-                                    label="Template"
-                                    onChange={this.onTemplateChange}
-                                    value={this.state.template}
-                                    helperText={this.state.notifyTemplateIdErrorMessage}
-                                />
-                                <TextField
-                                    fullWidth={true}
-                                    style={{ marginTop: 10 }}
-                                    error={this.state.newTemplateMetadataValidationError}
-                                    label="Metadata"
-                                    onChange={this.onNewTemplateMetadataChange}
-                                    value={this.state.newTemplateMetadata}
-                                />
-                            </div>
-                            <div style={{ marginTop: 10 }}>
-                                <Button
-                                    onClick={this.onCreateExportFileTemplate}
-                                    variant="contained"
-                                    style={{ margin: 10 }}
-                                >
-                                    Create export file template
-                                </Button>
-                                <Button
-                                    onClick={this.closeExportFileTemplateDialog}
-                                    variant="contained"
-                                    style={{ margin: 10 }}
-                                >
-                                    Cancel
-                                </Button>
-                            </div>
-                        </div>
-                    </DialogContent>
-                </Dialog>
-
-
-            </>
-
-        )
-
-    }
-
+                  <InputLabel>Export File Destination</InputLabel>
+                  <Select
+                    onChange={this.onexportFileDestinationChange}
+                    value={this.state.exportFileDestination}
+                    error={this.state.exportFileDestinationValidationError}
+                  >
+                    {exportFileDestinationMenuItems}
+                  </Select>
+                </FormControl>
+                <TextField
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.templateValidationError}
+                  label="Template"
+                  onChange={this.onTemplateChange}
+                  value={this.state.template}
+                  helperText={this.state.notifyTemplateIdErrorMessage}
+                />
+                <TextField
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  error={this.state.newTemplateMetadataValidationError}
+                  label="Metadata"
+                  onChange={this.onNewTemplateMetadataChange}
+                  value={this.state.newTemplateMetadata}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                  onClick={this.onCreateExportFileTemplate}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Create export file template
+                </Button>
+                <Button
+                  onClick={this.closeExportFileTemplateDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
 }
 
-export default ExportFileTemplate;
+export default ExportFileTemplateList;
