@@ -44,7 +44,7 @@ class LandingPage extends Component {
         <SurveysList />
         <ExportFileTemplateList></ExportFileTemplateList>
         <SmsTemplatesList />
-        <EmailTemplateList></EmailTemplateList>
+        <EmailTemplateList />
         <ConfigureFulfilmentTrigger></ConfigureFulfilmentTrigger>
 
         {this.state.authorisedActivities.includes("SUPER_USER") && (
