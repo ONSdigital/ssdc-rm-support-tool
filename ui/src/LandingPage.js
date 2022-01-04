@@ -42,10 +42,10 @@ class LandingPage extends Component {
     return (
       <div style={{ padding: 20 }}>
         <SurveysList />
-        <ExportFileTemplateList></ExportFileTemplateList>
+        <ExportFileTemplateList />
         <SmsTemplatesList />
         <EmailTemplateList />
-        <ConfigureFulfilmentTrigger></ConfigureFulfilmentTrigger>
+        <ConfigureFulfilmentTrigger />
 
         {this.state.authorisedActivities.includes("SUPER_USER") && (
           <>
