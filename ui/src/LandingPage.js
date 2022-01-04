@@ -41,7 +41,7 @@ class LandingPage extends Component {
   render() {
     return (
       <div style={{ padding: 20 }}>
-        <SurveysList></SurveysList>
+        <SurveysList />
         <ExportFileTemplateList></ExportFileTemplateList>
         <SmsTemplatesList></SmsTemplatesList>
         <EmailTemplateList></EmailTemplateList>
