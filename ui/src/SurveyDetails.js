@@ -66,10 +66,16 @@ class SurveyDetails extends Component {
         )}
 
         <CollectionExerciseList surveyId={this.props.surveyId} />
-        <AllowedExportFileTemplatesActionRulesList surveyId={this.props.surveyId} />
+        <AllowedExportFileTemplatesActionRulesList
+          surveyId={this.props.surveyId}
+        />
         <AllowedSMSTemplatesActionRulesList surveyId={this.props.surveyId} />
-        <AllowedEmailTemplatesOnActionRulesList surveyId={this.props.surveyId} />
-        <AllowedExportFileTemplatesOnFulfilmentsList surveyId={this.props.surveyId} />
+        <AllowedEmailTemplatesOnActionRulesList
+          surveyId={this.props.surveyId}
+        />
+        <AllowedExportFileTemplatesOnFulfilmentsList
+          surveyId={this.props.surveyId}
+        />
         <AllowedSMSTemplatesOnFulfilmentsList surveyId={this.props.surveyId} />
         <AllowedEmailTemplatesOnFulfilments surveyId={this.props.surveyId} />
       </div>
