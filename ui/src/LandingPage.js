@@ -43,7 +43,7 @@ class LandingPage extends Component {
       <div style={{ padding: 20 }}>
         <SurveysList />
         <ExportFileTemplateList></ExportFileTemplateList>
-        <SmsTemplatesList></SmsTemplatesList>
+        <SmsTemplatesList />
         <EmailTemplateList></EmailTemplateList>
         <ConfigureFulfilmentTrigger></ConfigureFulfilmentTrigger>
 
