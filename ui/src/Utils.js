@@ -185,3 +185,17 @@ export const getSampleColumns = async (authorisedActivities, surveyId) => {
 
   return sampleColumns;
 };
+
+// This is not efficent, but it seems to work ok ish
+export const getAuthorisedActivities = async () => {
+  const authResponse = await fetch("/api/auth");
+
+  // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+  if (!authResponse.ok) {
+    return;
+  }
+
+  const authorisedActivities = await authResponse.json();
+
+  return authorisedActivities;
+};
