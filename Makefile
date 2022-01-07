@@ -1,11 +1,13 @@
-test:
-	mvn clean verify jacoco:report
-
 build:
 	./build.sh
 
-build_no_test:
+build-no-test:
 	SKIP_TESTS=true ./build.sh
+
+test: test-mvn test-ui
+
+test-mvn:
+	mvn clean verify jacoco:report
 
 test-ui:
 	cd ui && npm install && npx eslint . && npm test -- --watchAll=false
@@ -34,3 +36,6 @@ format: format-mvn format-ui
 
 package-audit-ui:
 	$(MAKE) -C ui package-audit
+
+docker-build:
+	SKIP_TESTS=true ./build.sh
