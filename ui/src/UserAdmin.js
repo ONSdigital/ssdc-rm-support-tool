@@ -87,7 +87,7 @@ class UserAdmin extends Component {
 
     const authorisedActivities = await authResponse.json();
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities,
       isLoading: false,
     });
 
@@ -242,8 +242,7 @@ class UserAdmin extends Component {
       </TableRow>
     ));
 
-    const groupsTableRows = this.state.groups.map((group) => {
-      return (
+    const groupsTableRows = this.state.groups.map((group) => (
         <TableRow key={group.id}>
           <TableCell component="th" scope="row">
             <Link to={`/groupDetails?groupId=${group.id}`}>{group.name}</Link>
@@ -252,8 +251,7 @@ class UserAdmin extends Component {
             {group.description}
           </TableCell>
         </TableRow>
-      );
-    });
+      ));
 
     return (
       <div style={{ padding: 20 }}>
@@ -327,7 +325,7 @@ class UserAdmin extends Component {
             <div>
               <TextField
                 required
-                fullWidth={true}
+                fullWidth
                 label="Email"
                 onChange={this.onEmailChange}
                 error={this.state.emailValidationError}
@@ -360,7 +358,7 @@ class UserAdmin extends Component {
             <div>
               <TextField
                 required
-                fullWidth={true}
+                fullWidth
                 label="Group name"
                 onChange={this.onGroupNameChange}
                 error={this.state.groupNameValidationError}
@@ -368,7 +366,7 @@ class UserAdmin extends Component {
                 value={this.state.groupName}
               />
               <TextField
-                fullWidth={true}
+                fullWidth
                 label="Description"
                 onChange={this.onGroupDescriptionChange}
                 value={this.state.groupDescription}

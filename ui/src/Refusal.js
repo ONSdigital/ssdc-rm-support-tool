@@ -80,17 +80,17 @@ class Refusal extends Component {
         <Dialog open={this.state.showDialog}>
           <DialogContent style={{ padding: 30 }}>
             <div>
-              <FormControl required fullWidth={true}>
+              <FormControl required fullWidth>
                 <InputLabel>Refusal Type</InputLabel>
                 <Select
                   onChange={this.onTypeChange}
                   value={this.state.type}
                   error={this.state.typeValidationError}
                 >
-                  <MenuItem value={"EXTRAORDINARY_REFUSAL"}>
+                  <MenuItem value="EXTRAORDINARY_REFUSAL">
                     EXTRAORDINARY REFUSAL
                   </MenuItem>
-                  <MenuItem value={"HARD_REFUSAL"}>HARD REFUSAL</MenuItem>
+                  <MenuItem value="HARD_REFUSAL">HARD REFUSAL</MenuItem>
                 </Select>
               </FormControl>
             </div>

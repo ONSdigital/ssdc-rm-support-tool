@@ -51,7 +51,7 @@ class ExceptionManager extends Component {
     const response = await fetch("/api/exceptionManager/badMessagesSummary");
     const exceptions = await response.json();
 
-    this.setState({ exceptions: exceptions });
+    this.setState({ exceptions });
   };
 
   getAuthorisedActivities = async () => {
@@ -64,7 +64,7 @@ class ExceptionManager extends Component {
 
     const authorisedActivities = await authResponse.json();
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities,
       isLoading: false,
     });
 
@@ -77,7 +77,7 @@ class ExceptionManager extends Component {
     );
     const exceptionDetails = await response.json();
 
-    this.setState({ exceptionDetails: exceptionDetails });
+    this.setState({ exceptionDetails });
   };
 
   closeDetailsDialog = () => {
@@ -150,7 +150,7 @@ class ExceptionManager extends Component {
       (exception) => !exception.quarantined
     );
 
-    var sortedExceptions = activeExceptions.sort((firstEx, secondEx) =>
+    const sortedExceptions = activeExceptions.sort((firstEx, secondEx) =>
       firstEx.firstSeen.localeCompare(secondEx.firstSeen)
     );
     sortedExceptions.reverse();
@@ -180,7 +180,7 @@ class ExceptionManager extends Component {
       </TableRow>
     ));
 
-    var exceptionDetailsSections;
+    let exceptionDetailsSections;
 
     if (this.state.exceptionDetails) {
       exceptionDetailsSections = this.state.exceptionDetails.map(
@@ -220,7 +220,7 @@ class ExceptionManager extends Component {
           </Table>
         </TableContainer>
         {this.state.exceptionDetails && (
-          <Dialog open={true} maxWidth={300}>
+          <Dialog open maxWidth={300}>
             <DialogContent style={{ padding: 30 }}>
               <div>{exceptionDetailsSections}</div>
               <div>
@@ -258,7 +258,7 @@ class ExceptionManager extends Component {
           </Dialog>
         )}
         {this.state.showPeekDialog && (
-          <Dialog open={true} maxWidth={300}>
+          <Dialog open maxWidth={300}>
             <DialogContent style={{ padding: 30 }}>
               {!this.state.peekResult && <CircularProgress color="inherit" />}
               {this.state.peekResult && <p>{this.state.peekResult}</p>}
@@ -276,7 +276,7 @@ class ExceptionManager extends Component {
         )}
         <Dialog open={this.state.showQuarantineDialog}>
           <DialogTitle id="alert-dialog-title">
-            {"Confirm quarantine?"}
+            Confirm quarantine?
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">

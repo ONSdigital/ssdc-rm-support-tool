@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { convertStatusText } from "./common";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import {
@@ -18,8 +17,9 @@ import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
-import JobDetails from "./JobDetails";
 import { Link } from "react-router-dom";
+import JobDetails from "./JobDetails";
+import { convertStatusText } from "./common";
 
 const BULK_REFUSAL_JOB_TYPE = "BULK_REFUSAL";
 const BULK_REFUSAL_VIEW_PERMISSION = "VIEW_BULK_REFUSAL_PROGRESS";
@@ -410,7 +410,7 @@ class BulkUploads extends Component {
         >
           <SnackbarContent
             style={{ backgroundColor: "#4caf50" }}
-            message={"File upload successful!"}
+            message="File upload successful!"
           />
         </Snackbar>
         <JobDetails

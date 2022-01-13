@@ -32,8 +32,7 @@ class MyGroupsAdmin extends Component {
   };
 
   render() {
-    const groupsTableRows = this.state.thisUserAdminGroups.map((group) => {
-      return (
+    const groupsTableRows = this.state.thisUserAdminGroups.map((group) => (
         <TableRow key={group.id}>
           <TableCell component="th" scope="row">
             <Link to={`/myGroupUserAdmin?groupId=${group.id}`}>
@@ -44,8 +43,7 @@ class MyGroupsAdmin extends Component {
             {group.description}
           </TableCell>
         </TableRow>
-      );
-    });
+      ));
 
     return (
       <div style={{ padding: 20 }}>
@@ -58,9 +56,7 @@ class MyGroupsAdmin extends Component {
             <h1 style={{ color: "red" }}>YOU ARE NOT AUTHORISED</h1>
           )}
         {this.state.thisUserAdminGroups.length > 0 && (
-          <>
-            <>
-              <TableContainer component={Paper} style={{ marginTop: 20 }}>
+          <TableContainer component={Paper} style={{ marginTop: 20 }}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -71,8 +67,6 @@ class MyGroupsAdmin extends Component {
                   <TableBody>{groupsTableRows}</TableBody>
                 </Table>
               </TableContainer>
-            </>
-          </>
         )}
       </div>
     );

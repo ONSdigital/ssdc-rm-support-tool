@@ -43,7 +43,7 @@ class AllowedSMSTemplatesActionRulesList extends Component {
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
     this.interval = setInterval(
@@ -62,7 +62,7 @@ class AllowedSMSTemplatesActionRulesList extends Component {
       this.props.surveyId
     );
 
-    let allowableActionRuleSmsTemplates = [];
+    const allowableActionRuleSmsTemplates = [];
 
     allSmsFulfilmentTemplates.forEach((packCode) => {
       if (!actionRuleSmsTemplates.includes(packCode)) {
@@ -71,8 +71,8 @@ class AllowedSMSTemplatesActionRulesList extends Component {
     });
 
     this.setState({
-      allowableActionRuleSmsTemplates: allowableActionRuleSmsTemplates,
-      actionRuleSmsTemplates: actionRuleSmsTemplates,
+      allowableActionRuleSmsTemplates,
+      actionRuleSmsTemplates,
     });
   };
 
@@ -190,7 +190,7 @@ class AllowedSMSTemplatesActionRulesList extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl required fullWidth={true}>
+                <FormControl required fullWidth>
                   <InputLabel>SMS Template</InputLabel>
                   <Select
                     onChange={this.onSmsTemplateChange}

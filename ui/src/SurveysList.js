@@ -45,7 +45,7 @@ class SurveysList extends Component {
 
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(this.state.authorisedActivities);
 
     this.interval = setInterval(
@@ -247,7 +247,7 @@ class SurveysList extends Component {
             Create Survey
           </Button>
         )}
-        <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth={true}>
+        <Dialog open={this.state.createSurveyDialogDisplayed} fullWidth>
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
@@ -262,37 +262,37 @@ class SurveysList extends Component {
                 <FormControl
                   style={{ marginTop: 10 }}
                   required
-                  fullWidth={true}
+                  fullWidth
                 >
                   <InputLabel>Sample Has Header Row</InputLabel>
                   <Select
                     onChange={this.onNewSurveyHeaderRowChange}
                     value={this.state.newSurveyHeaderRow}
                   >
-                    <MenuItem value={true}>True</MenuItem>
+                    <MenuItem value>True</MenuItem>
                     <MenuItem value={false}>False</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl
                   style={{ marginTop: 10 }}
                   required
-                  fullWidth={true}
+                  fullWidth
                 >
                   <InputLabel>Sample File Separator</InputLabel>
                   <Select
                     onChange={this.onNewSurveySampleSeparatorChange}
                     value={this.state.newSurveySampleSeparator}
                   >
-                    <MenuItem value={","}>Comma</MenuItem>
-                    <MenuItem value={":"}>Colon</MenuItem>
-                    <MenuItem value={"|"}>Pipe</MenuItem>
+                    <MenuItem value=",">Comma</MenuItem>
+                    <MenuItem value=":">Colon</MenuItem>
+                    <MenuItem value="|">Pipe</MenuItem>
                   </Select>
                 </FormControl>
                 <TextField
                   style={{ marginTop: 10 }}
                   required
                   multiline
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.validationRulesValidationError}
                   id="standard-required"
                   label="Validation rules"
@@ -303,7 +303,7 @@ class SurveysList extends Component {
                   style={{ marginTop: 10 }}
                   required
                   multiline
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.sampleDefinitionUrlError}
                   id="standard-required"
                   label="Survey Definition URL"
@@ -313,7 +313,7 @@ class SurveysList extends Component {
                 <TextField
                   style={{ marginTop: 10 }}
                   multiline
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.surveyMetadataError}
                   id="standard-required"
                   label="Metadata"

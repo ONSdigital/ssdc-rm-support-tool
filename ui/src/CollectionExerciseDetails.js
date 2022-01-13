@@ -18,6 +18,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { Link } from "react-router-dom";
 import SampleUpload from "./SampleUpload";
 import {
   getActionRuleExportFileTemplates,
@@ -25,7 +26,6 @@ import {
   getActionRuleEmailTemplates,
   getSensitiveSampleColumns,
 } from "./Utils";
-import { Link } from "react-router-dom";
 
 class CollectionExerciseDetails extends Component {
   state = {
@@ -97,7 +97,7 @@ class CollectionExerciseDetails extends Component {
       authorisedActivities,
       this.props.surveyId
     );
-    this.setState({ sensitiveSampleColumns: sensitiveSampleColumns });
+    this.setState({ sensitiveSampleColumns });
   };
 
   getCollectionExerciseName = async (authorisedActivities) => {
@@ -267,7 +267,7 @@ class CollectionExerciseDetails extends Component {
 
     this.createActionRuleDisabled = true;
 
-    var failedValidation = false;
+    let failedValidation = false;
 
     if (!this.state.newActionRuleType) {
       this.setState({ actionRuleTypeValidationError: true });
@@ -314,7 +314,7 @@ class CollectionExerciseDetails extends Component {
       failedValidation = true;
     }
 
-    var uacMetadataJson = null;
+    let uacMetadataJson = null;
 
     if (this.state.newUacQidMetadata.length > 0) {
       try {
@@ -379,7 +379,7 @@ class CollectionExerciseDetails extends Component {
   };
 
   getTimeNowForDateTimePicker = () => {
-    var dateNow = new Date();
+    const dateNow = new Date();
     dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
     return dateNow.toJSON().slice(0, 16);
   };
@@ -389,8 +389,7 @@ class CollectionExerciseDetails extends Component {
       first.triggerDateTime.localeCompare(second.triggerDateTime)
     );
 
-    const actionRuleTableRows = sortedActionRules.map((actionRule, index) => {
-      return (
+    const actionRuleTableRows = sortedActionRules.map((actionRule, index) => (
         <TableRow key={index}>
           <TableCell component="th" scope="row">
             {actionRule.type}
@@ -411,8 +410,7 @@ class CollectionExerciseDetails extends Component {
             {actionRule.packCode}
           </TableCell>
         </TableRow>
-      );
-    });
+      ));
 
     const exportFilePackCodeMenuItems = this.state.exportFilePackCodes.map(
       (packCode) => (
@@ -441,24 +439,24 @@ class CollectionExerciseDetails extends Component {
         </MenuItem>
       ));
 
-    let allowedActionRuleTypeMenuItems = [];
+    const allowedActionRuleTypeMenuItems = [];
     if (
       this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_ACTION_RULE")
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"EXPORT_FILE"}>Export File</MenuItem>
+        <MenuItem value="EXPORT_FILE">Export File</MenuItem>
       );
     }
 
     if (this.state.authorisedActivities.includes("CREATE_SMS_ACTION_RULE")) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"SMS"}>SMS</MenuItem>
+        <MenuItem value="SMS">SMS</MenuItem>
       );
     }
 
     if (this.state.authorisedActivities.includes("CREATE_EMAIL_ACTION_RULE")) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"EMAIL"}>Email</MenuItem>
+        <MenuItem value="EMAIL">Email</MenuItem>
       );
     }
 
@@ -468,7 +466,7 @@ class CollectionExerciseDetails extends Component {
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"FACE_TO_FACE"}>Face to face</MenuItem>
+        <MenuItem value="FACE_TO_FACE">Face to face</MenuItem>
       );
     }
     if (
@@ -477,7 +475,7 @@ class CollectionExerciseDetails extends Component {
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"OUTBOUND_TELEPHONE"}>Outbound phone</MenuItem>
+        <MenuItem value="OUTBOUND_TELEPHONE">Outbound phone</MenuItem>
       );
     }
     if (
@@ -486,7 +484,7 @@ class CollectionExerciseDetails extends Component {
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"DEACTIVATE_UAC"}>Deactivate UAC</MenuItem>
+        <MenuItem value="DEACTIVATE_UAC">Deactivate UAC</MenuItem>
       );
     }
 
@@ -540,7 +538,7 @@ class CollectionExerciseDetails extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl required fullWidth={true}>
+                <FormControl required fullWidth>
                   <InputLabel>Type</InputLabel>
                   <Select
                     onChange={this.onNewActionRuleTypeChange}
@@ -552,7 +550,7 @@ class CollectionExerciseDetails extends Component {
                 </FormControl>
                 {this.state.newActionRuleType === "EXPORT_FILE" && (
                   <>
-                    <FormControl required fullWidth={true}>
+                    <FormControl required fullWidth>
                       <InputLabel>Pack Code</InputLabel>
                       <Select
                         onChange={this.onNewActionRuleExportFilePackCodeChange}
@@ -562,7 +560,7 @@ class CollectionExerciseDetails extends Component {
                         {exportFilePackCodeMenuItems}
                       </Select>
                     </FormControl>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth>
                       <TextField
                         style={{ minWidth: 200 }}
                         error={this.state.uacQidMetadataValidationError}
@@ -575,7 +573,7 @@ class CollectionExerciseDetails extends Component {
                 )}
                 {this.state.newActionRuleType === "SMS" && (
                   <>
-                    <FormControl required fullWidth={true}>
+                    <FormControl required fullWidth>
                       <InputLabel>Pack Code</InputLabel>
                       <Select
                         onChange={this.onNewActionRuleSmsPackCodeChange}
@@ -585,7 +583,7 @@ class CollectionExerciseDetails extends Component {
                         {smsPackCodeMenuItems}
                       </Select>
                     </FormControl>
-                    <FormControl required fullWidth={true}>
+                    <FormControl required fullWidth>
                       <InputLabel>Phone Number Column</InputLabel>
                       <Select
                         onChange={this.onNewActionRuleSmsPhoneNumberChange}
@@ -595,7 +593,7 @@ class CollectionExerciseDetails extends Component {
                         {sensitiveSampleColumnsMenuItems}
                       </Select>
                     </FormControl>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth>
                       <TextField
                         style={{ minWidth: 200 }}
                         error={this.state.uacQidMetadataValidationError}
@@ -608,7 +606,7 @@ class CollectionExerciseDetails extends Component {
                 )}
                 {this.state.newActionRuleType === "EMAIL" && (
                   <>
-                    <FormControl required fullWidth={true}>
+                    <FormControl required fullWidth>
                       <InputLabel>Pack Code</InputLabel>
                       <Select
                         onChange={this.onNewActionRuleEmailPackCodeChange}
@@ -618,7 +616,7 @@ class CollectionExerciseDetails extends Component {
                         {emailPackCodeMenuItems}
                       </Select>
                     </FormControl>
-                    <FormControl required fullWidth={true}>
+                    <FormControl required fullWidth>
                       <InputLabel>Email Column</InputLabel>
                       <Select
                         onChange={this.onNewActionRuleEmailChange}
@@ -628,7 +626,7 @@ class CollectionExerciseDetails extends Component {
                         {sensitiveSampleColumnsMenuItems}
                       </Select>
                     </FormControl>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth>
                       <TextField
                         style={{ minWidth: 200 }}
                         error={this.state.uacQidMetadataValidationError}
@@ -640,7 +638,7 @@ class CollectionExerciseDetails extends Component {
                   </>
                 )}
                 <TextField
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 20 }}
                   error={this.state.classifiersValidationError}
                   label="Classifiers"
@@ -680,15 +678,13 @@ class CollectionExerciseDetails extends Component {
         {["LOAD_BULK_REFUSAL", "VIEW_BULK_REFUSAL_PROGRESS"].some((p) =>
           this.state.authorisedActivities.includes(p)
         ) && (
-          <>
-            <div style={{ marginTop: 20 }}>
+          <div style={{ marginTop: 20 }}>
               <Link
                 to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}
               >
                 Bulk Uploads
               </Link>
             </div>
-          </>
         )}
       </div>
     );

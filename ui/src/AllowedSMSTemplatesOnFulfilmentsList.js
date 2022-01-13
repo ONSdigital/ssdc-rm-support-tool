@@ -44,7 +44,7 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
     this.interval = setInterval(
@@ -63,7 +63,7 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
       this.props.surveyId
     );
 
-    let allowableSmsFulfilmentTemplates = [];
+    const allowableSmsFulfilmentTemplates = [];
 
     allSmsFulfilmentTemplates.forEach((packCode) => {
       if (!smsFulfilmentTemplates.includes(packCode)) {
@@ -72,8 +72,8 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
     });
 
     this.setState({
-      smsFulfilmentTemplates: smsFulfilmentTemplates,
-      allowableSmsFulfilmentTemplates: allowableSmsFulfilmentTemplates,
+      smsFulfilmentTemplates,
+      allowableSmsFulfilmentTemplates,
     });
   };
 
@@ -189,7 +189,7 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl required fullWidth={true}>
+                <FormControl required fullWidth>
                   <InputLabel>SMS Template</InputLabel>
                   <Select
                     onChange={this.onSmsTemplateChange}

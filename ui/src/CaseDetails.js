@@ -15,15 +15,15 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { Link } from "react-router-dom";
+import JSONPretty from "react-json-pretty";
 import Refusal from "./Refusal";
 import InvalidCase from "./InvalidCase";
 import PrintFulfilment from "./PrintFulfilment";
 import SampleData from "./SampleData";
 import SensitiveData from "./SensitiveData";
-import { Link } from "react-router-dom";
 import SmsFulfilment from "./SmsFulfilment";
 import EmailFulfilment from "./EmailFulfilment";
-import JSONPretty from "react-json-pretty";
 
 class CaseDetails extends Component {
   state = {
@@ -340,7 +340,7 @@ class CaseDetails extends Component {
           </div>
         )}
         {this.state.eventToShow && (
-          <Dialog open={true}>
+          <Dialog open>
             <DialogContent style={{ padding: 30 }}>
               <div>
                 <Typography
@@ -422,7 +422,7 @@ class CaseDetails extends Component {
         )}
         <Dialog open={this.state.showDeactivaveDialog}>
           <DialogTitle id="alert-dialog-title">
-            {"Confirm deactivate?"}
+            Confirm deactivate?
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">

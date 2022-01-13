@@ -128,7 +128,7 @@ class SmsFulfilment extends Component {
       validationFailed = true;
     }
 
-    var uacMetadataJson = null;
+    let uacMetadataJson = null;
 
     if (this.state.newSmsUacQidMetadata.length > 0) {
       try {
@@ -196,7 +196,7 @@ class SmsFulfilment extends Component {
         <Dialog open={this.state.showDialog}>
           <DialogContent style={{ padding: 30 }}>
             <div>
-              <FormControl required fullWidth={true}>
+              <FormControl required fullWidth>
                 <InputLabel>SMS Template</InputLabel>
                 <Select
                   onChange={this.onSmsTemplateChange}
@@ -215,7 +215,7 @@ class SmsFulfilment extends Component {
                 value={this.state.phoneNumber}
                 helperText={this.state.newValueValidationError}
               />
-              <FormControl fullWidth={true}>
+              <FormControl fullWidth>
                 <TextField
                   style={{ minWidth: 200 }}
                   error={this.state.smsUacQidMetadataValidationError}

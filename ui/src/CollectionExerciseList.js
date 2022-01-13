@@ -14,8 +14,8 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { getAuthorisedActivities } from "./Utils";
 import { Link } from "react-router-dom";
+import { getAuthorisedActivities } from "./Utils";
 
 class CollectionExerciseList extends Component {
   state = {
@@ -45,7 +45,7 @@ class CollectionExerciseList extends Component {
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
     this.interval = setInterval(
@@ -91,7 +91,7 @@ class CollectionExerciseList extends Component {
   };
 
   getTimeNowForDateTimePicker = () => {
-    var dateNow = new Date();
+    const dateNow = new Date();
     dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
     return dateNow.toJSON().slice(0, 16);
   };
@@ -303,7 +303,7 @@ class CollectionExerciseList extends Component {
               <div>
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.newCollectionExerciseNameError}
                   label="Collection exercise name"
                   onChange={this.onNewCollectionExerciseNameChange}
@@ -311,7 +311,7 @@ class CollectionExerciseList extends Component {
                 />
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.newCollectionExerciseReferenceError}
                   label="Reference"
                   onChange={this.onNewCollectionExerciseReferenceChange}
@@ -345,7 +345,7 @@ class CollectionExerciseList extends Component {
                 <TextField
                   style={{ marginTop: 10 }}
                   multiline
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.newCollectionExerciseMetadataError}
                   label="Metadata"
                   onChange={this.onNewCollectionExerciseMetadataChange}
@@ -355,7 +355,7 @@ class CollectionExerciseList extends Component {
                   style={{ marginTop: 10 }}
                   multiline
                   required
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.newCollectionExerciseCIRulesError}
                   label="CI Rules"
                   onChange={this.onNewCollectionExerciseCIRulesChange}

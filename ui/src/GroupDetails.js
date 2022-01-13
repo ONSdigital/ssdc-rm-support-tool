@@ -134,7 +134,7 @@ class GroupDetails extends Component {
     );
 
     this.setState({
-      allUsersAutocompleteOptions: allUsersAutocompleteOptions,
+      allUsersAutocompleteOptions,
     });
   };
 
@@ -162,7 +162,7 @@ class GroupDetails extends Component {
 
     const authorisedActivities = await authResponse.json();
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities,
       isLoading: false,
     });
 
@@ -225,9 +225,9 @@ class GroupDetails extends Component {
 
     this.setState({
       showRemoveDialog: true,
-      activity: activity,
-      surveyName: surveyName,
-      userGroupPermissionId: userGroupPermissionId,
+      activity,
+      surveyName,
+      userGroupPermissionId,
     });
   };
 
@@ -266,7 +266,7 @@ class GroupDetails extends Component {
       .map((permission) => permission.surveyId);
 
     // Build the list of surveys this activity is not already allowed on
-    let allowedSurveys = [];
+    const allowedSurveys = [];
     if (!existingPermissionSurveyIds.includes(null)) {
       // For global permissions
       allowedSurveys.push(null);
@@ -279,7 +279,7 @@ class GroupDetails extends Component {
 
     this.setState({
       activity: event.target.value,
-      allowedSurveys: allowedSurveys,
+      allowedSurveys,
       surveyValidationError: false,
     });
   };
@@ -328,7 +328,7 @@ class GroupDetails extends Component {
     const newUserGroupPermission = {
       authorisedActivity: this.state.activity,
       groupId: this.props.groupId,
-      surveyId: surveyId,
+      surveyId,
     };
 
     const response = await fetch("/api/userGroupPermissions", {
@@ -352,7 +352,7 @@ class GroupDetails extends Component {
     this.removeAdminInProgress = false;
 
     this.setState({
-      adminIdToRemove: adminIdToRemove,
+      adminIdToRemove,
       showRemoveAdminDialog: true,
     });
   };
@@ -430,7 +430,7 @@ class GroupDetails extends Component {
   onNewAdminEmailChange = (_, newValue) => {
     this.setState({
       newAdminUserId: newValue ? newValue.id : null,
-      newAdminEmailValidationError: newValue ? false : true,
+      newAdminEmailValidationError: !newValue,
     });
   };
 
@@ -501,15 +501,13 @@ class GroupDetails extends Component {
 
     const activityMenuItems = this.state.allActivities
       .sort()
-      .map((activity) => {
-        return (
+      .map((activity) => (
           <MenuItem key={activity} value={activity}>
             {activity}
           </MenuItem>
-        );
-      });
+        ));
 
-    var surveyMenuItems = [];
+    let surveyMenuItems = [];
     if (this.state.activity) {
       if (this.state.globalActivities.includes(this.state.activity)) {
         surveyMenuItems = [
@@ -589,7 +587,7 @@ class GroupDetails extends Component {
                 style={{ paddingLeft: 30, paddingRight: 30, paddingBottom: 10 }}
               >
                 <div>
-                  <FormControl required fullWidth={true}>
+                  <FormControl required fullWidth>
                     <InputLabel>Activity</InputLabel>
                     <Select
                       onChange={this.onActivityChange}
@@ -600,7 +598,7 @@ class GroupDetails extends Component {
                     </Select>
                   </FormControl>
                   {this.state.activity && (
-                    <FormControl required fullWidth={true}>
+                    <FormControl required fullWidth>
                       <InputLabel>Survey</InputLabel>
                       <Select
                         onChange={this.onSurveyChange}
@@ -632,7 +630,7 @@ class GroupDetails extends Component {
             </Dialog>
             <Dialog open={this.state.showRemoveDialog}>
               <DialogTitle id="alert-dialog-title">
-                {"Confirm remove?"}
+                Confirm remove?
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
@@ -692,7 +690,7 @@ class GroupDetails extends Component {
             </Dialog>
             <Dialog open={this.state.showRemoveAdminDialog}>
               <DialogTitle id="alert-dialog-title">
-                {"Confirm remove admin"}
+                Confirm remove admin
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">

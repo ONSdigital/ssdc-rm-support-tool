@@ -12,7 +12,7 @@ import { convertStatusText } from "./common";
 
 class JobDetails extends Component {
   render() {
-    var jobDetailsFragment;
+    let jobDetailsFragment;
     let headerRowCorrection = 0;
 
     if (this.props.job) {
@@ -204,12 +204,12 @@ class JobDetails extends Component {
       );
     }
 
-    var fileDownloadHost = "";
+    let fileDownloadHost = "";
     if (process.env.NODE_ENV !== "production") {
       fileDownloadHost = "http://localhost:8080";
     }
 
-    var buttonFragment;
+    let buttonFragment;
     if (
       this.props.job &&
       [
@@ -225,7 +225,7 @@ class JobDetails extends Component {
         <Grid container spacing={1}>
           <Button
             target="_blank"
-            href={fileDownloadHost + "/api/job/" + this.props.job.id + "/error"}
+            href={`${fileDownloadHost}/api/job/${this.props.job.id}/error`}
             variant="contained"
             style={{ margin: 10 }}
           >
@@ -233,12 +233,7 @@ class JobDetails extends Component {
           </Button>
           <Button
             target="_blank"
-            href={
-              fileDownloadHost +
-              "/api/job/" +
-              this.props.job.id +
-              "/errorDetail"
-            }
+            href={`${fileDownloadHost}/api/job/${this.props.job.id}/errorDetail`}
             variant="contained"
             style={{ margin: 10 }}
           >

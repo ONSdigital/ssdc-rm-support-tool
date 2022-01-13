@@ -42,7 +42,7 @@ class EmailTemplateList extends Component {
 
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
     this.interval = setInterval(
@@ -145,7 +145,7 @@ class EmailTemplateList extends Component {
       packCodeValidationError: false,
     });
 
-    var failedValidation = false;
+    let failedValidation = false;
 
     if (!this.state.packCode.trim()) {
       this.setState({ packCodeValidationError: true });
@@ -229,7 +229,7 @@ class EmailTemplateList extends Component {
       packCode: this.state.packCode,
       description: this.state.description,
       template: JSON.parse(this.state.template),
-      metadata: metadata,
+      metadata,
     };
 
     const response = await fetch("/api/emailTemplates", {
@@ -305,7 +305,7 @@ class EmailTemplateList extends Component {
 
         <Dialog
           open={this.state.createEmailTemplateDialogDisplayed}
-          fullWidth={true}
+          fullWidth
         >
           <DialogContent style={{ padding: 30 }}>
             {this.state.createEmailTemplateError && (
@@ -317,7 +317,7 @@ class EmailTemplateList extends Component {
               <div>
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.packCodeValidationError}
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
@@ -326,7 +326,7 @@ class EmailTemplateList extends Component {
                 />
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.descriptionValidationError}
                   label="Description"
@@ -336,7 +336,7 @@ class EmailTemplateList extends Component {
                 />
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.notifyTemplateIdValidationError}
                   label="Notify Template ID (UUID)"
@@ -344,7 +344,7 @@ class EmailTemplateList extends Component {
                   value={this.state.notifyTemplateId}
                 />
                 <TextField
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.templateValidationError}
                   label="Template"
@@ -352,7 +352,7 @@ class EmailTemplateList extends Component {
                   value={this.state.template}
                 />
                 <TextField
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.newTemplateMetadataValidationError}
                   label="Metadata"

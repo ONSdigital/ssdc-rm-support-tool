@@ -44,7 +44,7 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
     this.interval = setInterval(
@@ -63,7 +63,7 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
       this.props.surveyId
     );
 
-    let allowableEmailFulfilmentTemplates = [];
+    const allowableEmailFulfilmentTemplates = [];
 
     allEmailFulfilmentTemplates.forEach((packCode) => {
       if (!emailFulfilmentTemplates.includes(packCode)) {
@@ -72,8 +72,8 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
     });
 
     this.setState({
-      emailFulfilmentTemplates: emailFulfilmentTemplates,
-      allowableEmailFulfilmentTemplates: allowableEmailFulfilmentTemplates,
+      emailFulfilmentTemplates,
+      allowableEmailFulfilmentTemplates,
     });
   };
 
@@ -188,7 +188,7 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl required fullWidth={true}>
+                <FormControl required fullWidth>
                   <InputLabel>Email Template</InputLabel>
                   <Select
                     onChange={this.onEmailTemplateChange}

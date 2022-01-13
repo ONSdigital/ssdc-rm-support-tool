@@ -31,7 +31,7 @@ class SurveySampleSearch extends Component {
   getRefusalTypes = async () => {
     // This endpoint has no security
     const response = await fetch("/api/refusals/types");
-    let refusalJson = await response.json();
+    const refusalJson = await response.json();
 
     this.setState({ refusalTypes: refusalJson });
   };
@@ -91,11 +91,11 @@ class SurveySampleSearch extends Component {
 
   render() {
     const noFilterMenuItem = (
-      <MenuItem key={"NO FILTER"} value={""}>
-        {"NO FILTER"}
+      <MenuItem key="NO FILTER" value="">
+        NO FILTER
       </MenuItem>
     );
-    let collectionExerciseMenuItems = [];
+    const collectionExerciseMenuItems = [];
     collectionExerciseMenuItems.push(noFilterMenuItem);
     collectionExerciseMenuItems.push(
       this.props.collectionExercises.map((collex) => (
@@ -118,11 +118,11 @@ class SurveySampleSearch extends Component {
     const trueOrFalseFilterMenuItems = [];
     trueOrFalseFilterMenuItems.push(noFilterMenuItem);
     trueOrFalseFilterMenuItems.push([
-      <MenuItem key={"true"} value={"true"}>
-        {"TRUE"}
+      <MenuItem key="true" value="true">
+        TRUE
       </MenuItem>,
-      <MenuItem key={"false"} value={"false"}>
-        {"FALSE"}
+      <MenuItem key="false" value="false">
+        FALSE
       </MenuItem>,
     ]);
 
@@ -147,7 +147,7 @@ class SurveySampleSearch extends Component {
         </div>
         <div id="searchSampleFiltersDiv">
           <Box marginTop={2} marginLeft={1}>
-            <Typography display={"inline"} variant="subtitle2">
+            <Typography display="inline" variant="subtitle2">
               Optional search filters:
             </Typography>
           </Box>

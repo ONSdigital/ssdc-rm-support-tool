@@ -43,7 +43,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
     this.interval = setInterval(
@@ -62,7 +62,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
       this.props.surveyId
     );
 
-    let allowableActionRuleEmailTemplates = [];
+    const allowableActionRuleEmailTemplates = [];
 
     allEmailFulfilmentTemplates.forEach((packCode) => {
       if (!actionRuleEmailTemplates.includes(packCode)) {
@@ -71,8 +71,8 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
     });
 
     this.setState({
-      actionRuleEmailTemplates: actionRuleEmailTemplates,
-      allowableActionRuleEmailTemplates: allowableActionRuleEmailTemplates,
+      actionRuleEmailTemplates,
+      allowableActionRuleEmailTemplates,
     });
   };
 
@@ -188,7 +188,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl required fullWidth={true}>
+                <FormControl required fullWidth>
                   <InputLabel>Email Template</InputLabel>
                   <Select
                     onChange={this.onEmailTemplateChange}

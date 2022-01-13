@@ -43,7 +43,7 @@ class ExportFileTemplateList extends Component {
 
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
 
     this.refreshDataFromBackend(authorisedActivities);
 
@@ -135,7 +135,7 @@ class ExportFileTemplateList extends Component {
       packCodeValidationError: false,
     });
 
-    var failedValidation = false;
+    let failedValidation = false;
 
     if (!this.state.exportFileDestination.trim()) {
       this.setState({ exportFileDestinationValidationError: true });
@@ -213,7 +213,7 @@ class ExportFileTemplateList extends Component {
       packCode: this.state.packCode,
       exportFileDestination: this.state.exportFileDestination,
       template: JSON.parse(this.state.template),
-      metadata: metadata,
+      metadata,
     };
 
     const response = await fetch("/api/exportFileTemplates", {
@@ -335,14 +335,14 @@ class ExportFileTemplateList extends Component {
 
         <Dialog
           open={this.state.createExportFileTemplateDialogDisplayed}
-          fullWidth={true}
+          fullWidth
         >
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.packCodeValidationError}
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
@@ -351,7 +351,7 @@ class ExportFileTemplateList extends Component {
                 />
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.descriptionValidationError}
                   label="Description"
@@ -360,7 +360,7 @@ class ExportFileTemplateList extends Component {
                 />
                 <FormControl
                   required
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                 >
                   <InputLabel>Export File Destination</InputLabel>
@@ -374,7 +374,7 @@ class ExportFileTemplateList extends Component {
                 </FormControl>
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.templateValidationError}
                   label="Template"
@@ -383,7 +383,7 @@ class ExportFileTemplateList extends Component {
                   helperText={this.state.notifyTemplateIdErrorMessage}
                 />
                 <TextField
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.newTemplateMetadataValidationError}
                   label="Metadata"

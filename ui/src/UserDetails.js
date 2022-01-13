@@ -105,7 +105,7 @@ class UserDetails extends Component {
 
     const authorisedActivities = await authResponse.json();
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities,
       isLoading: false,
     });
 
@@ -132,8 +132,8 @@ class UserDetails extends Component {
 
     this.setState({
       showRemoveDialog: true,
-      groupName: groupName,
-      userGroupMemberId: userGroupMemberId,
+      groupName,
+      userGroupMemberId,
     });
   };
 
@@ -194,8 +194,7 @@ class UserDetails extends Component {
 
   render() {
     const memberOfGroupTableRows = this.state.memberOfGroups.map(
-      (memberOfGroup) => {
-        return (
+      (memberOfGroup) => (
           <TableRow key={memberOfGroup.groupId}>
             <TableCell component="th" scope="row">
               <Link to={`/groupDetails?groupId=${memberOfGroup.groupId}`}>
@@ -219,8 +218,7 @@ class UserDetails extends Component {
               </Button>
             </TableCell>
           </TableRow>
-        );
-      }
+        )
     );
 
     const addGroupMenuItems = this.state.groups
@@ -278,7 +276,7 @@ class UserDetails extends Component {
                 style={{ paddingLeft: 30, paddingRight: 30, paddingBottom: 10 }}
               >
                 <div>
-                  <FormControl required fullWidth={true}>
+                  <FormControl required fullWidth>
                     <InputLabel>Group</InputLabel>
                     <Select
                       onChange={this.onGroupChange}
@@ -309,7 +307,7 @@ class UserDetails extends Component {
             </Dialog>
             <Dialog open={this.state.showRemoveDialog}>
               <DialogTitle id="alert-dialog-title">
-                {"Confirm remove?"}
+                Confirm remove?
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">

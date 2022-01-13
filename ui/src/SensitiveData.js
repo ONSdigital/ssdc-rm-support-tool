@@ -147,7 +147,7 @@ class SensitiveData extends Component {
         <Dialog open={this.state.showDialog}>
           <DialogContent style={{ padding: 30 }}>
             <div>
-              <FormControl required fullWidth={true}>
+              <FormControl required fullWidth>
                 <InputLabel>Sensitive Data Column</InputLabel>
                 <Select
                   onChange={this.onSensitiveDataColumnChange}
@@ -167,7 +167,7 @@ class SensitiveData extends Component {
                 helperText={this.state.newValueValidationError}
               />
             </div>
-            <div></div>
+            <div />
             <div style={{ marginTop: 10 }}>
               <Button
                 onClick={this.onUpdateSensitiveData}

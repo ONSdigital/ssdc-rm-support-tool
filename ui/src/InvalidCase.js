@@ -79,7 +79,7 @@ class InvalidCase extends Component {
             <div>
               <TextField
                 required
-                fullWidth={true}
+                fullWidth
                 style={{ marginTop: 20 }}
                 label="Reason"
                 onChange={this.onReasonChange}

@@ -148,7 +148,7 @@ class SampleData extends Component {
         <Dialog open={this.state.showDialog}>
           <DialogContent style={{ padding: 30 }}>
             <div>
-              <FormControl required fullWidth={true}>
+              <FormControl required fullWidth>
                 <InputLabel>Sample Data Column</InputLabel>
                 <Select
                   onChange={this.onSampleDataColumnChange}
@@ -168,7 +168,7 @@ class SampleData extends Component {
                 helperText={this.state.newValueValidationError}
               />
             </div>
-            <div></div>
+            <div />
             <div style={{ marginTop: 10 }}>
               <Button
                 onClick={this.onUpdateSampleData}

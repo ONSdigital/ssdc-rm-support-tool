@@ -20,7 +20,7 @@ class ConfigureFulfilmentTrigger extends Component {
 
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
   };
 
   getDateTimeForDateTimePicker = (date) => {
@@ -44,7 +44,7 @@ class ConfigureFulfilmentTrigger extends Component {
       });
     } else {
       const fulfilmentNextTriggerJson = await response.json();
-      var dateOfTrigger = new Date(fulfilmentNextTriggerJson);
+      const dateOfTrigger = new Date(fulfilmentNextTriggerJson);
       this.setState({
         nextFulfilmentTriggerDateTime:
           this.getDateTimeForDateTimePicker(dateOfTrigger),
@@ -111,7 +111,7 @@ class ConfigureFulfilmentTrigger extends Component {
         )}
         <Dialog
           open={this.state.configureNextTriggerDisplayed}
-          fullWidth={true}
+          fullWidth
         >
           <DialogContent style={{ padding: 30 }}>
             <div>

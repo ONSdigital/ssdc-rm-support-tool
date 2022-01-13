@@ -32,7 +32,7 @@ class MyGroupUserAdmin extends Component {
     groupMemberIdToRemove: null,
   };
 
-  componentDidMount = async () => {
+  componentDidMount() {
     this.getGroup(); // Changes infrequently
     const allUsers = await this.getAllUsers(); // Changes infrequently, but expensive to fetch
 
@@ -84,7 +84,7 @@ class MyGroupUserAdmin extends Component {
     );
 
     this.setState({
-      allUsersAutocompleteOptions: allUsersAutocompleteOptions,
+      allUsersAutocompleteOptions,
     });
   };
 
@@ -104,7 +104,7 @@ class MyGroupUserAdmin extends Component {
   onEmailChange = (_, newValue) => {
     this.setState({
       userId: newValue ? newValue.id : null,
-      emailValidationError: newValue ? false : true,
+      emailValidationError: !newValue,
     });
   };
 
@@ -157,7 +157,7 @@ class MyGroupUserAdmin extends Component {
     this.removeUserFromGroupInProgress = false;
 
     this.setState({
-      groupMemberIdToRemove: groupMemberIdToRemove,
+      groupMemberIdToRemove,
       showRemoveDialog: true,
     });
   };
@@ -270,7 +270,7 @@ class MyGroupUserAdmin extends Component {
           </DialogContent>
         </Dialog>
         <Dialog open={this.state.showRemoveDialog}>
-          <DialogTitle id="alert-dialog-title">{"Confirm remove?"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">Confirm remove?</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               Are you sure you wish to remove user from group?

@@ -44,7 +44,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
     this.interval = setInterval(
@@ -64,7 +64,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
         this.props.surveyId
       );
 
-    let allowableActionRuleExportFileTemplates = [];
+    const allowableActionRuleExportFileTemplates = [];
 
     allExportFileFulfilmentTemplates.forEach((packCode) => {
       if (!actionRuleExportFileTemplates.includes(packCode)) {
@@ -73,9 +73,8 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
     });
 
     this.setState({
-      allowableActionRuleExportFileTemplates:
-        allowableActionRuleExportFileTemplates,
-      actionRuleExportFileTemplates: actionRuleExportFileTemplates,
+      allowableActionRuleExportFileTemplates,
+      actionRuleExportFileTemplates,
     });
   };
 
@@ -193,7 +192,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
-                <FormControl required fullWidth={true}>
+                <FormControl required fullWidth>
                   <InputLabel>Export File Template</InputLabel>
                   <Select
                     onChange={this.onExportFileTemplateChange}

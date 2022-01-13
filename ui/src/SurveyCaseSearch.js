@@ -7,10 +7,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { Link } from "react-router-dom";
 import SurveySimpleSearchInput from "./SurveySimpleSearchInput";
 import SurveySampleSearch from "./SurveySampleSearch";
 import CaseDetails from "./CaseDetails";
-import { Link } from "react-router-dom";
 
 class SurveyCaseSearch extends Component {
   state = {
@@ -86,13 +86,9 @@ class SurveyCaseSearch extends Component {
     });
   };
 
-  checkWhitespace = (valueToValidate) => {
-    return valueToValidate.trim();
-  };
+  checkWhitespace = (valueToValidate) => valueToValidate.trim();
 
-  isNumeric = (str) => {
-    return /^\+?\d+$/.test(str);
-  };
+  isNumeric = (str) => /^\+?\d+$/.test(str);
 
   getSampleColumns = async (authorisedActivities) => {
     if (!authorisedActivities.includes("VIEW_SURVEY")) return;
@@ -112,7 +108,7 @@ class SurveyCaseSearch extends Component {
 
   getCaseCells = (caze) => {
     const caseId = caze.id;
-    let caseCells = [];
+    const caseCells = [];
     caseCells.push(
       <TableCell key={0}>
         {this.state.authorisedActivities.includes("VIEW_CASE_DETAILS") && (
@@ -138,7 +134,7 @@ class SurveyCaseSearch extends Component {
   };
 
   getTableHeaderRows() {
-    let tableHeaderRows = [];
+    const tableHeaderRows = [];
     tableHeaderRows.push(<TableCell key={0}>Case Ref</TableCell>);
 
     tableHeaderRows.push(<TableCell key={1}>Collection Exercise</TableCell>);

@@ -22,7 +22,7 @@ class LandingPage extends Component {
   getAuthorisedBackendData = async () => {
     this.getThisUserAdminGroups(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
   };
 
   getThisUserAdminGroups = async () => {
@@ -48,27 +48,21 @@ class LandingPage extends Component {
         <ConfigureFulfilmentTrigger />
 
         {this.state.authorisedActivities.includes("SUPER_USER") && (
-          <>
-            <div style={{ marginTop: 20 }}>
+          <div style={{ marginTop: 20 }}>
               <Link to="/userAdmin">User and Groups Admin</Link>
             </div>
-          </>
         )}
         {this.state.thisUserAdminGroups.length > 0 && (
-          <>
-            <div style={{ marginTop: 20 }}>
+          <div style={{ marginTop: 20 }}>
               <Link to="/myGroupsAdmin">My Groups Admin</Link>
             </div>
-          </>
         )}
         {this.state.authorisedActivities.includes(
           "EXCEPTION_MANAGER_VIEWER"
         ) && (
-          <>
-            <div style={{ marginTop: 20 }}>
+          <div style={{ marginTop: 20 }}>
               <Link to="/exceptionManager">Exception Manager</Link>
             </div>
-          </>
         )}
       </div>
     );

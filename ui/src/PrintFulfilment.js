@@ -91,7 +91,7 @@ class PrintFulfilment extends Component {
       validationFailed = true;
     }
 
-    var uacMetadataJson = null;
+    let uacMetadataJson = null;
 
     if (this.state.newPrintUacQidMetadata.length > 0) {
       try {
@@ -169,7 +169,7 @@ class PrintFulfilment extends Component {
         <Dialog open={this.state.showDialog}>
           <DialogContent style={{ padding: 30 }}>
             <div>
-              <FormControl required fullWidth={true}>
+              <FormControl required fullWidth>
                 <InputLabel>Export File Template</InputLabel>
                 <Select
                   onChange={this.onPrintTemplateChange}
@@ -179,7 +179,7 @@ class PrintFulfilment extends Component {
                   {fulfilmentPrintTemplateMenuItems}
                 </Select>
               </FormControl>
-              <FormControl fullWidth={true}>
+              <FormControl fullWidth>
                 <TextField
                   style={{ minWidth: 200 }}
                   error={this.state.printUacQidMetadataValidationError}

@@ -46,7 +46,7 @@ class SmsTemplatesList extends Component {
 
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
-    this.setState({ authorisedActivities: authorisedActivities });
+    this.setState({ authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
     this.interval = setInterval(
@@ -106,7 +106,7 @@ class SmsTemplatesList extends Component {
       packCodeValidationError: false,
     });
 
-    var failedValidation = false;
+    let failedValidation = false;
 
     if (!this.state.packCode.trim()) {
       this.setState({ packCodeValidationError: true });
@@ -189,7 +189,7 @@ class SmsTemplatesList extends Component {
       packCode: this.state.packCode,
       description: this.state.description,
       template: JSON.parse(this.state.template),
-      metadata: metadata,
+      metadata,
     };
 
     const response = await fetch("/api/smsTemplates", {
@@ -308,7 +308,7 @@ class SmsTemplatesList extends Component {
 
         <Dialog
           open={this.state.createSmsTemplateDialogDisplayed}
-          fullWidth={true}
+          fullWidth
         >
           <DialogContent style={{ padding: 30 }}>
             {this.state.createSmsTemplateError && (
@@ -320,7 +320,7 @@ class SmsTemplatesList extends Component {
               <div>
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   error={this.state.packCodeValidationError}
                   label="Pack Code"
                   onChange={this.onPackCodeChange}
@@ -329,7 +329,7 @@ class SmsTemplatesList extends Component {
                 />
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.descriptionValidationError}
                   label="Description"
@@ -339,7 +339,7 @@ class SmsTemplatesList extends Component {
                 />
                 <TextField
                   required
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.notifyTemplateIdValidationError}
                   label="Notify Template ID (UUID)"
@@ -347,7 +347,7 @@ class SmsTemplatesList extends Component {
                   value={this.state.notifyTemplateId}
                 />
                 <TextField
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.templateValidationError}
                   label="Template"
@@ -355,7 +355,7 @@ class SmsTemplatesList extends Component {
                   value={this.state.template}
                 />
                 <TextField
-                  fullWidth={true}
+                  fullWidth
                   style={{ marginTop: 10 }}
                   error={this.state.newTemplateMetadataValidationError}
                   label="Metadata"
