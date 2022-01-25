@@ -24,9 +24,12 @@ public class AllowTemplateOnSurveyValidator {
     surveyColumnsPlusOtherAllowableColumns.addAll(sensitiveSurveyColumns);
     surveyColumnsPlusOtherAllowableColumns.addAll(OTHER_ALLOWABLE_COLUMNS);
 
-    if (!surveyColumnsPlusOtherAllowableColumns.containsAll(templateColumns)) {
-      Set<String> printTemplateColumnsNotAllowed = new HashSet<>();
-      printTemplateColumnsNotAllowed.addAll(templateColumns);
+    // We can't validate the __request__ columns as the caller supplies them not the sample
+    Set<String> templateNonRequestColumns = new HashSet<>(templateColumns);
+    templateNonRequestColumns.removeIf(column -> column.startsWith("__request__."));
+
+    if (!surveyColumnsPlusOtherAllowableColumns.containsAll(templateNonRequestColumns)) {
+      Set<String> printTemplateColumnsNotAllowed = new HashSet<>(templateNonRequestColumns);
       printTemplateColumnsNotAllowed.removeAll(surveyColumnsPlusOtherAllowableColumns);
       String errorMessage =
           "Survey is missing columns: " + String.join(", ", printTemplateColumnsNotAllowed);
