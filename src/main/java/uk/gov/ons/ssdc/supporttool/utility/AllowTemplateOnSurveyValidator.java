@@ -30,7 +30,6 @@ public class AllowTemplateOnSurveyValidator {
 
     if (!surveyColumnsPlusOtherAllowableColumns.containsAll(templateNonRequestColumns)) {
       Set<String> printTemplateColumnsNotAllowed = new HashSet<>(templateNonRequestColumns);
-      //      printTemplateColumnsNotAllowed.addAll(templateColumns);
       printTemplateColumnsNotAllowed.removeAll(surveyColumnsPlusOtherAllowableColumns);
       String errorMessage =
           "Survey is missing columns: " + String.join(", ", printTemplateColumnsNotAllowed);
