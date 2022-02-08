@@ -26,8 +26,8 @@ import {
 class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
   state = {
     authorisedActivities: [],
-    fulfilmentExportFileTemplates: [],
-    allowableFulfilmentExportFileTemplates: [],
+    fulfilmentExportFilePackCodes: [],
+    allowableFulfilmentExportFilePackCodes: [],
     allowFulfilmentExportFileTemplateDialogDisplayed: false,
     exportFileTemplateToAllow: "",
     exportFileTemplateValidationError: false,
@@ -55,7 +55,7 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allExportFileFulfilmentTemplates = await getAllExportFileTemplates(
+    const allExportFileFulfilmentPackCodes = await getAllExportFileTemplates(
       authorisedActivities
     );
 
@@ -64,19 +64,21 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
         authorisedActivities,
         this.props.surveyId
       );
+    const fulfilmentExportFilePackCodes = fulfilmentExportFileTemplates.map(
+      (template) => template.packCode
+    );
+    let allowableFulfilmentExportFilePackCodes = [];
 
-    let allowableFulfilmentExportFileTemplates = [];
-
-    allExportFileFulfilmentTemplates.forEach((packCode) => {
-      if (!fulfilmentExportFileTemplates.includes(packCode)) {
-        allowableFulfilmentExportFileTemplates.push(packCode);
+    allExportFileFulfilmentPackCodes.forEach((packCode) => {
+      if (!fulfilmentExportFilePackCodes.includes(packCode)) {
+        allowableFulfilmentExportFilePackCodes.push(packCode);
       }
     });
 
     this.setState({
-      fulfilmentExportFileTemplates: fulfilmentExportFileTemplates,
-      allowableFulfilmentExportFileTemplates:
-        allowableFulfilmentExportFileTemplates,
+      fulfilmentExportFilePackCodes: fulfilmentExportFilePackCodes,
+      allowableFulfilmentExportFilePackCodes:
+        allowableFulfilmentExportFilePackCodes,
     });
   };
 
@@ -141,14 +143,14 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
 
   render() {
     const fulfilmentExportFileTemplateMenuItems =
-      this.state.allowableFulfilmentExportFileTemplates.map((packCode) => (
+      this.state.allowableFulfilmentExportFilePackCodes.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>
       ));
 
     const fulfilmentExportFileTemplateTableRows =
-      this.state.fulfilmentExportFileTemplates.map((exportFileTemplate) => (
+      this.state.fulfilmentExportFilePackCodes.map((exportFileTemplate) => (
         <TableRow key={exportFileTemplate}>
           <TableCell component="th" scope="row">
             {exportFileTemplate}
