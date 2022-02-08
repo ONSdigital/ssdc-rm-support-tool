@@ -146,7 +146,7 @@ class PrintFulfilment extends Component {
     let personalisationValuesToUpdate = this.state.personalisationValues
       ? this.state.personalisationValues
       : {};
-    personalisationValuesToUpdate[event.target.id] = event.target.value;
+    personalisationValuesToUpdate[event.target.name] = event.target.value;
     this.setState({ personalisationValues: personalisationValuesToUpdate });
   };
 
@@ -164,7 +164,8 @@ class PrintFulfilment extends Component {
             <FormControl fullWidth={true} key={personalisationKey}>
               <TextField
                 label={personalisationKey}
-                id={personalisationKey}
+                id={"personalisationKey-" + personalisationKey}
+                name={personalisationKey}
                 onChange={this.onPersonalisationValueChange}
                 value={this.state.personalisationValues?.personalisationKey}
               />
