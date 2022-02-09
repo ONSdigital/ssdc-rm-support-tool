@@ -240,7 +240,7 @@ class PrintFulfilment extends Component {
                   value={this.state.newPrintUacQidMetadata}
                 />
               </FormControl>
-              {!(this.state.selectedTemplate === null) &&
+              {this.state.selectedTemplate !== null &&
                 this.state.personalisationFormItems !== "" && (
                   <fieldset>
                     <label>Request Personalisation</label>
