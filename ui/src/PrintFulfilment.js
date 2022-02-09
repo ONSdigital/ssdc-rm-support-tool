@@ -61,6 +61,7 @@ class PrintFulfilment extends Component {
       selectedTemplate: null,
       personalisationFormItems: "",
       packCodeValidationError: false,
+      printUacQidMetadataValidationError: false,
       showDialog: false,
       newPrintUacQidMetadata: "",
       personalisationValues: null,
@@ -167,7 +168,6 @@ class PrintFulfilment extends Component {
                 id={"personalisationKey-" + personalisationKey}
                 name={personalisationKey}
                 onChange={this.onPersonalisationValueChange}
-                value={this.state.personalisationValues?.personalisationKey}
               />
             </FormControl>
           )
