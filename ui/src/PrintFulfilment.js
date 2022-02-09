@@ -243,7 +243,7 @@ class PrintFulfilment extends Component {
               {this.state.selectedTemplate !== null &&
                 this.state.personalisationFormItems !== "" && (
                   <fieldset>
-                    <label>Request Personalisation</label>
+                    <label>Optional Request Personalisation</label>
                     {fulfilmentPersonalisationFormItems}
                   </fieldset>
                 )}
