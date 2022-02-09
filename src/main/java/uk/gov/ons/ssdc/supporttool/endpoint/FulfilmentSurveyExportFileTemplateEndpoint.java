@@ -53,7 +53,6 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
   }
 
   @GetMapping
-  // TODO: make this a bit more RESTful... but it does the job just fine; we don't really need a DTO
   public List<ExportFileTemplateDto> getAllowedPackCodesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
