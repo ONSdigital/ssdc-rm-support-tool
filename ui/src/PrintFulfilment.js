@@ -14,12 +14,14 @@ import { getFulfilmentExportFileTemplates } from "./Utils";
 
 class PrintFulfilment extends Component {
   state = {
-    packCode: "",
+    selectedTemplate: null,
     allowableFulfilmentExportFileTemplates: [],
-    packCodeValidationError: false,
+    templateValidationError: false,
     printUacQidMetadataValidationError: false,
     showDialog: false,
     newPrintUacQidMetadata: "",
+    personalisationFormItems: "",
+    personalisationValues: null,
   };
 
   componentDidMount() {
@@ -56,15 +58,19 @@ class PrintFulfilment extends Component {
 
   closeDialog = () => {
     this.setState({
-      packCode: "",
+      selectedTemplate: null,
+      personalisationFormItems: "",
       packCodeValidationError: false,
+      printUacQidMetadataValidationError: false,
       showDialog: false,
       newPrintUacQidMetadata: "",
+      personalisationValues: null,
     });
   };
 
   onPrintTemplateChange = (event) => {
-    this.setState({ packCode: event.target.value });
+    this.setState({ selectedTemplate: event.target.value });
+    this.updatePersonalisationFormItems(event.target.value);
   };
 
   onNewActionRulePrintUacQidMetadataChange = (event) => {
@@ -72,6 +78,12 @@ class PrintFulfilment extends Component {
       newPrintUacQidMetadata: event.target.value,
       printUacQidMetadataValidationError: false,
     });
+  };
+
+  getTemplateRequestPersonalisationKeys = (templateKeys) => {
+    return templateKeys
+      .filter((templateKey) => templateKey.startsWith("__request__."))
+      .map((templateKey) => templateKey.replace("__request__.", ""));
   };
 
   onCreate = async () => {
@@ -83,9 +95,9 @@ class PrintFulfilment extends Component {
 
     let validationFailed = false;
 
-    if (!this.state.packCode) {
+    if (!this.state.selectedTemplate) {
       this.setState({
-        packCodeValidationError: true,
+        templateValidationError: true,
       });
 
       validationFailed = true;
@@ -112,8 +124,9 @@ class PrintFulfilment extends Component {
     }
 
     const printFulfilment = {
-      packCode: this.state.packCode,
+      packCode: this.state.selectedTemplate.packCode,
       uacMetadata: uacMetadataJson,
+      personalisation: this.state.personalisationValues,
     };
 
     const response = await fetch(
@@ -127,6 +140,39 @@ class PrintFulfilment extends Component {
 
     if (response.ok) {
       this.closeDialog();
+    }
+  };
+
+  onPersonalisationValueChange = (event) => {
+    let personalisationValuesToUpdate = this.state.personalisationValues
+      ? this.state.personalisationValues
+      : {};
+    personalisationValuesToUpdate[event.target.name] = event.target.value;
+    this.setState({ personalisationValues: personalisationValuesToUpdate });
+  };
+
+  updatePersonalisationFormItems = (selectedTemplate) => {
+    const requestTemplateKeys = this.getTemplateRequestPersonalisationKeys(
+      selectedTemplate.template
+    );
+
+    if (requestTemplateKeys.length === 0) {
+      this.setState({ personalisationFormItems: "" });
+    } else {
+      this.setState({
+        personalisationFormItems: requestTemplateKeys.map(
+          (personalisationKey) => (
+            <FormControl fullWidth={true} key={personalisationKey}>
+              <TextField
+                label={personalisationKey}
+                id={"personalisationKey-" + personalisationKey}
+                name={personalisationKey}
+                onChange={this.onPersonalisationValueChange}
+              />
+            </FormControl>
+          )
+        ),
+      });
     }
   };
 
@@ -151,11 +197,16 @@ class PrintFulfilment extends Component {
 
   render() {
     const fulfilmentPrintTemplateMenuItems =
-      this.state.allowableFulfilmentExportFileTemplates.map((packCode) => (
-        <MenuItem key={packCode} value={packCode}>
-          {packCode}
-        </MenuItem>
-      ));
+      this.state.allowableFulfilmentExportFileTemplates.map(
+        (selectedTemplate) => (
+          <MenuItem key={selectedTemplate.packCode} value={selectedTemplate}>
+            {selectedTemplate.packCode}
+          </MenuItem>
+        )
+      );
+
+    let fulfilmentPersonalisationFormItems =
+      this.state.personalisationFormItems;
 
     return (
       <div>
@@ -173,15 +224,15 @@ class PrintFulfilment extends Component {
                 <InputLabel>Export File Template</InputLabel>
                 <Select
                   onChange={this.onPrintTemplateChange}
-                  value={this.state.packCode}
-                  error={this.state.packCodeValidationError}
+                  value={this.state.selectedTemplate}
+                  error={this.state.templateValidationError}
                 >
                   {fulfilmentPrintTemplateMenuItems}
                 </Select>
               </FormControl>
               <FormControl fullWidth={true}>
                 <TextField
-                  style={{ minWidth: 200 }}
+                  style={{ minWidth: 200, marginBottom: 20 }}
                   error={this.state.printUacQidMetadataValidationError}
                   label="UAC QID Metadata"
                   id="standard-required"
@@ -189,6 +240,13 @@ class PrintFulfilment extends Component {
                   value={this.state.newPrintUacQidMetadata}
                 />
               </FormControl>
+              {this.state.selectedTemplate !== null &&
+                this.state.personalisationFormItems !== "" && (
+                  <fieldset>
+                    <label>Optional Request Personalisation</label>
+                    {fulfilmentPersonalisationFormItems}
+                  </fieldset>
+                )}
             </div>
             <div style={{ marginTop: 10 }}>
               <Button

@@ -49,9 +49,8 @@ export const getFulfilmentExportFileTemplates = async (
   const response = await fetch(
     `/api/fulfilmentSurveyExportFileTemplates/?surveyId=${surveyId}`
   );
-  const exportFileTemplatesJson = await response.json();
-
-  return exportFileTemplatesJson;
+  const fulfilmentExportFileTemplates = await response.json();
+  return fulfilmentExportFileTemplates;
 };
 
 export const getSmsFulfilmentTemplates = async (
