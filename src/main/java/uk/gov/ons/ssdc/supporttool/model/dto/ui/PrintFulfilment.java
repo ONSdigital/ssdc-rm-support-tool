@@ -6,4 +6,5 @@ import lombok.Data;
 public class PrintFulfilment {
   private String packCode;
   private Object uacMetadata;
+  private Object personalisation;
 }
