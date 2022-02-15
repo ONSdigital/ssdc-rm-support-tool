@@ -13,4 +13,5 @@ public class SurveyDto {
   private char sampleSeparator;
   private String sampleDefinitionUrl;
   private Object metadata;
+  private Object scheduleTemplate;
 }
