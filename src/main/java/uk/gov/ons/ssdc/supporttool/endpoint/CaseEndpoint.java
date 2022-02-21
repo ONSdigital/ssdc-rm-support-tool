@@ -132,7 +132,7 @@ public class CaseEndpoint {
     List<String> validationErrors =
         validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive(), true);
 
-    if (validationErrors.size() > 0) {
+    if (!validationErrors.isEmpty()) {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
 
@@ -159,7 +159,7 @@ public class CaseEndpoint {
 
     List<String> validationErrors = validateFieldToUpdate(caze, updateSample.getSample(), false);
 
-    if (validationErrors.size() > 0) {
+    if (!validationErrors.isEmpty()) {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
 

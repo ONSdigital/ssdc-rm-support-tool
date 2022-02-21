@@ -55,10 +55,8 @@ public class FileUploadEndpoint {
   private final byte[] BYTE_ORDER_MARK = {(byte) 239, (byte) 187, (byte) 191};
 
   private String stripBomFromStringIfExists(String stringToCheckAndStrip) throws IOException {
-    InputStream input = null;
 
-    try {
-      input = new ByteArrayInputStream(stringToCheckAndStrip.getBytes());
+    try (InputStream input = new ByteArrayInputStream(stringToCheckAndStrip.getBytes())) {
 
       // Read in the length of a possible BOM in bytes
       byte[] firstFewBytes = input.readNBytes(BYTE_ORDER_MARK.length);
@@ -72,8 +70,6 @@ public class FileUploadEndpoint {
       return new String(input.readAllBytes());
     } catch (IOException e) {
       throw new RuntimeException(e);
-    } finally {
-      input.close();
     }
   }
 }

@@ -42,7 +42,7 @@ public class FulfilmentNextTriggerEndpoint {
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }
 
-    if (fulfilmentNextTriggers.size() == 0) {
+    if (fulfilmentNextTriggers.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -65,7 +65,7 @@ public class FulfilmentNextTriggerEndpoint {
 
     FulfilmentNextTrigger fulfilmentNextTrigger;
 
-    if (fulfilmentNextTriggers.size() == 0) {
+    if (fulfilmentNextTriggers.isEmpty()) {
       fulfilmentNextTrigger = new FulfilmentNextTrigger();
       fulfilmentNextTrigger.setId(UUID.randomUUID());
     } else {
