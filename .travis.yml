@@ -9,7 +9,7 @@ jobs:
       name: Java Service Build
 
       before_install:
-        - make format-check-mvn
+        - make check-mvn
         - docker login -u "${DOCKER_GCP_USERNAME}" -p "${DOCKER_GCP_PASSWORD}" https://europe-west2-docker.pkg.dev;
         - docker login -u "${DOCKERHUB_USERNAME}" -p "${DOCKERHUB_PASSWORD}";
         - docker network create ssdcrmdockerdev_default

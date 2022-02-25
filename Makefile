@@ -21,6 +21,9 @@ run-dev-ui:
 format-check-mvn:
 	mvn fmt:check
 
+check-mvn:
+	mvn fmt:check pmd:check
+
 format-check-ui:
 	$(MAKE) -C ui format-check
 

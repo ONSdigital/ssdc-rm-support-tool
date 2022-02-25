@@ -11,9 +11,10 @@ public class UserIdentityInterceptor implements HandlerInterceptor {
     this.userIdentity = userIdentity;
   }
 
+  @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
       throws Exception {
-    if (request.getRequestURI().equals("/api/upload")) {
+    if ("/api/upload".equals(request.getRequestURI())) {
       // Don't bother with identity for file uploads because the JWT claim expires after 10 mins
       return true;
     }
