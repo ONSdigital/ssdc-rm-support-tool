@@ -1,5 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,13 +61,7 @@ public class ExportFileTemplateEndpoint {
     exportFileTemplateRepository
         .findAll()
         .forEach(
-            exportFileTemplate -> {
-              if (exportFileTemplate
-                  .getPackCode()
-                  .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-              }
-            });
+            exportFileTemplate -> validate(exportFileTemplateDto, exportFileTemplate));
 
     ExportFileTemplate exportFileTemplate = new ExportFileTemplate();
     exportFileTemplate.setTemplate(exportFileTemplateDto.getTemplate());
@@ -79,5 +74,34 @@ public class ExportFileTemplateEndpoint {
     exportFileTemplateRepository.saveAndFlush(exportFileTemplate);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  private void validate(ExportFileTemplateDto exportFileTemplateDto,
+      ExportFileTemplate exportFileTemplate) {
+
+    checkDuplicatePackCode(exportFileTemplateDto, exportFileTemplate);
+    checkDuplicateTemplateItems(exportFileTemplateDto, exportFileTemplate);
+  }
+
+  private void checkDuplicatePackCode(ExportFileTemplateDto exportFileTemplateDto,
+      ExportFileTemplate exportFileTemplate) {
+    if (exportFileTemplate
+        .getPackCode()
+        .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private void checkDuplicateTemplateItems(ExportFileTemplateDto exportFileTemplateDto,
+      ExportFileTemplate exportFileTemplate) {
+    List<String> dtoExportFileTemplateItems = Arrays.stream(exportFileTemplate.getTemplate()).toList();
+    List<String> exportFileTemplateItems = Arrays.stream(exportFileTemplateDto.getTemplate()).toList();
+    boolean matchingExportFileTemplateItems = dtoExportFileTemplateItems.containsAll(exportFileTemplateItems);
+
+    boolean matchingExportFileDestination = exportFileTemplateDto.getExportFileDestination().equals(exportFileTemplate.getExportFileDestination());
+
+    if (matchingExportFileTemplateItems && matchingExportFileDestination) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT);
+    }
   }
 }
