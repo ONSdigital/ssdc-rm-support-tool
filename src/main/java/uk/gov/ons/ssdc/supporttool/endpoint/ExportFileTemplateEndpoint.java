@@ -1,7 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -58,10 +60,18 @@ public class ExportFileTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_TEMPLATE);
 
+    checkDuplicateTemplateItems(exportFileTemplateDto);
+
     exportFileTemplateRepository
         .findAll()
         .forEach(
-            exportFileTemplate -> validate(exportFileTemplateDto, exportFileTemplate));
+            exportFileTemplate -> {
+              if (exportFileTemplate
+                  .getPackCode()
+                  .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+              }
+            });
 
     ExportFileTemplate exportFileTemplate = new ExportFileTemplate();
     exportFileTemplate.setTemplate(exportFileTemplateDto.getTemplate());
@@ -76,32 +86,12 @@ public class ExportFileTemplateEndpoint {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  private void validate(ExportFileTemplateDto exportFileTemplateDto,
-      ExportFileTemplate exportFileTemplate) {
+  private void checkDuplicateTemplateItems(ExportFileTemplateDto exportFileTemplateDto) {
+    Set<String> exportFileTemplateDtoItemsSet = new HashSet<>(
+        Arrays.asList(exportFileTemplateDto.getTemplate()));
 
-    checkDuplicatePackCode(exportFileTemplateDto, exportFileTemplate);
-    checkDuplicateTemplateItems(exportFileTemplateDto, exportFileTemplate);
-  }
-
-  private void checkDuplicatePackCode(ExportFileTemplateDto exportFileTemplateDto,
-      ExportFileTemplate exportFileTemplate) {
-    if (exportFileTemplate
-        .getPackCode()
-        .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
+    if (exportFileTemplateDtoItemsSet.size() != exportFileTemplateDto.getTemplate().length) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  private void checkDuplicateTemplateItems(ExportFileTemplateDto exportFileTemplateDto,
-      ExportFileTemplate exportFileTemplate) {
-    List<String> dtoExportFileTemplateItems = Arrays.stream(exportFileTemplate.getTemplate()).toList();
-    List<String> exportFileTemplateItems = Arrays.stream(exportFileTemplateDto.getTemplate()).toList();
-    boolean matchingExportFileTemplateItems = dtoExportFileTemplateItems.containsAll(exportFileTemplateItems);
-
-    boolean matchingExportFileDestination = exportFileTemplateDto.getExportFileDestination().equals(exportFileTemplate.getExportFileDestination());
-
-    if (matchingExportFileTemplateItems && matchingExportFileDestination) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT);
     }
   }
 }
