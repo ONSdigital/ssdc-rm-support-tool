@@ -178,9 +178,10 @@ class ExportFileTemplateList extends Component {
     } else {
       try {
         const parsedJson = JSON.parse(this.state.template);
+        const hasDuplicateTemplateItems = new Set(parsedJson).size !== parsedJson.length
         if (!Array.isArray(parsedJson) ||
             parsedJson.length === 0 ||
-            new Set(parsedJson).size !== parsedJson.length) {
+            hasDuplicateTemplateItems) {
           this.setState({ templateValidationError: true });
           failedValidation = true;
         }
