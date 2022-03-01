@@ -87,8 +87,8 @@ public class ExportFileTemplateEndpoint {
   }
 
   private void checkDuplicateTemplateItems(ExportFileTemplateDto exportFileTemplateDto) {
-    Set<String> exportFileTemplateDtoItemsSet = new HashSet<>(
-        Arrays.asList(exportFileTemplateDto.getTemplate()));
+    Set<String> exportFileTemplateDtoItemsSet =
+        new HashSet<>(Arrays.asList(exportFileTemplateDto.getTemplate()));
 
     if (exportFileTemplateDtoItemsSet.size() != exportFileTemplateDto.getTemplate().length) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
