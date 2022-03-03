@@ -33,6 +33,7 @@ class ExportFileTemplateList extends Component {
     template: "",
     descriptionValidationError: false,
     packCodeValidationError: false,
+    templateValidationErrorMessage: "",
     templateValidationError: false,
     newTemplateMetadataValidationError: false,
   };
@@ -100,6 +101,7 @@ class ExportFileTemplateList extends Component {
       exportFileDestinationValidationError: false,
       descriptionValidationError: false,
       packCodeValidationError: false,
+      templateValidationErrorMessage: "",
       templateValidationError: false,
       newTemplateMetadataValidationError: false,
       createExportFileTemplatePackCodeError: "",
@@ -142,11 +144,6 @@ class ExportFileTemplateList extends Component {
       failedValidation = true;
     }
 
-    if (!this.state.exportFileDestination.trim()) {
-      this.setState({ exportFileDestinationValidationError: true });
-      failedValidation = true;
-    }
-
     if (!this.state.description.trim()) {
       this.setState({ descriptionValidationError: true });
       failedValidation = true;
@@ -180,6 +177,17 @@ class ExportFileTemplateList extends Component {
         const parsedJson = JSON.parse(this.state.template);
         if (!Array.isArray(parsedJson) || parsedJson.length === 0) {
           this.setState({ templateValidationError: true });
+          failedValidation = true;
+        }
+
+        const hasDuplicateTemplateColumns =
+          new Set(parsedJson).size !== parsedJson.length;
+        if (hasDuplicateTemplateColumns) {
+          this.setState({
+            templateValidationError: true,
+            templateValidationErrorMessage:
+              "Template cannot have duplicate columns",
+          });
           failedValidation = true;
         }
       } catch (err) {
@@ -256,6 +264,7 @@ class ExportFileTemplateList extends Component {
     this.setState({
       template: event.target.value,
       templateValidationError: resetValidation,
+      templateValidationErrorMessage: "",
     });
   };
 
@@ -380,7 +389,7 @@ class ExportFileTemplateList extends Component {
                   label="Template"
                   onChange={this.onTemplateChange}
                   value={this.state.template}
-                  helperText={this.state.notifyTemplateIdErrorMessage}
+                  helperText={this.state.templateValidationErrorMessage}
                 />
                 <TextField
                   fullWidth={true}

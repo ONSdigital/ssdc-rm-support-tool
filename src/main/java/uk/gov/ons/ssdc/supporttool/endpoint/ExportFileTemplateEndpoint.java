@@ -1,6 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -57,6 +60,8 @@ public class ExportFileTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_TEMPLATE);
 
+    checkDuplicateTemplateItems(exportFileTemplateDto);
+
     exportFileTemplateRepository
         .findAll()
         .forEach(
@@ -79,5 +84,14 @@ public class ExportFileTemplateEndpoint {
     exportFileTemplateRepository.saveAndFlush(exportFileTemplate);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  private void checkDuplicateTemplateItems(ExportFileTemplateDto exportFileTemplateDto) {
+    Set<String> exportFileTemplateDtoItemsSet =
+        new HashSet<>(Arrays.asList(exportFileTemplateDto.getTemplate()));
+
+    if (exportFileTemplateDtoItemsSet.size() != exportFileTemplateDto.getTemplate().length) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
   }
 }
