@@ -1,8 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.model.dto.ui;
 
-import lombok.Data;
-
 import java.util.Map;
+import lombok.Data;
 
 @Data
 public class SmsFulfilmentAction {

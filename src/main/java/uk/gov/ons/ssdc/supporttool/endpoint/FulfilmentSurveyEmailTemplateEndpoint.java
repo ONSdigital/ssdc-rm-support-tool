@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +66,8 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
 
     return fulfilmentSurveyEmailTemplateRepository.findBySurvey(survey).stream()
-        .map(fset -> new EmailTemplateDto(fset.getEmailTemplate())).toList();
+        .map(fset -> new EmailTemplateDto(fset.getEmailTemplate()))
+        .toList();
   }
 
   @PostMapping

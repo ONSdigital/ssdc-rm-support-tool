@@ -4,7 +4,6 @@ import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.ons.ssdc.common.model.entity.EmailTemplate;
-import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 
 @Data
 @NoArgsConstructor
