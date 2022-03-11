@@ -231,7 +231,7 @@ class SmsFulfilment extends Component {
               />
               <FormControl fullWidth={true}>
                 <TextField
-                  style={{ minWidth: 200 }}
+                  style={{ minWidth: 200, marginBottom: 20 }}
                   error={this.state.smsUacQidMetadataValidationError}
                   label="UAC QID Metadata"
                   id="standard-required"
