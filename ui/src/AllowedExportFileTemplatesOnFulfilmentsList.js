@@ -19,8 +19,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
   getAuthorisedActivities,
-  getAllExportFileTemplates,
-  getFulfilmentExportFileTemplates,
+  getAllExportFilePackCodes,
+  getFulfilmentExportFileTemplatesForSurvey,
 } from "./Utils";
 
 class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
@@ -55,12 +55,12 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allExportFileFulfilmentPackCodes = await getAllExportFileTemplates(
+    const allExportFileFulfilmentPackCodes = await getAllExportFilePackCodes(
       authorisedActivities
     );
 
     const fulfilmentExportFileTemplates =
-      await getFulfilmentExportFileTemplates(
+      await getFulfilmentExportFileTemplatesForSurvey(
         authorisedActivities,
         this.props.surveyId
       );
@@ -150,10 +150,10 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
       ));
 
     const fulfilmentExportFileTemplateTableRows =
-      this.state.fulfilmentExportFilePackCodes.map((exportFileTemplate) => (
-        <TableRow key={exportFileTemplate}>
+      this.state.fulfilmentExportFilePackCodes.map((packCode) => (
+        <TableRow key={packCode}>
           <TableCell component="th" scope="row">
-            {exportFileTemplate}
+            {packCode}
           </TableCell>
         </TableRow>
       ));

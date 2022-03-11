@@ -19,16 +19,16 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
   getAuthorisedActivities,
-  getAllEmailTemplates,
-  getEmailFulfilmentTemplates,
+  getAllEmailPackCodes,
+  getEmailFulfilmentTemplatesForSurvey,
 } from "./Utils";
 
 class AllowedEmailTemplatesOnFulfilments extends Component {
   state = {
     authorisedActivities: [],
     allowEmailFulfilmentTemplateDialogDisplayed: false,
-    emailFulfilmentTemplates: [],
-    allowableEmailFulfilmentTemplates: [],
+    emailFulfilmentPackCodes: [],
+    allowableEmailFulfilmentPackCodes: [],
     exportFileTemplateToAllow: "",
     exportFileTemplateValidationError: false,
     allowExportFileTemplateError: "",
@@ -54,26 +54,30 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allEmailFulfilmentTemplates = await getAllEmailTemplates(
+    const allEmailFulfilmentPackCodes = await getAllEmailPackCodes(
       authorisedActivities
     );
 
-    const emailFulfilmentTemplates = await getEmailFulfilmentTemplates(
+    const emailFulfilmentTemplates = await getEmailFulfilmentTemplatesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );
 
-    let allowableEmailFulfilmentTemplates = [];
+    const emailFulfilmentPackCodes = emailFulfilmentTemplates.map(
+      (template) => template.packCode
+    );
 
-    allEmailFulfilmentTemplates.forEach((packCode) => {
-      if (!emailFulfilmentTemplates.includes(packCode)) {
-        allowableEmailFulfilmentTemplates.push(packCode);
+    let allowableEmailFulfilmentPackCodes = [];
+
+    allEmailFulfilmentPackCodes.forEach((packCode) => {
+      if (!emailFulfilmentPackCodes.includes(packCode)) {
+        allowableEmailFulfilmentPackCodes.push(packCode);
       }
     });
 
     this.setState({
-      emailFulfilmentTemplates: emailFulfilmentTemplates,
-      allowableEmailFulfilmentTemplates: allowableEmailFulfilmentTemplates,
+      emailFulfilmentPackCodes: emailFulfilmentPackCodes,
+      allowableEmailFulfilmentPackCodes: allowableEmailFulfilmentPackCodes,
     });
   };
 
@@ -136,16 +140,16 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
 
   render() {
     const emailFulfilmentTemplateTableRows =
-      this.state.emailFulfilmentTemplates.map((emailTemplate) => (
-        <TableRow key={emailTemplate}>
+      this.state.emailFulfilmentPackCodes.map((packCode) => (
+        <TableRow key={packCode}>
           <TableCell component="th" scope="row">
-            {emailTemplate}
+            {packCode}
           </TableCell>
         </TableRow>
       ));
 
     const emailFulfilmentTemplateMenuItems =
-      this.state.allowableEmailFulfilmentTemplates.map((packCode) => (
+      this.state.allowableEmailFulfilmentPackCodes.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>

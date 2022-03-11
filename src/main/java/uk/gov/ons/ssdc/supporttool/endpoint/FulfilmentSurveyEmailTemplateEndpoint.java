@@ -22,6 +22,7 @@ import uk.gov.ons.ssdc.common.model.entity.FulfilmentSurveyEmailTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.EmailTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveyEmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
@@ -51,8 +52,7 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
   }
 
   @GetMapping
-  // TODO: make this a bit more RESTful... but it does the job just fine; we don't really need a DTO
-  public List<String> getAllowedPackCodesBySurvey(
+  public List<EmailTemplateDto> getAllowedEmailTemplatesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Survey survey =
@@ -67,8 +67,7 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
 
     return fulfilmentSurveyEmailTemplateRepository.findBySurvey(survey).stream()
-        .map(fsst -> fsst.getEmailTemplate().getPackCode())
-        .collect(Collectors.toList());
+        .map(fset -> new EmailTemplateDto(fset.getEmailTemplate())).toList();
   }
 
   @PostMapping

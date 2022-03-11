@@ -79,15 +79,6 @@ class ExportFileTemplateList extends Component {
     });
   };
 
-  getExportFileTemplates = async (authorisedActivities) => {
-    if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return;
-
-    const response = await fetch("/api/exportFileTemplates");
-    const templateJson = await response.json();
-
-    this.setState({ exportFileTemplates: templateJson });
-  };
-
   openExportFileTemplateDialog = () => {
     this.createExportFileTemplateInProgress = false;
 
@@ -118,7 +109,7 @@ class ExportFileTemplateList extends Component {
     this.refresh;
   };
 
-  onexportFileDestinationChange = (event) => {
+  onExportFileDestinationChange = (event) => {
     this.setState({
       exportFileDestination: event.target.value,
       exportFileDestinationValidationError: false,
@@ -374,7 +365,7 @@ class ExportFileTemplateList extends Component {
                 >
                   <InputLabel>Export File Destination</InputLabel>
                   <Select
-                    onChange={this.onexportFileDestinationChange}
+                    onChange={this.onExportFileDestinationChange}
                     value={this.state.exportFileDestination}
                     error={this.state.exportFileDestinationValidationError}
                   >

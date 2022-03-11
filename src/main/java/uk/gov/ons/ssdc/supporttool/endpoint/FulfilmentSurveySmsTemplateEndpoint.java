@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
+import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveySmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
@@ -51,8 +53,7 @@ public class FulfilmentSurveySmsTemplateEndpoint {
   }
 
   @GetMapping
-  // TODO: make this a bit more RESTful... but it does the job just fine; we don't really need a DTO
-  public List<String> getAllowedPackCodesBySurvey(
+  public List<SmsTemplateDto> getAllowedSmsTemplatesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Survey survey =
@@ -67,8 +68,7 @@ public class FulfilmentSurveySmsTemplateEndpoint {
         UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS);
 
     return fulfilmentSurveySmsTemplateRepository.findBySurvey(survey).stream()
-        .map(fsst -> fsst.getSmsTemplate().getPackCode())
-        .collect(Collectors.toList());
+        .map(fsst -> new SmsTemplateDto(fsst.getSmsTemplate())).toList();
   }
 
   @PostMapping

@@ -9,20 +9,23 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getEmailFulfilmentTemplates } from "./Utils";
+import { getEmailFulfilmentTemplatesForSurvey } from "./Utils";
+import FulfilmentPersonalisationForm from "./FulfilmentPersonalisationForm";
 
 class EmailFulfilment extends Component {
   state = {
-    packCode: "",
+    selectedTemplate: "",
     allowableEmailFulfilmentTemplates: [],
-    packCodeValidationError: false,
-    packCodeValidationErrorDesc: "",
+    templateValidationError: false,
+    templateValidationErrorDesc: "",
     emailUacQidMetadataValidationError: false,
     showDialog: false,
     email: "",
     newValueValidationError: "",
     validationError: false,
     newEmailUacQidMetadata: "",
+    personalisationFormItems: "",
+    personalisationValues: null,
   };
 
   componentDidMount() {
@@ -59,13 +62,15 @@ class EmailFulfilment extends Component {
 
   closeDialog = () => {
     this.setState({
-      packCode: "",
-      packCodeValidationError: false,
+      selectedTemplate: "",
+      templateValidationError: false,
       showDialog: false,
       newValueValidationError: "",
       email: "",
       validationError: false,
       newEmailUacQidMetadata: "",
+      personalisationFormItems: "",
+      personalisationValues: null,
     });
   };
 
@@ -83,7 +88,7 @@ class EmailFulfilment extends Component {
     )
       return;
 
-    const fulfilmentEmailTemplates = await getEmailFulfilmentTemplates(
+    const fulfilmentEmailTemplates = await getEmailFulfilmentTemplatesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );
@@ -94,7 +99,7 @@ class EmailFulfilment extends Component {
   };
 
   onEmailTemplateChange = (event) => {
-    this.setState({ packCode: event.target.value });
+    this.setState({ selectedTemplate: event.target.value });
   };
 
   onNewActionRuleEmailUacQidMetadataChange = (event) => {
@@ -113,9 +118,9 @@ class EmailFulfilment extends Component {
 
     let validationFailed = false;
 
-    if (!this.state.packCode) {
+    if (!this.state.selectedTemplate) {
       this.setState({
-        packCodeValidationError: true,
+        templateValidationError: true,
       });
       validationFailed = true;
     }
@@ -149,9 +154,10 @@ class EmailFulfilment extends Component {
     }
 
     const emailFulfilment = {
-      packCode: this.state.packCode,
+      packCode: this.state.selectedTemplate.packCode,
       email: this.state.email,
       uacMetadata: uacMetadataJson,
+      personalisation: this.state.personalisationValues,
     };
 
     const response = await fetch(
@@ -176,11 +182,19 @@ class EmailFulfilment extends Component {
     }
   };
 
+  onPersonalisationValueChange = (event) => {
+    let updatedPersonalisationValues = this.state.personalisationValues
+      ? this.state.personalisationValues
+      : {};
+    updatedPersonalisationValues[event.target.name] = event.target.value;
+    this.setState({ personalisationValues: updatedPersonalisationValues });
+  };
+
   render() {
     const fulfilmentEmailTemplateMenuItems =
-      this.state.allowableEmailFulfilmentTemplates.map((packCode) => (
-        <MenuItem key={packCode} value={packCode}>
-          {packCode}
+      this.state.allowableEmailFulfilmentTemplates.map((template) => (
+        <MenuItem key={template.packCode} value={template}>
+          {template.packCode}
         </MenuItem>
       ));
 
@@ -200,8 +214,8 @@ class EmailFulfilment extends Component {
                 <InputLabel>Email Template</InputLabel>
                 <Select
                   onChange={this.onEmailTemplateChange}
-                  value={this.state.packCode}
-                  error={this.state.packCodeValidationError}
+                  value={this.state.selectedTemplate}
+                  error={this.state.templateValidationError}
                 >
                   {fulfilmentEmailTemplateMenuItems}
                 </Select>
@@ -225,6 +239,14 @@ class EmailFulfilment extends Component {
                   value={this.state.newEmailUacQidMetadata}
                 />
               </FormControl>
+              {this.state.showDialog && (
+                <FulfilmentPersonalisationForm
+                  template={this.state.selectedTemplate}
+                  onPersonalisationValueChange={
+                    this.onPersonalisationValueChange
+                  }
+                />
+              )}
             </div>
             <div style={{ marginTop: 10 }}>
               <Button
