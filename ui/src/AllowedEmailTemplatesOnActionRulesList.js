@@ -19,15 +19,15 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
   getAuthorisedActivities,
-  getAllEmailTemplates,
-  getActionRuleEmailTemplates,
+  getAllEmailPackCodes,
+  getActionRuleEmailPackCodesForSurvey,
 } from "./Utils";
 
 class AllowedEmailTemplatesOnActionRulesList extends Component {
   state = {
     authorisedActivities: [],
-    actionRuleEmailTemplates: [],
-    allowableActionRuleEmailTemplates: [],
+    actionRuleEmailPackCodes: [],
+    allowableActionRuleEmailPackCodes: [],
     emailTemplateToAllow: "",
     emailTemplateValidationError: false,
     allowEmailTemplateError: "",
@@ -53,26 +53,26 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allEmailFulfilmentTemplates = await getAllEmailTemplates(
+    const allEmailFulfilmentPackCodes = await getAllEmailPackCodes(
       authorisedActivities
     );
 
-    const actionRuleEmailTemplates = await getActionRuleEmailTemplates(
+    const actionRuleEmailPackCodes = await getActionRuleEmailPackCodesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );
 
-    let allowableActionRuleEmailTemplates = [];
+    let allowableActionRuleEmailPackCodes = [];
 
-    allEmailFulfilmentTemplates.forEach((packCode) => {
-      if (!actionRuleEmailTemplates.includes(packCode)) {
-        allowableActionRuleEmailTemplates.push(packCode);
+    allEmailFulfilmentPackCodes.forEach((packCode) => {
+      if (!actionRuleEmailPackCodes.includes(packCode)) {
+        allowableActionRuleEmailPackCodes.push(packCode);
       }
     });
 
     this.setState({
-      actionRuleEmailTemplates: actionRuleEmailTemplates,
-      allowableActionRuleEmailTemplates: allowableActionRuleEmailTemplates,
+      actionRuleEmailPackCodes: actionRuleEmailPackCodes,
+      allowableActionRuleEmailPackCodes: allowableActionRuleEmailPackCodes,
     });
   };
 
@@ -135,16 +135,16 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
 
   render() {
     const actionRuleEmailTemplateTableRows =
-      this.state.actionRuleEmailTemplates.map((emailTemplate) => (
-        <TableRow key={emailTemplate}>
+      this.state.actionRuleEmailPackCodes.map((packCode) => (
+        <TableRow key={packCode}>
           <TableCell component="th" scope="row">
-            {emailTemplate}
+            {packCode}
           </TableCell>
         </TableRow>
       ));
 
     const actionRuleEmailTemplateMenuItems =
-      this.state.allowableActionRuleEmailTemplates.map((packCode) => (
+      this.state.allowableActionRuleEmailPackCodes.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>

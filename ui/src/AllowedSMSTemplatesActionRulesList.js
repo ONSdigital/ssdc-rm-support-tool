@@ -19,15 +19,15 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
   getAuthorisedActivities,
-  getAllSmsTemplates,
-  getActionRuleSmsTemplates,
+  getAllSmsPackCodes,
+  getActionRuleSmsPackCodesForSurvey,
 } from "./Utils";
 
 class AllowedSMSTemplatesActionRulesList extends Component {
   state = {
     authorisedActivities: [],
-    actionRuleSmsTemplates: [],
-    allowableActionRuleSmsTemplates: [],
+    actionRuleSmsPackCodes: [],
+    allowableActionRuleSmsPackCodes: [],
     smsTemplateToAllow: "",
     smsTemplateValidationError: false,
     allowSmsTemplateError: "",
@@ -53,26 +53,26 @@ class AllowedSMSTemplatesActionRulesList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allSmsFulfilmentTemplates = await getAllSmsTemplates(
+    const allSmsFulfilmentPackCodes = await getAllSmsPackCodes(
       authorisedActivities
     );
 
-    const actionRuleSmsTemplates = await getActionRuleSmsTemplates(
+    const actionRuleSmsPackCodes = await getActionRuleSmsPackCodesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );
 
-    let allowableActionRuleSmsTemplates = [];
+    let allowableActionRuleSmsPackCodes = [];
 
-    allSmsFulfilmentTemplates.forEach((packCode) => {
-      if (!actionRuleSmsTemplates.includes(packCode)) {
-        allowableActionRuleSmsTemplates.push(packCode);
+    allSmsFulfilmentPackCodes.forEach((packCode) => {
+      if (!actionRuleSmsPackCodes.includes(packCode)) {
+        allowableActionRuleSmsPackCodes.push(packCode);
       }
     });
 
     this.setState({
-      allowableActionRuleSmsTemplates: allowableActionRuleSmsTemplates,
-      actionRuleSmsTemplates: actionRuleSmsTemplates,
+      allowableActionRuleSmsPackCodes: allowableActionRuleSmsPackCodes,
+      actionRuleSmsPackCodes: actionRuleSmsPackCodes,
     });
   };
 
@@ -137,16 +137,16 @@ class AllowedSMSTemplatesActionRulesList extends Component {
 
   render() {
     const actionRuleSmsTemplateTableRows =
-      this.state.actionRuleSmsTemplates.map((smsTemplate) => (
-        <TableRow key={smsTemplate}>
+      this.state.actionRuleSmsPackCodes.map((packCode) => (
+        <TableRow key={packCode}>
           <TableCell component="th" scope="row">
-            {smsTemplate}
+            {packCode}
           </TableCell>
         </TableRow>
       ));
 
     const actionRuleSmsTemplateMenuItems =
-      this.state.allowableActionRuleSmsTemplates.map((packCode) => (
+      this.state.allowableActionRuleSmsPackCodes.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>

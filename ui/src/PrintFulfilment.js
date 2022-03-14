@@ -10,11 +10,12 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getFulfilmentExportFileTemplates } from "./Utils";
+import { getFulfilmentExportFileTemplatesForSurvey } from "./Utils";
+import FulfilmentPersonalisationForm from "./FulfilmentPersonalisationForm";
 
 class PrintFulfilment extends Component {
   state = {
-    selectedTemplate: null,
+    selectedTemplate: "",
     allowableFulfilmentExportFileTemplates: [],
     templateValidationError: false,
     printUacQidMetadataValidationError: false,
@@ -70,14 +71,6 @@ class PrintFulfilment extends Component {
 
   onPrintTemplateChange = (event) => {
     this.setState({ selectedTemplate: event.target.value });
-    this.updatePersonalisationFormItems(event.target.value);
-  };
-
-  onNewActionRulePrintUacQidMetadataChange = (event) => {
-    this.setState({
-      newPrintUacQidMetadata: event.target.value,
-      printUacQidMetadataValidationError: false,
-    });
   };
 
   getTemplateRequestPersonalisationKeys = (templateKeys) => {
@@ -144,36 +137,11 @@ class PrintFulfilment extends Component {
   };
 
   onPersonalisationValueChange = (event) => {
-    let personalisationValuesToUpdate = this.state.personalisationValues
+    let updatedPersonalisationValues = this.state.personalisationValues
       ? this.state.personalisationValues
       : {};
-    personalisationValuesToUpdate[event.target.name] = event.target.value;
-    this.setState({ personalisationValues: personalisationValuesToUpdate });
-  };
-
-  updatePersonalisationFormItems = (selectedTemplate) => {
-    const requestTemplateKeys = this.getTemplateRequestPersonalisationKeys(
-      selectedTemplate.template
-    );
-
-    if (requestTemplateKeys.length === 0) {
-      this.setState({ personalisationFormItems: "" });
-    } else {
-      this.setState({
-        personalisationFormItems: requestTemplateKeys.map(
-          (personalisationKey) => (
-            <FormControl fullWidth={true} key={personalisationKey}>
-              <TextField
-                label={personalisationKey}
-                id={"personalisationKey-" + personalisationKey}
-                name={personalisationKey}
-                onChange={this.onPersonalisationValueChange}
-              />
-            </FormControl>
-          )
-        ),
-      });
-    }
+    updatedPersonalisationValues[event.target.name] = event.target.value;
+    this.setState({ personalisationValues: updatedPersonalisationValues });
   };
 
   // TODO: Need to handle errors from Promises
@@ -185,10 +153,11 @@ class PrintFulfilment extends Component {
     )
       return;
 
-    const fulfilmentPrintTemplates = await getFulfilmentExportFileTemplates(
-      authorisedActivities,
-      this.props.surveyId
-    );
+    const fulfilmentPrintTemplates =
+      await getFulfilmentExportFileTemplatesForSurvey(
+        authorisedActivities,
+        this.props.surveyId
+      );
 
     this.setState({
       allowableFulfilmentExportFileTemplates: fulfilmentPrintTemplates,
@@ -197,16 +166,11 @@ class PrintFulfilment extends Component {
 
   render() {
     const fulfilmentPrintTemplateMenuItems =
-      this.state.allowableFulfilmentExportFileTemplates.map(
-        (selectedTemplate) => (
-          <MenuItem key={selectedTemplate.packCode} value={selectedTemplate}>
-            {selectedTemplate.packCode}
-          </MenuItem>
-        )
-      );
-
-    let fulfilmentPersonalisationFormItems =
-      this.state.personalisationFormItems;
+      this.state.allowableFulfilmentExportFileTemplates.map((template) => (
+        <MenuItem key={template.packCode} value={template}>
+          {template.packCode}
+        </MenuItem>
+      ));
 
     return (
       <div>
@@ -240,13 +204,14 @@ class PrintFulfilment extends Component {
                   value={this.state.newPrintUacQidMetadata}
                 />
               </FormControl>
-              {this.state.selectedTemplate !== null &&
-                this.state.personalisationFormItems !== "" && (
-                  <fieldset>
-                    <label>Optional Request Personalisation</label>
-                    {fulfilmentPersonalisationFormItems}
-                  </fieldset>
-                )}
+              {this.state.showDialog && (
+                <FulfilmentPersonalisationForm
+                  template={this.state.selectedTemplate}
+                  onPersonalisationValueChange={
+                    this.onPersonalisationValueChange
+                  }
+                />
+              )}
             </div>
             <div style={{ marginTop: 10 }}>
               <Button

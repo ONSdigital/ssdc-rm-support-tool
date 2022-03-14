@@ -258,14 +258,6 @@ class CaseDetails extends Component {
                       "CREATE_CASE_INVALID_CASE"
                     ) && <InvalidCase caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_EXPORT_FILE_FULFILMENT"
-                    ) && (
-                      <PrintFulfilment
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
-                    {this.state.authorisedActivities.includes(
                       "UPDATE_SAMPLE"
                     ) && (
                       <SampleData
@@ -277,6 +269,14 @@ class CaseDetails extends Component {
                       "UPDATE_SAMPLE_SENSITIVE"
                     ) && (
                       <SensitiveData
+                        caseId={this.props.caseId}
+                        surveyId={this.props.surveyId}
+                      />
+                    )}
+                    {this.state.authorisedActivities.includes(
+                      "CREATE_CASE_EXPORT_FILE_FULFILMENT"
+                    ) && (
+                      <PrintFulfilment
                         caseId={this.props.caseId}
                         surveyId={this.props.surveyId}
                       />

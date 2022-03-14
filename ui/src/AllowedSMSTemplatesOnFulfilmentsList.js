@@ -19,16 +19,16 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
   getAuthorisedActivities,
-  getAllSmsTemplates,
-  getSmsFulfilmentTemplates,
+  getAllSmsPackCodes,
+  getSmsFulfilmentTemplatesForSurvey,
 } from "./Utils";
 
 class AllowedSMSTemplatesOnFulfilmentsList extends Component {
   state = {
     authorisedActivities: [],
     allowSmsFulfilmentTemplateDialogDisplayed: false,
-    smsFulfilmentTemplates: [],
-    allowableSmsFulfilmentTemplates: [],
+    smsFulfilmentPackCodes: [],
+    allowableSmsFulfilmentPackCodes: [],
     smsTemplateToAllow: "",
     exportFileTemplateValidationError: false,
     allowExportFileTemplateError: "",
@@ -54,26 +54,29 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allSmsFulfilmentTemplates = await getAllSmsTemplates(
+    const allSmsFulfilmentPackCodes = await getAllSmsPackCodes(
       authorisedActivities
     );
 
-    const smsFulfilmentTemplates = await getSmsFulfilmentTemplates(
+    const smsFulfilmentTemplates = await getSmsFulfilmentTemplatesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );
+    const smsFulfilmentPackCodes = smsFulfilmentTemplates.map(
+      (template) => template.packCode
+    );
 
-    let allowableSmsFulfilmentTemplates = [];
+    let allowableSmsFulfilmentPackCodes = [];
 
-    allSmsFulfilmentTemplates.forEach((packCode) => {
-      if (!smsFulfilmentTemplates.includes(packCode)) {
-        allowableSmsFulfilmentTemplates.push(packCode);
+    allSmsFulfilmentPackCodes.forEach((packCode) => {
+      if (!smsFulfilmentPackCodes.includes(packCode)) {
+        allowableSmsFulfilmentPackCodes.push(packCode);
       }
     });
 
     this.setState({
-      smsFulfilmentTemplates: smsFulfilmentTemplates,
-      allowableSmsFulfilmentTemplates: allowableSmsFulfilmentTemplates,
+      smsFulfilmentPackCodes: smsFulfilmentPackCodes,
+      allowableSmsFulfilmentPackCodes: allowableSmsFulfilmentPackCodes,
     });
   };
 
@@ -136,16 +139,16 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
 
   render() {
     const smsFulfilmentTemplateTableRows =
-      this.state.smsFulfilmentTemplates.map((smsTemplate) => (
-        <TableRow key={smsTemplate}>
+      this.state.smsFulfilmentPackCodes.map((packCode) => (
+        <TableRow key={packCode}>
           <TableCell component="th" scope="row">
-            {smsTemplate}
+            {packCode}
           </TableCell>
         </TableRow>
       ));
 
     const smsFulfilmentTemplateMenuItems =
-      this.state.allowableSmsFulfilmentTemplates.map((packCode) => (
+      this.state.allowableSmsFulfilmentPackCodes.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>
