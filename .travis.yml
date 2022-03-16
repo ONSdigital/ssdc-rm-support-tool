@@ -11,10 +11,10 @@ jobs:
       before_install:
         - docker login -u "${DOCKER_GCP_USERNAME}" -p "${DOCKER_GCP_PASSWORD}" https://europe-west2-docker.pkg.dev;
         - docker login -u "${DOCKERHUB_USERNAME}" -p "${DOCKERHUB_PASSWORD}";
-        - make check-mvn
         - docker network create ssdcrmdockerdev_default
         - echo "$GOOGLE_SERVICE_ACCOUNT_KEY" > ~/google-service-account-key.json
         - export GOOGLE_APPLICATION_CREDENTIALS=~/google-service-account-key.json
+        - make check-mvn
 
       install: echo "SKIPPING DEFAULT INSTALL" # Travis has a default maven install. Don't build twice!
 
