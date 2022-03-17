@@ -1,6 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -56,15 +59,7 @@ public class SmsTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_SMS_TEMPLATE);
 
-    smsTemplateRepository
-        .findAll()
-        .forEach(
-            smsTemplate -> {
-              if (smsTemplate.getPackCode().equalsIgnoreCase(smsTemplateDto.getPackCode())) {
-                throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Pack code already exists");
-              }
-            });
+    validateTemplate(smsTemplateDto);
 
     SmsTemplate smsTemplate = new SmsTemplate();
     smsTemplate.setTemplate(smsTemplateDto.getTemplate());
@@ -76,5 +71,23 @@ public class SmsTemplateEndpoint {
     smsTemplateRepository.saveAndFlush(smsTemplate);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  private void validateTemplate(SmsTemplateDto smsTemplateDto) {
+    smsTemplateRepository
+        .findAll()
+        .forEach(
+            smsTemplate -> {
+              if (smsTemplate.getPackCode().equalsIgnoreCase(smsTemplateDto.getPackCode())) {
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Pack code already exists");
+              }
+            });
+
+    Set<String> templateSet = new HashSet<>(Arrays.asList(smsTemplateDto.getTemplate()));
+    if (templateSet.size() != smsTemplateDto.getTemplate().length) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
+    }
   }
 }
