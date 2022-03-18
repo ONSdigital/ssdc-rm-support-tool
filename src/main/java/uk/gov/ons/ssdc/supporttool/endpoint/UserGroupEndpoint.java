@@ -67,7 +67,7 @@ public class UserGroupEndpoint {
   @GetMapping("/thisUserAdminGroups")
   public List<UserGroupDto> getUserAdminGroups(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    return userGroupAdminRepository.findByUserEmail(userEmail).stream()
+    return userGroupAdminRepository.findByUserEmailIgnoreCase(userEmail).stream()
         .map(UserGroupAdmin::getGroup)
         .map(this::mapDto)
         .collect(Collectors.toList());

@@ -130,7 +130,7 @@ class UserAdmin extends Component {
 
     this.createUserInProgress = true;
 
-    if (this.state.users.map((user) => user.email).includes(this.state.email)) {
+    if (this.state.users.map((user) => user.email.toLowerCase()).includes(this.state.email.toLowerCase())) {
       this.setState({
         emailValidationError: "User already exists",
       });
