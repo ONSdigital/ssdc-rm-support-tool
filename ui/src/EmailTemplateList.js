@@ -202,12 +202,12 @@ class EmailTemplateList extends Component {
         if (!Array.isArray(parsedJson) || hasDuplicateTemplateColumns) {
           this.setState({ templateValidationError: true });
           failedValidation = true;
-          this.setState({ templateValidationErrorMessage: "email template must be JSON array with one or more unique elements" });
+          this.setState({ templateValidationErrorMessage: "Email template must be JSON array with one or more unique elements" });
         }
       } catch (err) {
         this.setState({ templateValidationError: true });
         failedValidation = true;
-        this.setState({ templateValidationErrorMessage: "email template must be JSON array with one or more unique elements" });
+        this.setState({ templateValidationErrorMessage: "Email template must be JSON array with one or more unique elements" });
       }
     }
 

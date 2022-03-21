@@ -75,6 +75,12 @@ public class EmailTemplateEndpoint {
 
   private void validateEmailTemplate(EmailTemplateDto emailTemplateDto) {
 
+    Set<String> templateSet = new HashSet<>(Arrays.asList(emailTemplateDto.getTemplate()));
+    if (templateSet.size() != emailTemplateDto.getTemplate().length) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
+    }
+
     emailTemplateRepository
         .findAll()
         .forEach(
@@ -84,11 +90,5 @@ public class EmailTemplateEndpoint {
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }
             });
-
-    Set<String> templateSet = new HashSet<>(Arrays.asList(emailTemplateDto.getTemplate()));
-    if (templateSet.size() != emailTemplateDto.getTemplate().length) {
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
-    }
   }
 }
