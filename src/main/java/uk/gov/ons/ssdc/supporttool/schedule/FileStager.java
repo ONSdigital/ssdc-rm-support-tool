@@ -32,7 +32,7 @@ public class FileStager {
   private final JobTypeHelper jobTypeHelper;
 
   @Value("${file-upload-storage-path}")
-  private String fileUploadStoragePath;
+  String fileUploadStoragePath;
 
   private final String hostName = InetAddress.getLocalHost().getHostName();
 

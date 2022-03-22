@@ -36,7 +36,7 @@ public class RowStager {
   private final RowChunkStager rowChunkStager;
 
   @Value("${file-upload-storage-path}")
-  private String fileUploadStoragePath;
+  String fileUploadStoragePath;
 
   private final String hostName = InetAddress.getLocalHost().getHostName();
 
