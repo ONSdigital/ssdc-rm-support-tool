@@ -50,7 +50,7 @@ public class AuthorisationEndpoint {
       @RequestParam(required = false, value = "surveyId") Optional<UUID> surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
-    if (dummyUserIdentityAllowed && userEmail.equals(dummySuperUserIdentity)) {
+    if (dummyUserIdentityAllowed && userEmail.equalsIgnoreCase(dummySuperUserIdentity)) {
       // Dummy test super user is fully authorised, bypassing all security
       // This is **STRICTLY** for ease of dev/testing in non-production environments
       return Set.of(UserGroupAuthorisedActivityType.values());
