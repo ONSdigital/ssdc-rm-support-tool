@@ -156,17 +156,23 @@ class SmsTemplatesList extends Component {
     } else {
       try {
         const parsedJson = JSON.parse(this.state.template);
-        const hasDuplicateTemplateColumns = new Set(parsedJson).size !== parsedJson.length;
+        const hasDuplicateTemplateColumns =
+          new Set(parsedJson).size !== parsedJson.length;
         if (!Array.isArray(parsedJson) || hasDuplicateTemplateColumns) {
           this.setState({ templateValidationError: true });
           failedValidation = true;
-          this.setState({ templateValidationErrorMessage: "SMS template must be JSON array with one or more unique elements" });
+          this.setState({
+            templateValidationErrorMessage:
+              "SMS template must be JSON array with one or more unique elements",
+          });
         }
       } catch (err) {
         this.setState({ templateValidationError: true });
         failedValidation = true;
-        this.setState({ templateValidationErrorMessage: "SMS template must be JSON array with one or more unique elements" });
-
+        this.setState({
+          templateValidationErrorMessage:
+            "SMS template must be JSON array with one or more unique elements",
+        });
       }
     }
 
