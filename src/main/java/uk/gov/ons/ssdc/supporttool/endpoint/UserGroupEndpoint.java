@@ -48,7 +48,7 @@ public class UserGroupEndpoint {
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
 
     if (group.getAdmins().stream()
-        .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equals(userEmail))) {
+        .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
       // If you're not admin of this group, you have to be super user
       userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
     }
@@ -67,7 +67,7 @@ public class UserGroupEndpoint {
   @GetMapping("/thisUserAdminGroups")
   public List<UserGroupDto> getUserAdminGroups(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    return userGroupAdminRepository.findByUserEmail(userEmail).stream()
+    return userGroupAdminRepository.findByUserEmailIgnoreCase(userEmail).stream()
         .map(UserGroupAdmin::getGroup)
         .map(this::mapDto)
         .collect(Collectors.toList());
