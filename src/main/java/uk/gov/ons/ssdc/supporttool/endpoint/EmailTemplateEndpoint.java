@@ -1,6 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -56,15 +59,7 @@ public class EmailTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EMAIL_TEMPLATE);
 
-    emailTemplateRepository
-        .findAll()
-        .forEach(
-            emailTemplate -> {
-              if (emailTemplate.getPackCode().equalsIgnoreCase(emailTemplateDto.getPackCode())) {
-                throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Pack code already exists");
-              }
-            });
+    validateEmailTemplate(emailTemplateDto);
 
     EmailTemplate emailTemplate = new EmailTemplate();
     emailTemplate.setTemplate(emailTemplateDto.getTemplate());
@@ -76,5 +71,24 @@ public class EmailTemplateEndpoint {
     emailTemplateRepository.saveAndFlush(emailTemplate);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  private void validateEmailTemplate(EmailTemplateDto emailTemplateDto) {
+
+    Set<String> templateSet = new HashSet<>(Arrays.asList(emailTemplateDto.getTemplate()));
+    if (templateSet.size() != emailTemplateDto.getTemplate().length) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
+    }
+
+    emailTemplateRepository
+        .findAll()
+        .forEach(
+            emailTemplate -> {
+              if (emailTemplate.getPackCode().equalsIgnoreCase(emailTemplateDto.getPackCode())) {
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Pack code already exists");
+              }
+            });
   }
 }
