@@ -209,7 +209,7 @@ public class CollectionExerciseEndpoint {
         expressionParser.parseExpression(spelExpression);
       } catch (Exception e) {
         throw new ResponseStatusException(
-            HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression);
+            HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression, e);
       }
     }
 
