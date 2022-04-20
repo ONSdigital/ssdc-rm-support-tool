@@ -9,20 +9,23 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSmsFulfilmentTemplates } from "./Utils";
+import { getSmsFulfilmentTemplatesForSurvey } from "./Utils";
+import FulfilmentPersonalisationForm from "./FulfilmentPersonalisationForm";
 
 class SmsFulfilment extends Component {
   state = {
-    packCode: "",
+    selectedTemplate: "",
     allowableSmsFulfilmentTemplates: [],
-    packCodeValidationError: false,
-    packCodeValidationErrorDesc: "",
+    templateValidationError: false,
+    templateValidationErrorDesc: "",
     smsUacQidMetadataValidationError: false,
     showDialog: false,
     phoneNumber: "",
     newValueValidationError: "",
     validationError: false,
     newSmsUacQidMetadata: "",
+    personalisationFormItems: "",
+    personalisationValues: null,
   };
 
   componentDidMount() {
@@ -59,13 +62,15 @@ class SmsFulfilment extends Component {
 
   closeDialog = () => {
     this.setState({
-      packCode: "",
-      packCodeValidationError: false,
+      selectedTemplate: "",
+      templateValidationError: false,
       showDialog: false,
       newValueValidationError: "",
       phoneNumber: "",
       validationError: false,
       newSmsUacQidMetadata: "",
+      personalisationFormItems: "",
+      personalisationValues: null,
     });
   };
 
@@ -83,7 +88,7 @@ class SmsFulfilment extends Component {
     )
       return;
 
-    const fulfilmentSmsTemplates = await getSmsFulfilmentTemplates(
+    const fulfilmentSmsTemplates = await getSmsFulfilmentTemplatesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );
@@ -94,7 +99,7 @@ class SmsFulfilment extends Component {
   };
 
   onSmsTemplateChange = (event) => {
-    this.setState({ packCode: event.target.value });
+    this.setState({ selectedTemplate: event.target.value });
   };
 
   onNewActionRuleSmsUacQidMetadataChange = (event) => {
@@ -113,9 +118,9 @@ class SmsFulfilment extends Component {
 
     let validationFailed = false;
 
-    if (!this.state.packCode) {
+    if (!this.state.selectedTemplate) {
       this.setState({
-        packCodeValidationError: true,
+        templateValidationError: true,
       });
       validationFailed = true;
     }
@@ -149,9 +154,10 @@ class SmsFulfilment extends Component {
     }
 
     const smsFulfilment = {
-      packCode: this.state.packCode,
+      packCode: this.state.selectedTemplate.packCode,
       phoneNumber: this.state.phoneNumber,
       uacMetadata: uacMetadataJson,
+      personalisation: this.state.personalisationValues,
     };
 
     const response = await fetch(
@@ -176,11 +182,19 @@ class SmsFulfilment extends Component {
     }
   };
 
+  onPersonalisationValueChange = (event) => {
+    let updatedPersonalisationValues = this.state.personalisationValues
+      ? this.state.personalisationValues
+      : {};
+    updatedPersonalisationValues[event.target.name] = event.target.value;
+    this.setState({ personalisationValues: updatedPersonalisationValues });
+  };
+
   render() {
     const fulfilmentSmsTemplateMenuItems =
-      this.state.allowableSmsFulfilmentTemplates.map((packCode) => (
-        <MenuItem key={packCode} value={packCode}>
-          {packCode}
+      this.state.allowableSmsFulfilmentTemplates.map((template) => (
+        <MenuItem key={template.packCode} value={template}>
+          {template.packCode}
         </MenuItem>
       ));
 
@@ -200,8 +214,8 @@ class SmsFulfilment extends Component {
                 <InputLabel>SMS Template</InputLabel>
                 <Select
                   onChange={this.onSmsTemplateChange}
-                  value={this.state.packCode}
-                  error={this.state.packCodeValidationError}
+                  value={this.state.selectedTemplate}
+                  error={this.state.templateValidationError}
                 >
                   {fulfilmentSmsTemplateMenuItems}
                 </Select>
@@ -217,7 +231,7 @@ class SmsFulfilment extends Component {
               />
               <FormControl fullWidth={true}>
                 <TextField
-                  style={{ minWidth: 200 }}
+                  style={{ minWidth: 200, marginBottom: 20 }}
                   error={this.state.smsUacQidMetadataValidationError}
                   label="UAC QID Metadata"
                   id="standard-required"
@@ -225,6 +239,14 @@ class SmsFulfilment extends Component {
                   value={this.state.newSmsUacQidMetadata}
                 />
               </FormControl>
+              {this.state.showDialog && (
+                <FulfilmentPersonalisationForm
+                  template={this.state.selectedTemplate}
+                  onPersonalisationValueChange={
+                    this.onPersonalisationValueChange
+                  }
+                />
+              )}
             </div>
             <div style={{ marginTop: 10 }}>
               <Button

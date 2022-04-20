@@ -1,4 +1,4 @@
-export const getAllExportFileTemplates = async (authorisedActivities) => {
+export const getAllExportFilePackCodes = async (authorisedActivities) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return [];
 
@@ -10,7 +10,7 @@ export const getAllExportFileTemplates = async (authorisedActivities) => {
   return templatePackCodes;
 };
 
-export const getAllSmsTemplates = async (authorisedActivities) => {
+export const getAllSmsPackCodes = async (authorisedActivities) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (!authorisedActivities.includes("LIST_SMS_TEMPLATES")) return [];
 
@@ -22,7 +22,7 @@ export const getAllSmsTemplates = async (authorisedActivities) => {
   return templatePackCodes;
 };
 
-export const getAllEmailTemplates = async (authorisedActivities) => {
+export const getAllEmailPackCodes = async (authorisedActivities) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (!authorisedActivities.includes("LIST_EMAIL_TEMPLATES")) return [];
 
@@ -34,7 +34,7 @@ export const getAllEmailTemplates = async (authorisedActivities) => {
   return templatePackCodes;
 };
 
-export const getFulfilmentExportFileTemplates = async (
+export const getFulfilmentExportFileTemplatesForSurvey = async (
   authorisedActivities,
   surveyId
 ) => {
@@ -53,7 +53,7 @@ export const getFulfilmentExportFileTemplates = async (
   return fulfilmentExportFileTemplates;
 };
 
-export const getSmsFulfilmentTemplates = async (
+export const getSmsFulfilmentTemplatesForSurvey = async (
   authorisedActivities,
   surveyId
 ) => {
@@ -71,7 +71,7 @@ export const getSmsFulfilmentTemplates = async (
   return smsFulfilmentTemplatesJson;
 };
 
-export const getEmailFulfilmentTemplates = async (
+export const getEmailFulfilmentTemplatesForSurvey = async (
   authorisedActivities,
   surveyId
 ) => {
@@ -91,7 +91,7 @@ export const getEmailFulfilmentTemplates = async (
   return emailFulfilmentTemplatesJson;
 };
 
-export const getActionRuleExportFileTemplates = async (
+export const getActionRuleExportFilePackCodesForSurvey = async (
   authorisedActivities,
   surveyId
 ) => {
@@ -111,7 +111,7 @@ export const getActionRuleExportFileTemplates = async (
   return exportFileTemplatesJson;
 };
 
-export const getActionRuleSmsTemplates = async (
+export const getActionRuleSmsPackCodesForSurvey = async (
   authorisedActivities,
   surveyId
 ) => {
@@ -129,7 +129,7 @@ export const getActionRuleSmsTemplates = async (
   return smsTemplatesJson;
 };
 
-export const getActionRuleEmailTemplates = async (
+export const getActionRuleEmailPackCodesForSurvey = async (
   authorisedActivities,
   surveyId
 ) => {

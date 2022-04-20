@@ -19,14 +19,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
   getAuthorisedActivities,
-  getActionRuleExportFileTemplates,
-  getAllExportFileTemplates,
+  getActionRuleExportFilePackCodesForSurvey,
+  getAllExportFilePackCodes,
 } from "./Utils";
 
 class AllowedExportFileTemplatesActionRulesList extends Component {
   state = {
-    actionRuleExportFileTemplates: [],
-    allowableActionRuleExportFileTemplates: [],
+    actionRuleExportFilePackCodes: [],
+    allowableActionRuleExportFilePackCodes: [],
     authorisedActivities: [],
     allowActionRuleExportFileTemplateDialogDisplayed: false,
     exportFileTemplateToAllow: "",
@@ -54,28 +54,28 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allExportFileFulfilmentTemplates = await getAllExportFileTemplates(
+    const allExportFileFulfilmentTemplates = await getAllExportFilePackCodes(
       authorisedActivities
     );
 
-    const actionRuleExportFileTemplates =
-      await getActionRuleExportFileTemplates(
+    const actionRuleExportFilePackCodes =
+      await getActionRuleExportFilePackCodesForSurvey(
         authorisedActivities,
         this.props.surveyId
       );
 
-    let allowableActionRuleExportFileTemplates = [];
+    let allowableActionRuleExportFilePackCodes = [];
 
     allExportFileFulfilmentTemplates.forEach((packCode) => {
-      if (!actionRuleExportFileTemplates.includes(packCode)) {
-        allowableActionRuleExportFileTemplates.push(packCode);
+      if (!actionRuleExportFilePackCodes.includes(packCode)) {
+        allowableActionRuleExportFilePackCodes.push(packCode);
       }
     });
 
     this.setState({
-      allowableActionRuleExportFileTemplates:
-        allowableActionRuleExportFileTemplates,
-      actionRuleExportFileTemplates: actionRuleExportFileTemplates,
+      allowableActionRuleExportFilePackCodes:
+        allowableActionRuleExportFilePackCodes,
+      actionRuleExportFilePackCodes: actionRuleExportFilePackCodes,
     });
   };
 
@@ -140,16 +140,16 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
 
   render() {
     const actionRuleExportFileTemplateTableRows =
-      this.state.actionRuleExportFileTemplates.map((exportFileTemplate) => (
-        <TableRow key={exportFileTemplate}>
+      this.state.actionRuleExportFilePackCodes.map((packCode) => (
+        <TableRow key={packCode}>
           <TableCell component="th" scope="row">
-            {exportFileTemplate}
+            {packCode}
           </TableCell>
         </TableRow>
       ));
 
     const actionRuleExportFileTemplateMenuItems =
-      this.state.allowableActionRuleExportFileTemplates.map((packCode) => (
+      this.state.allowableActionRuleExportFilePackCodes.map((packCode) => (
         <MenuItem key={packCode} value={packCode}>
           {packCode}
         </MenuItem>

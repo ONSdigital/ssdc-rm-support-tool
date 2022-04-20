@@ -20,9 +20,9 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import SampleUpload from "./SampleUpload";
 import {
-  getActionRuleExportFileTemplates,
-  getActionRuleSmsTemplates,
-  getActionRuleEmailTemplates,
+  getActionRuleExportFilePackCodesForSurvey,
+  getActionRuleSmsPackCodesForSurvey,
+  getActionRuleEmailPackCodesForSurvey,
   getSensitiveSampleColumns,
 } from "./Utils";
 import { Link } from "react-router-dom";
@@ -138,7 +138,7 @@ class CollectionExerciseDetails extends Component {
     )
       return;
 
-    const packCodes = await getActionRuleExportFileTemplates(
+    const packCodes = await getActionRuleExportFilePackCodesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );
@@ -153,7 +153,7 @@ class CollectionExerciseDetails extends Component {
     )
       return;
 
-    const packCodes = await getActionRuleSmsTemplates(
+    const packCodes = await getActionRuleSmsPackCodesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );
@@ -168,7 +168,7 @@ class CollectionExerciseDetails extends Component {
     )
       return;
 
-    const packCodes = await getActionRuleEmailTemplates(
+    const packCodes = await getActionRuleEmailPackCodesForSurvey(
       authorisedActivities,
       this.props.surveyId
     );

@@ -30,6 +30,7 @@ class SmsTemplatesList extends Component {
     packCodeValidationError: false,
     descriptionValidationError: false,
     templateValidationError: false,
+    templateValidationErrorMessage: "",
     newTemplateMetadataValidationError: false,
     notifyTemplateIdValidationError: false,
     notifyTemplateIdErrorMessage: "",
@@ -77,6 +78,7 @@ class SmsTemplatesList extends Component {
       packCodeValidationError: false,
       descriptionValidationError: false,
       templateValidationError: false,
+      templateValidationErrorMessage: "",
       newTemplateMetadataValidationError: false,
       notifyTemplateIdValidationError: false,
       createSmsTemplateDialogDisplayed: true,
@@ -154,13 +156,23 @@ class SmsTemplatesList extends Component {
     } else {
       try {
         const parsedJson = JSON.parse(this.state.template);
-        if (!Array.isArray(parsedJson)) {
+        const hasDuplicateTemplateColumns =
+          new Set(parsedJson).size !== parsedJson.length;
+        if (!Array.isArray(parsedJson) || hasDuplicateTemplateColumns) {
           this.setState({ templateValidationError: true });
           failedValidation = true;
+          this.setState({
+            templateValidationErrorMessage:
+              "SMS template must be JSON array with one or more unique elements",
+          });
         }
       } catch (err) {
         this.setState({ templateValidationError: true });
         failedValidation = true;
+        this.setState({
+          templateValidationErrorMessage:
+            "SMS template must be JSON array with one or more unique elements",
+        });
       }
     }
 
@@ -353,6 +365,7 @@ class SmsTemplatesList extends Component {
                   label="Template"
                   onChange={this.onTemplateChange}
                   value={this.state.template}
+                  helperText={this.state.templateValidationErrorMessage}
                 />
                 <TextField
                   fullWidth={true}

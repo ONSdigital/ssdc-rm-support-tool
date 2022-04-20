@@ -33,6 +33,7 @@ class ExportFileTemplateList extends Component {
     template: "",
     descriptionValidationError: false,
     packCodeValidationError: false,
+    templateValidationErrorMessage: "",
     templateValidationError: false,
     newTemplateMetadataValidationError: false,
   };
@@ -78,15 +79,6 @@ class ExportFileTemplateList extends Component {
     });
   };
 
-  getExportFileTemplates = async (authorisedActivities) => {
-    if (!authorisedActivities.includes("LIST_EXPORT_FILE_TEMPLATES")) return;
-
-    const response = await fetch("/api/exportFileTemplates");
-    const templateJson = await response.json();
-
-    this.setState({ exportFileTemplates: templateJson });
-  };
-
   openExportFileTemplateDialog = () => {
     this.createExportFileTemplateInProgress = false;
 
@@ -100,6 +92,7 @@ class ExportFileTemplateList extends Component {
       exportFileDestinationValidationError: false,
       descriptionValidationError: false,
       packCodeValidationError: false,
+      templateValidationErrorMessage: "",
       templateValidationError: false,
       newTemplateMetadataValidationError: false,
       createExportFileTemplatePackCodeError: "",
@@ -116,7 +109,7 @@ class ExportFileTemplateList extends Component {
     this.refresh;
   };
 
-  onexportFileDestinationChange = (event) => {
+  onExportFileDestinationChange = (event) => {
     this.setState({
       exportFileDestination: event.target.value,
       exportFileDestinationValidationError: false,
@@ -136,11 +129,6 @@ class ExportFileTemplateList extends Component {
     });
 
     var failedValidation = false;
-
-    if (!this.state.exportFileDestination.trim()) {
-      this.setState({ exportFileDestinationValidationError: true });
-      failedValidation = true;
-    }
 
     if (!this.state.exportFileDestination.trim()) {
       this.setState({ exportFileDestinationValidationError: true });
@@ -180,6 +168,17 @@ class ExportFileTemplateList extends Component {
         const parsedJson = JSON.parse(this.state.template);
         if (!Array.isArray(parsedJson) || parsedJson.length === 0) {
           this.setState({ templateValidationError: true });
+          failedValidation = true;
+        }
+
+        const hasDuplicateTemplateColumns =
+          new Set(parsedJson).size !== parsedJson.length;
+        if (hasDuplicateTemplateColumns) {
+          this.setState({
+            templateValidationError: true,
+            templateValidationErrorMessage:
+              "Template cannot have duplicate columns",
+          });
           failedValidation = true;
         }
       } catch (err) {
@@ -256,6 +255,7 @@ class ExportFileTemplateList extends Component {
     this.setState({
       template: event.target.value,
       templateValidationError: resetValidation,
+      templateValidationErrorMessage: "",
     });
   };
 
@@ -365,7 +365,7 @@ class ExportFileTemplateList extends Component {
                 >
                   <InputLabel>Export File Destination</InputLabel>
                   <Select
-                    onChange={this.onexportFileDestinationChange}
+                    onChange={this.onExportFileDestinationChange}
                     value={this.state.exportFileDestination}
                     error={this.state.exportFileDestinationValidationError}
                   >
@@ -380,7 +380,7 @@ class ExportFileTemplateList extends Component {
                   label="Template"
                   onChange={this.onTemplateChange}
                   value={this.state.template}
-                  helperText={this.state.notifyTemplateIdErrorMessage}
+                  helperText={this.state.templateValidationErrorMessage}
                 />
                 <TextField
                   fullWidth={true}

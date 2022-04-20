@@ -1,6 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +54,7 @@ public class UserEndpoint {
 
   @GetMapping
   public List<UserDto> getUsers(@Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    if (!userGroupAdminRepository.existsByUserEmail(userEmail)) {
+    if (!userGroupAdminRepository.existsByUserEmailIgnoreCase(userEmail)) {
       // If you're not admin of a group, you have to be super user
       userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
     }
@@ -69,10 +70,14 @@ public class UserEndpoint {
   }
 
   @PostMapping
-  public ResponseEntity<Void> createUser(
+  public ResponseEntity<?> createUser(
       @RequestBody UserDto userDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+
+    if (userRepository.findByEmailIgnoreCase(userDto.getEmail()).isPresent()) {
+      return new ResponseEntity<>(Map.of("errors", "email already exists"), HttpStatus.BAD_REQUEST);
+    }
 
     User user = new User();
     user.setId(UUID.randomUUID());

@@ -132,7 +132,7 @@ public class CaseEndpoint {
     List<String> validationErrors =
         validateFieldToUpdate(caze, updateSampleSensitive.getSampleSensitive(), true);
 
-    if (validationErrors.size() > 0) {
+    if (!validationErrors.isEmpty()) {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
 
@@ -159,7 +159,7 @@ public class CaseEndpoint {
 
     List<String> validationErrors = validateFieldToUpdate(caze, updateSample.getSample(), false);
 
-    if (validationErrors.size() > 0) {
+    if (!validationErrors.isEmpty()) {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
 
@@ -282,6 +282,7 @@ public class CaseEndpoint {
     smsFulfilment.setPackCode(smsFulfilmentAction.getPackCode());
     smsFulfilment.setPhoneNumber(smsFulfilmentAction.getPhoneNumber());
     smsFulfilment.setUacMetadata(smsFulfilmentAction.getUacMetadata());
+    smsFulfilment.setPersonalisation(smsFulfilmentAction.getPersonalisation());
 
     smsFulfilmentRequest.setHeader(header);
     payload.setSmsFulfilment(smsFulfilment);
@@ -321,6 +322,7 @@ public class CaseEndpoint {
     emailFulfilment.setPackCode(emailFulfilmentAction.getPackCode());
     emailFulfilment.setEmail(emailFulfilmentAction.getEmail());
     emailFulfilment.setUacMetadata(emailFulfilmentAction.getUacMetadata());
+    emailFulfilment.setPersonalisation(emailFulfilmentAction.getPersonalisation());
 
     emailFulfilmentRequest.setHeader(header);
     payload.setEmailFulfilment(emailFulfilment);
