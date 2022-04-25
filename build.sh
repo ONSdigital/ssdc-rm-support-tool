@@ -17,8 +17,7 @@ rm -r ui/build/* || true
 
 if [ "$SKIP_TESTS" = true ] ; then
   mvn clean install -Dmaven.test.skip=true -DdockerCompose.skip=true
-  docker build . -t europe-west2-docker.pkg.dev/ssdc-rm-ci/docker/ssdc-rm-support-tool:latest
 else
   mvn clean install
-  docker build . -t europe-west2-docker.pkg.dev/ssdc-rm-ci/docker/ssdc-rm-support-tool:latest
 fi
+docker build . -t europe-west2-docker.pkg.dev/ssdc-rm-ci/docker/ssdc-rm-support-tool:latest
