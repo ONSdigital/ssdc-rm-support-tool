@@ -20,3 +20,4 @@ if [ "$SKIP_TESTS" = true ] ; then
 else
   mvn clean install
 fi
+docker build . -t europe-west2-docker.pkg.dev/ssdc-rm-ci/docker/ssdc-rm-support-tool:latest
