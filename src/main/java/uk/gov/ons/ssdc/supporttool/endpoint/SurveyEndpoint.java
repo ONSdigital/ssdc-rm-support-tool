@@ -1,11 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import static uk.gov.ons.ssdc.supporttool.utility.JsonHelper.convertObjectToJson;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -91,11 +92,7 @@ public class SurveyEndpoint {
     survey.setSampleWithHeaderRow(surveyDto.isSampleWithHeaderRow());
     survey.setSampleDefinitionUrl(surveyDto.getSampleDefinitionUrl());
     survey.setMetadata(surveyDto.getMetadata());
-
-    PGobject scheduleAsPGObject = new PGobject();
-    scheduleAsPGObject.setType("jsonb");
-    scheduleAsPGObject.setValue((String) surveyDto.getScheduleTemplate());
-    survey.setScheduleTemplate(scheduleAsPGObject);
+    survey.setScheduleTemplate(convertObjectToJson(surveyDto.getScheduleTemplate()));
 
     survey = surveyRepository.saveAndFlush(survey);
 
