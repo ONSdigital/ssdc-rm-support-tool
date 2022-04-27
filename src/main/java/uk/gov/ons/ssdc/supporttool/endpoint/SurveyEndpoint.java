@@ -1,7 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.supporttool.utility.JsonHelper.convertObjectToJson;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.sql.SQLException;
 import java.util.List;
@@ -92,7 +90,7 @@ public class SurveyEndpoint {
     survey.setSampleWithHeaderRow(surveyDto.isSampleWithHeaderRow());
     survey.setSampleDefinitionUrl(surveyDto.getSampleDefinitionUrl());
     survey.setMetadata(surveyDto.getMetadata());
-    survey.setScheduleTemplate(convertObjectToJson(surveyDto.getScheduleTemplate()));
+    survey.setScheduleTemplate(surveyDto.getScheduleTemplate());
 
     survey = surveyRepository.saveAndFlush(survey);
 
