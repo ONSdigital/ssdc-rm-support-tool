@@ -1,4 +1,4 @@
-FROM openjdk:17-slim
+FROM europe-west2-docker.pkg.dev/ssdc-rm-liamtoozer-349808/docker/jdk17-mvn-node16-npm:latest
 CMD ["/usr/local/openjdk-17/bin/java", "-jar", "/opt/ssdc-rm-support-tool.jar"]
 
 RUN groupadd --gid 999 supporttool && \
