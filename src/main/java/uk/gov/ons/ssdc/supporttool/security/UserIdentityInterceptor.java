@@ -1,11 +1,16 @@
 package uk.gov.ons.ssdc.supporttool.security;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 public class UserIdentityInterceptor implements HandlerInterceptor {
   private final UserIdentity userIdentity;
+
+  private static final Logger log = LoggerFactory.getLogger(UserIdentityInterceptor.class);
 
   public UserIdentityInterceptor(UserIdentity userIdentity) {
     this.userIdentity = userIdentity;
@@ -22,5 +27,20 @@ public class UserIdentityInterceptor implements HandlerInterceptor {
     String userEmail = userIdentity.getUserEmail(jwtToken);
     request.setAttribute("userEmail", userEmail);
     return true;
+  }
+
+  @Override
+  public void postHandle(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      Object handler,
+      ModelAndView modelAndView)
+      throws Exception {
+    log.with("audit", true)
+        .with("userEmail", request.getAttribute("userEmail"))
+        .with("requestURI", request.getRequestURI())
+        .with("requestMethod", request.getMethod())
+        .with("responseStatus", response.getStatus())
+        .info("API Audit");
   }
 }
