@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 import SmsFulfilment from "./SmsFulfilment";
 import EmailFulfilment from "./EmailFulfilment";
 import JSONPretty from "react-json-pretty";
+import {errorAlert} from "./Utils";
 
 class CaseDetails extends Component {
   state = {
@@ -73,6 +74,7 @@ class CaseDetails extends Component {
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
+      errorAlert(response)
       return;
     }
 

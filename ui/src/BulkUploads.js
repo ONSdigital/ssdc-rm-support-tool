@@ -20,6 +20,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import JobDetails from "./JobDetails";
 import { Link } from "react-router-dom";
+import {errorAlert} from "./Utils";
 
 const BULK_REFUSAL_JOB_TYPE = "BULK_REFUSAL";
 const BULK_REFUSAL_VIEW_PERMISSION = "VIEW_BULK_REFUSAL_PROGRESS";
@@ -102,6 +103,7 @@ class BulkUploads extends Component {
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
+      errorAlert(response)
       return;
     }
 

@@ -9,7 +9,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSmsFulfilmentTemplatesForSurvey } from "./Utils";
+import {errorAlert, getSmsFulfilmentTemplatesForSurvey} from "./Utils";
 import FulfilmentPersonalisationForm from "./FulfilmentPersonalisationForm";
 
 class SmsFulfilment extends Component {
@@ -42,6 +42,7 @@ class SmsFulfilment extends Component {
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
+      errorAlert(response)
       return;
     }
 

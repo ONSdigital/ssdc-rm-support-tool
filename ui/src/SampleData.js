@@ -10,7 +10,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSampleColumns } from "./Utils";
+import {errorAlert, getSampleColumns} from "./Utils";
 
 class SampleData extends Component {
   state = {
@@ -36,6 +36,7 @@ class SampleData extends Component {
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
+      errorAlert(response)
       return;
     }
 

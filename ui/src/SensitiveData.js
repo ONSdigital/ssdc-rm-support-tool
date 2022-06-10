@@ -10,7 +10,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSensitiveSampleColumns } from "./Utils";
+import {errorAlert, getSensitiveSampleColumns} from "./Utils";
 
 class SensitiveData extends Component {
   state = {
@@ -36,6 +36,7 @@ class SensitiveData extends Component {
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
+      errorAlert(response)
       return;
     }
 
