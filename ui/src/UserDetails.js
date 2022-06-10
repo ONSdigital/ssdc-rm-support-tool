@@ -41,7 +41,6 @@ class UserDetails extends Component {
   }
 
   componentWillUnmount() {
-    // clearInterval(this.interval);
   }
 
   getAuthorisedBackendData = async () => {
@@ -50,11 +49,6 @@ class UserDetails extends Component {
     this.getGroups(authorisedActivities);
 
     this.getUserMemberOf(authorisedActivities);
-
-    // this.interval = setInterval(
-    //   () => this.getUserMemberOf(authorisedActivities),
-    //   1000
-    // );
   };
 
   getUser = async (authorisedActivities) => {
