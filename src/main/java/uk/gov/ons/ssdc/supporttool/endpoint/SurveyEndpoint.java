@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -75,7 +77,8 @@ public class SurveyEndpoint {
   @Transactional
   public ResponseEntity<UUID> createSurvey(
       @RequestBody SurveyDto surveyDto,
-      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+      @Value("#{request.getAttribute('userEmail')}") String userEmail)
+      throws JsonProcessingException, SQLException {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_SURVEY);
 
@@ -87,6 +90,8 @@ public class SurveyEndpoint {
     survey.setSampleWithHeaderRow(surveyDto.isSampleWithHeaderRow());
     survey.setSampleDefinitionUrl(surveyDto.getSampleDefinitionUrl());
     survey.setMetadata(surveyDto.getMetadata());
+    survey.setScheduleTemplate(surveyDto.getScheduleTemplate());
+
     survey = surveyRepository.saveAndFlush(survey);
 
     surveyService.publishSurveyUpdate(survey, userEmail);
