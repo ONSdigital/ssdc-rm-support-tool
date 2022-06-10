@@ -47,11 +47,6 @@ class SurveysList extends Component {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(this.state.authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -84,6 +79,7 @@ class SurveysList extends Component {
   closeDialog = () => {
     // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
     this.setState({ createSurveyDialogDisplayed: false });
+    //this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   onNewSurveyNameChange = (event) => {
@@ -124,6 +120,7 @@ class SurveysList extends Component {
 
   onNewSurveySampleSeparatorChange = (event) => {
     this.setState({ newSurveySampleSeparator: event.target.value });
+
   };
 
   onCreateSurvey = async () => {
@@ -198,6 +195,7 @@ class SurveysList extends Component {
     });
 
     this.setState({ createSurveyDialogDisplayed: false });
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   render() {
