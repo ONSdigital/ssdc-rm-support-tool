@@ -47,11 +47,6 @@ class ExportFileTemplateList extends Component {
     this.setState({ authorisedActivities: authorisedActivities });
 
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {

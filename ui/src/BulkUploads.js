@@ -63,11 +63,6 @@ class BulkUploads extends Component {
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -288,6 +283,7 @@ class BulkUploads extends Component {
               type="file"
               onChange={(event) => {
                 this.handleBulkFileUpload(event, jobType);
+                this.refreshDataFromBackend(this.state.authorisedActivities);
               }}
             />
             <label htmlFor={`contained-button-file-${jobType}`}>

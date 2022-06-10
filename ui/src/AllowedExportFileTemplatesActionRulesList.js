@@ -46,11 +46,6 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -81,7 +76,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
 
   openActionRuleExportFileTemplateDialog = () => {
     this.allowActionRuleExportFileTemplateInProgress = false;
-
+    this.refreshDataFromBackend(this.state.authorisedActivities);
     this.setState({
       allowActionRuleExportFileTemplateDialogDisplayed: true,
       exportFileTemplateToAllow: "",
@@ -132,6 +127,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
       });
       this.allowActionRuleExportFileTemplateInProgress = false;
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   closeAllowActionRuleExportFileTemplateDialog = () => {

@@ -45,11 +45,6 @@ class EmailTemplateList extends Component {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -258,6 +253,7 @@ class EmailTemplateList extends Component {
     } else {
       this.setState({ createEmailTemplateDialogDisplayed: false });
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   render() {

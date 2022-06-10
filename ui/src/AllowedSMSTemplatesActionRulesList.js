@@ -46,10 +46,6 @@ class AllowedSMSTemplatesActionRulesList extends Component {
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
 
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -114,11 +110,12 @@ class AllowedSMSTemplatesActionRulesList extends Component {
       });
       this.allowActionRuleSmsTemplateInProgress = false;
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   openActionRuleSmsTemplateDialog = () => {
     this.allowActionRuleSmsTemplateInProgress = false;
-
+    this.refreshDataFromBackend(this.state.authorisedActivities);
     this.setState({
       allowActionRuleSmsTemplateDialogDisplayed: true,
       smsTemplateToAllow: "",

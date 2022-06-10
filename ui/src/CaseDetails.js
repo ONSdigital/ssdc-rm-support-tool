@@ -51,11 +51,6 @@ class CaseDetails extends Component {
 
     this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCasesAndQidData(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.getCasesAndQidData(authorisedActivities),
-      1000
-    );
   };
 
   getSurveyName = async (authorisedActivities) => {
@@ -100,7 +95,6 @@ class CaseDetails extends Component {
 
   onClickDeactivate = (qid) => {
     this.confirmDeactivateInProgress = false;
-
     this.setState({
       showDeactivaveDialog: true,
       qidToDeactivate: qid,
@@ -120,6 +114,7 @@ class CaseDetails extends Component {
       showDeactivaveDialog: false,
       qidToDeactivate: "",
     });
+    this.getCasesAndQidData(this.state.authorisedActivities);
   };
 
   cancelDeactivate = () => {

@@ -70,11 +70,6 @@ class CollectionExerciseDetails extends Component {
     this.getSmsTemplates(authorisedActivities);
     this.getEmailTemplates(authorisedActivities);
     this.getSensitiveSampleColumns(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.getActionRules(authorisedActivities),
-      1000
-    );
   };
 
   getAuthorisedActivities = async () => {
@@ -376,6 +371,7 @@ class CollectionExerciseDetails extends Component {
     if (response.ok) {
       this.setState({ createActionRulesDialogDisplayed: false });
     }
+    this.getActionRules(this.state.authorisedActivities)
   };
 
   getTimeNowForDateTimePicker = () => {

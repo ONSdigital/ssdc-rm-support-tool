@@ -47,11 +47,6 @@ class CollectionExerciseList extends Component {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.getCollectionExercises(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -232,6 +227,7 @@ class CollectionExerciseList extends Component {
     } else {
       this.createCollectionExerciseInProgress = false;
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   render() {
