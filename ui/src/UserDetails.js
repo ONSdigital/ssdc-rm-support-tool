@@ -40,8 +40,7 @@ class UserDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-  }
+  componentWillUnmount() {}
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently

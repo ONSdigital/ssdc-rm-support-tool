@@ -32,6 +32,8 @@ class SampleUpload extends Component {
   componentDidMount() {
     this.getJobs();
 
+    // This is kept because the progress bars for file processing rely on it.
+    // It has been put to every 10 seconds to cut it back a little
     this.interval = setInterval(() => this.getJobs(), 10000);
   }
 
