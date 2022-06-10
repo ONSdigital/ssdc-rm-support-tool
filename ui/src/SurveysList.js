@@ -120,7 +120,6 @@ class SurveysList extends Component {
 
   onNewSurveySampleSeparatorChange = (event) => {
     this.setState({ newSurveySampleSeparator: event.target.value });
-
   };
 
   onCreateSurvey = async () => {

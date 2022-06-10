@@ -32,7 +32,7 @@ class SampleUpload extends Component {
   componentDidMount() {
     this.getJobs();
 
-    this.interval = setInterval(() => this.getJobs(), 1000);
+    this.interval = setInterval(() => this.getJobs(), 10000);
   }
 
   componentWillUnmount() {
