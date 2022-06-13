@@ -38,16 +38,15 @@ class SurveyCaseSearch extends Component {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(response)
+      errorAlert(responseJson)
       return;
     }
 
-    const authJson = await response.json();
+    this.setState({ authorisedActivities: responseJson });
 
-    this.setState({ authorisedActivities: authJson });
-
-    return authJson;
+    return responseJson;
   };
 
   getCollectionExercises = async (authorisedActivities) => {
@@ -74,15 +73,15 @@ class SurveyCaseSearch extends Component {
     this.setState({ isWaitingForResults: false });
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(response)
+      errorAlert(responseJson)
       return;
+
     }
 
-    const matchedCasesJson = await response.json();
-
     this.setState({
-      caseSearchResults: matchedCasesJson,
+      caseSearchResults: responseJson,
       caseSearchTerm: searchTerm,
       caseSearchDesc: searchDesc,
     });

@@ -29,12 +29,12 @@ class LandingPage extends Component {
     const response = await fetch("/api/userGroups/thisUserAdminGroups");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
-    if (!response.ok) {
-      errorAlert(response)
-      return;
-    }
-
     const responseJson = await response.json();
+    if (!response.ok) {
+      errorAlert(responseJson)
+      return;
+
+    }
 
     this.setState({ thisUserAdminGroups: responseJson });
   };

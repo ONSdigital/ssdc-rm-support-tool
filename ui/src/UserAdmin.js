@@ -82,18 +82,18 @@ class UserAdmin extends Component {
     const authResponse = await fetch("/api/auth");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await authResponse.json();
     if (!authResponse.ok) {
-      errorAlert(authResponse)
+      errorAlert(responseJson)
       return;
-    }
 
-    const authorisedActivities = await authResponse.json();
+    }
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities: responseJson,
       isLoading: false,
     });
 
-    return authorisedActivities;
+    return responseJson;
   };
 
   openCreateUserDialog = () => {

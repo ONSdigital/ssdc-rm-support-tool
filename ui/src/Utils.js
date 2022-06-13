@@ -190,17 +190,15 @@ export const getAuthorisedActivities = async () => {
   const authResponse = await fetch("/api/auth");
 
   // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+  const responseJson = await authResponse.json();
   if (!authResponse.ok) {
-    errorAlert(authResponse)
+    errorAlert(responseJson)
     return;
   }
 
-  const authorisedActivities = await authResponse.json();
-
-  return authorisedActivities;
+  return responseJson;
 };
 
-export async function errorAlert(response) {
-  const errorJson = await response.json();
+export function errorAlert(errorJson) {
   alert(`Something went wrong\nStatus: ${errorJson.status}\nError: ${errorJson.error}\nPath: ${errorJson.path}`)
 }

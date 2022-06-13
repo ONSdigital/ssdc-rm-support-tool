@@ -93,12 +93,12 @@ class MyGroupUserAdmin extends Component {
     const response = await fetch("/api/users");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
-    if (!response.ok) {
-      errorAlert(response)
-      return [];
-    }
-
     const responseJson = await response.json();
+    if (!response.ok) {
+      errorAlert(responseJson)
+      return [];
+
+    }
 
     return responseJson;
   };
