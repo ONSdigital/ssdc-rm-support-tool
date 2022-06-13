@@ -27,7 +27,7 @@ class SurveyDetails extends Component {
   };
 
   getAuthorisedActivities = async () => {
-    const response = await fetch(`/api/auth?surveyId=123`);
+    const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await response.json();
