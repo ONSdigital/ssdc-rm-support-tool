@@ -42,10 +42,6 @@ class CaseDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 

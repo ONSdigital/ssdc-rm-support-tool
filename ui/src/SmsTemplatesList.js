@@ -41,8 +41,6 @@ class SmsTemplatesList extends Component {
     this.getBackEndData();
   }
 
-  componentWillUnmount() {}
-
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });

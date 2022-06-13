@@ -57,10 +57,6 @@ class GroupDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getGroup(authorisedActivities);
@@ -72,10 +68,12 @@ class GroupDetails extends Component {
     const allUsers = await this.getAllUsers(authorisedActivities); // Only need to do this once... it's an expensive operation
     this.filterAllUsers(allUsers, admins);
 
-    this.interval = setInterval(
-      () => this.refreshBackendData(authorisedActivities, allUsers),
-      1000
-    );
+    this.setState({
+      authorisedActivities: authorisedActivities,
+      allUsers: allUsers,
+    });
+
+    this.refreshBackendData(authorisedActivities, allUsers);
   };
 
   refreshBackendData = async (authorisedActivities, allUsers) => {
@@ -251,6 +249,10 @@ class GroupDetails extends Component {
       }
     );
     this.closeRemoveDialog();
+    this.refreshBackendData(
+      this.state.authorisedActivities,
+      this.state.allUsers
+    );
   };
 
   onActivityChange = (event) => {
@@ -346,6 +348,10 @@ class GroupDetails extends Component {
     }
 
     this.setState({ showAllowDialog: false });
+    this.refreshBackendData(
+      this.state.authorisedActivities,
+      this.state.allUsers
+    );
   };
 
   openRemoveAdminDialog = (adminIdToRemove) => {
@@ -374,6 +380,11 @@ class GroupDetails extends Component {
     if (response.ok) {
       this.closeRemoveAdminDialog();
     }
+
+    this.refreshBackendData(
+      this.state.authorisedActivities,
+      this.state.allUsers
+    );
   };
 
   closeRemoveAdminDialog = () => {
@@ -419,6 +430,10 @@ class GroupDetails extends Component {
     }
 
     this.addAdminInProgress = false;
+    this.refreshBackendData(
+      this.state.authorisedActivities,
+      this.state.allUsers
+    );
   };
 
   closeAddAdminDialog = () => {

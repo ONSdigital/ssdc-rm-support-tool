@@ -58,10 +58,6 @@ class CollectionExerciseDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCollectionExerciseName(authorisedActivities);
@@ -371,7 +367,7 @@ class CollectionExerciseDetails extends Component {
     if (response.ok) {
       this.setState({ createActionRulesDialogDisplayed: false });
     }
-    this.getActionRules(this.state.authorisedActivities)
+    this.getActionRules(this.state.authorisedActivities);
   };
 
   getTimeNowForDateTimePicker = () => {

@@ -34,8 +34,6 @@ class UserAdmin extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {}
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend(authorisedActivities);
