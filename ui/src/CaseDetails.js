@@ -51,6 +51,12 @@ class CaseDetails extends Component {
 
     this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCasesAndQidData(authorisedActivities);
+
+    // Left in to refresh event list
+    this.interval = setInterval(
+      () => this.getCasesAndQidData(authorisedActivities),
+      10000
+    );
   };
 
   getSurveyName = async (authorisedActivities) => {
@@ -114,7 +120,6 @@ class CaseDetails extends Component {
       showDeactivaveDialog: false,
       qidToDeactivate: "",
     });
-    this.getCasesAndQidData(this.state.authorisedActivities);
   };
 
   cancelDeactivate = () => {

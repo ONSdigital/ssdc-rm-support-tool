@@ -63,6 +63,12 @@ class BulkUploads extends Component {
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend(authorisedActivities);
+
+    // Left in but increased to refresh upload status button
+    this.interval = setInterval(
+      () => this.refreshDataFromBackend(authorisedActivities),
+      10000
+    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
