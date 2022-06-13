@@ -37,15 +37,10 @@ class AllowedSMSTemplatesActionRulesList extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {

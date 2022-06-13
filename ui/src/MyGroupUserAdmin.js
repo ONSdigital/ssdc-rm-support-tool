@@ -44,10 +44,6 @@ class MyGroupUserAdmin extends Component {
     this.refreshBackendData(allUsers);
   };
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   refreshBackendData = async (allUsers) => {
     const groupMembers = await this.getGroupMembers();
     this.filterAllUsers(allUsers, groupMembers);

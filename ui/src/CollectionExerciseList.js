@@ -39,10 +39,6 @@ class CollectionExerciseList extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
