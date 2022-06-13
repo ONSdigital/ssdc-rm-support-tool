@@ -45,7 +45,6 @@ class MyGroupUserAdmin extends Component {
   };
 
   componentWillUnmount() {
-    clearInterval(this.interval);
   }
 
   refreshBackendData = async (allUsers) => {
