@@ -16,7 +16,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import {errorAlert} from "./Utils";
+import { errorAlert } from "./Utils";
 
 class ExceptionManager extends Component {
   state = {
@@ -61,9 +61,8 @@ class ExceptionManager extends Component {
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await authResponse.json();
     if (!authResponse.ok) {
-      errorAlert(responseJson)
+      errorAlert(responseJson);
       return;
-
     }
     this.setState({
       authorisedActivities: responseJson,

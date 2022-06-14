@@ -9,7 +9,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import {errorAlert, getEmailFulfilmentTemplatesForSurvey} from "./Utils";
+import { errorAlert, getEmailFulfilmentTemplatesForSurvey } from "./Utils";
 import FulfilmentPersonalisationForm from "./FulfilmentPersonalisationForm";
 
 class EmailFulfilment extends Component {
@@ -43,7 +43,7 @@ class EmailFulfilment extends Component {
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(responseJson)
+      errorAlert(responseJson);
       return;
     }
 

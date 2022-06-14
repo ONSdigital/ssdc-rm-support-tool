@@ -10,7 +10,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import {errorAlert, getSensitiveSampleColumns} from "./Utils";
+import { errorAlert, getSensitiveSampleColumns } from "./Utils";
 
 class SensitiveData extends Component {
   state = {
@@ -37,7 +37,7 @@ class SensitiveData extends Component {
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(responseJson)
+      errorAlert(responseJson);
       return;
     }
 

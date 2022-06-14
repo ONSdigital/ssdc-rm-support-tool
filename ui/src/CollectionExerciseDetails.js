@@ -23,7 +23,8 @@ import {
   getActionRuleExportFilePackCodesForSurvey,
   getActionRuleSmsPackCodesForSurvey,
   getActionRuleEmailPackCodesForSurvey,
-  getSensitiveSampleColumns, errorAlert,
+  getSensitiveSampleColumns,
+  errorAlert,
 } from "./Utils";
 import { Link } from "react-router-dom";
 
@@ -83,7 +84,7 @@ class CollectionExerciseDetails extends Component {
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(responseJson)
+      errorAlert(responseJson);
       return;
     }
 
@@ -110,7 +111,7 @@ class CollectionExerciseDetails extends Component {
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(responseJson)
+      errorAlert(responseJson);
       return;
     }
 
