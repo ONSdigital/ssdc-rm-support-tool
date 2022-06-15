@@ -11,7 +11,7 @@ import SurveySimpleSearchInput from "./SurveySimpleSearchInput";
 import SurveySampleSearch from "./SurveySampleSearch";
 import CaseDetails from "./CaseDetails";
 import { Link } from "react-router-dom";
-import {errorAlert} from "./Utils";
+import { errorAlert } from "./Utils";
 
 class SurveyCaseSearch extends Component {
   state = {
@@ -40,7 +40,7 @@ class SurveyCaseSearch extends Component {
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(responseJson)
+      errorAlert(responseJson);
       return;
     }
 
@@ -75,9 +75,8 @@ class SurveyCaseSearch extends Component {
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(responseJson)
+      errorAlert(responseJson);
       return;
-
     }
 
     this.setState({

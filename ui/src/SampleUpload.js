@@ -19,7 +19,7 @@ import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import JobDetails from "./JobDetails";
-import {errorAlert} from "./Utils";
+import { errorAlert } from "./Utils";
 
 class SampleUpload extends Component {
   state = {
@@ -126,9 +126,8 @@ class SampleUpload extends Component {
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     const responseJson = await response.json();
     if (!response.ok) {
-      errorAlert(responseJson)
+      errorAlert(responseJson);
       return;
-
     }
 
     this.setState({ jobs: responseJson });
