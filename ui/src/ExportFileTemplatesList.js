@@ -17,7 +17,7 @@ import {
   MenuItem,
   Typography,
 } from "@material-ui/core";
-import {errorAlert, getAuthorisedActivities} from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class ExportFileTemplateList extends Component {
   state = {
@@ -225,7 +225,7 @@ class ExportFileTemplateList extends Component {
     if (!response.ok) {
       this.createExportFileTemplateInProgress = false;
       const responseJson = await response.json();
-      errorAlert(responseJson)
+      errorAlert(responseJson);
     } else {
       this.setState({ createExportFileTemplateDialogDisplayed: false });
     }

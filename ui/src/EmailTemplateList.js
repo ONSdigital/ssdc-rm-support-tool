@@ -13,7 +13,7 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import {errorAlert, getAuthorisedActivities} from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class EmailTemplateList extends Component {
   state = {
@@ -256,7 +256,7 @@ class EmailTemplateList extends Component {
       });
       this.createEmailTemplateInProgress = false;
       const responseJson = await response.json();
-      errorAlert(responseJson)
+      errorAlert(responseJson);
     } else {
       this.setState({ createEmailTemplateDialogDisplayed: false });
     }

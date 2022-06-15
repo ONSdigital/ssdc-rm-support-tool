@@ -14,7 +14,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import {errorAlert, getAuthorisedActivities} from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 import { Link } from "react-router-dom";
 
 class CollectionExerciseList extends Component {
@@ -232,7 +232,7 @@ class CollectionExerciseList extends Component {
     } else {
       this.createCollectionExerciseInProgress = false;
       const responseJson = await response.json();
-      errorAlert(responseJson)
+      errorAlert(responseJson);
     }
   };
 

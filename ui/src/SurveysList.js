@@ -18,7 +18,7 @@ import {
   MenuItem,
   Typography,
 } from "@material-ui/core";
-import {errorAlert, getAuthorisedActivities} from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class SurveysList extends Component {
   state = {
@@ -198,13 +198,12 @@ class SurveysList extends Component {
     });
 
     if (response.ok) {
-        this.setState({createSurveyDialogDisplayed: false});
+      this.setState({ createSurveyDialogDisplayed: false });
     } else {
-        this.createSurveyInProgress = false;
-        const responseJson = await response.json();
-        errorAlert(responseJson)
+      this.createSurveyInProgress = false;
+      const responseJson = await response.json();
+      errorAlert(responseJson);
     }
-
   };
 
   render() {
