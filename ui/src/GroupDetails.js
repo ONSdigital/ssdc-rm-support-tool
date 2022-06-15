@@ -22,6 +22,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { errorAlert } from "./Utils";
 
 const globalSurveyId = "GLOBAL";
 const globalSurveyLabel = "All Surveys - Global permission";
@@ -118,11 +119,11 @@ class GroupDetails extends Component {
     const response = await fetch("/api/users");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return [];
     }
-
-    const responseJson = await response.json();
 
     return responseJson;
   };
@@ -156,17 +157,17 @@ class GroupDetails extends Component {
     const authResponse = await fetch("/api/auth");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await authResponse.json();
     if (!authResponse.ok) {
+      errorAlert(responseJson);
       return;
     }
-
-    const authorisedActivities = await authResponse.json();
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities: responseJson,
       isLoading: false,
     });
 
-    return authorisedActivities;
+    return responseJson;
   };
 
   getAllActivities = async () => {

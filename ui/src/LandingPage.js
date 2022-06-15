@@ -7,7 +7,7 @@ import SmsTemplatesList from "./SmsTemplatesList";
 import EmailTemplateList from "./EmailTemplateList";
 import ConfigureFulfilmentTrigger from "./ConfigureFulfilmentTrigger";
 
-import { getAuthorisedActivities } from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class LandingPage extends Component {
   state = {
@@ -29,11 +29,11 @@ class LandingPage extends Component {
     const response = await fetch("/api/userGroups/thisUserAdminGroups");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return;
     }
-
-    const responseJson = await response.json();
 
     this.setState({ thisUserAdminGroups: responseJson });
   };

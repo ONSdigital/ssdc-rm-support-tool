@@ -11,6 +11,7 @@ import SurveySimpleSearchInput from "./SurveySimpleSearchInput";
 import SurveySampleSearch from "./SurveySampleSearch";
 import CaseDetails from "./CaseDetails";
 import { Link } from "react-router-dom";
+import { errorAlert } from "./Utils";
 
 class SurveyCaseSearch extends Component {
   state = {
@@ -37,15 +38,15 @@ class SurveyCaseSearch extends Component {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return;
     }
 
-    const authJson = await response.json();
+    this.setState({ authorisedActivities: responseJson });
 
-    this.setState({ authorisedActivities: authJson });
-
-    return authJson;
+    return responseJson;
   };
 
   getCollectionExercises = async (authorisedActivities) => {
@@ -72,15 +73,14 @@ class SurveyCaseSearch extends Component {
     this.setState({ isWaitingForResults: false });
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
-      alert(`Error: ${response.state}`);
+      errorAlert(responseJson);
       return;
     }
 
-    const matchedCasesJson = await response.json();
-
     this.setState({
-      caseSearchResults: matchedCasesJson,
+      caseSearchResults: responseJson,
       caseSearchTerm: searchTerm,
       caseSearchDesc: searchDesc,
     });
