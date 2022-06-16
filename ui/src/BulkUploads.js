@@ -20,6 +20,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import JobDetails from "./JobDetails";
 import { Link } from "react-router-dom";
+import { errorAlert } from "./Utils";
 
 const BULK_REFUSAL_JOB_TYPE = "BULK_REFUSAL";
 const BULK_REFUSAL_VIEW_PERMISSION = "VIEW_BULK_REFUSAL_PROGRESS";
@@ -101,15 +102,15 @@ class BulkUploads extends Component {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return;
     }
 
-    const authJson = await response.json();
+    this.setState({ authorisedActivities: responseJson });
 
-    this.setState({ authorisedActivities: authJson });
-
-    return authJson;
+    return responseJson;
   };
 
   refreshBulkJobsFromBackend = async (

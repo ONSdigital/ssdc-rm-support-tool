@@ -10,7 +10,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSampleColumns } from "./Utils";
+import { errorAlert, getSampleColumns } from "./Utils";
 
 class SampleData extends Component {
   state = {
@@ -35,15 +35,15 @@ class SampleData extends Component {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return;
     }
 
-    const authJson = await response.json();
+    this.setState({ authorisedActivities: responseJson });
 
-    this.setState({ authorisedActivities: authJson });
-
-    return authJson;
+    return responseJson;
   };
 
   getSampleColumns = async (authorisedActivities) => {

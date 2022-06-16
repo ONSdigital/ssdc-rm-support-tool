@@ -10,7 +10,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { getSensitiveSampleColumns } from "./Utils";
+import { errorAlert, getSensitiveSampleColumns } from "./Utils";
 
 class SensitiveData extends Component {
   state = {
@@ -35,15 +35,15 @@ class SensitiveData extends Component {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return;
     }
 
-    const authJson = await response.json();
+    this.setState({ authorisedActivities: responseJson });
 
-    this.setState({ authorisedActivities: authJson });
-
-    return authJson;
+    return responseJson;
   };
 
   getSensitiveSampleColumns = async (authorisedActivities) => {
