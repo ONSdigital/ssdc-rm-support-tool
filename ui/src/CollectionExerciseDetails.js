@@ -59,10 +59,6 @@ class CollectionExerciseDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCollectionExerciseName(authorisedActivities);
@@ -71,11 +67,6 @@ class CollectionExerciseDetails extends Component {
     this.getSmsTemplates(authorisedActivities);
     this.getEmailTemplates(authorisedActivities);
     this.getSensitiveSampleColumns(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.getActionRules(authorisedActivities),
-      1000
-    );
   };
 
   getAuthorisedActivities = async () => {
@@ -377,6 +368,7 @@ class CollectionExerciseDetails extends Component {
     if (response.ok) {
       this.setState({ createActionRulesDialogDisplayed: false });
     }
+    this.getActionRules(this.state.authorisedActivities);
   };
 
   getTimeNowForDateTimePicker = () => {

@@ -47,11 +47,6 @@ class SurveysList extends Component {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(this.state.authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -199,6 +194,7 @@ class SurveysList extends Component {
 
     if (response.ok) {
       this.setState({ createSurveyDialogDisplayed: false });
+      this.refreshDataFromBackend(this.state.authorisedActivities);
     } else {
       this.createSurveyInProgress = false;
       const responseJson = await response.json();

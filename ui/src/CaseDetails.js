@@ -43,19 +43,16 @@ class CaseDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
     this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCasesAndQidData(authorisedActivities);
 
+    // Left in to refresh event list
     this.interval = setInterval(
       () => this.getCasesAndQidData(authorisedActivities),
-      1000
+      10000
     );
   };
 
@@ -101,7 +98,6 @@ class CaseDetails extends Component {
 
   onClickDeactivate = (qid) => {
     this.confirmDeactivateInProgress = false;
-
     this.setState({
       showDeactivaveDialog: true,
       qidToDeactivate: qid,

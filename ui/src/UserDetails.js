@@ -41,21 +41,12 @@ class UserDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getUser(authorisedActivities);
     this.getGroups(authorisedActivities);
 
     this.getUserMemberOf(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.getUserMemberOf(authorisedActivities),
-      1000
-    );
   };
 
   getUser = async (authorisedActivities) => {
@@ -155,12 +146,16 @@ class UserDetails extends Component {
       method: "DELETE",
     });
     this.closeRemoveDialog();
+
+    this.getAuthorisedBackendData();
   };
 
   onGroupChange = (event) => {
     this.setState({
       groupId: event.target.value,
     });
+
+    this.getAuthorisedBackendData();
   };
 
   onJoinGroup = async () => {
@@ -191,6 +186,8 @@ class UserDetails extends Component {
     });
 
     this.setState({ showGroupDialog: false });
+
+    this.getAuthorisedBackendData();
   };
 
   render() {

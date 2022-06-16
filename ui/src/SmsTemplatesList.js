@@ -41,19 +41,10 @@ class SmsTemplatesList extends Component {
     this.getBackEndData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -220,6 +211,8 @@ class SmsTemplatesList extends Component {
     } else {
       this.setState({ createSmsTemplateDialogDisplayed: false });
     }
+
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   onPackCodeChange = (event) => {

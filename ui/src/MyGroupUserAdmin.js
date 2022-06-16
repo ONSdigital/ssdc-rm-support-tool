@@ -31,20 +31,19 @@ class MyGroupUserAdmin extends Component {
     emailValidationError: false,
     showRemoveDialog: false,
     groupMemberIdToRemove: null,
+    allUsers: [],
   };
 
   componentDidMount = async () => {
     this.getGroup(); // Changes infrequently
     const allUsers = await this.getAllUsers(); // Changes infrequently, but expensive to fetch
 
+    this.setState({
+      allUsers: allUsers,
+    });
+
     this.refreshBackendData(allUsers);
-
-    this.interval = setInterval(() => this.refreshBackendData(allUsers), 1000);
   };
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
 
   refreshBackendData = async (allUsers) => {
     const groupMembers = await this.getGroupMembers();
@@ -152,6 +151,8 @@ class MyGroupUserAdmin extends Component {
     if (response.ok) {
       this.setState({ showAddUserToGroupDialog: false });
     }
+
+    this.refreshBackendData(this.state.allUsers);
   };
 
   openRemoveDialog = (groupMemberIdToRemove) => {
@@ -187,6 +188,8 @@ class MyGroupUserAdmin extends Component {
     if (response.ok) {
       this.closeRemoveDialog();
     }
+
+    this.refreshBackendData(this.state.allUsers);
   };
 
   render() {

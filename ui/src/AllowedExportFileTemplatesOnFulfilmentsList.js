@@ -39,19 +39,10 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -124,11 +115,12 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
       });
       this.allowFulfilmentExportFileTemplateInProgress = false;
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   openFulfilmentExportFileTemplateDialog = () => {
     this.allowFulfilmentExportFileTemplateInProgress = false;
-
+    this.refreshDataFromBackend(this.state.authorisedActivities);
     this.setState({
       allowFulfilmentExportFileTemplateDialogDisplayed: true,
       exportFileTemplateToAllow: "",

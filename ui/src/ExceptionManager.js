@@ -40,9 +40,10 @@ class ExceptionManager extends Component {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend(authorisedActivities);
 
+    // This has an interval still, as we presume devs doing support may wish to keep this screen up
     this.interval = setInterval(
       () => this.refreshDataFromBackend(authorisedActivities),
-      1000
+      10000
     );
   };
 

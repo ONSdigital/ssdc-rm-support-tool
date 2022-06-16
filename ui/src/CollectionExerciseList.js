@@ -39,19 +39,10 @@ class CollectionExerciseList extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.getCollectionExercises(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -234,6 +225,7 @@ class CollectionExerciseList extends Component {
       const responseJson = await response.json();
       errorAlert(responseJson);
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   render() {

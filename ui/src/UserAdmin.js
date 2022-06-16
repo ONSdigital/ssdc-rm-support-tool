@@ -35,18 +35,9 @@ class UserAdmin extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = (authorisedActivities) => {
@@ -116,6 +107,8 @@ class UserAdmin extends Component {
       email: event.target.value,
       emailValidationError: "",
     });
+
+    this.getAuthorisedBackendData();
   };
 
   validateEmail = (email) => {
@@ -162,6 +155,8 @@ class UserAdmin extends Component {
     });
 
     this.setState({ showUserDialog: false });
+
+    this.getAuthorisedBackendData();
   };
 
   openCreateGroupDialog = () => {
@@ -185,6 +180,8 @@ class UserAdmin extends Component {
     this.setState({
       groupName: event.target.value,
     });
+
+    this.getAuthorisedBackendData();
   };
 
   onGroupDescriptionChange = (event) => {
@@ -195,6 +192,8 @@ class UserAdmin extends Component {
     this.setState({
       groupDescription: event.target.value,
     });
+
+    this.getAuthorisedBackendData();
   };
 
   onCreateGroup = async () => {
@@ -236,6 +235,8 @@ class UserAdmin extends Component {
     });
 
     this.setState({ showGroupDialog: false });
+
+    this.getAuthorisedBackendData();
   };
 
   render() {

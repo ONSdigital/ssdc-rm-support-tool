@@ -38,19 +38,10 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -116,6 +107,7 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
       });
       this.allowSmsFulfilmentTemplateInProgress = false;
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   closeAllowSmsFulfilmentTemplateDialog = () => {
@@ -128,7 +120,7 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
 
   openSmsFulfilmentTemplateDialog = () => {
     this.allowSmsFulfilmentTemplateInProgress = false;
-
+    this.refreshDataFromBackend(this.state.authorisedActivities);
     this.setState({
       allowSmsFulfilmentTemplateDialogDisplayed: true,
       smsTemplateToAllow: "",
