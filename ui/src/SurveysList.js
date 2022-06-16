@@ -18,7 +18,7 @@ import {
   MenuItem,
   Typography,
 } from "@material-ui/core";
-import { getAuthorisedActivities } from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class SurveysList extends Component {
   state = {
@@ -79,7 +79,6 @@ class SurveysList extends Component {
   closeDialog = () => {
     // No. Do not. Do not put anything extra in here. This method ONLY deals with closing the dialog.
     this.setState({ createSurveyDialogDisplayed: false });
-    //this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   onNewSurveyNameChange = (event) => {
@@ -187,14 +186,20 @@ class SurveysList extends Component {
       metadata: metadataJson,
     };
 
-    await fetch("/api/surveys", {
+    const response = await fetch("/api/surveys", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSurvey),
     });
 
-    this.setState({ createSurveyDialogDisplayed: false });
-    this.refreshDataFromBackend(this.state.authorisedActivities);
+    if (response.ok) {
+      this.setState({ createSurveyDialogDisplayed: false });
+      this.refreshDataFromBackend(this.state.authorisedActivities);
+    } else {
+      this.createSurveyInProgress = false;
+      const responseJson = await response.json();
+      errorAlert(responseJson);
+    }
   };
 
   render() {

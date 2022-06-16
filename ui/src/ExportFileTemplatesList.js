@@ -17,7 +17,7 @@ import {
   MenuItem,
   Typography,
 } from "@material-ui/core";
-import { getAuthorisedActivities } from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class ExportFileTemplateList extends Component {
   state = {
@@ -216,9 +216,11 @@ class ExportFileTemplateList extends Component {
       body: JSON.stringify(newExportFileTemplate),
     });
 
-    // TODO: look at this madness some more
+    // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
     if (!response.ok) {
-      this.createExportFileTemplateDialogDisplayed = false;
+      this.createExportFileTemplateInProgress = false;
+      const responseJson = await response.json();
+      errorAlert(responseJson);
     } else {
       this.setState({ createExportFileTemplateDialogDisplayed: false });
     }

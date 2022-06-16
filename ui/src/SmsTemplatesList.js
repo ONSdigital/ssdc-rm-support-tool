@@ -13,7 +13,7 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import { getAuthorisedActivities } from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class SmsTemplatesList extends Component {
   state = {
@@ -206,6 +206,8 @@ class SmsTemplatesList extends Component {
         createSmsTemplateError: "Error Creating SMSTemplate",
       });
       this.createSmsTemplateInProgress = false;
+      const responseJson = await response.json();
+      errorAlert(responseJson);
     } else {
       this.setState({ createSmsTemplateDialogDisplayed: false });
     }
