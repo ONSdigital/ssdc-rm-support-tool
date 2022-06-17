@@ -13,7 +13,7 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import { getAuthorisedActivities } from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class EmailTemplateList extends Component {
   state = {
@@ -45,11 +45,6 @@ class EmailTemplateList extends Component {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -255,9 +250,12 @@ class EmailTemplateList extends Component {
         createEmailTemplateError: "Error creating email template",
       });
       this.createEmailTemplateInProgress = false;
+      const responseJson = await response.json();
+      errorAlert(responseJson);
     } else {
       this.setState({ createEmailTemplateDialogDisplayed: false });
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   render() {

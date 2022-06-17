@@ -14,6 +14,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { errorAlert } from "./Utils";
 
 class UserAdmin extends Component {
   state = {
@@ -34,18 +35,9 @@ class UserAdmin extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = (authorisedActivities) => {
@@ -81,17 +73,17 @@ class UserAdmin extends Component {
     const authResponse = await fetch("/api/auth");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await authResponse.json();
     if (!authResponse.ok) {
+      errorAlert(responseJson);
       return;
     }
-
-    const authorisedActivities = await authResponse.json();
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities: responseJson,
       isLoading: false,
     });
 
-    return authorisedActivities;
+    return responseJson;
   };
 
   openCreateUserDialog = () => {
@@ -115,6 +107,8 @@ class UserAdmin extends Component {
       email: event.target.value,
       emailValidationError: "",
     });
+
+    this.getAuthorisedBackendData();
   };
 
   validateEmail = (email) => {
@@ -161,6 +155,8 @@ class UserAdmin extends Component {
     });
 
     this.setState({ showUserDialog: false });
+
+    this.getAuthorisedBackendData();
   };
 
   openCreateGroupDialog = () => {
@@ -184,6 +180,8 @@ class UserAdmin extends Component {
     this.setState({
       groupName: event.target.value,
     });
+
+    this.getAuthorisedBackendData();
   };
 
   onGroupDescriptionChange = (event) => {
@@ -194,6 +192,8 @@ class UserAdmin extends Component {
     this.setState({
       groupDescription: event.target.value,
     });
+
+    this.getAuthorisedBackendData();
   };
 
   onCreateGroup = async () => {
@@ -235,6 +235,8 @@ class UserAdmin extends Component {
     });
 
     this.setState({ showGroupDialog: false });
+
+    this.getAuthorisedBackendData();
   };
 
   render() {

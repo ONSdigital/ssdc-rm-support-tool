@@ -20,6 +20,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { errorAlert } from "./Utils";
 
 class UserDetails extends Component {
   state = {
@@ -40,21 +41,12 @@ class UserDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getUser(authorisedActivities);
     this.getGroups(authorisedActivities);
 
     this.getUserMemberOf(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.getUserMemberOf(authorisedActivities),
-      1000
-    );
   };
 
   getUser = async (authorisedActivities) => {
@@ -99,17 +91,17 @@ class UserDetails extends Component {
     const authResponse = await fetch("/api/auth");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await authResponse.json();
     if (!authResponse.ok) {
+      errorAlert(responseJson);
       return;
     }
-
-    const authorisedActivities = await authResponse.json();
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities: responseJson,
       isLoading: false,
     });
 
-    return authorisedActivities;
+    return responseJson;
   };
 
   openJoinGroupDialog = () => {
@@ -154,12 +146,16 @@ class UserDetails extends Component {
       method: "DELETE",
     });
     this.closeRemoveDialog();
+
+    this.getAuthorisedBackendData();
   };
 
   onGroupChange = (event) => {
     this.setState({
       groupId: event.target.value,
     });
+
+    this.getAuthorisedBackendData();
   };
 
   onJoinGroup = async () => {
@@ -190,6 +186,8 @@ class UserDetails extends Component {
     });
 
     this.setState({ showGroupDialog: false });
+
+    this.getAuthorisedBackendData();
   };
 
   render() {

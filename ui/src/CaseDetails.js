@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 import SmsFulfilment from "./SmsFulfilment";
 import EmailFulfilment from "./EmailFulfilment";
 import JSONPretty from "react-json-pretty";
+import { errorAlert } from "./Utils";
 
 class CaseDetails extends Component {
   state = {
@@ -42,19 +43,16 @@ class CaseDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
 
     this.getSurveyName(authorisedActivities); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getCasesAndQidData(authorisedActivities);
 
+    // Left in to refresh event list
     this.interval = setInterval(
       () => this.getCasesAndQidData(authorisedActivities),
-      1000
+      10000
     );
   };
 
@@ -72,15 +70,15 @@ class CaseDetails extends Component {
     const response = await fetch(`/api/auth?surveyId=${this.props.surveyId}`);
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return;
     }
 
-    const authJson = await response.json();
+    this.setState({ authorisedActivities: responseJson });
 
-    this.setState({ authorisedActivities: authJson });
-
-    return authJson;
+    return responseJson;
   };
 
   getCasesAndQidData = async (authorisedActivities) => {
@@ -100,7 +98,6 @@ class CaseDetails extends Component {
 
   onClickDeactivate = (qid) => {
     this.confirmDeactivateInProgress = false;
-
     this.setState({
       showDeactivaveDialog: true,
       qidToDeactivate: qid,

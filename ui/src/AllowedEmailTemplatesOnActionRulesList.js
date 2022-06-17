@@ -37,19 +37,10 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -116,6 +107,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
       });
       this.allowActionRuleEmailTemplateInProgress = false;
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   closeAllowActionRuleEmailTemplateDialog = () => {
@@ -124,7 +116,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
 
   openActionRuleEmailTemplateDialog = () => {
     this.allowActionRuleEmailTemplateInProgress = false;
-
+    this.refreshDataFromBackend(this.state.authorisedActivities);
     this.setState({
       allowActionRuleEmailTemplateDialogDisplayed: true,
       emailTemplateToAllow: "",

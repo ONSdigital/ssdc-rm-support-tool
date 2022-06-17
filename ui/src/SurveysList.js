@@ -18,7 +18,7 @@ import {
   MenuItem,
   Typography,
 } from "@material-ui/core";
-import { getAuthorisedActivities } from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class SurveysList extends Component {
   state = {
@@ -47,11 +47,6 @@ class SurveysList extends Component {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(this.state.authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -191,13 +186,20 @@ class SurveysList extends Component {
       metadata: metadataJson,
     };
 
-    await fetch("/api/surveys", {
+    const response = await fetch("/api/surveys", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSurvey),
     });
 
-    this.setState({ createSurveyDialogDisplayed: false });
+    if (response.ok) {
+      this.setState({ createSurveyDialogDisplayed: false });
+      this.refreshDataFromBackend(this.state.authorisedActivities);
+    } else {
+      this.createSurveyInProgress = false;
+      const responseJson = await response.json();
+      errorAlert(responseJson);
+    }
   };
 
   render() {

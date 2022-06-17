@@ -13,7 +13,7 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import { getAuthorisedActivities } from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class SmsTemplatesList extends Component {
   state = {
@@ -41,19 +41,10 @@ class SmsTemplatesList extends Component {
     this.getBackEndData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.refreshDataFromBackend(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -215,9 +206,13 @@ class SmsTemplatesList extends Component {
         createSmsTemplateError: "Error Creating SMSTemplate",
       });
       this.createSmsTemplateInProgress = false;
+      const responseJson = await response.json();
+      errorAlert(responseJson);
     } else {
       this.setState({ createSmsTemplateDialogDisplayed: false });
     }
+
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   onPackCodeChange = (event) => {

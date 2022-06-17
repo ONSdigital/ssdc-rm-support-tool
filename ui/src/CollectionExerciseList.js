@@ -14,7 +14,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { getAuthorisedActivities } from "./Utils";
+import { errorAlert, getAuthorisedActivities } from "./Utils";
 import { Link } from "react-router-dom";
 
 class CollectionExerciseList extends Component {
@@ -39,19 +39,10 @@ class CollectionExerciseList extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
     this.refreshDataFromBackend(authorisedActivities);
-
-    this.interval = setInterval(
-      () => this.getCollectionExercises(authorisedActivities),
-      1000
-    );
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
@@ -231,7 +222,10 @@ class CollectionExerciseList extends Component {
       this.setState({ createCollectionExerciseDialogDisplayed: false });
     } else {
       this.createCollectionExerciseInProgress = false;
+      const responseJson = await response.json();
+      errorAlert(responseJson);
     }
+    this.refreshDataFromBackend(this.state.authorisedActivities);
   };
 
   render() {

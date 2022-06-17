@@ -22,6 +22,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { errorAlert } from "./Utils";
 
 const globalSurveyId = "GLOBAL";
 const globalSurveyLabel = "All Surveys - Global permission";
@@ -57,10 +58,6 @@ class GroupDetails extends Component {
     this.getAuthorisedBackendData();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
     this.getGroup(authorisedActivities);
@@ -72,10 +69,12 @@ class GroupDetails extends Component {
     const allUsers = await this.getAllUsers(authorisedActivities); // Only need to do this once... it's an expensive operation
     this.filterAllUsers(allUsers, admins);
 
-    this.interval = setInterval(
-      () => this.refreshBackendData(authorisedActivities, allUsers),
-      1000
-    );
+    this.setState({
+      authorisedActivities: authorisedActivities,
+      allUsers: allUsers,
+    });
+
+    this.refreshBackendData(authorisedActivities, allUsers);
   };
 
   refreshBackendData = async (authorisedActivities, allUsers) => {
@@ -118,11 +117,11 @@ class GroupDetails extends Component {
     const response = await fetch("/api/users");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return [];
     }
-
-    const responseJson = await response.json();
 
     return responseJson;
   };
@@ -156,17 +155,17 @@ class GroupDetails extends Component {
     const authResponse = await fetch("/api/auth");
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await authResponse.json();
     if (!authResponse.ok) {
+      errorAlert(responseJson);
       return;
     }
-
-    const authorisedActivities = await authResponse.json();
     this.setState({
-      authorisedActivities: authorisedActivities,
+      authorisedActivities: responseJson,
       isLoading: false,
     });
 
-    return authorisedActivities;
+    return responseJson;
   };
 
   getAllActivities = async () => {
@@ -251,6 +250,10 @@ class GroupDetails extends Component {
       }
     );
     this.closeRemoveDialog();
+    this.refreshBackendData(
+      this.state.authorisedActivities,
+      this.state.allUsers
+    );
   };
 
   onActivityChange = (event) => {
@@ -346,6 +349,10 @@ class GroupDetails extends Component {
     }
 
     this.setState({ showAllowDialog: false });
+    this.refreshBackendData(
+      this.state.authorisedActivities,
+      this.state.allUsers
+    );
   };
 
   openRemoveAdminDialog = (adminIdToRemove) => {
@@ -374,6 +381,11 @@ class GroupDetails extends Component {
     if (response.ok) {
       this.closeRemoveAdminDialog();
     }
+
+    this.refreshBackendData(
+      this.state.authorisedActivities,
+      this.state.allUsers
+    );
   };
 
   closeRemoveAdminDialog = () => {
@@ -419,6 +431,10 @@ class GroupDetails extends Component {
     }
 
     this.addAdminInProgress = false;
+    this.refreshBackendData(
+      this.state.authorisedActivities,
+      this.state.allUsers
+    );
   };
 
   closeAddAdminDialog = () => {

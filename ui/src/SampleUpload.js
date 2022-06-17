@@ -19,6 +19,7 @@ import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import JobDetails from "./JobDetails";
+import { errorAlert } from "./Utils";
 
 class SampleUpload extends Component {
   state = {
@@ -32,7 +33,9 @@ class SampleUpload extends Component {
   componentDidMount() {
     this.getJobs();
 
-    this.interval = setInterval(() => this.getJobs(), 1000);
+    // This is kept because the progress bars for file processing rely on it.
+    // It has been put to every 10 seconds to cut it back a little
+    this.interval = setInterval(() => this.getJobs(), 10000);
   }
 
   componentWillUnmount() {
@@ -123,13 +126,13 @@ class SampleUpload extends Component {
     );
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
+    const responseJson = await response.json();
     if (!response.ok) {
+      errorAlert(responseJson);
       return;
     }
 
-    const jobsJson = await response.json();
-
-    this.setState({ jobs: jobsJson });
+    this.setState({ jobs: responseJson });
   };
 
   handleOpenDetails = (job) => {
