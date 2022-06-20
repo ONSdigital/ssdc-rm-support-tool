@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +30,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/userGroupMembers")
 public class UserGroupMemberEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(UserGroupMemberEndpoint.class);
+
   private final UserGroupMemberRepository userGroupMemberRepository;
   private final UserIdentity userIdentity;
   private final UserRepository userRepository;
@@ -54,7 +58,10 @@ public class UserGroupMemberEndpoint {
         userRepository
             .findById(userId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
+                () -> {
+                  log.warn("User not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+                });
 
     return userGroupMemberRepository.findByUser(user).stream()
         .map(this::mapGroupMember)
@@ -69,7 +76,10 @@ public class UserGroupMemberEndpoint {
         userGroupRepository
             .findById(groupId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     if (group.getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
@@ -90,7 +100,10 @@ public class UserGroupMemberEndpoint {
         userGroupRepository
             .findById(userGroupMemberDto.getGroupId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     if (group.getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
@@ -102,7 +115,10 @@ public class UserGroupMemberEndpoint {
         userRepository
             .findById(userGroupMemberDto.getUserId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
+                () -> {
+                  log.warn("User not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+                });
 
     if (user.getMemberOf().stream()
         .anyMatch(userGroupMember -> userGroupMember.getGroup() == group)) {
@@ -128,9 +144,11 @@ public class UserGroupMemberEndpoint {
         userGroupMemberRepository
             .findById(groupMemberId)
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Group membership not found"));
+                () -> {
+                  log.warn("Group membership not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Group membership not found");
+                });
 
     if (userGroupMember.getGroup().getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {

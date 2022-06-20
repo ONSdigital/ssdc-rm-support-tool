@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +30,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/userGroupPermissions")
 public class UserGroupPermissionEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(UserGroupPermissionEndpoint.class);
+
   private final UserGroupPermissionRepository userGroupPermissionRepository;
   private final UserIdentity userIdentity;
   private final UserGroupRepository userGroupRepository;
@@ -54,7 +58,10 @@ public class UserGroupPermissionEndpoint {
         userGroupRepository
             .findById(groupId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     return userGroupPermissionRepository.findByGroup(group).stream()
         .map(
@@ -84,7 +91,10 @@ public class UserGroupPermissionEndpoint {
         userGroupRepository
             .findById(userGroupPermissionDto.getGroupId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     Survey survey = null;
     if (userGroupPermissionDto.getSurveyId() != null) {
@@ -98,7 +108,10 @@ public class UserGroupPermissionEndpoint {
           surveyRepository
               .findById(userGroupPermissionDto.getSurveyId())
               .orElseThrow(
-                  () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                  () -> {
+                    log.warn("Survey not found {}", HttpStatus.BAD_REQUEST);
+                    return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                  });
     }
 
     for (UserGroupPermission existingPermission : group.getPermissions()) {

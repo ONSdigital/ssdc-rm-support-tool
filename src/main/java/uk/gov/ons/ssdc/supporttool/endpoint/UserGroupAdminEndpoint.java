@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/userGroupAdmins")
 public class UserGroupAdminEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(UserGroupAdminEndpoint.class);
   private final UserGroupAdminRepository userGroupAdminRepository;
   private final UserIdentity userIdentity;
   private final UserRepository userRepository;
@@ -72,13 +75,19 @@ public class UserGroupAdminEndpoint {
         userRepository
             .findById(userGroupAdminDto.getUserId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
+                () -> {
+                  log.warn("User not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+                });
 
     UserGroup group =
         userGroupRepository
             .findById(userGroupAdminDto.getGroupId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     if (user.getAdminOf().stream().anyMatch(userGroupAdmin -> userGroupAdmin.getGroup() == group)) {
       throw new ResponseStatusException(

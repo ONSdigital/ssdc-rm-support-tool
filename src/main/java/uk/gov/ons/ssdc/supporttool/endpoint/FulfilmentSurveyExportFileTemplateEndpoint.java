@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,6 +33,8 @@ import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 @RestController
 @RequestMapping(value = "/api/fulfilmentSurveyExportFileTemplates")
 public class FulfilmentSurveyExportFileTemplateEndpoint {
+  private static final Logger log =
+      LoggerFactory.getLogger(FulfilmentSurveyExportFileTemplateEndpoint.class);
   private final FulfilmentSurveyExportFileTemplateRepository
       fulfilmentSurveyExportFileTemplateRepository;
   private final SurveyRepository surveyRepository;
@@ -60,7 +64,10 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("Survey not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -80,7 +87,10 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("Survey not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,

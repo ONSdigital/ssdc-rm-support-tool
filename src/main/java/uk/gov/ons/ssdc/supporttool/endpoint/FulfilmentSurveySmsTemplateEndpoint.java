@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,6 +33,8 @@ import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 @RestController
 @RequestMapping(value = "/api/fulfilmentSurveySmsTemplates")
 public class FulfilmentSurveySmsTemplateEndpoint {
+  private static final Logger log =
+      LoggerFactory.getLogger(FulfilmentSurveySmsTemplateEndpoint.class);
   private final FulfilmentSurveySmsTemplateRepository fulfilmentSurveySmsTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final SmsTemplateRepository smsTemplateRepository;
@@ -58,7 +62,10 @@ public class FulfilmentSurveySmsTemplateEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("Survey not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -78,7 +85,10 @@ public class FulfilmentSurveySmsTemplateEndpoint {
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("Survey not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_FULFILMENT);
@@ -87,8 +97,11 @@ public class FulfilmentSurveySmsTemplateEndpoint {
         smsTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(HttpStatus.BAD_REQUEST, "SMS template not found"));
+                () -> {
+                  log.warn("SMS template not found {}", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "SMS template not found");
+                });
 
     Optional<String> errorOpt = validate(survey, Set.of(smsTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
