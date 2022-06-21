@@ -101,9 +101,10 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
         exportFileTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->{
+                () -> {
                   log.warn("{} Export file template not found", HttpStatus.BAD_REQUEST);
-                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Export file template not found");
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Export file template not found");
                 });
 
     Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));

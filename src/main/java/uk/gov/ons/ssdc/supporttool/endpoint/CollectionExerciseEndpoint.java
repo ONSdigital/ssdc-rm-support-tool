@@ -229,7 +229,9 @@ public class CollectionExerciseEndpoint {
     }
 
     if (!foundDefaultRuleWithNullExpression) {
-      log.warn("{} Rules must include zero priority default with null expression", HttpStatus.BAD_REQUEST);
+      log.warn(
+          "{} Rules must include zero priority default with null expression",
+          HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Rules must include zero priority default with null expression");
     }
