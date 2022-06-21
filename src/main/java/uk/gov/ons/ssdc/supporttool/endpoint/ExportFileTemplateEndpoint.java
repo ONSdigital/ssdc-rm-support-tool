@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/exportFileTemplates")
 public class ExportFileTemplateEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(ExportFileTemplateEndpoint.class);
+
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final UserIdentity userIdentity;
 
@@ -69,6 +74,7 @@ public class ExportFileTemplateEndpoint {
               if (exportFileTemplate
                   .getPackCode()
                   .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
+                log.warn("{} Pack code already exists", HttpStatus.BAD_REQUEST);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
               }
             });
@@ -91,6 +97,7 @@ public class ExportFileTemplateEndpoint {
         new HashSet<>(Arrays.asList(exportFileTemplateDto.getTemplate()));
 
     if (exportFileTemplateDtoItemsSet.size() != exportFileTemplateDto.getTemplate().length) {
+      log.warn("{} Duplicate column in template", HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
   }

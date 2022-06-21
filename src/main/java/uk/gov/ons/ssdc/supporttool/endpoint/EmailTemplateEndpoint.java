@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/emailTemplates")
 public class EmailTemplateEndpoint {
+
+  private static final Logger log = LoggerFactory.getLogger(EmailTemplateEndpoint.class);
   private final EmailTemplateRepository emailTemplateRepository;
   private final UserIdentity userIdentity;
 
@@ -77,6 +82,7 @@ public class EmailTemplateEndpoint {
 
     Set<String> templateSet = new HashSet<>(Arrays.asList(emailTemplateDto.getTemplate()));
     if (templateSet.size() != emailTemplateDto.getTemplate().length) {
+      log.warn("{} Template cannot have duplicate columns", HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -86,6 +92,7 @@ public class EmailTemplateEndpoint {
         .forEach(
             emailTemplate -> {
               if (emailTemplate.getPackCode().equalsIgnoreCase(emailTemplateDto.getPackCode())) {
+                log.warn("{} Pack code already exists", HttpStatus.BAD_REQUEST);
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }

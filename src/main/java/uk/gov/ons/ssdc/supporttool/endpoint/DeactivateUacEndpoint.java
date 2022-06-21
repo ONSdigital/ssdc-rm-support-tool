@@ -27,7 +27,7 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 @RequestMapping(value = "/api/deactivateUac")
 public class DeactivateUacEndpoint {
 
-  private static final Logger log = LoggerFactory.getLogger(CollectionExerciseEndpoint.class);
+  private static final Logger log = LoggerFactory.getLogger(DeactivateUacEndpoint.class);
   private final UserIdentity userIdentity;
   private final UacQidLinkRepository qidLinkRepository;
   private final PubSubTemplate pubSubTemplate;

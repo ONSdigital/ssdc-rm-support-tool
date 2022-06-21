@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/smsTemplates")
 public class SmsTemplateEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(SmsTemplateEndpoint.class);
   private final SmsTemplateRepository smsTemplateRepository;
   private final UserIdentity userIdentity;
 
@@ -76,6 +80,7 @@ public class SmsTemplateEndpoint {
   private void validateTemplate(SmsTemplateDto smsTemplateDto) {
     Set<String> templateSet = new HashSet<>(Arrays.asList(smsTemplateDto.getTemplate()));
     if (templateSet.size() != smsTemplateDto.getTemplate().length) {
+      log.warn("{} Template cannot have duplicate columns", HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -85,6 +90,7 @@ public class SmsTemplateEndpoint {
         .forEach(
             smsTemplate -> {
               if (smsTemplate.getPackCode().equalsIgnoreCase(smsTemplateDto.getPackCode())) {
+                log.warn("{} Pack code already exists", HttpStatus.BAD_REQUEST);
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }
