@@ -58,6 +58,7 @@ public class UserIdentity {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
+      log.warn("{} User not known to RM", HttpStatus.FORBIDDEN);
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 
@@ -82,9 +83,8 @@ public class UserIdentity {
       }
     }
 
-    throw new ResponseStatusException(
-        HttpStatus.FORBIDDEN,
-        String.format("User not authorised for activity %s", activity.name()));
+    log.warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
+    throw new ResponseStatusException(HttpStatus.FORBIDDEN, String.format("User not authorised for activity %s", activity.name()));
   }
 
   public void checkGlobalUserPermission(
@@ -99,6 +99,7 @@ public class UserIdentity {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
+      log.warn("{} User not known to RM", HttpStatus.FORBIDDEN);
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 
@@ -116,6 +117,7 @@ public class UserIdentity {
       }
     }
 
+    log.warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
     throw new ResponseStatusException(
         HttpStatus.FORBIDDEN,
         String.format("User not authorised for activity %s", activity.name()));
@@ -128,6 +130,7 @@ public class UserIdentity {
       return dummyUserIdentity;
     } else if (!StringUtils.hasText(jwtToken)) {
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
+      log.warn("{} Requests bypassing IAP are strictly forbidden", HttpStatus.FORBIDDEN);
       throw new ResponseStatusException(
           HttpStatus.FORBIDDEN, String.format("Requests bypassing IAP are strictly forbidden"));
     } else {

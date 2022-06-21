@@ -98,9 +98,10 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
         emailTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->{
+                () -> {
                   log.warn("{} Email template not found", HttpStatus.BAD_REQUEST);
-                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email template not found");
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Email template not found");
                 });
 
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
