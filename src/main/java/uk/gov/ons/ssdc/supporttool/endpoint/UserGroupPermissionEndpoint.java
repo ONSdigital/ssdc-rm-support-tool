@@ -59,7 +59,7 @@ public class UserGroupPermissionEndpoint {
             .findById(groupId)
             .orElseThrow(
                 () -> {
-                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -92,7 +92,7 @@ public class UserGroupPermissionEndpoint {
             .findById(userGroupPermissionDto.getGroupId())
             .orElseThrow(
                 () -> {
-                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -109,7 +109,7 @@ public class UserGroupPermissionEndpoint {
               .findById(userGroupPermissionDto.getSurveyId())
               .orElseThrow(
                   () -> {
-                    log.warn("Survey not found {}", HttpStatus.BAD_REQUEST);
+                    log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                     return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                   });
     }

@@ -64,7 +64,7 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.warn("Survey not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -87,7 +87,7 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.warn("Survey not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -98,9 +98,10 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
         emailTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Email template not found"));
+                () ->{
+                  log.warn("{} Email template not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email template not found");
+                });
 
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {

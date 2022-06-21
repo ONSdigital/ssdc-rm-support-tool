@@ -76,7 +76,7 @@ public class UserGroupAdminEndpoint {
             .findById(userGroupAdminDto.getUserId())
             .orElseThrow(
                 () -> {
-                  log.warn("User not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} User not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
                 });
 
@@ -85,7 +85,7 @@ public class UserGroupAdminEndpoint {
             .findById(userGroupAdminDto.getGroupId())
             .orElseThrow(
                 () -> {
-                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 

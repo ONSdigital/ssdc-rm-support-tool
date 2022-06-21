@@ -50,7 +50,7 @@ public class UserGroupEndpoint {
             .findById(groupId)
             .orElseThrow(
                 () -> {
-                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 

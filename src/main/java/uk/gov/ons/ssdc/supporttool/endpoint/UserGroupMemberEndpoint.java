@@ -59,7 +59,7 @@ public class UserGroupMemberEndpoint {
             .findById(userId)
             .orElseThrow(
                 () -> {
-                  log.warn("User not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} User not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
                 });
 
@@ -77,7 +77,7 @@ public class UserGroupMemberEndpoint {
             .findById(groupId)
             .orElseThrow(
                 () -> {
-                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -101,7 +101,7 @@ public class UserGroupMemberEndpoint {
             .findById(userGroupMemberDto.getGroupId())
             .orElseThrow(
                 () -> {
-                  log.warn("Group not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -116,7 +116,7 @@ public class UserGroupMemberEndpoint {
             .findById(userGroupMemberDto.getUserId())
             .orElseThrow(
                 () -> {
-                  log.warn("User not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} User not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
                 });
 
@@ -145,7 +145,7 @@ public class UserGroupMemberEndpoint {
             .findById(groupMemberId)
             .orElseThrow(
                 () -> {
-                  log.warn("Group membership not found {}", HttpStatus.BAD_REQUEST);
+                  log.warn("{} Group membership not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Group membership not found");
                 });
