@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -30,6 +32,9 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/actionRuleSurveyEmailTemplates")
 public class ActionRuleSurveyEmailTemplateEndpoint {
+
+  private static final Logger log =
+      LoggerFactory.getLogger(ActionRuleSurveyEmailTemplateEndpoint.class);
   private final ActionRuleSurveyEmailTemplateRepository actionRuleSurveyEmailTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final EmailTemplateRepository emailTemplateRepository;
@@ -55,7 +60,10 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -75,7 +83,10 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE);
@@ -84,9 +95,11 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
         emailTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Email template not found"));
+                () -> {
+                  log.warn("{} Email template not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Email template not found");
+                });
 
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {

@@ -2,13 +2,17 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -42,6 +46,8 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 @RestController
 @RequestMapping(value = "/api/collectionExercises")
 public class CollectionExerciseEndpoint {
+
+  private static final Logger log = LoggerFactory.getLogger(CollectionExerciseEndpoint.class);
   private static final ExpressionParser expressionParser = new SpelExpressionParser();
 
   private final CollectionExerciseRepository collectionExerciseRepository;
@@ -77,9 +83,11 @@ public class CollectionExerciseEndpoint {
         collectionExerciseRepository
             .findById(collexId)
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Collection exercise not found"));
+                () -> {
+                  log.warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Collection exercise not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -98,7 +106,10 @@ public class CollectionExerciseEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES);
@@ -130,7 +141,10 @@ public class CollectionExerciseEndpoint {
         surveyRepository
             .findById(collectionExerciseDto.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.CREATE_COLLECTION_EXERCISE);

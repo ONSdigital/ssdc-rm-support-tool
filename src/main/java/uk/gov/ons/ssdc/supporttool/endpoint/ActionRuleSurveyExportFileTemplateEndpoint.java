@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -30,6 +32,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/actionRuleSurveyExportFileTemplates")
 public class ActionRuleSurveyExportFileTemplateEndpoint {
+  private static final Logger log =
+      LoggerFactory.getLogger(ActionRuleSurveyExportFileTemplateEndpoint.class);
   private final ActionRuleSurveyExportFileTemplateRepository
       actionRuleSurveyExportFileTemplateRepository;
   private final SurveyRepository surveyRepository;
@@ -57,7 +61,10 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -77,7 +84,10 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -88,9 +98,11 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
         exportFileTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Export file template not found"));
+                () -> {
+                  log.warn("{} Export File template not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Export File template not found");
+                });
 
     Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));
     if (errorOpt.isPresent()) {

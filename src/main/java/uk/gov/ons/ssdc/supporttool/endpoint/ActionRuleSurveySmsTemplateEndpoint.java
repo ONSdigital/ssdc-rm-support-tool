@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -30,6 +32,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/actionRuleSurveySmsTemplates")
 public class ActionRuleSurveySmsTemplateEndpoint {
+  private static final Logger log =
+      LoggerFactory.getLogger(ActionRuleSurveySmsTemplateEndpoint.class);
   private final ActionRuleSurveySmsTemplateRepository actionRuleSurveySmsTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final SmsTemplateRepository smsTemplateRepository;
@@ -55,8 +59,10 @@ public class ActionRuleSurveySmsTemplateEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
-
+                () -> {
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
     userIdentity.checkUserPermission(
         userEmail,
         survey,
@@ -75,7 +81,10 @@ public class ActionRuleSurveySmsTemplateEndpoint {
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_ACTION_RULE);
@@ -84,8 +93,11 @@ public class ActionRuleSurveySmsTemplateEndpoint {
         smsTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(HttpStatus.BAD_REQUEST, "SMS template not found"));
+                () -> {
+                  log.warn("{} SMS template not found", HttpStatus.BAD_REQUEST);
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "SMS template not found");
+                });
 
     Optional<String> errorOpt = validate(survey, Set.of(smsTemplate.getTemplate()));
     if (errorOpt.isPresent()) {

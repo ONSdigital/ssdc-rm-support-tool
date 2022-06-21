@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,7 @@ import uk.gov.ons.ssdc.supporttool.service.CaseService;
 @RequestMapping(value = "/api/cases")
 public class CaseEndpoint {
 
+  private static final Logger log = LoggerFactory.getLogger(CaseEndpoint.class);
   private final NotifyServiceClient notifyServiceClient;
   private final CaseService caseService;
   private final UserIdentity userIdentity;
@@ -136,6 +139,7 @@ public class CaseEndpoint {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
 
+      log.warn("{} There are validation errors in the provided data", HttpStatus.BAD_REQUEST);
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -163,6 +167,7 @@ public class CaseEndpoint {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
 
+      log.warn("{} There are validation errors in the provided data", HttpStatus.BAD_REQUEST);
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -290,6 +295,7 @@ public class CaseEndpoint {
 
     Optional<String> errorOpt = requestSmsFulfilment(smsFulfilmentRequest);
     if (errorOpt.isPresent()) {
+      log.warn("{} There are validation errors in the provided data", HttpStatus.BAD_REQUEST);
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(HttpStatus.OK);
@@ -330,6 +336,7 @@ public class CaseEndpoint {
 
     Optional<String> errorOpt = requestEmailFulfilment(emailFulfilmentRequest);
     if (errorOpt.isPresent()) {
+      log.warn("{} There are validation errors in the provided data", HttpStatus.BAD_REQUEST);
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(HttpStatus.OK);
