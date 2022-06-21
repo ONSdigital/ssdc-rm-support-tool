@@ -4,6 +4,9 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +24,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/fulfilmentNextTriggers")
 public class FulfilmentNextTriggerEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(FulfilmentNextTriggerEndpoint.class);
   private final FulfilmentNextTriggerRepository fulfilmentNextTriggerRepository;
   private final UserIdentity userIdentity;
 
@@ -38,11 +42,13 @@ public class FulfilmentNextTriggerEndpoint {
 
     List<FulfilmentNextTrigger> fulfilmentNextTriggers = fulfilmentNextTriggerRepository.findAll();
     if (fulfilmentNextTriggers.size() > 1) {
+      log.warn("{} Multiple triggers not currently supported", HttpStatus.INTERNAL_SERVER_ERROR);
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }
 
     if (fulfilmentNextTriggers.isEmpty()) {
+      log.warn("{} No fulfilment trigger found", HttpStatus.NOT_FOUND);
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -59,6 +65,7 @@ public class FulfilmentNextTriggerEndpoint {
     List<FulfilmentNextTrigger> fulfilmentNextTriggers = fulfilmentNextTriggerRepository.findAll();
 
     if (fulfilmentNextTriggers.size() > 1) {
+      log.warn("{} Multiple triggers not currently supported", HttpStatus.INTERNAL_SERVER_ERROR);
       throw new HttpClientErrorException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }
