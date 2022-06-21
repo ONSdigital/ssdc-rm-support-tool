@@ -95,6 +95,7 @@ public class UserGroupEndpoint {
     userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     if (userGroupRepository.existsByName(userGroupDto.getName())) {
+      log.warn("{} Group name already exists", HttpStatus.CONFLICT);
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Group name already exists");
     }
 

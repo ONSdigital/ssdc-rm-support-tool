@@ -122,6 +122,7 @@ public class UserGroupMemberEndpoint {
 
     if (user.getMemberOf().stream()
         .anyMatch(userGroupMember -> userGroupMember.getGroup() == group)) {
+      log.warn("{} User is already a member of this group", HttpStatus.CONFLICT);
       throw new ResponseStatusException(
           HttpStatus.CONFLICT, "User is already a member of this group");
     }

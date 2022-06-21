@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 @RestController
 @RequestMapping(value = "/api/surveyCases")
 public class SurveyCasesEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(SurveyCasesEndpoint.class);
 
   private final SurveyRepository surveyRepository;
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -137,6 +140,7 @@ public class SurveyCasesEndpoint {
   private void checkSurveySearchCasesPermission(String userEmail, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
+      log.warn("{} Survey not found", HttpStatus.NOT_FOUND);
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Survey not found");
     }
     userIdentity.checkUserPermission(

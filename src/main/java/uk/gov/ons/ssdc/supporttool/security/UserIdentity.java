@@ -84,7 +84,9 @@ public class UserIdentity {
     }
 
     log.warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
-    throw new ResponseStatusException(HttpStatus.FORBIDDEN, String.format("User not authorised for activity %s", activity.name()));
+    throw new ResponseStatusException(
+        HttpStatus.FORBIDDEN,
+        String.format("User not authorised for activity %s", activity.name()));
   }
 
   public void checkGlobalUserPermission(

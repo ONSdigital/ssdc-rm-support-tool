@@ -90,6 +90,7 @@ public class UserGroupAdminEndpoint {
                 });
 
     if (user.getAdminOf().stream().anyMatch(userGroupAdmin -> userGroupAdmin.getGroup() == group)) {
+      log.warn("{} User is already an admin of this group", HttpStatus.CONFLICT);
       throw new ResponseStatusException(
           HttpStatus.CONFLICT, "User is already an admin of this group");
     }
