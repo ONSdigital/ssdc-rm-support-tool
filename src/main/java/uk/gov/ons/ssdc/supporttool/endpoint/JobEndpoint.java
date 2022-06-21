@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.rasrm.constants.RasRmConstants.BUSINESS_SAMPLE_DEFINITION_URL_SUFFIX;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +48,8 @@ import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
 @RestController
 @RequestMapping(value = "/api/job")
 public class JobEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(JobEndpoint.class);
+
   private final JobRepository jobRepository;
   private final JobRowRepository jobRowRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
@@ -80,6 +84,7 @@ public class JobEndpoint {
         collectionExerciseRepository.findById(collectionExerciseId);
 
     if (collexOpt.isEmpty()) {
+      log.warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
@@ -216,6 +221,7 @@ public class JobEndpoint {
       job.setProcessedAt(OffsetDateTime.now());
       jobRepository.saveAndFlush(job);
     } else {
+      log.warn("{} Can't cancel a job which isn't validated", HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't process a job which isn't validated");
     }
@@ -238,6 +244,7 @@ public class JobEndpoint {
 
       jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
     } else {
+      log.warn("{} Can't cancel a job which isn't validated", HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't cancel a job which isn't validated");
     }
@@ -255,6 +262,7 @@ public class JobEndpoint {
     Optional<CollectionExercise> collexOpt =
         collectionExerciseRepository.findById(collectionExerciseId);
     if (collexOpt.isEmpty()) {
+      log.warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 

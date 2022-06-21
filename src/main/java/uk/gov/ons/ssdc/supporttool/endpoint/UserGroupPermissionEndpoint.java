@@ -100,6 +100,7 @@ public class UserGroupPermissionEndpoint {
     if (userGroupPermissionDto.getSurveyId() != null) {
       if (userGroupPermissionDto.getAuthorisedActivity().isGlobal()) {
         // Not allowed to use a global permission on a specific survey... doesn't work; nonsensical!
+        log.warn("{} Global permissions must be global", HttpStatus.BAD_REQUEST);
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Global permissions must be global");
       }
@@ -123,6 +124,7 @@ public class UserGroupPermissionEndpoint {
           && ((survey == null && existingPermission.getSurvey() == null)
               || (existingPermission.getSurvey() != null
                   && existingPermission.getSurvey().equals(survey)))) {
+        log.warn("{} Permission already exists", HttpStatus.CONFLICT);
         throw new ResponseStatusException(HttpStatus.CONFLICT, "Permission already exists");
       }
     }
