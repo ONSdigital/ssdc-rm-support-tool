@@ -52,6 +52,7 @@ public class UserGroupEndpoint {
                 () -> {
                   log.with("groupId", groupId)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
                       .warn("Group not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
@@ -99,6 +100,7 @@ public class UserGroupEndpoint {
     if (userGroupRepository.existsByName(userGroupDto.getName())) {
       log.with("groupId", userGroupDto.getId())
           .with("groupName", userGroupDto.getName())
+          .with("userEmail", userEmail)
           .with("httpStatus", HttpStatus.CONFLICT)
           .warn("Group name already exists");
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Group name already exists");

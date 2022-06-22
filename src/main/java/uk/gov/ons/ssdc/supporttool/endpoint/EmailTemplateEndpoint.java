@@ -63,7 +63,7 @@ public class EmailTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EMAIL_TEMPLATE);
 
-    validateEmailTemplate(emailTemplateDto);
+    validateEmailTemplate(emailTemplateDto, userEmail);
 
     EmailTemplate emailTemplate = new EmailTemplate();
     emailTemplate.setTemplate(emailTemplateDto.getTemplate());
@@ -77,11 +77,12 @@ public class EmailTemplateEndpoint {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  private void validateEmailTemplate(EmailTemplateDto emailTemplateDto) {
+  private void validateEmailTemplate(EmailTemplateDto emailTemplateDto, String userEmail) {
 
     Set<String> templateSet = new HashSet<>(Arrays.asList(emailTemplateDto.getTemplate()));
     if (templateSet.size() != emailTemplateDto.getTemplate().length) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
           .with("template", templateSet)
           .warn("Template cannot have duplicate columns");
       throw new ResponseStatusException(
@@ -94,6 +95,7 @@ public class EmailTemplateEndpoint {
             emailTemplate -> {
               if (emailTemplate.getPackCode().equalsIgnoreCase(emailTemplateDto.getPackCode())) {
                 log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                    .with("userEmail", userEmail)
                     .with("packCode", emailTemplate.getPackCode())
                     .warn("Pack code already exists");
                 throw new ResponseStatusException(

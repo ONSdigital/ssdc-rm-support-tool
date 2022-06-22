@@ -78,6 +78,7 @@ public class ActionRuleEndpoint {
                 () -> {
                   log.with("collectionExerciseId", collectionExerciseId)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
                       .warn("Collection exercise not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
@@ -133,6 +134,7 @@ public class ActionRuleEndpoint {
                 () -> {
                   log.with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", createdBy)
                       .warn("Collection exercise not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
@@ -153,6 +155,7 @@ public class ActionRuleEndpoint {
                     () -> {
                       log.with("packcode", actionRuleDTO.getPackCode())
                           .with("httpStatus", HttpStatus.BAD_REQUEST)
+                          .with("userEmail", createdBy)
                           .warn("Export file template not found");
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST, "Export file template not found");
@@ -176,6 +179,7 @@ public class ActionRuleEndpoint {
                     () -> {
                       log.with("packcode", actionRuleDTO.getPackCode())
                           .with("httpStatus", HttpStatus.BAD_REQUEST)
+                          .with("userEmail", createdBy)
                           .warn("SMS template not found");
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST, "SMS template not found");
@@ -184,6 +188,7 @@ public class ActionRuleEndpoint {
             .contains(actionRuleDTO.getPhoneNumberColumn())) {
           log.with("requestedColumn", actionRuleDTO.getPhoneNumberColumn())
               .with("httpStatus", HttpStatus.BAD_REQUEST)
+              .with("userEmail", createdBy)
               .warn("Phone number column does not exist");
           throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Phone number column does not exist");
@@ -198,6 +203,7 @@ public class ActionRuleEndpoint {
                     () -> {
                       log.with("packcode", actionRuleDTO.getPackCode())
                           .with("httpStatus", HttpStatus.BAD_REQUEST)
+                          .with("userEmail", createdBy)
                           .warn("Email template not found");
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST, "Email template not found");
@@ -206,6 +212,7 @@ public class ActionRuleEndpoint {
             .contains(actionRuleDTO.getEmailColumn())) {
           log.with("requestedColumn", actionRuleDTO.getEmailColumn())
               .with("httpStatus", HttpStatus.BAD_REQUEST)
+              .with("userEmail", createdBy)
               .warn("{} Email column does not exist", HttpStatus.BAD_REQUEST);
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
         }

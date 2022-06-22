@@ -85,6 +85,7 @@ public class JobEndpoint {
 
     if (collexOpt.isEmpty()) {
       log.with("collexId", collectionExerciseId)
+          .with("userEmail", userEmail)
           .with("httpStatus", HttpStatus.BAD_REQUEST)
           .warn("Collection exercise not found");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
@@ -225,6 +226,7 @@ public class JobEndpoint {
     } else {
       log.with("jobId", id)
           .with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
           .warn("Can't process a job which isn't validated");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't process a job which isn't validated");
@@ -250,6 +252,7 @@ public class JobEndpoint {
     } else {
       log.with("jobId", id)
           .with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
           .warn("Can't cancel a job which isn't validated");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't cancel a job which isn't validated");
@@ -270,6 +273,7 @@ public class JobEndpoint {
     if (collexOpt.isEmpty()) {
       log.with("collexId", collectionExerciseId)
           .with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
           .warn("Collection exercise not found");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }

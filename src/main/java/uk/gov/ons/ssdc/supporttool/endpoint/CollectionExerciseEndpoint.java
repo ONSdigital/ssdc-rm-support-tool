@@ -84,6 +84,7 @@ public class CollectionExerciseEndpoint {
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("collexId", collexId)
+                      .with("userEmail", userEmail)
                       .warn("Collection exercise not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
@@ -109,6 +110,7 @@ public class CollectionExerciseEndpoint {
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("surveyId", surveyId)
+                      .with("userEmail", userEmail)
                       .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
@@ -146,6 +148,7 @@ public class CollectionExerciseEndpoint {
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("surveyId", collectionExerciseDto.getSurveyId())
+                      .with("userEmail", userEmail)
                       .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
@@ -154,7 +157,7 @@ public class CollectionExerciseEndpoint {
         userEmail, survey, UserGroupAuthorisedActivityType.CREATE_COLLECTION_EXERCISE);
 
     validateCollectionInstrumentRules(
-        collectionExerciseDto.getCollectionInstrumentSelectionRules());
+        collectionExerciseDto.getCollectionInstrumentSelectionRules(), userEmail);
 
     CollectionExercise collectionExercise = new CollectionExercise();
     collectionExercise.setId(UUID.randomUUID());
@@ -201,13 +204,15 @@ public class CollectionExerciseEndpoint {
   }
 
   private void validateCollectionInstrumentRules(
-      CollectionInstrumentSelectionRule[] collectionInstrumentSelectionRules) {
+      CollectionInstrumentSelectionRule[] collectionInstrumentSelectionRules, String userEmail) {
     boolean foundDefaultRuleWithNullExpression = false;
 
     for (CollectionInstrumentSelectionRule collectionInstrumentSelectionRule :
         collectionInstrumentSelectionRules) {
       if (!StringUtils.hasText(collectionInstrumentSelectionRule.getCollectionInstrumentUrl())) {
-        log.with("httpStatus", HttpStatus.BAD_REQUEST).warn("CI URL cannot be blank");
+        log.with("httpStatus", HttpStatus.BAD_REQUEST)
+            .with("userEmail", userEmail)
+            .warn("CI URL cannot be blank");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CI URL cannot be blank");
       }
 
@@ -220,7 +225,9 @@ public class CollectionExerciseEndpoint {
 
         continue;
       } else if (!StringUtils.hasText(spelExpression)) {
-        log.with("httpStatus", HttpStatus.BAD_REQUEST).warn("SPEL expression cannot be blank");
+        log.with("httpStatus", HttpStatus.BAD_REQUEST)
+            .with("userEmail", userEmail)
+            .warn("SPEL expression cannot be blank");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "SPEL expression cannot be blank");
       }
@@ -230,6 +237,7 @@ public class CollectionExerciseEndpoint {
       } catch (Exception e) {
         log.with("httpStatus", HttpStatus.BAD_REQUEST)
             .with("spelExpression", spelExpression)
+            .with("userEmail", userEmail)
             .warn("Invalid SPEL");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression, e);
@@ -238,6 +246,7 @@ public class CollectionExerciseEndpoint {
 
     if (!foundDefaultRuleWithNullExpression) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
           .warn("Rules must include zero priority default with null expression");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Rules must include zero priority default with null expression");

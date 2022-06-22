@@ -61,6 +61,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
                       .with("surveyId", surveyId)
                       .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
@@ -85,6 +86,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
                       .with("surveyId", allowTemplateOnSurvey.getSurveyId())
                       .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
@@ -99,6 +101,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
                       .with("packCode", allowTemplateOnSurvey.getPackCode())
                       .warn("SMS template not found");
                   return new ResponseStatusException(
@@ -108,6 +111,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
     Optional<String> errorOpt = validate(survey, Set.of(smsTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
           .warn("There were errors validating the sms template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);

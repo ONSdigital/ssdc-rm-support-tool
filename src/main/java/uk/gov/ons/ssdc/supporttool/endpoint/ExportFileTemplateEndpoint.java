@@ -64,7 +64,7 @@ public class ExportFileTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_TEMPLATE);
 
-    checkDuplicateTemplateItems(exportFileTemplateDto);
+    checkDuplicateTemplateItems(exportFileTemplateDto, userEmail);
 
     exportFileTemplateRepository
         .findAll()
@@ -74,6 +74,7 @@ public class ExportFileTemplateEndpoint {
                   .getPackCode()
                   .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
                 log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                    .with("userEmail", userEmail)
                     .with("packCode", exportFileTemplateDto.getPackCode())
                     .warn("Pack code already exists");
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -93,12 +94,14 @@ public class ExportFileTemplateEndpoint {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  private void checkDuplicateTemplateItems(ExportFileTemplateDto exportFileTemplateDto) {
+  private void checkDuplicateTemplateItems(
+      ExportFileTemplateDto exportFileTemplateDto, String userEmail) {
     Set<String> exportFileTemplateDtoItemsSet =
         new HashSet<>(Arrays.asList(exportFileTemplateDto.getTemplate()));
 
     if (exportFileTemplateDtoItemsSet.size() != exportFileTemplateDto.getTemplate().length) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
           .with("template", exportFileTemplateDtoItemsSet)
           .warn("Duplicate column in template");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

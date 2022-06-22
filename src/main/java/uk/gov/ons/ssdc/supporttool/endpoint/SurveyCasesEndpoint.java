@@ -141,6 +141,7 @@ public class SurveyCasesEndpoint {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
       log.with("surveyId", surveyId)
+          .with("userEmail", userEmail)
           .with("httpStatus", HttpStatus.NOT_FOUND)
           .warn("Survey not found");
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Survey not found");

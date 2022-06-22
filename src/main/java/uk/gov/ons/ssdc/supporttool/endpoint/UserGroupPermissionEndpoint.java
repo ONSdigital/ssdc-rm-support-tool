@@ -60,6 +60,7 @@ public class UserGroupPermissionEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("groupId", groupId)
+                      .with("userEmail", userEmail)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
                       .warn("Group not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
@@ -95,6 +96,7 @@ public class UserGroupPermissionEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("groupId", userGroupPermissionDto.getGroupId())
+                      .with("userEmail", userEmail)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
                       .warn("Group not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
@@ -106,6 +108,7 @@ public class UserGroupPermissionEndpoint {
         // Not allowed to use a global permission on a specific survey... doesn't work; nonsensical!
         log.with("authorisedActivity", userGroupPermissionDto.getAuthorisedActivity().name())
             .with("httpStatus", HttpStatus.BAD_REQUEST)
+            .with("userEmail", userEmail)
             .warn("Global permissions must be global");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Global permissions must be global");
@@ -118,6 +121,7 @@ public class UserGroupPermissionEndpoint {
                   () -> {
                     log.with("surveyId", userGroupPermissionDto.getSurveyId())
                         .with("httpStatus", HttpStatus.BAD_REQUEST)
+                        .with("userEmail", userEmail)
                         .warn("Survey not found");
                     return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                   });
@@ -134,6 +138,7 @@ public class UserGroupPermissionEndpoint {
                   && existingPermission.getSurvey().equals(survey)))) {
         log.with("authorisedActivity", existingPermission.getAuthorisedActivity())
             .with("surveyName", survey.getName())
+            .with("userEmail", userEmail)
             .with("httpStatus", HttpStatus.CONFLICT)
             .warn("Permission already exists");
         throw new ResponseStatusException(HttpStatus.CONFLICT, "Permission already exists");

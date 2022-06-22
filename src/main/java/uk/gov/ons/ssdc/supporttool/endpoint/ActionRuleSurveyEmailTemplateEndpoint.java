@@ -63,6 +63,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("surveyId", surveyId)
+                      .with("userEmail", userEmail)
                       .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
@@ -88,6 +89,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .with("userEmail", userEmail)
                       .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
@@ -102,6 +104,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                 () -> {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("packCode", allowTemplateOnSurvey.getPackCode())
+                      .with("userEmail", userEmail)
                       .warn("Email template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Email template not found");
@@ -110,6 +113,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
           .warn("There were errors validating the email template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
