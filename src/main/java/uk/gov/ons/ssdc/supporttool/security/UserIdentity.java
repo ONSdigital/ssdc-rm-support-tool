@@ -58,7 +58,9 @@ public class UserIdentity {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
-      log.with("userEmail", userEmail).warn("{} User not known to RM", HttpStatus.FORBIDDEN);
+      log.with("userEmail", userEmail)
+          .with("httpStatus", HttpStatus.FORBIDDEN)
+          .warn("User not known to RM");
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 
@@ -85,7 +87,8 @@ public class UserIdentity {
 
     log.with("userEmail", userEmail)
         .with("activity", activity)
-        .warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
+        .with("httpStatus", HttpStatus.FORBIDDEN)
+        .warn("User not authorised for attempted activity");
     throw new ResponseStatusException(
         HttpStatus.FORBIDDEN,
         String.format("User not authorised for activity %s", activity.name()));
@@ -103,7 +106,9 @@ public class UserIdentity {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
-      log.with("userEmail", userEmail).warn("{} User not known to RM", HttpStatus.FORBIDDEN);
+      log.with("userEmail", userEmail)
+          .with("httpStatus", HttpStatus.FORBIDDEN)
+          .warn("User not known to RM");
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 
@@ -123,7 +128,8 @@ public class UserIdentity {
 
     log.with("userEmail", userEmail)
         .with("activity", activity)
-        .warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
+        .with("httpStatus", HttpStatus.FORBIDDEN)
+        .warn("User not authorised for attempted activity");
     throw new ResponseStatusException(
         HttpStatus.FORBIDDEN,
         String.format("User not authorised for activity %s", activity.name()));
@@ -136,7 +142,8 @@ public class UserIdentity {
       return dummyUserIdentity;
     } else if (!StringUtils.hasText(jwtToken)) {
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
-      log.warn("{} Requests bypassing IAP are strictly forbidden", HttpStatus.FORBIDDEN);
+      log.with("httpStatus", HttpStatus.FORBIDDEN)
+          .warn("Requests bypassing IAP are strictly forbidden");
       throw new ResponseStatusException(
           HttpStatus.FORBIDDEN, String.format("Requests bypassing IAP are strictly forbidden"));
     } else {

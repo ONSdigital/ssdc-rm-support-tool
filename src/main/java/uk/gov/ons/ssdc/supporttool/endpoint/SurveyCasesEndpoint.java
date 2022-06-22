@@ -140,7 +140,9 @@ public class SurveyCasesEndpoint {
   private void checkSurveySearchCasesPermission(String userEmail, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
-      log.with("surveyId", surveyId).warn("{} Survey not found", HttpStatus.NOT_FOUND);
+      log.with("surveyId", surveyId)
+          .with("httpStatus", HttpStatus.NOT_FOUND)
+          .warn("Survey not found");
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Survey not found");
     }
     userIdentity.checkUserPermission(

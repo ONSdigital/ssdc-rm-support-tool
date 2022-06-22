@@ -79,7 +79,9 @@ public class SmsTemplateEndpoint {
   private void validateTemplate(SmsTemplateDto smsTemplateDto) {
     Set<String> templateSet = new HashSet<>(Arrays.asList(smsTemplateDto.getTemplate()));
     if (templateSet.size() != smsTemplateDto.getTemplate().length) {
-      log.warn("{} Template cannot have duplicate columns", HttpStatus.BAD_REQUEST);
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("template", smsTemplateDto.getTemplate())
+          .warn("Template cannot have duplicate columns");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -90,7 +92,8 @@ public class SmsTemplateEndpoint {
             smsTemplate -> {
               if (smsTemplate.getPackCode().equalsIgnoreCase(smsTemplateDto.getPackCode())) {
                 log.with("packCode", smsTemplateDto.getPackCode())
-                    .warn("{} Pack code already exists", HttpStatus.BAD_REQUEST);
+                    .with("httpStatus", HttpStatus.BAD_REQUEST)
+                    .warn("Pack code already exists");
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }

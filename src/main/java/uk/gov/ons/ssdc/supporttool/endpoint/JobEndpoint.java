@@ -85,7 +85,8 @@ public class JobEndpoint {
 
     if (collexOpt.isEmpty()) {
       log.with("collexId", collectionExerciseId)
-          .warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+          .with("httpStatus", HttpStatus.BAD_REQUEST)
+          .warn("Collection exercise not found");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
@@ -223,7 +224,8 @@ public class JobEndpoint {
       jobRepository.saveAndFlush(job);
     } else {
       log.with("jobId", id)
-          .warn("{} Can't cancel a job which isn't validated", HttpStatus.BAD_REQUEST);
+          .with("httpStatus", HttpStatus.BAD_REQUEST)
+          .warn("Can't process a job which isn't validated");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't process a job which isn't validated");
     }
@@ -247,7 +249,8 @@ public class JobEndpoint {
       jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
     } else {
       log.with("jobId", id)
-          .warn("{} Can't cancel a job which isn't validated", HttpStatus.BAD_REQUEST);
+          .with("httpStatus", HttpStatus.BAD_REQUEST)
+          .warn("Can't cancel a job which isn't validated");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't cancel a job which isn't validated");
     }
@@ -266,7 +269,8 @@ public class JobEndpoint {
         collectionExerciseRepository.findById(collectionExerciseId);
     if (collexOpt.isEmpty()) {
       log.with("collexId", collectionExerciseId)
-          .warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+          .with("httpStatus", HttpStatus.BAD_REQUEST)
+          .warn("Collection exercise not found");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
