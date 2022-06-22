@@ -61,8 +61,9 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.with("surveyId", surveyId)
-                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("surveyId", surveyId)
+                      .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -85,8 +86,9 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
-                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -98,14 +100,18 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
                 () -> {
-                  log.with("packCode", allowTemplateOnSurvey.getPackCode())
-                      .warn("{} Email template not found", HttpStatus.BAD_REQUEST);
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("packCode", allowTemplateOnSurvey.getPackCode())
+                      .warn("Email template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Email template not found");
                 });
 
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("validationErrors", errorOpt.get())
+          .warn("There were errors validating the email template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 

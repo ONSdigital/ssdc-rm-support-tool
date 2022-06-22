@@ -10,9 +10,11 @@ import static uk.gov.ons.ssdc.supporttool.utility.ColumnHelper.getSurveyColumns;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,8 +78,8 @@ public class ActionRuleEndpoint {
             .findById(collectionExerciseId)
             .orElseThrow(
                 () -> {
-                  log.with("collectionExerciseId", collectionExerciseId)
-                      .warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+                  log.with("collectionExerciseId", collectionExerciseId).with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Collection exercise not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -131,7 +133,8 @@ public class ActionRuleEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
-                      .warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Collection exercise not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -142,67 +145,70 @@ public class ActionRuleEndpoint {
     SmsTemplate smsTemplate = null;
     EmailTemplate emailTemplate = null;
     switch (actionRuleDTO.getType()) {
-      case EXPORT_FILE:
-        userActivity = CREATE_EXPORT_FILE_ACTION_RULE;
-        exportFileTemplate =
-            exportFileTemplateRepository
-                .findById(actionRuleDTO.getPackCode())
-                .orElseThrow(
-                    () -> {
-                      log.with("packcode", actionRuleDTO.getPackCode())
-                          .warn("{} Export file template not found", HttpStatus.BAD_REQUEST);
-                      return new ResponseStatusException(
-                          HttpStatus.BAD_REQUEST, "Export file template not found");
-                    });
-        break;
-      case OUTBOUND_TELEPHONE:
-        userActivity = CREATE_OUTBOUND_PHONE_ACTION_RULE;
-        break;
-      case FACE_TO_FACE:
-        userActivity = CREATE_FACE_TO_FACE_ACTION_RULE;
-        break;
-      case DEACTIVATE_UAC:
-        userActivity = CREATE_DEACTIVATE_UAC_ACTION_RULE;
-        break;
-      case SMS:
-        userActivity = CREATE_SMS_ACTION_RULE;
-        smsTemplate =
-            smsTemplateRepository
-                .findById(actionRuleDTO.getPackCode())
-                .orElseThrow(
-                    () -> {
-                      log.with("packcode", actionRuleDTO.getPackCode())
-                          .warn("{} SMS template not found", HttpStatus.BAD_REQUEST);
-                      return new ResponseStatusException(
-                          HttpStatus.BAD_REQUEST, "SMS template not found");
-                    });
-        if (!getSurveyColumns(collectionExercise.getSurvey(), true)
-            .contains(actionRuleDTO.getPhoneNumberColumn())) {
-          log.warn("{} Phone number column does not exist", HttpStatus.BAD_REQUEST);
-          throw new ResponseStatusException(
-              HttpStatus.BAD_REQUEST, "Phone number column does not exist");
-        }
-        break;
-      case EMAIL:
-        userActivity = CREATE_EMAIL_ACTION_RULE;
-        emailTemplate =
-            emailTemplateRepository
-                .findById(actionRuleDTO.getPackCode())
-                .orElseThrow(
-                    () -> {
-                      log.with("packcode", actionRuleDTO.getPackCode())
-                          .warn("{} Email template not found", HttpStatus.BAD_REQUEST);
-                      return new ResponseStatusException(
-                          HttpStatus.BAD_REQUEST, "Email template not found");
-                    });
-        if (!getSurveyColumns(collectionExercise.getSurvey(), true)
-            .contains(actionRuleDTO.getEmailColumn())) {
-          log.warn("{} Email column does not exist", HttpStatus.BAD_REQUEST);
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
-        }
-        break;
-      default:
-        throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
+    case EXPORT_FILE:
+      userActivity = CREATE_EXPORT_FILE_ACTION_RULE;
+      exportFileTemplate =
+          exportFileTemplateRepository
+              .findById(actionRuleDTO.getPackCode())
+              .orElseThrow(
+                  () -> {
+                    log.with("packcode", actionRuleDTO.getPackCode())
+                        .with("httpStatus", HttpStatus.BAD_REQUEST)
+                        .warn("Export file template not found");
+                    return new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Export file template not found");
+                  });
+      break;
+    case OUTBOUND_TELEPHONE:
+      userActivity = CREATE_OUTBOUND_PHONE_ACTION_RULE;
+      break;
+    case FACE_TO_FACE:
+      userActivity = CREATE_FACE_TO_FACE_ACTION_RULE;
+      break;
+    case DEACTIVATE_UAC:
+      userActivity = CREATE_DEACTIVATE_UAC_ACTION_RULE;
+      break;
+    case SMS:
+      userActivity = CREATE_SMS_ACTION_RULE;
+      smsTemplate =
+          smsTemplateRepository
+              .findById(actionRuleDTO.getPackCode())
+              .orElseThrow(
+                  () -> {
+                    log.with("packcode", actionRuleDTO.getPackCode())
+                        .with("httpStatus", HttpStatus.BAD_REQUEST)
+                        .warn("{} SMS template not found", HttpStatus.BAD_REQUEST);
+                    return new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "SMS template not found");
+                  });
+      if (!getSurveyColumns(collectionExercise.getSurvey(), true)
+          .contains(actionRuleDTO.getPhoneNumberColumn())) {
+        log.with("requestedColumn", actionRuleDTO.getPhoneNumberColumn()).with("httpStatus", HttpStatus.BAD_REQUEST).warn("Phone number column does not exist");
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "Phone number column does not exist");
+      }
+      break;
+    case EMAIL:
+      userActivity = CREATE_EMAIL_ACTION_RULE;
+      emailTemplate =
+          emailTemplateRepository
+              .findById(actionRuleDTO.getPackCode())
+              .orElseThrow(
+                  () -> {
+                    log.with("packcode", actionRuleDTO.getPackCode())
+                        .with("httpStatus", HttpStatus.BAD_REQUEST)
+                        .warn("{} Email template not found", HttpStatus.BAD_REQUEST);
+                    return new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Email template not found");
+                  });
+      if (!getSurveyColumns(collectionExercise.getSurvey(), true)
+          .contains(actionRuleDTO.getEmailColumn())) {
+        log.with("requestedColumn", actionRuleDTO.getEmailColumn()).with("httpStatus", HttpStatus.BAD_REQUEST).warn("{} Email column does not exist", HttpStatus.BAD_REQUEST);
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
+      }
+      break;
+    default:
+      throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
     }
 
     userIdentity.checkUserPermission(createdBy, collectionExercise.getSurvey(), userActivity);

@@ -138,9 +138,9 @@ public class CaseEndpoint {
     if (!validationErrors.isEmpty()) {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
-      // CHECK THIS
-      log.with("valitdationErrors", body)
-          .warn("{} There are validation errors in the provided data", HttpStatus.BAD_REQUEST);
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("valitdationErrors", validationErrorStr)
+          .warn("There are validation errors in the provided data");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -167,9 +167,9 @@ public class CaseEndpoint {
     if (!validationErrors.isEmpty()) {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
-      // CHECK THIS
-      log.with("valitdationErrors", body)
-          .warn("{} There are validation errors in the provided data", HttpStatus.BAD_REQUEST);
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("valitdationErrors", validationErrorStr)
+          .warn("There are validation errors in the provided data");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -297,8 +297,9 @@ public class CaseEndpoint {
 
     Optional<String> errorOpt = requestSmsFulfilment(smsFulfilmentRequest);
     if (errorOpt.isPresent()) {
-      log.with("validationErrors", errorOpt.get())
-          .warn("{} There are validation errors in the provided data", HttpStatus.BAD_REQUEST);
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("validationErrors", errorOpt.get())
+          .warn("There are validation errors in the provided data");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(HttpStatus.OK);
@@ -339,8 +340,9 @@ public class CaseEndpoint {
 
     Optional<String> errorOpt = requestEmailFulfilment(emailFulfilmentRequest);
     if (errorOpt.isPresent()) {
-      log.with("validationErrors", errorOpt.get())
-          .warn("{} There are validation errors in the provided data", HttpStatus.BAD_REQUEST);
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("validationErrors", errorOpt.get())
+          .warn("There are validation errors in the provided data");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(HttpStatus.OK);

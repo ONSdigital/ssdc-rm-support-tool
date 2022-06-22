@@ -82,8 +82,9 @@ public class CollectionExerciseEndpoint {
             .findById(collexId)
             .orElseThrow(
                 () -> {
-                  log.with("collexId", collexId)
-                      .warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("collexId", collexId)
+                      .warn("Collection exercise not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -106,8 +107,9 @@ public class CollectionExerciseEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.with("surveyId", surveyId)
-                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("surveyId", surveyId)
+                      .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -142,8 +144,9 @@ public class CollectionExerciseEndpoint {
             .findById(collectionExerciseDto.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.with("surveyId", collectionExerciseDto.getSurveyId())
-                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("surveyId", collectionExerciseDto.getSurveyId())
+                      .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -204,7 +207,8 @@ public class CollectionExerciseEndpoint {
     for (CollectionInstrumentSelectionRule collectionInstrumentSelectionRule :
         collectionInstrumentSelectionRules) {
       if (!StringUtils.hasText(collectionInstrumentSelectionRule.getCollectionInstrumentUrl())) {
-        log.warn("{} CI URL cannot be blank", HttpStatus.BAD_REQUEST);
+        log.with("httpStatus", HttpStatus.BAD_REQUEST)
+            .warn("CI URL cannot be blank");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CI URL cannot be blank");
       }
 
@@ -217,7 +221,8 @@ public class CollectionExerciseEndpoint {
 
         continue;
       } else if (!StringUtils.hasText(spelExpression)) {
-        log.warn("{} SPEL expression cannot be blank", HttpStatus.BAD_REQUEST);
+        log.with("httpStatus", HttpStatus.BAD_REQUEST)
+            .warn("SPEL expression cannot be blank");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "SPEL expression cannot be blank");
       }
@@ -225,16 +230,16 @@ public class CollectionExerciseEndpoint {
       try {
         expressionParser.parseExpression(spelExpression);
       } catch (Exception e) {
-        log.with("spelExpression", spelExpression).warn("{} Invalid SPEL", HttpStatus.BAD_REQUEST);
+        log.with("httpStatus", HttpStatus.BAD_REQUEST)
+            .with("spelExpression", spelExpression).warn("Invalid SPEL");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression, e);
       }
     }
 
     if (!foundDefaultRuleWithNullExpression) {
-      log.warn(
-          "{} Rules must include zero priority default with null expression",
-          HttpStatus.BAD_REQUEST);
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .warn("Rules must include zero priority default with null expression");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Rules must include zero priority default with null expression");
     }
