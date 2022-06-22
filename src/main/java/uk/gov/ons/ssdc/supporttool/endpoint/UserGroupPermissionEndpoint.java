@@ -59,7 +59,9 @@ public class UserGroupPermissionEndpoint {
             .findById(groupId)
             .orElseThrow(
                 () -> {
-                  log.with("groupId", groupId).warn("{} Group not found", HttpStatus.BAD_REQUEST);
+                  log.with("groupId", groupId)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Group not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -93,7 +95,8 @@ public class UserGroupPermissionEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("groupId", userGroupPermissionDto.getGroupId())
-                      .warn("{} Group not found", HttpStatus.BAD_REQUEST);
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Group not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -102,7 +105,8 @@ public class UserGroupPermissionEndpoint {
       if (userGroupPermissionDto.getAuthorisedActivity().isGlobal()) {
         // Not allowed to use a global permission on a specific survey... doesn't work; nonsensical!
         log.with("authorisedActivity", userGroupPermissionDto.getAuthorisedActivity().name())
-            .warn("{} Global permissions must be global", HttpStatus.BAD_REQUEST);
+            .with("httpStatus", HttpStatus.BAD_REQUEST)
+            .warn("Global permissions must be global");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Global permissions must be global");
       }
@@ -113,7 +117,8 @@ public class UserGroupPermissionEndpoint {
               .orElseThrow(
                   () -> {
                     log.with("surveyId", userGroupPermissionDto.getSurveyId())
-                        .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                        .with("httpStatus", HttpStatus.BAD_REQUEST)
+                        .warn("Survey not found");
                     return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                   });
     }
@@ -129,7 +134,8 @@ public class UserGroupPermissionEndpoint {
                   && existingPermission.getSurvey().equals(survey)))) {
         log.with("authorisedActivity", existingPermission.getAuthorisedActivity())
             .with("surveyName", survey.getName())
-            .warn("{} Permission already exists", HttpStatus.CONFLICT);
+            .with("httpStatus", HttpStatus.CONFLICT)
+            .warn("Permission already exists");
         throw new ResponseStatusException(HttpStatus.CONFLICT, "Permission already exists");
       }
     }

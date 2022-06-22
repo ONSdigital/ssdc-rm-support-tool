@@ -77,7 +77,8 @@ public class UserGroupAdminEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("userId", userGroupAdminDto.getUserId())
-                      .warn("{} User not found", HttpStatus.BAD_REQUEST);
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("User not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
                 });
 
@@ -87,7 +88,8 @@ public class UserGroupAdminEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("groupId", userGroupAdminDto.getGroupId())
-                      .warn("{} Group not found", HttpStatus.BAD_REQUEST);
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Group not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -96,7 +98,8 @@ public class UserGroupAdminEndpoint {
           .with("groupId", group.getId())
           .with("groupName", group.getName())
           .with("userEmail", user.getEmail())
-          .warn("{} User is already an admin of this group", HttpStatus.CONFLICT);
+          .with("httpStatus", HttpStatus.CONFLICT)
+          .warn("User is already an admin of this group");
       throw new ResponseStatusException(
           HttpStatus.CONFLICT, "User is already an admin of this group");
     }

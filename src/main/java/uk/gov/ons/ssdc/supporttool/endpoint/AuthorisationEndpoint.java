@@ -59,7 +59,9 @@ public class AuthorisationEndpoint {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.FORBIDDEN).with("userEmail", userEmail).warn("User not known to RM");
+      log.with("httpStatus", HttpStatus.FORBIDDEN)
+          .with("userEmail", userEmail)
+          .warn("User not known to RM");
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 

@@ -68,7 +68,8 @@ public class SurveyEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("surveyId", surveyId)
-                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
