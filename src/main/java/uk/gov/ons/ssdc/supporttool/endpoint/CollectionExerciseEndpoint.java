@@ -207,8 +207,7 @@ public class CollectionExerciseEndpoint {
     for (CollectionInstrumentSelectionRule collectionInstrumentSelectionRule :
         collectionInstrumentSelectionRules) {
       if (!StringUtils.hasText(collectionInstrumentSelectionRule.getCollectionInstrumentUrl())) {
-        log.with("httpStatus", HttpStatus.BAD_REQUEST)
-            .warn("CI URL cannot be blank");
+        log.with("httpStatus", HttpStatus.BAD_REQUEST).warn("CI URL cannot be blank");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CI URL cannot be blank");
       }
 
@@ -221,8 +220,7 @@ public class CollectionExerciseEndpoint {
 
         continue;
       } else if (!StringUtils.hasText(spelExpression)) {
-        log.with("httpStatus", HttpStatus.BAD_REQUEST)
-            .warn("SPEL expression cannot be blank");
+        log.with("httpStatus", HttpStatus.BAD_REQUEST).warn("SPEL expression cannot be blank");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "SPEL expression cannot be blank");
       }
@@ -231,7 +229,8 @@ public class CollectionExerciseEndpoint {
         expressionParser.parseExpression(spelExpression);
       } catch (Exception e) {
         log.with("httpStatus", HttpStatus.BAD_REQUEST)
-            .with("spelExpression", spelExpression).warn("Invalid SPEL");
+            .with("spelExpression", spelExpression)
+            .warn("Invalid SPEL");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression, e);
       }
