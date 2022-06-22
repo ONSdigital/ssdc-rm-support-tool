@@ -53,7 +53,7 @@ public class DeactivateUacEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Optional<UacQidLink> uacQidLinkOpt = qidLinkRepository.findByQid(qid);
     if (!uacQidLinkOpt.isPresent()) {
-      log.warn("{} Could not find QID", HttpStatus.NOT_FOUND);
+      log.with("qid", qid).warn("{} Could not find QID", HttpStatus.NOT_FOUND);
       throw new ResponseStatusException(
           HttpStatus.NOT_FOUND, String.format("Could not find QID %s", qid));
     }

@@ -58,7 +58,7 @@ public class UserIdentity {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
-      log.warn("{} User not known to RM", HttpStatus.FORBIDDEN);
+      log.with("userEmail", userEmail).warn("{} User not known to RM", HttpStatus.FORBIDDEN);
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 
@@ -83,7 +83,9 @@ public class UserIdentity {
       }
     }
 
-    log.warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
+    log.with("userEmail", userEmail)
+        .with("activity", activity)
+        .warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
     throw new ResponseStatusException(
         HttpStatus.FORBIDDEN,
         String.format("User not authorised for activity %s", activity.name()));
@@ -101,7 +103,7 @@ public class UserIdentity {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
-      log.warn("{} User not known to RM", HttpStatus.FORBIDDEN);
+      log.with("userEmail", userEmail).warn("{} User not known to RM", HttpStatus.FORBIDDEN);
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 
@@ -119,7 +121,9 @@ public class UserIdentity {
       }
     }
 
-    log.warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
+    log.with("userEmail", userEmail)
+        .with("activity", activity)
+        .warn("{} User not authorised for attempted activity", HttpStatus.FORBIDDEN);
     throw new ResponseStatusException(
         HttpStatus.FORBIDDEN,
         String.format("User not authorised for activity %s", activity.name()));

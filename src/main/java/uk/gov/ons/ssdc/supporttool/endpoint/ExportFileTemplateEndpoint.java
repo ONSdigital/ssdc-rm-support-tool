@@ -73,7 +73,8 @@ public class ExportFileTemplateEndpoint {
               if (exportFileTemplate
                   .getPackCode()
                   .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
-                log.warn("{} Pack code already exists", HttpStatus.BAD_REQUEST);
+                log.with("packCode", exportFileTemplateDto.getPackCode())
+                    .warn("{} Pack code already exists", HttpStatus.BAD_REQUEST);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
               }
             });
@@ -96,7 +97,8 @@ public class ExportFileTemplateEndpoint {
         new HashSet<>(Arrays.asList(exportFileTemplateDto.getTemplate()));
 
     if (exportFileTemplateDtoItemsSet.size() != exportFileTemplateDto.getTemplate().length) {
-      log.warn("{} Duplicate column in template", HttpStatus.BAD_REQUEST);
+      log.with("template", exportFileTemplateDtoItemsSet)
+          .warn("{} Duplicate column in template", HttpStatus.BAD_REQUEST);
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
   }

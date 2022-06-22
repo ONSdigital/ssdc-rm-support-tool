@@ -89,7 +89,8 @@ public class SmsTemplateEndpoint {
         .forEach(
             smsTemplate -> {
               if (smsTemplate.getPackCode().equalsIgnoreCase(smsTemplateDto.getPackCode())) {
-                log.warn("{} Pack code already exists", HttpStatus.BAD_REQUEST);
+                log.with("packCode", smsTemplateDto.getPackCode())
+                    .warn("{} Pack code already exists", HttpStatus.BAD_REQUEST);
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }

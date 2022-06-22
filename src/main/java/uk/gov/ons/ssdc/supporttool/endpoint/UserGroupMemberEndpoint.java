@@ -59,7 +59,7 @@ public class UserGroupMemberEndpoint {
             .findById(userId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} User not found", HttpStatus.BAD_REQUEST);
+                  log.with("userId", userId).warn("{} User not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
                 });
 
@@ -77,7 +77,7 @@ public class UserGroupMemberEndpoint {
             .findById(groupId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
+                  log.with("groupId", groupId).warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -101,7 +101,8 @@ public class UserGroupMemberEndpoint {
             .findById(userGroupMemberDto.getGroupId())
             .orElseThrow(
                 () -> {
-                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
+                  log.with("groupId", userGroupMemberDto.getGroupId())
+                      .warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -116,13 +117,18 @@ public class UserGroupMemberEndpoint {
             .findById(userGroupMemberDto.getUserId())
             .orElseThrow(
                 () -> {
-                  log.warn("{} User not found", HttpStatus.BAD_REQUEST);
+                  log.with("userId", userGroupMemberDto.getUserId())
+                      .warn("{} User not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
                 });
 
     if (user.getMemberOf().stream()
         .anyMatch(userGroupMember -> userGroupMember.getGroup() == group)) {
-      log.warn("{} User is already a member of this group", HttpStatus.CONFLICT);
+      log.with("userId", user.getId())
+          .with("groupId", group.getId())
+          .with("groupName", group.getName())
+          .with("userEmail", user.getEmail())
+          .warn("{} User is already a member of this group", HttpStatus.CONFLICT);
       throw new ResponseStatusException(
           HttpStatus.CONFLICT, "User is already a member of this group");
     }
@@ -146,7 +152,8 @@ public class UserGroupMemberEndpoint {
             .findById(groupMemberId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} Group membership not found", HttpStatus.BAD_REQUEST);
+                  log.with("groupMemberId", groupMemberId)
+                      .warn("{} Group membership not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Group membership not found");
                 });

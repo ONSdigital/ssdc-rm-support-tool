@@ -76,7 +76,8 @@ public class ActionRuleEndpoint {
             .findById(collectionExerciseId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+                  log.with("collectionExerciseId", collectionExerciseId)
+                      .warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -129,7 +130,8 @@ public class ActionRuleEndpoint {
             .findById(actionRuleDTO.getCollectionExerciseId())
             .orElseThrow(
                 () -> {
-                  log.warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+                  log.with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
+                      .warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -147,7 +149,8 @@ public class ActionRuleEndpoint {
                 .findById(actionRuleDTO.getPackCode())
                 .orElseThrow(
                     () -> {
-                      log.warn("{} Export file template not found", HttpStatus.BAD_REQUEST);
+                      log.with("packcode", actionRuleDTO.getPackCode())
+                          .warn("{} Export file template not found", HttpStatus.BAD_REQUEST);
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST, "Export file template not found");
                     });
@@ -168,7 +171,8 @@ public class ActionRuleEndpoint {
                 .findById(actionRuleDTO.getPackCode())
                 .orElseThrow(
                     () -> {
-                      log.warn("{} SMS template not found", HttpStatus.BAD_REQUEST);
+                      log.with("packcode", actionRuleDTO.getPackCode())
+                          .warn("{} SMS template not found", HttpStatus.BAD_REQUEST);
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST, "SMS template not found");
                     });
@@ -186,7 +190,8 @@ public class ActionRuleEndpoint {
                 .findById(actionRuleDTO.getPackCode())
                 .orElseThrow(
                     () -> {
-                      log.warn("{} Email template not found", HttpStatus.BAD_REQUEST);
+                      log.with("packcode", actionRuleDTO.getPackCode())
+                          .warn("{} Email template not found", HttpStatus.BAD_REQUEST);
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST, "Email template not found");
                     });

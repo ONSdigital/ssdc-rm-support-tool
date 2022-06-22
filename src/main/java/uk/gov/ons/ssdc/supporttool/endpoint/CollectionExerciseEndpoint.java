@@ -82,7 +82,8 @@ public class CollectionExerciseEndpoint {
             .findById(collexId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
+                  log.with("collexId", collexId)
+                      .warn("{} Collection exercise not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -105,7 +106,8 @@ public class CollectionExerciseEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("surveyId", surveyId)
+                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -140,7 +142,8 @@ public class CollectionExerciseEndpoint {
             .findById(collectionExerciseDto.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("surveyId", collectionExerciseDto.getSurveyId())
+                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -222,7 +225,7 @@ public class CollectionExerciseEndpoint {
       try {
         expressionParser.parseExpression(spelExpression);
       } catch (Exception e) {
-        log.warn("{} Invalid SPEL", HttpStatus.BAD_REQUEST);
+        log.with("spelExpression", spelExpression).warn("{} Invalid SPEL", HttpStatus.BAD_REQUEST);
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression, e);
       }

@@ -65,7 +65,8 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("surveyId", surveyId)
+                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -88,7 +89,8 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -102,7 +104,8 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
                 () -> {
-                  log.warn("{} Export file template not found", HttpStatus.BAD_REQUEST);
+                  log.with("packCode", allowTemplateOnSurvey.getPackCode())
+                      .warn("{} Export file template not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Export file template not found");
                 });

@@ -51,7 +51,7 @@ public class UserEndpoint {
             .findById(userId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} User not found", HttpStatus.BAD_REQUEST);
+                  log.with("userId", userId).warn("{} User not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
                 });
 

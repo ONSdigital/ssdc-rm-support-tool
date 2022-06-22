@@ -50,7 +50,7 @@ public class UserGroupEndpoint {
             .findById(groupId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} Group not found", HttpStatus.BAD_REQUEST);
+                  log.with("groupId", groupId).warn("{} Group not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -95,7 +95,9 @@ public class UserGroupEndpoint {
     userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     if (userGroupRepository.existsByName(userGroupDto.getName())) {
-      log.warn("{} Group name already exists", HttpStatus.CONFLICT);
+      log.with("groupId", userGroupDto.getId())
+          .with("groupName", userGroupDto.getName())
+          .warn("{} Group name already exists", HttpStatus.CONFLICT);
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Group name already exists");
     }
 

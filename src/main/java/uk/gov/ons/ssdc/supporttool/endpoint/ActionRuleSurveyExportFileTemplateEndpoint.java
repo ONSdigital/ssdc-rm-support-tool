@@ -62,7 +62,8 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("surveyId", surveyId)
+                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -85,7 +86,8 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.warn("{} Survey not found", HttpStatus.BAD_REQUEST);
+                  log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .warn("{} Survey not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -99,7 +101,8 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
                 () -> {
-                  log.warn("{} Export File template not found", HttpStatus.BAD_REQUEST);
+                  log.with("packCode", allowTemplateOnSurvey.getPackCode())
+                      .warn("{} Export File template not found", HttpStatus.BAD_REQUEST);
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Export File template not found");
                 });
