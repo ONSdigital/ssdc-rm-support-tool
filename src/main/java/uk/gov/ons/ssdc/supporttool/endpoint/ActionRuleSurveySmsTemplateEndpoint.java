@@ -63,7 +63,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("userEmail", userEmail)
                       .with("surveyId", surveyId)
-                      .warn("Survey not found");
+                      .warn("Failed to get allowed pack codes, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
     userIdentity.checkUserPermission(
@@ -88,7 +88,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("userEmail", userEmail)
                       .with("surveyId", allowTemplateOnSurvey.getSurveyId())
-                      .warn("Survey not found");
+                      .warn("Failed to create action rule survey sms template, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -113,7 +113,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
-          .warn("There were errors validating the sms template");
+          .warn("Failed to create action rule survey sms template, there were errors validating the sms template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 

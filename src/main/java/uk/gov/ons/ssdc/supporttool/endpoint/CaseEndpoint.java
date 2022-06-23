@@ -139,9 +139,8 @@ public class CaseEndpoint {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("valitdationErrors", validationErrorStr)
           .with("userEmail", userEmail)
-          .warn("There are validation errors in the provided data");
+          .warn("There are case validation errors in the provided data");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -169,7 +168,6 @@ public class CaseEndpoint {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("valitdationErrors", validationErrorStr)
           .with("userEmail", userEmail)
           .warn("There are validation errors in the provided data");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
@@ -300,7 +298,6 @@ public class CaseEndpoint {
     Optional<String> errorOpt = requestSmsFulfilment(smsFulfilmentRequest);
     if (errorOpt.isPresent()) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("validationErrors", errorOpt.get())
           .with("userEmail", userEmail)
           .warn("There are validation errors in the provided data");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
@@ -344,7 +341,6 @@ public class CaseEndpoint {
     Optional<String> errorOpt = requestEmailFulfilment(emailFulfilmentRequest);
     if (errorOpt.isPresent()) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("validationErrors", errorOpt.get())
           .with("userEmail", userEmail)
           .warn("There are validation errors in the provided data");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);

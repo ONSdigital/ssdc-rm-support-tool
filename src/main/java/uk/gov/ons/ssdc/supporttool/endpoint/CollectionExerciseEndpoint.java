@@ -149,7 +149,7 @@ public class CollectionExerciseEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("surveyId", collectionExerciseDto.getSurveyId())
                       .with("userEmail", userEmail)
-                      .warn("Survey not found");
+                      .warn("Failed to create collection exercise, Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -212,7 +212,7 @@ public class CollectionExerciseEndpoint {
       if (!StringUtils.hasText(collectionInstrumentSelectionRule.getCollectionInstrumentUrl())) {
         log.with("httpStatus", HttpStatus.BAD_REQUEST)
             .with("userEmail", userEmail)
-            .warn("CI URL cannot be blank");
+            .warn("Failed to create collection exercise, CI URL cannot be blank");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CI URL cannot be blank");
       }
 
@@ -227,7 +227,7 @@ public class CollectionExerciseEndpoint {
       } else if (!StringUtils.hasText(spelExpression)) {
         log.with("httpStatus", HttpStatus.BAD_REQUEST)
             .with("userEmail", userEmail)
-            .warn("SPEL expression cannot be blank");
+            .warn("Failed to create collection exercise, SPEL expression cannot be blank");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "SPEL expression cannot be blank");
       }
@@ -238,7 +238,7 @@ public class CollectionExerciseEndpoint {
         log.with("httpStatus", HttpStatus.BAD_REQUEST)
             .with("spelExpression", spelExpression)
             .with("userEmail", userEmail)
-            .warn("Invalid SPEL");
+            .warn("Failed to create collection exercise, Invalid SPEL");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression, e);
       }
@@ -247,7 +247,7 @@ public class CollectionExerciseEndpoint {
     if (!foundDefaultRuleWithNullExpression) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
-          .warn("Rules must include zero priority default with null expression");
+          .warn("Failed to create collection exercise, Rules must include zero priority default with null expression");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Rules must include zero priority default with null expression");
     }

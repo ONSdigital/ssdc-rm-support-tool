@@ -64,7 +64,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("surveyId", surveyId)
                       .with("userEmail", userEmail)
-                      .warn("Survey not found");
+                      .warn("Failed to get allowed pack codes, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -90,7 +90,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("surveyId", allowTemplateOnSurvey.getSurveyId())
                       .with("userEmail", userEmail)
-                      .warn("Survey not found");
+                      .warn("Failed to create action rule survey email template, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -105,7 +105,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("packCode", allowTemplateOnSurvey.getPackCode())
                       .with("userEmail", userEmail)
-                      .warn("Email template not found");
+                      .warn("Failed to create action rule survey email template, email template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Email template not found");
                 });
@@ -115,7 +115,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
-          .warn("There were errors validating the email template");
+          .warn("Failed to create action rule survey email template, there were errors validating the email template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 

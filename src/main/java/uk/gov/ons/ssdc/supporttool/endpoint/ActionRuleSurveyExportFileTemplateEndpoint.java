@@ -65,7 +65,7 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("userEmail", userEmail)
                       .with("surveyId", surveyId)
-                      .warn("Survey not found");
+                      .warn("Failed to get allowed pack codes, Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -91,7 +91,7 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("userEmail", userEmail)
                       .with("surveyId", allowTemplateOnSurvey.getSurveyId())
-                      .warn("Survey not found");
+                      .warn("Failed to create action rule survey export file template, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -108,7 +108,7 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("userEmail", userEmail)
                       .with("packCode", allowTemplateOnSurvey.getPackCode())
-                      .warn("Export File template not found");
+                      .warn("Failed to create action rule survey export file template, export File template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Export File template not found");
                 });
@@ -118,7 +118,7 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
-          .warn("There were errors validating the export file template");
+          .warn("Failed to create action rule survey export file template, there were errors validating the export file template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 
