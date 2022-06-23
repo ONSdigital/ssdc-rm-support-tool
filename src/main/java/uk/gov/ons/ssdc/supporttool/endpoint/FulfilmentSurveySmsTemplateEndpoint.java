@@ -66,7 +66,7 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                   log.with("surveyId", surveyId)
                       .with("userEmail", userEmail)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Survey not found");
+                      .warn("Failed to get allowed sms templates, Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -92,7 +92,7 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                   log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
                       .with("userEmail", userEmail)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Survey not found");
+                      .warn("Failed to create fulfilment survey sms templates, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -107,7 +107,8 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                   log.with("packCode", allowTemplateOnSurvey.getPackCode())
                       .with("userEmail", userEmail)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("SMS template not found");
+                      .warn(
+                          "Failed to create fulfilment survey sms templates,SMS template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "SMS template not found");
                 });

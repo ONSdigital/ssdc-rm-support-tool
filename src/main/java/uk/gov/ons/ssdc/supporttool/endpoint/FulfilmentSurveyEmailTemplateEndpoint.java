@@ -66,8 +66,8 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                 () -> {
                   log.with("surveyId", surveyId)
                       .with("userEmail", userEmail)
-                          .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Survey not found");
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Failed to get allowed email templates, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -91,8 +91,9 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
-                      .with("userEmail", userEmail).with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Survey not found");
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Failed to create fulfilment survey email templates, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -105,8 +106,10 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("packCode", allowTemplateOnSurvey.getPackCode())
-                      .with("userEmail", userEmail).with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Email template not found");
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn(
+                          "Failed to create fulfilment survey email templates, email template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Email template not found");
                 });

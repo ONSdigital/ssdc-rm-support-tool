@@ -43,7 +43,7 @@ public class FulfilmentNextTriggerEndpoint {
     if (fulfilmentNextTriggers.size() > 1) {
       log.with("userEmail", userEmail)
           .with("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR)
-          .warn("Multiple triggers not currently supported");
+          .warn("Failed to get fulfilment trigger time, multiple triggers not currently supported");
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }
@@ -51,7 +51,7 @@ public class FulfilmentNextTriggerEndpoint {
     if (fulfilmentNextTriggers.isEmpty()) {
       log.with("userEmail", userEmail)
           .with("httpStatus", HttpStatus.NOT_FOUND)
-          .warn("No fulfilment trigger found");
+          .warn("Failed to get fulfilment trigger time, no fulfilment trigger found");
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -70,7 +70,7 @@ public class FulfilmentNextTriggerEndpoint {
     if (fulfilmentNextTriggers.size() > 1) {
       log.with("userEmail", userEmail)
           .with("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR)
-          .warn("Multiple triggers not currently supported");
+          .warn("Failed to set fulfilment trigger time, multiple triggers not currently supported");
       throw new HttpClientErrorException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }

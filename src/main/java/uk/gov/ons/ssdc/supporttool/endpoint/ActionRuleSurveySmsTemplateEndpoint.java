@@ -103,7 +103,8 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("userEmail", userEmail)
                       .with("packCode", allowTemplateOnSurvey.getPackCode())
-                      .warn("SMS template not found");
+                      .warn(
+                          "Failed to create action rule survey sms template, SMS template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "SMS template not found");
                 });
@@ -113,7 +114,8 @@ public class ActionRuleSurveySmsTemplateEndpoint {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
-          .warn("Failed to create action rule survey sms template, there were errors validating the sms template");
+          .warn(
+              "Failed to create action rule survey sms template, there were errors validating the sms template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 

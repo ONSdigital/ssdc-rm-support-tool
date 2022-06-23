@@ -140,7 +140,8 @@ public class CaseEndpoint {
       Map<String, String> body = Map.of("errors", validationErrorStr);
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
-          .warn("There are case validation errors in the provided data");
+          .warn(
+              "Failed to update sensitive field, there are case validation errors in the provided data");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -169,7 +170,7 @@ public class CaseEndpoint {
       Map<String, String> body = Map.of("errors", validationErrorStr);
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
-          .warn("There are validation errors in the provided data");
+          .warn("Failed to update sample field, there are validation errors in the provided data");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -299,7 +300,9 @@ public class CaseEndpoint {
     if (errorOpt.isPresent()) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
-          .warn("There are validation errors in the provided data");
+          .with("caseId", caseId)
+          .warn(
+              "Failed to request sms fulfilment, there are validation errors in the provided data");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(HttpStatus.OK);

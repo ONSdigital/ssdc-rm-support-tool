@@ -79,7 +79,7 @@ public class ActionRuleEndpoint {
                   log.with("collectionExerciseId", collectionExerciseId)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("userEmail", userEmail)
-                      .warn("Collection exercise not found");
+                      .warn("Failed to find action rule, Collection exercise not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -180,16 +180,17 @@ public class ActionRuleEndpoint {
                       log.with("packcode", actionRuleDTO.getPackCode())
                           .with("httpStatus", HttpStatus.BAD_REQUEST)
                           .with("userEmail", createdBy)
-                          .warn("SMS template not found");
+                          .warn("Failed to insert action rule, SMS template not found");
                       return new ResponseStatusException(
-                          HttpStatus.BAD_REQUEST, "Failed to insert action rule, SMS template not found");
+                          HttpStatus.BAD_REQUEST,
+                          "Failed to insert action rule, SMS template not found");
                     });
         if (!getSurveyColumns(collectionExercise.getSurvey(), true)
             .contains(actionRuleDTO.getPhoneNumberColumn())) {
           log.with("requestedColumn", actionRuleDTO.getPhoneNumberColumn())
               .with("httpStatus", HttpStatus.BAD_REQUEST)
               .with("userEmail", createdBy)
-                  .with("survey", actionRuleDTO)
+              .with("survey", actionRuleDTO)
               .warn("Failed to insert action rule, phone number column does not exist");
           throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Phone number column does not exist");

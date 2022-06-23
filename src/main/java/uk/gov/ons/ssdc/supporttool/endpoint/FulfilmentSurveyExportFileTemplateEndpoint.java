@@ -57,7 +57,7 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
   }
 
   @GetMapping
-  public List<ExportFileTemplateDto> getAllowedPackCodesBySurvey(
+  public List<ExportFileTemplateDto> getAllowedExportFileTemplatesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Survey survey =
@@ -66,8 +66,10 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("surveyId", surveyId)
-                      .with("userEmail", userEmail).with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Survey not found");
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn(
+                          "Failed to get allowed fulfilment export file templates, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -91,8 +93,10 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
-                      .with("userEmail", userEmail).with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Survey not found");
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn(
+                          "Failed to create fulfilment survey export file templates, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -107,8 +111,10 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
             .orElseThrow(
                 () -> {
                   log.with("packCode", allowTemplateOnSurvey.getPackCode())
-                      .with("userEmail", userEmail).with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Export file template not found");
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn(
+                          "Failed to create fulfilment survey export file templates, export file template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Export file template not found");
                 });

@@ -70,7 +70,7 @@ public class SurveyEndpoint {
                   log.with("surveyId", surveyId)
                       .with("userEmail", userEmail)
                       .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Survey not found");
+                      .warn("Failed to get survey, survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 

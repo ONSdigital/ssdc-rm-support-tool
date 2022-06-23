@@ -85,7 +85,7 @@ public class CollectionExerciseEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("collexId", collexId)
                       .with("userEmail", userEmail)
-                      .warn("Collection exercise not found");
+                      .warn("Failed to get collection exercise, collection exercise not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -111,7 +111,7 @@ public class CollectionExerciseEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("surveyId", surveyId)
                       .with("userEmail", userEmail)
-                      .warn("Survey not found");
+                      .warn("Failed to find collection exercise, Survey not found");
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -247,7 +247,8 @@ public class CollectionExerciseEndpoint {
     if (!foundDefaultRuleWithNullExpression) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
-          .warn("Failed to create collection exercise, Rules must include zero priority default with null expression");
+          .warn(
+              "Failed to create collection exercise, Rules must include zero priority default with null expression");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Rules must include zero priority default with null expression");
     }

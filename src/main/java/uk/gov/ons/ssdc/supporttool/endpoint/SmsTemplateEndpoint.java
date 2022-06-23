@@ -82,7 +82,7 @@ public class SmsTemplateEndpoint {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("template", smsTemplateDto.getTemplate())
-          .warn("Template cannot have duplicate columns");
+          .warn("Failed to create sms template, template cannot have duplicate columns");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -95,7 +95,7 @@ public class SmsTemplateEndpoint {
                 log.with("packCode", smsTemplateDto.getPackCode())
                     .with("userEmail", userEmail)
                     .with("httpStatus", HttpStatus.BAD_REQUEST)
-                    .warn("Pack code already exists");
+                    .warn("Failed to create sms template, Pack code already exists");
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }

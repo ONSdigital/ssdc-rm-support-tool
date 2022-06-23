@@ -76,7 +76,7 @@ public class ExportFileTemplateEndpoint {
                 log.with("httpStatus", HttpStatus.BAD_REQUEST)
                     .with("userEmail", userEmail)
                     .with("packCode", exportFileTemplateDto.getPackCode())
-                    .warn("Pack code already exists");
+                    .warn("Failed to create export file template, pack code already exists");
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
               }
             });
@@ -103,7 +103,7 @@ public class ExportFileTemplateEndpoint {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("template", exportFileTemplateDtoItemsSet)
-          .warn("Duplicate column in template");
+          .warn("Failed to create export file template, duplicate column in template");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
   }

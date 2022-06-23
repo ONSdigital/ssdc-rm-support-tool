@@ -84,7 +84,7 @@ public class EmailTemplateEndpoint {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("template", templateSet)
-          .warn("Template cannot have duplicate columns");
+          .warn("Failed to create email template, template cannot have duplicate columns");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -97,7 +97,7 @@ public class EmailTemplateEndpoint {
                 log.with("httpStatus", HttpStatus.BAD_REQUEST)
                     .with("userEmail", userEmail)
                     .with("packCode", emailTemplate.getPackCode())
-                    .warn("Pack code already exists");
+                    .warn("Failed to create email template, Pack code already exists");
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }

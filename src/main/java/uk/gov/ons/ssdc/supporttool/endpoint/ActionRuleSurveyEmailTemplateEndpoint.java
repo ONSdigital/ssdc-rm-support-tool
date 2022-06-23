@@ -105,7 +105,8 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                   log.with("httpStatus", HttpStatus.BAD_REQUEST)
                       .with("packCode", allowTemplateOnSurvey.getPackCode())
                       .with("userEmail", userEmail)
-                      .warn("Failed to create action rule survey email template, email template not found");
+                      .warn(
+                          "Failed to create action rule survey email template, email template not found");
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Email template not found");
                 });
@@ -115,7 +116,8 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
-          .warn("Failed to create action rule survey email template, there were errors validating the email template");
+          .warn(
+              "Failed to create action rule survey email template, there were errors validating the email template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 

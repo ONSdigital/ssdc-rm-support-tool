@@ -143,7 +143,7 @@ public class SurveyCasesEndpoint {
       log.with("surveyId", surveyId)
           .with("userEmail", userEmail)
           .with("httpStatus", HttpStatus.NOT_FOUND)
-          .warn("Survey not found");
+          .warn("Failed to get case for survey, survey not found");
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Survey not found");
     }
     userIdentity.checkUserPermission(
