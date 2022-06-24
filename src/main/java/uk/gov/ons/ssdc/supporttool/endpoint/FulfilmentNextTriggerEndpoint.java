@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -21,6 +23,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/fulfilmentNextTriggers")
 public class FulfilmentNextTriggerEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(FulfilmentNextTriggerEndpoint.class);
   private final FulfilmentNextTriggerRepository fulfilmentNextTriggerRepository;
   private final UserIdentity userIdentity;
 
@@ -38,11 +41,17 @@ public class FulfilmentNextTriggerEndpoint {
 
     List<FulfilmentNextTrigger> fulfilmentNextTriggers = fulfilmentNextTriggerRepository.findAll();
     if (fulfilmentNextTriggers.size() > 1) {
+      log.with("userEmail", userEmail)
+          .with("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR)
+          .warn("Failed to get fulfilment trigger time, multiple triggers not currently supported");
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }
 
     if (fulfilmentNextTriggers.isEmpty()) {
+      log.with("userEmail", userEmail)
+          .with("httpStatus", HttpStatus.NOT_FOUND)
+          .warn("Failed to get fulfilment trigger time, no fulfilment trigger found");
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -59,6 +68,9 @@ public class FulfilmentNextTriggerEndpoint {
     List<FulfilmentNextTrigger> fulfilmentNextTriggers = fulfilmentNextTriggerRepository.findAll();
 
     if (fulfilmentNextTriggers.size() > 1) {
+      log.with("userEmail", userEmail)
+          .with("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR)
+          .warn("Failed to set fulfilment trigger time, multiple triggers not currently supported");
       throw new HttpClientErrorException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }

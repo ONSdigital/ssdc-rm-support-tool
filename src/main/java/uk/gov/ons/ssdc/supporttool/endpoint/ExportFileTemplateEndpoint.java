@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +25,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/exportFileTemplates")
 public class ExportFileTemplateEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(ExportFileTemplateEndpoint.class);
+
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final UserIdentity userIdentity;
 
@@ -60,7 +64,7 @@ public class ExportFileTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_TEMPLATE);
 
-    checkDuplicateTemplateItems(exportFileTemplateDto);
+    checkDuplicateTemplateItems(exportFileTemplateDto, userEmail);
 
     exportFileTemplateRepository
         .findAll()
@@ -69,6 +73,10 @@ public class ExportFileTemplateEndpoint {
               if (exportFileTemplate
                   .getPackCode()
                   .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
+                log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                    .with("userEmail", userEmail)
+                    .with("packCode", exportFileTemplateDto.getPackCode())
+                    .warn("Failed to create export file template, pack code already exists");
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
               }
             });
@@ -86,11 +94,16 @@ public class ExportFileTemplateEndpoint {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  private void checkDuplicateTemplateItems(ExportFileTemplateDto exportFileTemplateDto) {
+  private void checkDuplicateTemplateItems(
+      ExportFileTemplateDto exportFileTemplateDto, String userEmail) {
     Set<String> exportFileTemplateDtoItemsSet =
         new HashSet<>(Arrays.asList(exportFileTemplateDto.getTemplate()));
 
     if (exportFileTemplateDtoItemsSet.size() != exportFileTemplateDto.getTemplate().length) {
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
+          .with("template", exportFileTemplateDtoItemsSet)
+          .warn("Failed to create export file template, duplicate column in template");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
   }

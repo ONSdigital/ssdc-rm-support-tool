@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.utility;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
@@ -12,6 +14,8 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseSearchResult;
 
 @Component
 public class CaseSearchResultsMapper implements RowMapper<CaseSearchResult> {
+  private static final Logger log = LoggerFactory.getLogger(CaseSearchResultsMapper.class);
+
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
@@ -23,6 +27,7 @@ public class CaseSearchResultsMapper implements RowMapper<CaseSearchResult> {
       caseContainerDto.setCollectionExerciseName(resultSet.getString("collex_name"));
       caseContainerDto.setSample(objectMapper.readValue(resultSet.getString("sample"), Map.class));
     } catch (SQLException | JsonProcessingException e) {
+      log.error("Error mapping case search results");
       throw new RuntimeException("Error mapping case search results", e);
     }
     return caseContainerDto;

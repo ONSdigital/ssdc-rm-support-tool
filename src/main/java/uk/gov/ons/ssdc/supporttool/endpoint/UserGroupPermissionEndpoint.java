@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +30,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/userGroupPermissions")
 public class UserGroupPermissionEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(UserGroupPermissionEndpoint.class);
+
   private final UserGroupPermissionRepository userGroupPermissionRepository;
   private final UserIdentity userIdentity;
   private final UserGroupRepository userGroupRepository;
@@ -54,7 +58,13 @@ public class UserGroupPermissionEndpoint {
         userGroupRepository
             .findById(groupId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.with("groupId", groupId)
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Failed to find user group permissiosn, group not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     return userGroupPermissionRepository.findByGroup(group).stream()
         .map(
@@ -84,12 +94,22 @@ public class UserGroupPermissionEndpoint {
         userGroupRepository
             .findById(userGroupPermissionDto.getGroupId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.with("groupId", userGroupPermissionDto.getGroupId())
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Failed to add permission to group, group not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     Survey survey = null;
     if (userGroupPermissionDto.getSurveyId() != null) {
       if (userGroupPermissionDto.getAuthorisedActivity().isGlobal()) {
         // Not allowed to use a global permission on a specific survey... doesn't work; nonsensical!
+        log.with("authorisedActivity", userGroupPermissionDto.getAuthorisedActivity().name())
+            .with("httpStatus", HttpStatus.BAD_REQUEST)
+            .with("userEmail", userEmail)
+            .warn("Failed to add permission to group, global permissions must be global");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Global permissions must be global");
       }
@@ -98,7 +118,13 @@ public class UserGroupPermissionEndpoint {
           surveyRepository
               .findById(userGroupPermissionDto.getSurveyId())
               .orElseThrow(
-                  () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                  () -> {
+                    log.with("surveyId", userGroupPermissionDto.getSurveyId())
+                        .with("httpStatus", HttpStatus.BAD_REQUEST)
+                        .with("userEmail", userEmail)
+                        .warn("Failed to add permission to group, survey not found");
+                    return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                  });
     }
 
     for (UserGroupPermission existingPermission : group.getPermissions()) {
@@ -110,6 +136,11 @@ public class UserGroupPermissionEndpoint {
           && ((survey == null && existingPermission.getSurvey() == null)
               || (existingPermission.getSurvey() != null
                   && existingPermission.getSurvey().equals(survey)))) {
+        log.with("authorisedActivity", existingPermission.getAuthorisedActivity())
+            .with("surveyName", survey.getName())
+            .with("userEmail", userEmail)
+            .with("httpStatus", HttpStatus.CONFLICT)
+            .warn("Failed to add permission to group, permission already exists");
         throw new ResponseStatusException(HttpStatus.CONFLICT, "Permission already exists");
       }
     }

@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,6 +33,8 @@ import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 @RestController
 @RequestMapping(value = "/api/fulfilmentSurveyExportFileTemplates")
 public class FulfilmentSurveyExportFileTemplateEndpoint {
+  private static final Logger log =
+      LoggerFactory.getLogger(FulfilmentSurveyExportFileTemplateEndpoint.class);
   private final FulfilmentSurveyExportFileTemplateRepository
       fulfilmentSurveyExportFileTemplateRepository;
   private final SurveyRepository surveyRepository;
@@ -53,14 +57,21 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
   }
 
   @GetMapping
-  public List<ExportFileTemplateDto> getAllowedPackCodesBySurvey(
+  public List<ExportFileTemplateDto> getAllowedExportFileTemplatesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Survey survey =
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.with("surveyId", surveyId)
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn(
+                          "Failed to get allowed fulfilment export file templates, survey not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -80,7 +91,14 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn(
+                          "Failed to create fulfilment survey export file templates, survey not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -91,9 +109,15 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
         exportFileTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Export file template not found"));
+                () -> {
+                  log.with("packCode", allowTemplateOnSurvey.getPackCode())
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn(
+                          "Failed to create fulfilment survey export file templates, export file template not found");
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Export file template not found");
+                });
 
     Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));
     if (errorOpt.isPresent()) {

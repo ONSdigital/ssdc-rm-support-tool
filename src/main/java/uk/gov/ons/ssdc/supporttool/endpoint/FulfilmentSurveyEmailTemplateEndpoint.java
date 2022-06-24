@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,6 +33,9 @@ import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 @RestController
 @RequestMapping(value = "/api/fulfilmentSurveyEmailTemplates")
 public class FulfilmentSurveyEmailTemplateEndpoint {
+  private static final Logger log =
+      LoggerFactory.getLogger(FulfilmentSurveyEmailTemplateEndpoint.class);
+
   private final FulfilmentSurveyEmailTemplateRepository fulfilmentSurveyEmailTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final EmailTemplateRepository emailTemplateRepository;
@@ -58,7 +63,13 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.with("surveyId", surveyId)
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Failed to get allowed email templates, survey not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -78,7 +89,13 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Failed to create fulfilment survey email templates, survey not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT);
@@ -87,9 +104,15 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
         emailTemplateRepository
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Email template not found"));
+                () -> {
+                  log.with("packCode", allowTemplateOnSurvey.getPackCode())
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn(
+                          "Failed to create fulfilment survey email templates, email template not found");
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Email template not found");
+                });
 
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {

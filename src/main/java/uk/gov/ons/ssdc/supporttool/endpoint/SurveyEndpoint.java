@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 @RestController
 @RequestMapping(value = "/api/surveys")
 public class SurveyEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(SurveyEndpoint.class);
   private final SurveyRepository surveyRepository;
   private final UserIdentity userIdentity;
   private final SurveyService surveyService;
@@ -63,7 +66,13 @@ public class SurveyEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.with("surveyId", surveyId)
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Failed to get survey, survey not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.VIEW_SURVEY);

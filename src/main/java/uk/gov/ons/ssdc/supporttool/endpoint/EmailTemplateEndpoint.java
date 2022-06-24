@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +25,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/emailTemplates")
 public class EmailTemplateEndpoint {
+
+  private static final Logger log = LoggerFactory.getLogger(EmailTemplateEndpoint.class);
   private final EmailTemplateRepository emailTemplateRepository;
   private final UserIdentity userIdentity;
 
@@ -59,7 +63,7 @@ public class EmailTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EMAIL_TEMPLATE);
 
-    validateEmailTemplate(emailTemplateDto);
+    validateEmailTemplate(emailTemplateDto, userEmail);
 
     EmailTemplate emailTemplate = new EmailTemplate();
     emailTemplate.setTemplate(emailTemplateDto.getTemplate());
@@ -73,10 +77,14 @@ public class EmailTemplateEndpoint {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  private void validateEmailTemplate(EmailTemplateDto emailTemplateDto) {
+  private void validateEmailTemplate(EmailTemplateDto emailTemplateDto, String userEmail) {
 
     Set<String> templateSet = new HashSet<>(Arrays.asList(emailTemplateDto.getTemplate()));
     if (templateSet.size() != emailTemplateDto.getTemplate().length) {
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
+          .with("template", templateSet)
+          .warn("Failed to create email template, template cannot have duplicate columns");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -86,6 +94,10 @@ public class EmailTemplateEndpoint {
         .forEach(
             emailTemplate -> {
               if (emailTemplate.getPackCode().equalsIgnoreCase(emailTemplateDto.getPackCode())) {
+                log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                    .with("userEmail", userEmail)
+                    .with("packCode", emailTemplate.getPackCode())
+                    .warn("Failed to create email template, Pack code already exists");
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }

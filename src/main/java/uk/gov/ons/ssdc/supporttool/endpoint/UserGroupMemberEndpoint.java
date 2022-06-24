@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +30,8 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/userGroupMembers")
 public class UserGroupMemberEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(UserGroupMemberEndpoint.class);
+
   private final UserGroupMemberRepository userGroupMemberRepository;
   private final UserIdentity userIdentity;
   private final UserRepository userRepository;
@@ -54,7 +58,13 @@ public class UserGroupMemberEndpoint {
         userRepository
             .findById(userId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
+                () -> {
+                  log.with("userId", userId)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
+                      .warn("Failed to find user group member, user not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+                });
 
     return userGroupMemberRepository.findByUser(user).stream()
         .map(this::mapGroupMember)
@@ -69,7 +79,13 @@ public class UserGroupMemberEndpoint {
         userGroupRepository
             .findById(groupId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.with("groupId", groupId)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
+                      .warn("Failed to find user group member, group not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     if (group.getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
@@ -90,7 +106,13 @@ public class UserGroupMemberEndpoint {
         userGroupRepository
             .findById(userGroupMemberDto.getGroupId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found"));
+                () -> {
+                  log.with("groupId", userGroupMemberDto.getGroupId())
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
+                      .warn("Failed to add user to group, group not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
+                });
 
     if (group.getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
@@ -102,10 +124,23 @@ public class UserGroupMemberEndpoint {
         userRepository
             .findById(userGroupMemberDto.getUserId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
+                () -> {
+                  log.with("userId", userGroupMemberDto.getUserId())
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
+                      .warn("Failed to add user to group, user not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+                });
 
     if (user.getMemberOf().stream()
         .anyMatch(userGroupMember -> userGroupMember.getGroup() == group)) {
+      log.with("userId", user.getId())
+          .with("groupId", group.getId())
+          .with("groupName", group.getName())
+          .with("userEmail", user.getEmail())
+          .with("httpStatus", HttpStatus.CONFLICT)
+          .with("userEmail", userEmail)
+          .warn("Failed to add user to group, user is already a member of this group");
       throw new ResponseStatusException(
           HttpStatus.CONFLICT, "User is already a member of this group");
     }
@@ -128,9 +163,14 @@ public class UserGroupMemberEndpoint {
         userGroupMemberRepository
             .findById(groupMemberId)
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Group membership not found"));
+                () -> {
+                  log.with("groupMemberId", groupMemberId)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("userEmail", userEmail)
+                      .warn("Failed to remove user from group, group membership not found");
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Group membership not found");
+                });
 
     if (userGroupMember.getGroup().getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {

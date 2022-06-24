@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +25,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/smsTemplates")
 public class SmsTemplateEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(SmsTemplateEndpoint.class);
   private final SmsTemplateRepository smsTemplateRepository;
   private final UserIdentity userIdentity;
 
@@ -59,7 +62,7 @@ public class SmsTemplateEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_SMS_TEMPLATE);
 
-    validateTemplate(smsTemplateDto);
+    validateTemplate(smsTemplateDto, userEmail);
 
     SmsTemplate smsTemplate = new SmsTemplate();
     smsTemplate.setTemplate(smsTemplateDto.getTemplate());
@@ -73,9 +76,13 @@ public class SmsTemplateEndpoint {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  private void validateTemplate(SmsTemplateDto smsTemplateDto) {
+  private void validateTemplate(SmsTemplateDto smsTemplateDto, String userEmail) {
     Set<String> templateSet = new HashSet<>(Arrays.asList(smsTemplateDto.getTemplate()));
     if (templateSet.size() != smsTemplateDto.getTemplate().length) {
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
+          .with("template", smsTemplateDto.getTemplate())
+          .warn("Failed to create sms template, template cannot have duplicate columns");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -85,6 +92,10 @@ public class SmsTemplateEndpoint {
         .forEach(
             smsTemplate -> {
               if (smsTemplate.getPackCode().equalsIgnoreCase(smsTemplateDto.getPackCode())) {
+                log.with("packCode", smsTemplateDto.getPackCode())
+                    .with("userEmail", userEmail)
+                    .with("httpStatus", HttpStatus.BAD_REQUEST)
+                    .warn("Failed to create sms template, Pack code already exists");
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }

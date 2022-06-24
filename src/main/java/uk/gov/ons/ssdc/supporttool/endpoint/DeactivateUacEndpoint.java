@@ -3,6 +3,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.DEACTIVATE_UAC;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 @RequestMapping(value = "/api/deactivateUac")
 public class DeactivateUacEndpoint {
 
+  private static final Logger log = LoggerFactory.getLogger(DeactivateUacEndpoint.class);
   private final UserIdentity userIdentity;
   private final UacQidLinkRepository qidLinkRepository;
   private final PubSubTemplate pubSubTemplate;
@@ -50,6 +53,10 @@ public class DeactivateUacEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Optional<UacQidLink> uacQidLinkOpt = qidLinkRepository.findByQid(qid);
     if (!uacQidLinkOpt.isPresent()) {
+      log.with("httpStatus", HttpStatus.NOT_FOUND)
+          .with("userEmail", userEmail)
+          .with("qid", qid)
+          .warn("Failed to deactivate UAC, could not find QID");
       throw new ResponseStatusException(
           HttpStatus.NOT_FOUND, String.format("Could not find QID %s", qid));
     }

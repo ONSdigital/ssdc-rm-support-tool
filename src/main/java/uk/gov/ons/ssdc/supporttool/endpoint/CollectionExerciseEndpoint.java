@@ -2,6 +2,8 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +44,8 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 @RestController
 @RequestMapping(value = "/api/collectionExercises")
 public class CollectionExerciseEndpoint {
+
+  private static final Logger log = LoggerFactory.getLogger(CollectionExerciseEndpoint.class);
   private static final ExpressionParser expressionParser = new SpelExpressionParser();
 
   private final CollectionExerciseRepository collectionExerciseRepository;
@@ -77,9 +81,14 @@ public class CollectionExerciseEndpoint {
         collectionExerciseRepository
             .findById(collexId)
             .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Collection exercise not found"));
+                () -> {
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("collexId", collexId)
+                      .with("userEmail", userEmail)
+                      .warn("Failed to get collection exercise, collection exercise not found");
+                  return new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "Collection exercise not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail,
@@ -98,7 +107,13 @@ public class CollectionExerciseEndpoint {
         surveyRepository
             .findById(surveyId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("surveyId", surveyId)
+                      .with("userEmail", userEmail)
+                      .warn("Failed to find collection exercise, Survey not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES);
@@ -130,13 +145,19 @@ public class CollectionExerciseEndpoint {
         surveyRepository
             .findById(collectionExerciseDto.getSurveyId())
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found"));
+                () -> {
+                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("surveyId", collectionExerciseDto.getSurveyId())
+                      .with("userEmail", userEmail)
+                      .warn("Failed to create collection exercise, Survey not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
+                });
 
     userIdentity.checkUserPermission(
         userEmail, survey, UserGroupAuthorisedActivityType.CREATE_COLLECTION_EXERCISE);
 
     validateCollectionInstrumentRules(
-        collectionExerciseDto.getCollectionInstrumentSelectionRules());
+        collectionExerciseDto.getCollectionInstrumentSelectionRules(), userEmail);
 
     CollectionExercise collectionExercise = new CollectionExercise();
     collectionExercise.setId(UUID.randomUUID());
@@ -183,12 +204,15 @@ public class CollectionExerciseEndpoint {
   }
 
   private void validateCollectionInstrumentRules(
-      CollectionInstrumentSelectionRule[] collectionInstrumentSelectionRules) {
+      CollectionInstrumentSelectionRule[] collectionInstrumentSelectionRules, String userEmail) {
     boolean foundDefaultRuleWithNullExpression = false;
 
     for (CollectionInstrumentSelectionRule collectionInstrumentSelectionRule :
         collectionInstrumentSelectionRules) {
       if (!StringUtils.hasText(collectionInstrumentSelectionRule.getCollectionInstrumentUrl())) {
+        log.with("httpStatus", HttpStatus.BAD_REQUEST)
+            .with("userEmail", userEmail)
+            .warn("Failed to create collection exercise, CI URL cannot be blank");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CI URL cannot be blank");
       }
 
@@ -201,6 +225,9 @@ public class CollectionExerciseEndpoint {
 
         continue;
       } else if (!StringUtils.hasText(spelExpression)) {
+        log.with("httpStatus", HttpStatus.BAD_REQUEST)
+            .with("userEmail", userEmail)
+            .warn("Failed to create collection exercise, SPEL expression cannot be blank");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "SPEL expression cannot be blank");
       }
@@ -208,12 +235,20 @@ public class CollectionExerciseEndpoint {
       try {
         expressionParser.parseExpression(spelExpression);
       } catch (Exception e) {
+        log.with("httpStatus", HttpStatus.BAD_REQUEST)
+            .with("spelExpression", spelExpression)
+            .with("userEmail", userEmail)
+            .warn("Failed to create collection exercise, Invalid SPEL");
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Invalid SPEL: " + spelExpression, e);
       }
     }
 
     if (!foundDefaultRuleWithNullExpression) {
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("userEmail", userEmail)
+          .warn(
+              "Failed to create collection exercise, Rules must include zero priority default with null expression");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Rules must include zero priority default with null expression");
     }

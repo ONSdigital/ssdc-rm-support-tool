@@ -1,5 +1,7 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,6 +26,7 @@ import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 @RestController
 @RequestMapping(value = "/api/users")
 public class UserEndpoint {
+  private static final Logger log = LoggerFactory.getLogger(UserEndpoint.class);
   private final UserRepository userRepository;
   private final UserIdentity userIdentity;
   private final UserGroupAdminRepository userGroupAdminRepository;
@@ -47,7 +50,13 @@ public class UserEndpoint {
         userRepository
             .findById(userId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
+                () -> {
+                  log.with("userId", userId)
+                      .with("userEmail", userEmail)
+                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .warn("Failed to get user, user not found");
+                  return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+                });
 
     return mapDto(user);
   }
