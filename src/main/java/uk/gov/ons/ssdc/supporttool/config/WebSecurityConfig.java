@@ -16,5 +16,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .contentTypeOptions()
         .and()
         .httpStrictTransportSecurity();
+
+    http.csrf().disable();
   }
 }
