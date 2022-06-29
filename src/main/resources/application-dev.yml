@@ -4,6 +4,9 @@ spring:
       pubsub:
         emulator-host: localhost:8538
         project-id: our-project
+security:
+  basic:
+    enabled: false
 
 queueconfig:
   shared-pubsub-project: shared-project
