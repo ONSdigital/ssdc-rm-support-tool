@@ -101,6 +101,14 @@ public class IntegrationTestHelper {
     String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
     assertThat(response.getStatusCode()).as("GET is OK").isEqualTo(HttpStatus.OK);
+    assertThat(response.getHeaders().get("Referrer-Policy").get(0)).isEqualTo("no-referrer");
+    assertThat(response.getHeaders().get("Content-Security-Policy").get(0))
+        .isEqualTo(
+            "default-src 'self'; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content");
+    assertThat(response.getHeaders().get("Strict-Transport-Security").get(0))
+        .isEqualTo("max-age=31536000 ; includeSubDomains");
+    assertThat(response.getHeaders().get("X-Frame-Options").get(0)).isEqualTo("DENY");
+    assertThat(response.getHeaders().get("X-Content-Type-Options").get(0)).isEqualTo("nosniff");
 
     if (activity != null) {
       deleteAllPermissions();
