@@ -76,7 +76,8 @@ public class RowChunkStager {
       jobRepository.saveAndFlush(job);
       jobRowRepository.saveAll(jobRows);
     } catch (IOException e) {
-      log.with("Lines read", csvReader.getRecordsRead()).error("Error staging job row, CSV data is malformed");
+      log.with("Lines read", csvReader.getRecordsRead())
+          .error("Error staging job row, CSV data is malformed");
       return JobStatus.VALIDATED_TOTAL_FAILURE;
     }
 
