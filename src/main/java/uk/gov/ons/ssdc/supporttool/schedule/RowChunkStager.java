@@ -4,11 +4,7 @@ import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.opencsv.CSVReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +37,11 @@ public class RowChunkStager {
       for (int i = 0; i < CHUNK_SIZE; i++) {
         String[] line = csvReader.readNext();
         if (line == null && i == 0) {
-          log.error(
-              "Error staging job row, next line in csvreader is null but it's the first iteration. This shouldn't be possible so must be something wrong with the file");
+          log.with("file_id", job.getFileId())
+              .with("job_id", job.getId())
+              .with("file_name", job.getFileName())
+              .error(
+                  "Failed to process job due to an empty chunk, this probably indicates a mismatch between file line count and row count");
           return JobStatus.VALIDATED_TOTAL_FAILURE;
         } else if (line == null) {
           break;
@@ -77,7 +76,10 @@ public class RowChunkStager {
       jobRowRepository.saveAll(jobRows);
     } catch (IOException e) {
       log.with("Lines read", csvReader.getRecordsRead())
-          .error("Error staging job row, CSV data is malformed");
+          .with("file_id", job.getFileId())
+          .with("job_id", job.getId())
+          .with("file_name", job.getFileName())
+          .error(e, "Error staging job row, CSV data is malformed");
       return JobStatus.VALIDATED_TOTAL_FAILURE;
     }
 
