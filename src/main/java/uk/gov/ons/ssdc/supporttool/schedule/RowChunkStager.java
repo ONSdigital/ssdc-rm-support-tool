@@ -37,12 +37,16 @@ public class RowChunkStager {
       for (int i = 0; i < CHUNK_SIZE; i++) {
         String[] line = csvReader.readNext();
         if (line == null && i == 0) {
-          log.with("file_id", job.getFileId())
-              .with("job_id", job.getId())
-              .with("file_name", job.getFileName())
+          log.with("linesRead", csvReader.getRecordsRead())
+              .with("fileId", job.getFileId())
+              .with("jobId", job.getId())
+              .with("fileName", job.getFileName())
               .error(
                   "Failed to process job due to an empty chunk, this probably indicates a mismatch between file line count and row count");
-          return JobStatus.VALIDATED_TOTAL_FAILURE;
+          jobStatus = JobStatus.VALIDATED_TOTAL_FAILURE;
+          job.setFatalErrorDescription(
+              "Failed to process job due to an empty chunk, this probably indicates a mismatch between file line count and row count");
+          break;
         } else if (line == null) {
           break;
         }
@@ -79,7 +83,8 @@ public class RowChunkStager {
           .with("file_id", job.getFileId())
           .with("job_id", job.getId())
           .with("file_name", job.getFileName())
-          .error(e, "Error staging job row, CSV data is malformed");
+          .with("exceptionMessage", e.getMessage())
+          .error(e, "IOException staging job row, CSV data is malformed");
       return JobStatus.VALIDATED_TOTAL_FAILURE;
     }
 
