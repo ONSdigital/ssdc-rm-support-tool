@@ -179,6 +179,8 @@ public class CollectionExerciseEndpoint {
     collectionExerciseUpdate.setStartDate(collectionExercise.getStartDate());
     collectionExerciseUpdate.setEndDate(collectionExercise.getEndDate());
     collectionExerciseUpdate.setMetadata(collectionExercise.getMetadata());
+    collectionExerciseUpdate.setCollectionInstrumentSelectionRules(
+            collectionExerciseDto.getCollectionInstrumentSelectionRules());
 
     PayloadDTO payloadDTO = new PayloadDTO();
     payloadDTO.setCollectionExerciseUpdate(collectionExerciseUpdate);
