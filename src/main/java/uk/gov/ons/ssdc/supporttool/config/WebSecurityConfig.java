@@ -25,7 +25,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
         .and()
         .contentSecurityPolicy(
-            "default-src 'self'; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content");
+            "default-src 'self'; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content")
+        .and()
+        .permissionsPolicy()
+        .policy(
+            "accelerometer=(),autoplay=(),camera=(),display-capture=(),document-domain=(),encrypted-media=(),fullscreen=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),midi=(),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),sync-xhr=(self),usb=(),web-share=(),xr-spatial-tracking=()");
 
     http.csrf().disable();
   }
