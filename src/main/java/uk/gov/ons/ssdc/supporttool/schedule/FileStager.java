@@ -93,7 +93,7 @@ public class FileStager {
             jobStatus = JobStatus.VALIDATED_TOTAL_FAILURE;
             job.setFatalErrorDescription(
                 "Header row does not match expected columns, received: ["
-                    + headerRow[index]
+                    + headerRow[index].substring(0, 150)
                     + "] expected: ["
                     + expectedColumns[index]
                     + "]");
@@ -115,7 +115,14 @@ public class FileStager {
 
       return jobStatus;
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      log.with("file_id", job.getFileId())
+          .with("job_id", job.getId())
+          .with("file_name", job.getFileName())
+          .error("IOException checking header row, CSV data is malformed");
+
+      job.setFatalErrorDescription("Exception Message: " + e.getMessage());
+      job.setJobStatus(JobStatus.VALIDATED_TOTAL_FAILURE);
+      return JobStatus.VALIDATED_TOTAL_FAILURE;
     }
   }
 }
