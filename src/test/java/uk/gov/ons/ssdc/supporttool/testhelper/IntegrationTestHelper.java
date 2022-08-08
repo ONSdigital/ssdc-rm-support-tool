@@ -109,6 +109,9 @@ public class IntegrationTestHelper {
         .isEqualTo("max-age=31536000 ; includeSubDomains");
     assertThat(response.getHeaders().get("X-Frame-Options").get(0)).isEqualTo("DENY");
     assertThat(response.getHeaders().get("X-Content-Type-Options").get(0)).isEqualTo("nosniff");
+    assertThat(response.getHeaders().get("Permissions-Policy").get(0))
+        .isEqualTo(
+            "accelerometer=(),autoplay=(),camera=(),display-capture=(),document-domain=(),encrypted-media=(),fullscreen=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),midi=(),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),sync-xhr=(self),usb=(),xr-spatial-tracking=()");
 
     if (activity != null) {
       deleteAllPermissions();
