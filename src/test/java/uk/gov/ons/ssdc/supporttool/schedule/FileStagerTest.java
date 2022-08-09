@@ -2,6 +2,7 @@ package uk.gov.ons.ssdc.supporttool.schedule;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
+import static uk.gov.ons.ssdc.supporttool.testhelper.ScheduleHelper.createFile;
 
 import java.io.*;
 import java.util.*;
@@ -15,10 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.ons.ssdc.common.model.entity.*;
-import uk.gov.ons.ssdc.common.validation.ColumnValidator;
-import uk.gov.ons.ssdc.common.validation.MandatoryRule;
-import uk.gov.ons.ssdc.common.validation.Rule;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
+import uk.gov.ons.ssdc.supporttool.testhelper.ScheduleHelper;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +40,7 @@ public class FileStagerTest {
   @Test
   void testFileStagerSuccess() throws IOException {
     // Given
-    Job job = getJob();
+    Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
     createFile(job, "Junk");
@@ -61,7 +60,7 @@ public class FileStagerTest {
   @Test
   void testFileStagerUnexpectedColumnName() throws IOException {
     // Given
-    Job job = getJob();
+    Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
     createFile(job, "Junk");
@@ -81,7 +80,7 @@ public class FileStagerTest {
   @Test
   void testFileStagerMismatchColumns() throws IOException {
     // Given
-    Job job = getJob();
+    Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
     createFile(job, "Junk");
@@ -103,7 +102,7 @@ public class FileStagerTest {
   @Test
   void testRowChunkStagerFailedWithIOException() throws IOException {
     // Given
-    Job job = getJob();
+    Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
 
@@ -124,7 +123,7 @@ public class FileStagerTest {
   @Test
   void testFileStagerFileDoesNotExist() {
     // Given
-    Job job = getJob();
+    Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
     when(jobRepository.findByJobStatus(JobStatus.FILE_UPLOADED)).thenReturn(jobList);
@@ -134,38 +133,5 @@ public class FileStagerTest {
 
     // // Then
     assertThat(job.getJobStatus()).isEqualTo(JobStatus.FILE_UPLOADED);
-  }
-
-  private void createFile(Job job, String header) throws IOException {
-    File file = new File("/tmp/" + job.getFileId());
-    file.createNewFile();
-    file.deleteOnExit();
-    FileWriter fw = new FileWriter(file.getPath(), true);
-    BufferedWriter bw = new BufferedWriter(fw);
-    bw.write(header);
-    bw.newLine();
-    bw.write("Blah");
-    bw.close();
-  }
-
-  private Job getJob() {
-    CollectionExercise collectionExercise = new CollectionExercise();
-    Survey survey = new Survey();
-    survey.setName("test_survey-" + UUID.randomUUID());
-    survey.setSampleSeparator(',');
-    survey.setSampleValidationRules(
-        new ColumnValidator[] {
-          new ColumnValidator("Junk", false, new Rule[] {new MandatoryRule()})
-        });
-    survey.setSampleWithHeaderRow(true);
-    collectionExercise.setSurvey(survey);
-    Job job = new Job();
-    job.setCollectionExercise(collectionExercise);
-    job.setJobStatus(JobStatus.FILE_UPLOADED);
-    job.setJobType(JobType.SAMPLE);
-    job.setFileRowCount(1);
-    job.setId(UUID.randomUUID());
-    job.setFileId(UUID.randomUUID());
-    return job;
   }
 }

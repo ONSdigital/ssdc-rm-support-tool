@@ -125,6 +125,7 @@ public class RowStager {
           .error("IOException staging job, CSV data is malformed");
 
       job.setFatalErrorDescription("Exception Message: " + e.getMessage());
+      job.setJobStatus(JobStatus.VALIDATED_TOTAL_FAILURE);
       jobRepository.saveAndFlush(job);
     }
   }
