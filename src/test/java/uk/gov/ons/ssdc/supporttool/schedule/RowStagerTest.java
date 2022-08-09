@@ -4,7 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static uk.gov.ons.ssdc.supporttool.testhelper.ScheduleHelper.createFile;
+import static uk.gov.ons.ssdc.supporttool.testhelper.ScheduleHelper.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class RowStagerTest {
     job.setStagingRowNumber(1);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
-    createFile(job, "Junk");
+    ScheduleHelper.createFile(job, "Junk");
     when(jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS)).thenReturn(jobList);
     doAnswer(
             (i) -> {
@@ -76,7 +76,7 @@ public class RowStagerTest {
     Job job = ScheduleHelper.getJob("Junk", false, JobStatus.STAGING_IN_PROGRESS);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
-    createFile(job, "Junk");
+    ScheduleHelper.createFile(job, "Junk");
     when(jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS)).thenReturn(jobList);
     when(rowChunkStager.stageChunk(eq(job), any(), any()))
         .thenReturn(JobStatus.VALIDATED_TOTAL_FAILURE);
@@ -97,7 +97,7 @@ public class RowStagerTest {
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.STAGING_IN_PROGRESS);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
-    createFile(job, "\"Junk");
+    ScheduleHelper.createFile(job, "\"Junk");
     when(jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS)).thenReturn(jobList);
 
     // When
@@ -121,7 +121,7 @@ public class RowStagerTest {
     // When
     underTest.processRows();
 
-    // // Then
+    // Then
     assertThat(job.getJobStatus()).isEqualTo(JobStatus.STAGING_IN_PROGRESS);
   }
 }

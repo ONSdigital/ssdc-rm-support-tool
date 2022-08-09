@@ -2,7 +2,6 @@ package uk.gov.ons.ssdc.supporttool.schedule;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
-import static uk.gov.ons.ssdc.supporttool.testhelper.ScheduleHelper.createFile;
 
 import java.io.*;
 import java.util.*;
@@ -43,7 +42,7 @@ public class FileStagerTest {
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
-    createFile(job, "Junk");
+    ScheduleHelper.createFile(job, "Junk");
     when(jobRepository.findByJobStatus(JobStatus.FILE_UPLOADED)).thenReturn(jobList);
     when(jobTypeHelper.getExpectedColumns(job.getJobType(), job.getCollectionExercise()))
         .thenReturn(new String[] {"Junk"});
@@ -63,7 +62,7 @@ public class FileStagerTest {
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
-    createFile(job, "Junk");
+    ScheduleHelper.createFile(job, "Junk");
     when(jobRepository.findByJobStatus(JobStatus.FILE_UPLOADED)).thenReturn(jobList);
     when(jobTypeHelper.getExpectedColumns(job.getJobType(), job.getCollectionExercise()))
         .thenReturn(new String[] {"Funk"});
@@ -83,7 +82,7 @@ public class FileStagerTest {
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
-    createFile(job, "Junk");
+    ScheduleHelper.createFile(job, "Junk");
     when(jobRepository.findByJobStatus(JobStatus.FILE_UPLOADED)).thenReturn(jobList);
     when(jobTypeHelper.getExpectedColumns(job.getJobType(), job.getCollectionExercise()))
         .thenReturn(new String[] {"Junk", "Funk"});
@@ -106,7 +105,7 @@ public class FileStagerTest {
     List<Job> jobList = new ArrayList<>();
     jobList.add(job);
 
-    createFile(job, "\"junk");
+    ScheduleHelper.createFile(job, "\"junk");
 
     when(jobRepository.findByJobStatus(JobStatus.FILE_UPLOADED)).thenReturn(jobList);
 
@@ -131,7 +130,7 @@ public class FileStagerTest {
     // When
     underTest.processFiles();
 
-    // // Then
+    // Then
     assertThat(job.getJobStatus()).isEqualTo(JobStatus.FILE_UPLOADED);
   }
 }
