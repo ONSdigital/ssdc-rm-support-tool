@@ -93,7 +93,7 @@ public class FileStager {
             jobStatus = JobStatus.VALIDATED_TOTAL_FAILURE;
             job.setFatalErrorDescription(
                 "Header row does not match expected columns, received: ["
-                    + headerRow[index].substring(0, 150)
+                    + headerRow[index]
                     + "] expected: ["
                     + expectedColumns[index]
                     + "]");
