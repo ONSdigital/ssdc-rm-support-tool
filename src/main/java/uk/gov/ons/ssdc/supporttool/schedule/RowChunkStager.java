@@ -83,8 +83,11 @@ public class RowChunkStager {
           .with("file_id", job.getFileId())
           .with("job_id", job.getId())
           .with("file_name", job.getFileName())
-          .with("exceptionMessage", e.getMessage())
-          .error(e, "IOException staging job row, CSV data is malformed");
+          .error("IOException staging job row, CSV data is malformed");
+
+      job.setFatalErrorDescription("Exception Message: " + e.getMessage());
+      jobRepository.saveAndFlush(job);
+
       return JobStatus.VALIDATED_TOTAL_FAILURE;
     }
 

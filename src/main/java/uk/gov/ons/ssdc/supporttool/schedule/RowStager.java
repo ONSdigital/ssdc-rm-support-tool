@@ -119,7 +119,14 @@ public class RowStager {
             });
       }
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      log.with("file_id", job.getFileId())
+          .with("job_id", job.getId())
+          .with("file_name", job.getFileName())
+          .error("IOException staging job, CSV data is malformed");
+
+      job.setFatalErrorDescription("Exception Message: " + e.getMessage());
+      job.setJobStatus(JobStatus.VALIDATED_TOTAL_FAILURE);
+      jobRepository.saveAndFlush(job);
     }
   }
 }
