@@ -27,7 +27,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
         .and()
         .contentSecurityPolicy(
-            String.format("default-src 'self'; manifest-src %s ; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content", TRUSTED_CDN_DOMAIN))
+            String.format(
+                "default-src 'self'; manifest-src %s ; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content",
+                TRUSTED_CDN_DOMAIN))
         .and()
         .permissionsPolicy()
         .policy(
