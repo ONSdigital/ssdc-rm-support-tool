@@ -9,6 +9,8 @@ import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+  private static final String TRUSTED_CDN_DOMAIN = "https://cdn.ons.gov.uk/";
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.headers()
@@ -25,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
         .and()
         .contentSecurityPolicy(
-            "default-src 'self'; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content")
+            String.format("default-src 'self'; manifest-src %s ; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content", TRUSTED_CDN_DOMAIN))
         .and()
         .permissionsPolicy()
         .policy(
