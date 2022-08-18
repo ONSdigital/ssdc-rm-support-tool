@@ -359,6 +359,7 @@ class CollectionExerciseList extends Component {
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button
+                  id="postCreateCollectionExerciseBtn"
                   onClick={this.onCreateCollectionExercise}
                   variant="contained"
                   style={{ margin: 10 }}
