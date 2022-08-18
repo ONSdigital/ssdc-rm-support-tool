@@ -260,37 +260,38 @@ class CollectionExerciseList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_COLLECTION_EXERCISES"
         ) && (
-          <>
-            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-              Collection Exercises
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Collection Exercise Name</TableCell>
-                    <TableCell>Reference</TableCell>
-                    <TableCell>Start Date</TableCell>
-                    <TableCell>End Date</TableCell>
-                    <TableCell>Metadata</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{collectionExerciseTableRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+                Collection Exercises
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Collection Exercise Name</TableCell>
+                      <TableCell>Reference</TableCell>
+                      <TableCell>Start Date</TableCell>
+                      <TableCell>End Date</TableCell>
+                      <TableCell>Metadata</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{collectionExerciseTableRows}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
         {this.state.authorisedActivities.includes(
           "CREATE_COLLECTION_EXERCISE"
         ) && (
-          <Button
-            variant="contained"
-            onClick={this.openCreateCollectionExerciseDialog}
-            style={{ marginTop: 10 }}
-          >
-            Create Collection Exercise
-          </Button>
-        )}
+            <Button
+              id="createCollectionExerciseBtn"
+              variant="contained"
+              onClick={this.openCreateCollectionExerciseDialog}
+              style={{ marginTop: 10 }}
+            >
+              Create Collection Exercise
+            </Button>
+          )}
         <Dialog open={this.state.createCollectionExerciseDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>

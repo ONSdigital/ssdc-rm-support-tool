@@ -227,7 +227,7 @@ class SurveysList extends Component {
               Surveys
             </Typography>
             <TableContainer component={Paper}>
-              <Table>
+              <Table id="surveyListTable">
                 <TableHead>
                   <TableRow>
                     <TableCell>Name</TableCell>
@@ -242,6 +242,7 @@ class SurveysList extends Component {
         )}
         {this.state.authorisedActivities.includes("CREATE_SURVEY") && (
           <Button
+            id="createSurveyBtn"
             variant="contained"
             onClick={this.openDialog}
             style={{ marginTop: 10 }}
@@ -254,9 +255,9 @@ class SurveysList extends Component {
             <div>
               <div>
                 <TextField
+                  id='surveyNameTextField'
                   required
                   error={this.state.validationError}
-                  id="standard-required"
                   label="Survey name"
                   onChange={this.onNewSurveyNameChange}
                   value={this.state.newSurveyName}
@@ -268,6 +269,7 @@ class SurveysList extends Component {
                 >
                   <InputLabel>Sample Has Header Row</InputLabel>
                   <Select
+                    id="headerRowSelect"
                     onChange={this.onNewSurveyHeaderRowChange}
                     value={this.state.newSurveyHeaderRow}
                   >
@@ -282,6 +284,7 @@ class SurveysList extends Component {
                 >
                   <InputLabel>Sample File Separator</InputLabel>
                   <Select
+                    id="sampleFileSeparator"
                     onChange={this.onNewSurveySampleSeparatorChange}
                     value={this.state.newSurveySampleSeparator}
                   >
@@ -291,33 +294,33 @@ class SurveysList extends Component {
                   </Select>
                 </FormControl>
                 <TextField
+                  id="validationRulesTextField"
                   style={{ marginTop: 10 }}
                   required
                   multiline
                   fullWidth={true}
                   error={this.state.validationRulesValidationError}
-                  id="standard-required"
                   label="Validation rules"
                   onChange={this.onNewSurveyValidationRulesChange}
                   value={this.state.newSurveyValidationRules}
                 />
                 <TextField
+                  id="surveyDefinitionURLTextField"
                   style={{ marginTop: 10 }}
                   required
                   multiline
                   fullWidth={true}
                   error={this.state.sampleDefinitionUrlError}
-                  id="standard-required"
                   label="Survey Definition URL"
                   onChange={this.onNewSurveySampleDefinitionUrlChange}
                   value={this.state.newSurveySampleDefinitionUrl}
                 />
                 <TextField
+                  id="metadataTextField"
                   style={{ marginTop: 10 }}
                   multiline
                   fullWidth={true}
                   error={this.state.surveyMetadataError}
-                  id="standard-required"
                   label="Metadata"
                   onChange={this.onNewSurveyMetadataChange}
                   value={this.state.newSurveyMetadata}
@@ -325,6 +328,7 @@ class SurveysList extends Component {
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button
+                  id="postCreateSurveyBtn"
                   onClick={this.onCreateSurvey}
                   variant="contained"
                   style={{ margin: 10 }}
