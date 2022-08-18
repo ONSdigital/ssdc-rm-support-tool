@@ -167,7 +167,7 @@ class SampleUpload extends Component {
         </TableCell>
         <TableCell>{job.createdAt}</TableCell>
         <TableCell align="right">
-          <Button
+          <Button  id={"sampleStatus" + index}
             onClick={() => this.handleOpenDetails(job)}
             variant="contained"
           >

@@ -267,6 +267,7 @@ class JobDetails extends Component {
                   onClick={this.props.onProcessJob}
                   variant="contained"
                   style={{ margin: 10 }}
+                  id="jobProcessBtn"
                 >
                   Process
                 </Button>
