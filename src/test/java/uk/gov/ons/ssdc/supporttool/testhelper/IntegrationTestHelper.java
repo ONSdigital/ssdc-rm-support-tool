@@ -104,7 +104,7 @@ public class IntegrationTestHelper {
     assertThat(response.getHeaders().get("Referrer-Policy").get(0)).isEqualTo("no-referrer");
     assertThat(response.getHeaders().get("Content-Security-Policy").get(0))
         .isEqualTo(
-            "default-src 'self'; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content");
+            "default-src 'self'; manifest-src https://cdn.ons.gov.uk/ ; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content");
     assertThat(response.getHeaders().get("Strict-Transport-Security").get(0))
         .isEqualTo("max-age=31536000 ; includeSubDomains");
     assertThat(response.getHeaders().get("X-Frame-Options").get(0)).isEqualTo("DENY");
