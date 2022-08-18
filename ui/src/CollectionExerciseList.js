@@ -265,7 +265,7 @@ class CollectionExerciseList extends Component {
                 Collection Exercises
               </Typography>
               <TableContainer component={Paper}>
-                <Table>
+                <Table id="collectionExerciseTableList">
                   <TableHead>
                     <TableRow>
                       <TableCell>Collection Exercise Name</TableCell>

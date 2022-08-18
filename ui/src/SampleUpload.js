@@ -194,7 +194,7 @@ class SampleUpload extends Component {
                 Uploaded Sample Files
               </Typography>
               <TableContainer component={Paper}>
-                <Table>
+                <Table id="sampleFilesList">
                   <TableHead>
                     <TableRow>
                       <TableCell>File Name</TableCell>
