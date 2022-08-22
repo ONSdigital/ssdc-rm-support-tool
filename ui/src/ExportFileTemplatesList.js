@@ -267,7 +267,7 @@ class ExportFileTemplateList extends Component {
     const exportFileTemplateRows = this.state.exportFileTemplates.map(
       (exportFileTemplate) => (
         <TableRow key={exportFileTemplate.packCode}>
-          <TableCell component="th" scope="row">
+          <TableCell component="th" scope="row" id="exportFileTemplatePackcode">
             {exportFileTemplate.packCode}
           </TableCell>
           <TableCell component="th" scope="row">
@@ -288,7 +288,7 @@ class ExportFileTemplateList extends Component {
 
     const exportFileDestinationMenuItems =
       this.state.exportFileDestinations.map((supplier) => (
-        <MenuItem key={supplier} value={supplier}>
+        <MenuItem key={supplier} value={supplier} id={supplier}>
           {supplier}
         </MenuItem>
       ));
@@ -303,7 +303,7 @@ class ExportFileTemplateList extends Component {
               Export File Templates
             </Typography>
             <TableContainer component={Paper}>
-              <Table>
+              <Table id="exportFileTemplateTable">
                 <TableHead>
                   <TableRow>
                     <TableCell>Pack Code</TableCell>
@@ -325,6 +325,7 @@ class ExportFileTemplateList extends Component {
             variant="contained"
             onClick={this.openExportFileTemplateDialog}
             style={{ marginTop: 10 }}
+            id="createExportFileTemplateBtn"
           >
             Create Export File Template
           </Button>
@@ -345,6 +346,7 @@ class ExportFileTemplateList extends Component {
                   onChange={this.onPackCodeChange}
                   value={this.state.packCode}
                   helperText={this.state.createExportFileTemplatePackCodeError}
+                  id="packCodeTextField"
                 />
                 <TextField
                   required
@@ -354,17 +356,20 @@ class ExportFileTemplateList extends Component {
                   label="Description"
                   onChange={this.onDescriptionChange}
                   value={this.state.description}
+                  id="descriptionTextField"
                 />
                 <FormControl
                   required
                   fullWidth={true}
                   style={{ marginTop: 10 }}
+                  id="form"
                 >
                   <InputLabel>Export File Destination</InputLabel>
                   <Select
                     onChange={this.onExportFileDestinationChange}
                     value={this.state.exportFileDestination}
                     error={this.state.exportFileDestinationValidationError}
+                    id="exportFileDestinationSelectField"
                   >
                     {exportFileDestinationMenuItems}
                   </Select>
@@ -378,6 +383,7 @@ class ExportFileTemplateList extends Component {
                   onChange={this.onTemplateChange}
                   value={this.state.template}
                   helperText={this.state.templateValidationErrorMessage}
+                  id="templateTextField"
                 />
                 <TextField
                   fullWidth={true}
@@ -386,6 +392,7 @@ class ExportFileTemplateList extends Component {
                   label="Metadata"
                   onChange={this.onNewTemplateMetadataChange}
                   value={this.state.newTemplateMetadata}
+                  id="metadataTextField"
                 />
               </div>
               <div style={{ marginTop: 10 }}>
@@ -393,6 +400,7 @@ class ExportFileTemplateList extends Component {
                   onClick={this.onCreateExportFileTemplate}
                   variant="contained"
                   style={{ margin: 10 }}
+                  id="createExportFileTemplateInnerBtn"
                 >
                   Create export file template
                 </Button>
