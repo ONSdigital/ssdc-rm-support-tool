@@ -137,7 +137,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
 
     const actionRuleEmailTemplateMenuItems =
       this.state.allowableActionRuleEmailPackCodes.map((packCode) => (
-        <MenuItem key={packCode} value={packCode}>
+        <MenuItem key={packCode} value={packCode} id={packCode}>
           {packCode}
         </MenuItem>
       ));
@@ -171,6 +171,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
             variant="contained"
             onClick={this.openActionRuleEmailTemplateDialog}
             style={{ marginTop: 10 }}
+            id="allowEmailTemplateDialogBtn"
           >
             Allow Email Template on Action Rule
           </Button>
@@ -186,6 +187,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
                     onChange={this.onEmailTemplateChange}
                     value={this.state.emailTemplateToAllow}
                     error={this.state.emailTemplateValidationError}
+                    id="selectEmailTemplate"
                   >
                     {actionRuleEmailTemplateMenuItems}
                   </Select>
@@ -203,6 +205,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
                   onClick={this.onAllowActionRuleEmailTemplate}
                   variant="contained"
                   style={{ margin: 10 }}
+                  id="allowEmailTemplateOnActionRule"
                 >
                   Allow
                 </Button>

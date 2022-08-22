@@ -287,7 +287,7 @@ class EmailTemplateList extends Component {
               Email Templates
             </Typography>
             <TableContainer component={Paper}>
-              <Table>
+              <Table id="emailTemplateTable">
                 <TableHead>
                   <TableRow>
                     <TableCell>Pack Code</TableCell>
@@ -308,6 +308,7 @@ class EmailTemplateList extends Component {
             variant="contained"
             onClick={this.openEmailTemplateDialog}
             style={{ marginTop: 10 }}
+            id="openCreateEmailTemplateBtn"
           >
             Create Email Template
           </Button>
@@ -333,6 +334,7 @@ class EmailTemplateList extends Component {
                   onChange={this.onPackCodeChange}
                   value={this.state.packCode}
                   helperText={this.state.createEmailTemplatePackCodeError}
+                  id="EmailPackcodeTextField"
                 />
                 <TextField
                   required
@@ -343,6 +345,8 @@ class EmailTemplateList extends Component {
                   onChange={this.onDescriptionChange}
                   value={this.state.description}
                   helperText={this.state.createEmailTemplateDescriptionError}
+                  id="EmailDescriptionTextField"
+
                 />
                 <TextField
                   required
@@ -352,6 +356,7 @@ class EmailTemplateList extends Component {
                   label="Notify Template ID (UUID)"
                   onChange={this.onNotifyTemplateIdChange}
                   value={this.state.notifyTemplateId}
+                  id="EmailNotifyTemplateIdTextField"
                 />
                 <TextField
                   fullWidth={true}
@@ -361,6 +366,7 @@ class EmailTemplateList extends Component {
                   onChange={this.onTemplateChange}
                   value={this.state.template}
                   helperText={this.state.templateValidationErrorMessage}
+                  id="EmailTemplateTextField"
                 />
                 <TextField
                   fullWidth={true}
@@ -376,6 +382,7 @@ class EmailTemplateList extends Component {
                   onClick={this.onCreateEmailTemplate}
                   variant="contained"
                   style={{ margin: 10 }}
+                  id="createEmailTemplateBtn"
                 >
                   Create Email template
                 </Button>

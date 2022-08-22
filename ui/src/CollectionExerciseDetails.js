@@ -429,7 +429,7 @@ class CollectionExerciseDetails extends Component {
 
     const sensitiveSampleColumnsMenuItems =
       this.state.sensitiveSampleColumns.map((column) => (
-        <MenuItem key={column} value={column}>
+        <MenuItem key={column} value={column} id={column}>
           {column}
         </MenuItem>
       ));
@@ -609,6 +609,7 @@ class CollectionExerciseDetails extends Component {
                         onChange={this.onNewActionRuleEmailPackCodeChange}
                         value={this.state.newActionRuleEmailPackCode}
                         error={this.state.emailPackCodeValidationError}
+                        id="selectActionRuleEmailPackCode"
                       >
                         {emailPackCodeMenuItems}
                       </Select>
@@ -619,6 +620,7 @@ class CollectionExerciseDetails extends Component {
                         onChange={this.onNewActionRuleEmailChange}
                         value={this.state.newActionRuleEmailColumn}
                         error={this.state.emailColumnValidationError}
+                        id="selectActionRuleEmailColumn"
                       >
                         {sensitiveSampleColumnsMenuItems}
                       </Select>
