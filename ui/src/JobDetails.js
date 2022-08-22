@@ -291,6 +291,7 @@ class JobDetails extends Component {
               onClick={this.props.handleClosedDetails}
               variant="contained"
               style={{ margin: 10 }}
+              id="closeSampledetailsBtn"
             >
               Close
             </Button>
