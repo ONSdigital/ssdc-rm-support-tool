@@ -41,9 +41,20 @@ public class SurveyEndpoint {
   @GetMapping
   public List<SurveyDto> getSurveys(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    log.warn("User trying to get Surveys");
+
     userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.LIST_SURVEYS);
 
-    return surveyRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+    log.warn("User has permission to get Surveys");
+
+    List<SurveyDto> surveys = surveyRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+
+    for(SurveyDto survey : surveys) {
+       log.warn("About to return survey: " + survey.getName());
+    }
+
+    return surveys;
   }
 
   private SurveyDto mapToDto(Survey survey) {
