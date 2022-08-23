@@ -8,6 +8,7 @@ import EmailTemplateList from "./EmailTemplateList";
 import ConfigureFulfilmentTrigger from "./ConfigureFulfilmentTrigger";
 
 import { errorAlert, getAuthorisedActivities } from "./Utils";
+import {Button} from "@material-ui/core";
 
 class LandingPage extends Component {
   state = {
@@ -41,6 +42,16 @@ class LandingPage extends Component {
   render() {
     return (
       <div style={{ padding: 20 }}>
+        <div>
+          <Button
+              id="aTestBtn"
+              variant="contained"
+              onClick={this.openDialog}
+              style={{ marginTop: 10 }}
+          >
+            Test Button
+          </Button>
+        </div>
         <SurveysList />
         <ExportFileTemplateList />
         <SmsTemplatesList />
