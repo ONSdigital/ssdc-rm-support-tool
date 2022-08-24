@@ -1,5 +1,6 @@
 package uk.gov.ons.ssdc.supporttool.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -10,6 +11,9 @@ import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String TRUSTED_CDN_DOMAIN = "https://cdn.ons.gov.uk/";
+
+  @Value("${CSP-upgrade-policy}")
+  private String cspUpgradePolicy;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -28,8 +32,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .contentSecurityPolicy(
             String.format(
-                "default-src 'self'; manifest-src %s ; style-src 'self' 'unsafe-inline' ; upgrade-insecure-requests; block-all-mixed-content",
-                TRUSTED_CDN_DOMAIN))
+                "default-src 'self'; manifest-src %s ; style-src 'self' 'unsafe-inline' ; %s block-all-mixed-content",
+                TRUSTED_CDN_DOMAIN, cspUpgradePolicy))
         .and()
         .permissionsPolicy()
         .policy(

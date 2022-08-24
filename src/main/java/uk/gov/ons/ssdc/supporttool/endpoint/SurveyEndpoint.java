@@ -46,15 +46,7 @@ public class SurveyEndpoint {
 
     userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.LIST_SURVEYS);
 
-    log.warn("User has permission to get Surveys");
-
-    List<SurveyDto> surveys = surveyRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
-
-    for(SurveyDto survey : surveys) {
-       log.warn("About to return survey: " + survey.getName());
-    }
-
-    return surveys;
+    return surveyRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
   }
 
   private SurveyDto mapToDto(Survey survey) {
