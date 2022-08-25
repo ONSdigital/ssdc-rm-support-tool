@@ -219,7 +219,6 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
                   variant="contained"
                   style={{ margin: 10 }}
                   id="closeAllowExportFileTemplateBtn"
-
                 >
                   Cancel
                 </Button>

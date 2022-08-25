@@ -515,7 +515,11 @@ class CollectionExerciseDetails extends Component {
         )}
         {allowedActionRuleTypeMenuItems.length > 0 && (
           <div style={{ marginTop: 10 }}>
-            <Button variant="contained" onClick={this.openDialog} id="createActionRuleDialogBtn">
+            <Button
+              variant="contained"
+              onClick={this.openDialog}
+              id="createActionRuleDialogBtn"
+            >
               Create Action Rule
             </Button>
           </div>

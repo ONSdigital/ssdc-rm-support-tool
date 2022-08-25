@@ -255,7 +255,7 @@ class SurveysList extends Component {
             <div>
               <div>
                 <TextField
-                  id='surveyNameTextField'
+                  id="surveyNameTextField"
                   required
                   error={this.state.validationError}
                   label="Survey name"

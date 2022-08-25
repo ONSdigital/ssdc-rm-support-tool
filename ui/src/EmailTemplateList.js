@@ -346,7 +346,6 @@ class EmailTemplateList extends Component {
                   value={this.state.description}
                   helperText={this.state.createEmailTemplateDescriptionError}
                   id="EmailDescriptionTextField"
-
                 />
                 <TextField
                   required
