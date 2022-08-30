@@ -391,7 +391,7 @@ class CollectionExerciseDetails extends Component {
           <TableCell component="th" scope="row">
             {actionRule.triggerDateTime}
           </TableCell>
-          <TableCell component="th" scope="row">
+          <TableCell component="th" scope="row" id="hasTriggered">
             {actionRule.hasTriggered ? "YES" : "NO"}
           </TableCell>
           <TableCell component="th" scope="row">
@@ -409,27 +409,27 @@ class CollectionExerciseDetails extends Component {
 
     const exportFilePackCodeMenuItems = this.state.exportFilePackCodes.map(
       (packCode) => (
-        <MenuItem key={packCode} value={packCode}>
+        <MenuItem key={packCode} value={packCode} id={packCode}>
           {packCode}
         </MenuItem>
       )
     );
 
     const smsPackCodeMenuItems = this.state.smsPackCodes.map((packCode) => (
-      <MenuItem key={packCode} value={packCode}>
+      <MenuItem key={packCode} value={packCode} id={packCode}>
         {packCode}
       </MenuItem>
     ));
 
     const emailPackCodeMenuItems = this.state.emailPackCodes.map((packCode) => (
-      <MenuItem key={packCode} value={packCode}>
+      <MenuItem key={packCode} value={packCode} id={packCode}>
         {packCode}
       </MenuItem>
     ));
 
     const sensitiveSampleColumnsMenuItems =
       this.state.sensitiveSampleColumns.map((column) => (
-        <MenuItem key={column} value={column}>
+        <MenuItem key={column} value={column} id={column}>
           {column}
         </MenuItem>
       ));
@@ -497,7 +497,7 @@ class CollectionExerciseDetails extends Component {
               Action Rules
             </Typography>
             <TableContainer component={Paper}>
-              <Table>
+              <Table id="actionRuleTable">
                 <TableHead>
                   <TableRow>
                     <TableCell>Type</TableCell>
@@ -515,7 +515,11 @@ class CollectionExerciseDetails extends Component {
         )}
         {allowedActionRuleTypeMenuItems.length > 0 && (
           <div style={{ marginTop: 10 }}>
-            <Button variant="contained" onClick={this.openDialog}>
+            <Button
+              variant="contained"
+              onClick={this.openDialog}
+              id="createActionRuleDialogBtn"
+            >
               Create Action Rule
             </Button>
           </div>
@@ -539,6 +543,7 @@ class CollectionExerciseDetails extends Component {
                     onChange={this.onNewActionRuleTypeChange}
                     value={this.state.newActionRuleType}
                     error={this.state.actionRuleTypeValidationError}
+                    id="selectActionRuleType"
                   >
                     {allowedActionRuleTypeMenuItems}
                   </Select>
@@ -551,6 +556,7 @@ class CollectionExerciseDetails extends Component {
                         onChange={this.onNewActionRuleExportFilePackCodeChange}
                         value={this.state.newActionRuleExportFilePackCode}
                         error={this.state.exportFilePackCodeValidationError}
+                        id="selectActionRuleExportFilePackCode"
                       >
                         {exportFilePackCodeMenuItems}
                       </Select>
@@ -607,6 +613,7 @@ class CollectionExerciseDetails extends Component {
                         onChange={this.onNewActionRuleEmailPackCodeChange}
                         value={this.state.newActionRuleEmailPackCode}
                         error={this.state.emailPackCodeValidationError}
+                        id="selectActionRuleEmailPackCode"
                       >
                         {emailPackCodeMenuItems}
                       </Select>
@@ -617,6 +624,7 @@ class CollectionExerciseDetails extends Component {
                         onChange={this.onNewActionRuleEmailChange}
                         value={this.state.newActionRuleEmailColumn}
                         error={this.state.emailColumnValidationError}
+                        id="selectActionRuleEmailColumn"
                       >
                         {sensitiveSampleColumnsMenuItems}
                       </Select>
@@ -656,6 +664,7 @@ class CollectionExerciseDetails extends Component {
                   onClick={this.onCreateActionRule}
                   variant="contained"
                   style={{ margin: 10 }}
+                  id="createActionRuleBtn"
                 >
                   Create action rule
                 </Button>

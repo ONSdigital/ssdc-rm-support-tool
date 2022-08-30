@@ -41,6 +41,7 @@ public class SurveyEndpoint {
   @GetMapping
   public List<SurveyDto> getSurveys(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
     userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.LIST_SURVEYS);
 
     return surveyRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());

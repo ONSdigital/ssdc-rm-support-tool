@@ -168,6 +168,7 @@ class SampleUpload extends Component {
         <TableCell>{job.createdAt}</TableCell>
         <TableCell align="right">
           <Button
+            id={"sampleStatus" + index}
             onClick={() => this.handleOpenDetails(job)}
             variant="contained"
           >
@@ -194,7 +195,7 @@ class SampleUpload extends Component {
               Uploaded Sample Files
             </Typography>
             <TableContainer component={Paper}>
-              <Table>
+              <Table id="sampleFilesList">
                 <TableHead>
                   <TableRow>
                     <TableCell>File Name</TableCell>
@@ -220,6 +221,7 @@ class SampleUpload extends Component {
             />
             <label htmlFor="contained-button-file">
               <Button
+                id="uploadSampleFileBtn"
                 variant="contained"
                 component="span"
                 style={{ marginTop: 10 }}

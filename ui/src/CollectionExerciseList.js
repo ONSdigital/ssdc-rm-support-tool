@@ -265,7 +265,7 @@ class CollectionExerciseList extends Component {
               Collection Exercises
             </Typography>
             <TableContainer component={Paper}>
-              <Table>
+              <Table id="collectionExerciseTableList">
                 <TableHead>
                   <TableRow>
                     <TableCell>Collection Exercise Name</TableCell>
@@ -284,6 +284,7 @@ class CollectionExerciseList extends Component {
           "CREATE_COLLECTION_EXERCISE"
         ) && (
           <Button
+            id="createCollectionExerciseBtn"
             variant="contained"
             onClick={this.openCreateCollectionExerciseDialog}
             style={{ marginTop: 10 }}
@@ -296,6 +297,7 @@ class CollectionExerciseList extends Component {
             <div>
               <div>
                 <TextField
+                  id="collectionExerciseNameTextField"
                   required
                   fullWidth={true}
                   error={this.state.newCollectionExerciseNameError}
@@ -304,6 +306,7 @@ class CollectionExerciseList extends Component {
                   value={this.state.newCollectionExerciseName}
                 />
                 <TextField
+                  id="collectionExerciseReferenceTextField"
                   required
                   fullWidth={true}
                   error={this.state.newCollectionExerciseReferenceError}
@@ -312,6 +315,7 @@ class CollectionExerciseList extends Component {
                   value={this.state.newCollectionExerciseReference}
                 />
                 <TextField
+                  id="collectionExerciseStartDateTextField"
                   required
                   label="Start Date"
                   type="datetime-local"
@@ -325,6 +329,7 @@ class CollectionExerciseList extends Component {
                   }}
                 />
                 <TextField
+                  id="collectionExerciseEndDateTextField"
                   required
                   label="End Date"
                   type="datetime-local"
@@ -346,6 +351,7 @@ class CollectionExerciseList extends Component {
                   value={this.state.newCollectionExerciseMetadata}
                 />
                 <TextField
+                  id="collectionExerciseCIRulesTextField"
                   style={{ marginTop: 10 }}
                   multiline
                   required
@@ -358,6 +364,7 @@ class CollectionExerciseList extends Component {
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button
+                  id="postCreateCollectionExerciseBtn"
                   onClick={this.onCreateCollectionExercise}
                   variant="contained"
                   style={{ margin: 10 }}

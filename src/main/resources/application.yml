@@ -109,3 +109,5 @@ ras-rm-sample-service:
     scheme: http
     host: localhost
     port: 8125
+
+CSP-upgrade-policy: "upgrade-insecure-requests;"

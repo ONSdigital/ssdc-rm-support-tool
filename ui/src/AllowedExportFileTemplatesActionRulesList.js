@@ -142,7 +142,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
 
     const actionRuleExportFileTemplateMenuItems =
       this.state.allowableActionRuleExportFilePackCodes.map((packCode) => (
-        <MenuItem key={packCode} value={packCode}>
+        <MenuItem key={packCode} value={packCode} id={packCode}>
           {packCode}
         </MenuItem>
       ));
@@ -175,6 +175,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
             variant="contained"
             onClick={this.openActionRuleExportFileTemplateDialog}
             style={{ marginTop: 10 }}
+            id="actionRuleExportFileTemplateBtn"
           >
             Allow Export File Template on Action Rule
           </Button>
@@ -191,6 +192,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
                     onChange={this.onExportFileTemplateChange}
                     value={this.state.exportFileTemplateToAllow}
                     error={this.state.exportFileTemplateValidationError}
+                    id="allowExportFileTemplateSelect"
                   >
                     {actionRuleExportFileTemplateMenuItems}
                   </Select>
@@ -208,6 +210,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
                   onClick={this.onAllowActionRuleExportFileTemplate}
                   variant="contained"
                   style={{ margin: 10 }}
+                  id="addAllowExportFileTemplateBtn"
                 >
                   Allow
                 </Button>
@@ -215,6 +218,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
                   onClick={this.closeAllowActionRuleExportFileTemplateDialog}
                   variant="contained"
                   style={{ margin: 10 }}
+                  id="closeAllowExportFileTemplateBtn"
                 >
                   Cancel
                 </Button>
