@@ -18,5 +18,6 @@ exception-manager:
 queueconfig:
   shared-pubsub-project: shared-project
 
-dummyuseridentity-allowed: true # This ** MUST ALWAYS!! ** be false in production!!!
-dummyuseridentity: integration-tests@testymctest.com
+
+#MUST BE TRUE FOR PRODUCTION
+iap-access-control-enabled: false

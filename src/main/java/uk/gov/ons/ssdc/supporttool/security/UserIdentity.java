@@ -24,38 +24,34 @@ public class UserIdentity {
 
   private final UserRepository userRepository;
   private final String iapAudience;
-  private final boolean dummyUserIdentityAllowed;
-  private final String dummyUserIdentity;
-  private final String dummySuperUserIdentity;
+  private final boolean iapAccessControlEnabled;
 
   private TokenVerifier tokenVerifier = null;
 
   public UserIdentity(
       UserRepository userRepository,
       @Value("${iapaudience}") String iapAudience,
-      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed,
-      @Value("${dummyuseridentity}") String dummyUserIdentity,
-      @Value("${dummysuperuseridentity}") String dummySuperUserIdentity) {
+      @Value("${iap-access-control-enabled}") boolean iapAccessControlEnabled) {
     this.userRepository = userRepository;
     this.iapAudience = iapAudience;
-    this.dummyUserIdentityAllowed = dummyUserIdentityAllowed;
-    this.dummyUserIdentity = dummyUserIdentity;
-    this.dummySuperUserIdentity = dummySuperUserIdentity;
+    this.iapAccessControlEnabled = iapAccessControlEnabled;
 
-    if (dummyUserIdentityAllowed) {
-      log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
+    if (!iapAccessControlEnabled) {
+      log.error(
+          "IAP ACCESS CONTROL IS DISABLED.  This should never occur in GCP let alone production");
     }
   }
 
   public void checkUserPermission(
       String userEmail, Survey survey, UserGroupAuthorisedActivityType activity) {
-    if (dummyUserIdentityAllowed && userEmail.equalsIgnoreCase(dummySuperUserIdentity)) {
-      // Dummy test super user is fully authorised, bypassing all security
-      // This is **STRICTLY** for ease of dev/testing in non-production environments
+    Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
+
+    if(!iapAccessControlEnabled) {
+      log.error(
+              "IAP ACCESS CONTROL IS DISABLED.  This should never occur in GCP let alone production");
       return;
     }
 
-    Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
       log.with("userEmail", userEmail)
@@ -97,9 +93,9 @@ public class UserIdentity {
   public void checkGlobalUserPermission(
       String userEmail, UserGroupAuthorisedActivityType activity) {
 
-    if (dummyUserIdentityAllowed && userEmail.equalsIgnoreCase(dummySuperUserIdentity)) {
-      // Dummy test super user is fully authorised, bypassing all security
-      // This is **STRICTLY** for ease of dev/testing in non-production environments
+    if(!iapAccessControlEnabled) {
+      log.error(
+              "IAP ACCESS CONTROL IS DISABLED.  This should never occur in GCP let alone production");
       return;
     }
 
@@ -136,11 +132,13 @@ public class UserIdentity {
   }
 
   public String getUserEmail(String jwtToken) {
-    if (dummyUserIdentityAllowed && !StringUtils.hasText(jwtToken)) {
-      // If there's no JWT header and dummy test user is enabled, use it
-      // This is **STRICTLY** for ease of dev/testing in non-production environments
-      return dummyUserIdentity;
-    } else if (!StringUtils.hasText(jwtToken)) {
+    if (!iapAccessControlEnabled) {
+      log.error(
+          "IAP ACCESS CONTROL IS DISABLED.  This should never occur in GCP let alone production");
+      return "";
+    }
+
+    if (!StringUtils.hasText(jwtToken)) {
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
       log.with("httpStatus", HttpStatus.FORBIDDEN)
           .warn("Requests bypassing IAP are strictly forbidden");

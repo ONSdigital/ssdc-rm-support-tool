@@ -77,9 +77,6 @@ notifyservice:
 
 iapaudience: DUMMY
 
-dummyuseridentity-allowed: false # This ** MUST ALWAYS!! ** be false in production!!!
-dummyuseridentity: dummy@fake-email.com
-dummysuperuseridentity: dummy@fake-email.com
 
 exportfiledestinationconfigfile: dummy-export-file-destination-config.json
 
@@ -111,3 +108,6 @@ ras-rm-sample-service:
     port: 8125
 
 CSP-upgrade-policy: "upgrade-insecure-requests;"
+
+#MUST BE TRUE FOR PRODUCTION
+iap-access-control-enabled: false
