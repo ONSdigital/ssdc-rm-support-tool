@@ -8,4 +8,4 @@ spring:
 queueconfig:
   shared-pubsub-project: shared-project
 
-dummyuseridentity-allowed: true # This ** MUST ALWAYS!! ** be false in production!!!
+iapaudience: false
