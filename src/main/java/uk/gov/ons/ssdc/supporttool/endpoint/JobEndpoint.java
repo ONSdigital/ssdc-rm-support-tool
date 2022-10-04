@@ -1,7 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import static uk.gov.ons.ssdc.supporttool.rasrm.constants.RasRmConstants.BUSINESS_SAMPLE_DEFINITION_URL_SUFFIX;
-
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.opencsv.CSVWriter;
@@ -41,7 +39,6 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobTypeDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
-import uk.gov.ons.ssdc.supporttool.rasrm.service.RasRmSampleSetupService;
 import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
 
@@ -54,7 +51,6 @@ public class JobEndpoint {
   private final JobRowRepository jobRowRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final UserIdentity userIdentity;
-  private final RasRmSampleSetupService rasRmSampleSetupService;
   private final JobTypeHelper jobTypeHelper;
 
   @Value("${file-upload-storage-path}")
@@ -65,14 +61,12 @@ public class JobEndpoint {
       JobRowRepository jobRowRepository,
       CollectionExerciseRepository collectionExerciseRepository,
       UserIdentity userIdentity,
-      JobTypeHelper jobTypeHelper,
-      RasRmSampleSetupService rasRmSampleSetupService) {
+      JobTypeHelper jobTypeHelper) {
     this.jobRepository = jobRepository;
     this.jobRowRepository = jobRowRepository;
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.userIdentity = userIdentity;
     this.jobTypeHelper = jobTypeHelper;
-    this.rasRmSampleSetupService = rasRmSampleSetupService;
   }
 
   @GetMapping
@@ -210,14 +204,6 @@ public class JobEndpoint {
 
     if (job.getJobStatus() == JobStatus.VALIDATED_OK
         || job.getJobStatus() == JobStatus.VALIDATED_WITH_ERRORS) {
-
-      if (job.getCollectionExercise()
-          .getSurvey()
-          .getSampleDefinitionUrl()
-          .endsWith(BUSINESS_SAMPLE_DEFINITION_URL_SUFFIX)) {
-        rasRmSampleSetupService.setupSampleSummary(
-            job.getCollectionExercise(), job.getFileRowCount());
-      }
 
       job.setJobStatus(JobStatus.PROCESSING_IN_PROGRESS);
       job.setProcessedBy(userEmail);
