@@ -249,8 +249,8 @@ class BulkUploads extends Component {
               "VALIDATION_IN_PROGRESS",
               "PROCESSING_IN_PROGRESS",
             ].includes(job.jobStatus) && (
-              <CircularProgress size={15} style={{ marginLeft: 10 }} />
-            )}
+                <CircularProgress size={15} style={{ marginLeft: 10 }} />
+              )}
           </Button>
         </TableCell>
       </TableRow>
@@ -386,7 +386,7 @@ class BulkUploads extends Component {
         <Dialog open={this.state.uploadInProgress}>
           <DialogContent style={{ padding: 30 }}>
             <Typography variant="h6" color="inherit">
-              Uploading file...
+              Uploading file. Do not close or refresh this tab.
             </Typography>
             <LinearProgress
               variant="determinate"
