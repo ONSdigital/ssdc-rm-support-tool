@@ -119,7 +119,6 @@ class SampleUpload extends Component {
 
         this.getJobs();
       });
-    // handle some sort of 502 or other errors - let UI know
   };
 
   handleClose = (event, reason) => {
