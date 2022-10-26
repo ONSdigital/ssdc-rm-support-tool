@@ -249,8 +249,8 @@ class BulkUploads extends Component {
               "VALIDATION_IN_PROGRESS",
               "PROCESSING_IN_PROGRESS",
             ].includes(job.jobStatus) && (
-                <CircularProgress size={15} style={{ marginLeft: 10 }} />
-              )}
+              <CircularProgress size={15} style={{ marginLeft: 10 }} />
+            )}
           </Button>
         </TableCell>
       </TableRow>
