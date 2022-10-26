@@ -53,7 +53,7 @@ class SampleUpload extends Component {
 
     if (file_size_in_mb > 100) {
       alert(
-        "Maimum file size is 100mb.  This file size is: " +
+        "Maximum file size is 100mb.  This file size is: " +
           file_size_in_mb +
           " mb"
       );
