@@ -142,9 +142,9 @@ class BulkUploads extends Component {
       alert(
         "Maximum file size is " +
           max_file_size_in_mb +
-          " This file size is: " +
+          "MB. This file size is: " +
           file_size_in_mb +
-          " MB"
+          "MB."
       );
       return;
     }
