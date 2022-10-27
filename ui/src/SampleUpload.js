@@ -47,15 +47,18 @@ class SampleUpload extends Component {
       return;
     }
 
+    // This must be <= spring.servlet.multipart.max-file-size: x
+    const max_file_size_in_mb = 100;
+
     // Comment here to explain why 1,000,000 and not 1024*1024.
     // Only dividing by 1,000,000 gives the size in mb that agrees with value on mac
     var file_size_in_mb = e.target.files[0].size / 1000000;
 
-    if (file_size_in_mb > 100) {
+    if (file_size_in_mb > max_file_size_in_mb) {
       alert(
         "Maximum file size is 100mb.  This file size is: " +
-          file_size_in_mb +
-          " mb"
+        file_size_in_mb +
+        " mb"
       );
       return;
     }
@@ -191,8 +194,8 @@ class SampleUpload extends Component {
               "VALIDATION_IN_PROGRESS",
               "PROCESSING_IN_PROGRESS",
             ].includes(job.jobStatus) && (
-              <CircularProgress size={15} style={{ marginLeft: 10 }} />
-            )}
+                <CircularProgress size={15} style={{ marginLeft: 10 }} />
+              )}
           </Button>
         </TableCell>
       </TableRow>
@@ -203,24 +206,24 @@ class SampleUpload extends Component {
         {this.props.authorisedActivities.includes(
           "VIEW_SAMPLE_LOAD_PROGRESS"
         ) && (
-          <>
-            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-              Uploaded Sample Files
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table id="sampleFilesList">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>File Name</TableCell>
-                    <TableCell>Date Uploaded</TableCell>
-                    <TableCell align="right">Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{jobTableRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+                Uploaded Sample Files
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table id="sampleFilesList">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>File Name</TableCell>
+                      <TableCell>Date Uploaded</TableCell>
+                      <TableCell align="right">Status</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{jobTableRows}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
         {this.props.authorisedActivities.includes("LOAD_SAMPLE") && (
           <>
             <input
