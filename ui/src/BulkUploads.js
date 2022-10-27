@@ -140,9 +140,11 @@ class BulkUploads extends Component {
 
     if (file_size_in_mb > max_file_size_in_mb) {
       alert(
-        "Maximum file size is 100mb.  This file size is: " +
+        "Maximum file size is " +
+          max_file_size_in_mb +
+          " This file size is: " +
           file_size_in_mb +
-          " mb"
+          " MB"
       );
       return;
     }
