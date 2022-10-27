@@ -131,6 +131,22 @@ class BulkUploads extends Component {
       return;
     }
 
+    // This must be <= spring.servlet.multipart.max-file-size: x
+    const max_file_size_in_mb = 100;
+
+    // Comment here to explain why 1,000,000 and not 1024*1024.
+    // Only dividing by 1,000,000 gives the size in mb that agrees with value on mac
+    var file_size_in_mb = event.target.files[0].size / 1000000;
+
+    if (file_size_in_mb > max_file_size_in_mb) {
+      alert(
+        "Maximum file size is 100mb.  This file size is: " +
+          file_size_in_mb +
+          " mb"
+      );
+      return;
+    }
+
     // Display the progress modal dialog
     this.setState({
       uploadInProgress: true,
