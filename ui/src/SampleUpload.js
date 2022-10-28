@@ -47,6 +47,24 @@ class SampleUpload extends Component {
       return;
     }
 
+    // This must be <= spring.servlet.multipart.max-file-size: x
+    const max_file_size_in_mb = 100;
+
+    // Comment here to explain why 1,000,000 and not 1024*1024.
+    // Only dividing by 1,000,000 gives the size in mb that agrees with value on mac
+    var file_size_in_mb = e.target.files[0].size / 1000000;
+
+    if (file_size_in_mb > max_file_size_in_mb) {
+      alert(
+        "Maximum file size is " +
+          max_file_size_in_mb +
+          "MB. This file size is: " +
+          file_size_in_mb +
+          " MB"
+      );
+      return;
+    }
+
     // Display the progress modal dialog
     this.setState({
       uploadInProgress: true,
@@ -234,7 +252,7 @@ class SampleUpload extends Component {
         <Dialog open={this.state.uploadInProgress}>
           <DialogContent style={{ padding: 30 }}>
             <Typography variant="h6" color="inherit">
-              Uploading file...
+              Uploading file. Do not close or refresh this tab.
             </Typography>
             <LinearProgress
               variant="determinate"
