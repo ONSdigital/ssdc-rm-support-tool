@@ -236,7 +236,7 @@ class SurveyCaseSearch extends Component {
               color="inherit"
               style={{ marginTop: 10, marginBottom: 10 }}
             >
-              Warning, there are too many search results to show
+              Search results are limited to 100, so there may be more matching cases
             </Typography>
           )}
         {!this.state.caseSearchTerm && !this.state.isWaitingForResults && (
