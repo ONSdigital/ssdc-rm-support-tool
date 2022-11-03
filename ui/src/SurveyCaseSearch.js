@@ -228,6 +228,18 @@ class SurveyCaseSearch extends Component {
             ":
           </Typography>
         )}
+        {this.state.caseSearchTerm &&
+          !this.state.isWaitingForResults &&
+          this.state.caseSearchResults.length === 100 && (
+            <Typography
+              variant="h6"
+              color="inherit"
+              style={{ marginTop: 10, marginBottom: 10 }}
+            >
+              Search results are limited to 100, so there may be more matching
+              cases
+            </Typography>
+          )}
         {!this.state.caseSearchTerm && !this.state.isWaitingForResults && (
           <Typography
             variant="h5"

@@ -97,6 +97,8 @@ public class SurveyCasesEndpoint {
       }
     }
 
+    queryStringBuilder.append(" LIMIT 100");
+
     return namedParameterJdbcTemplate.query(
         queryStringBuilder.toString(), namedParameters, caseRowMapper);
   }
