@@ -30,6 +30,19 @@ public class JobTypeHelper {
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         return new String[] {"caseId", "fieldToUpdate", "newValue"};
 
+      case BULK_PHM_UPDATE_SAMPLE:
+        return new String[] {
+          "PARTICIPANT_ID",
+          "LONGITUDINAL_QUESTIONS",
+          "BLOOD_TEST_BARCODE",
+          "SWAB_TEST_BARCODE",
+          "NO_TEST_BARCODE",
+          "BATCH_NUMBER",
+          "BATCH_OPEN_DATE",
+          "BATCH_CLOSE_DATE",
+          "COHORT_TYPE"
+        };
+
       default:
         // This code should be unreachable, providing we have a case for every JobType
         throw new RuntimeException(
@@ -49,6 +62,8 @@ public class JobTypeHelper {
         return UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE;
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         return UserGroupAuthorisedActivityType.LOAD_BULK_UPDATE_SAMPLE_SENSITIVE;
+      case BULK_PHM_UPDATE_SAMPLE:
+        return UserGroupAuthorisedActivityType.LOAD_BULK_PHM_UPDATE_SAMPLE;
       default:
         // This code should be unreachable, providing we have a case for every JobType
         throw new RuntimeException(
@@ -68,6 +83,8 @@ public class JobTypeHelper {
         return UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_PROGRESS;
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         return UserGroupAuthorisedActivityType.VIEW_BULK_UPDATE_SAMPLE_SENSITIVE_PROGRESS;
+      case BULK_PHM_UPDATE_SAMPLE:
+        return UserGroupAuthorisedActivityType.VIEW_BULK_PHM_UPDATE_SAMPLE_PROGRESS;
       default:
         // This code should be unreachable, providing we have a case for every JobType
         throw new RuntimeException(

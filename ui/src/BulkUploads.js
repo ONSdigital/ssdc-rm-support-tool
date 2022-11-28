@@ -34,6 +34,10 @@ const BULK_UPDATE_SAMPLE_JOB_TYPE = "BULK_UPDATE_SAMPLE";
 const BULK_UPDATE_SAMPLE_VIEW_PERMISSION = "VIEW_BULK_UPDATE_SAMPLE_PROGRESS";
 const BULK_UPDATE_SAMPLE_LOAD_PERMISSION = "LOAD_BULK_UPDATE_SAMPLE";
 
+const BULK_PHM_UPDATE_SAMPLE_JOB_TYPE = "BULK_PHM_UPDATE_SAMPLE";
+const BULK_PHM_UPDATE_SAMPLE_VIEW_PERMISSION = "VIEW_BULK_PHM_UPDATE_SAMPLE_PROGRESS";
+const BULK_PHM_UPDATE_SAMPLE_LOAD_PERMISSION = "LOAD_BULK_PHM_UPDATE_SAMPLE";
+
 const BULK_UPDATE_SAMPLE_SENSITIVE = "BULK_UPDATE_SAMPLE_SENSITIVE";
 const BULK_UPDATE_SAMPLE_SENSITIVE_VIEW_PERMISSION =
   "VIEW_BULK_UPDATE_SAMPLE_SENSITIVE_PROGRESS";
@@ -50,6 +54,7 @@ class BulkUploads extends Component {
     bulkRefusalJobs: [],
     bulkInvalidJobs: [],
     bulkUpdateSampleJobs: [],
+    bulkPHMUpdateSampleJobs: [],
     bulkUpdateSampleSensitiveJobs: [],
   };
 
@@ -86,6 +91,12 @@ class BulkUploads extends Component {
       BULK_UPDATE_SAMPLE_JOB_TYPE,
       BULK_UPDATE_SAMPLE_VIEW_PERMISSION,
       "bulkUpdateSampleJobs"
+    );
+    this.refreshBulkJobsFromBackend(
+        authorisedActivities,
+        BULK_PHM_UPDATE_SAMPLE_JOB_TYPE,
+        BULK_PHM_UPDATE_SAMPLE_VIEW_PERMISSION,
+        "bulkPHMUpdateSampleJobs"
     );
     this.refreshBulkJobsFromBackend(
       authorisedActivities,
@@ -348,6 +359,13 @@ class BulkUploads extends Component {
         detailsDialogTitle = "Bulk Update Sample Detail";
         loadPermission = BULK_UPDATE_SAMPLE_LOAD_PERMISSION;
         break;
+      case BULK_PHM_UPDATE_SAMPLE_JOB_TYPE:
+        selectedJob = this.state.bulkPHMUpdateSampleJobs.find(
+            (job) => job.id === this.state.selectedJob
+        );
+        detailsDialogTitle = "Bulk PHM Update Sample Detail";
+        loadPermission = BULK_PHM_UPDATE_SAMPLE_LOAD_PERMISSION;
+        break;
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         selectedJob = this.state.bulkUpdateSampleSensitiveJobs.find(
           (job) => job.id === this.state.selectedJob
@@ -391,6 +409,14 @@ class BulkUploads extends Component {
           "Bulk Update Sample",
           BULK_UPDATE_SAMPLE_LOAD_PERMISSION,
           BULK_UPDATE_SAMPLE_VIEW_PERMISSION
+        )}
+
+        {this.buildBulkProcessTable(
+            this.state.bulkPHMUpdateSampleJobs,
+            BULK_PHM_UPDATE_SAMPLE_JOB_TYPE,
+            "Bulk PHM Update Sample",
+            BULK_PHM_UPDATE_SAMPLE_LOAD_PERMISSION,
+            BULK_PHM_UPDATE_SAMPLE_VIEW_PERMISSION
         )}
 
         {this.buildBulkProcessTable(
