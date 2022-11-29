@@ -32,15 +32,9 @@ public class JobTypeHelper {
 
       case BULK_PHM_UPDATE_SAMPLE:
         return new String[] {
-          "PARTICIPANT_ID",
-          "LONGITUDINAL_QUESTIONS",
-          "BLOOD_TEST_BARCODE",
-          "SWAB_TEST_BARCODE",
-          "NO_TEST_BARCODE",
-          "BATCH_NUMBER",
-          "BATCH_OPEN_DATE",
+          "PARTICIPANT_ID", "BATCH_NUMBER", "SWAB_TEST_BARCODE", "BLOOD_TEST_BARCODE",
+          "NO_TEST_BARCODE", "LONGITUDINAL_QUESTIONS", "COHORT_TYPE", "BATCH_OPEN_DATE",
           "BATCH_CLOSE_DATE",
-          "COHORT_TYPE"
         };
 
       default:
