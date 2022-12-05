@@ -164,11 +164,7 @@ class SampleUpload extends Component {
   onProcessJob = () => {
     fetch(`/api/job/${this.state.selectedJob}/process`, {
       method: "POST",
-    });
-
-    alert(
-      "Posted Process Job successfully, because of complexities this may take a while to update, but don't go mashing the Process Btn"
-    );
+    }).then(() => this.getJobs());
   };
 
   onCancelJob = () => {
