@@ -74,7 +74,7 @@ public class CollectionExerciseEndpointIT {
             collectionExerciseDto.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
             collectionExerciseDto.setCollectionInstrumentSelectionRules(
                 new CollectionInstrumentSelectionRule[] {
-                  new CollectionInstrumentSelectionRule(0, null, "dummyUrl")
+                  new CollectionInstrumentSelectionRule(0, null, "dummyUrl", null)
                 });
             return collectionExerciseDto;
           });
