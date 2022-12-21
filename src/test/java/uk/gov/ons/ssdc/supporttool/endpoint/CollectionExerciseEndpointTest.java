@@ -50,7 +50,7 @@ public class CollectionExerciseEndpointTest {
     collectionExerciseDto.setSurveyId(UUID.randomUUID());
     collectionExerciseDto.setCollectionInstrumentSelectionRules(
         new CollectionInstrumentSelectionRule[] {
-          new CollectionInstrumentSelectionRule(100, "this is not SPEL", "dummyUrl")
+          new CollectionInstrumentSelectionRule(100, "this is not SPEL", "dummyUrl", null)
         });
 
     when(surveyRepository.findById(any(UUID.class))).thenReturn(Optional.of(new Survey()));
@@ -69,7 +69,7 @@ public class CollectionExerciseEndpointTest {
     collectionExerciseDto.setSurveyId(UUID.randomUUID());
     collectionExerciseDto.setCollectionInstrumentSelectionRules(
         new CollectionInstrumentSelectionRule[] {
-          new CollectionInstrumentSelectionRule(100, "true == false", "")
+          new CollectionInstrumentSelectionRule(100, "true == false", "", null)
         });
 
     when(surveyRepository.findById(any(UUID.class))).thenReturn(Optional.of(new Survey()));
@@ -88,7 +88,7 @@ public class CollectionExerciseEndpointTest {
     collectionExerciseDto.setSurveyId(UUID.randomUUID());
     collectionExerciseDto.setCollectionInstrumentSelectionRules(
         new CollectionInstrumentSelectionRule[] {
-          new CollectionInstrumentSelectionRule(100, "true == false", "dummyUrl")
+          new CollectionInstrumentSelectionRule(100, "true == false", "dummyUrl", null)
         });
 
     when(surveyRepository.findById(any(UUID.class))).thenReturn(Optional.of(new Survey()));

@@ -201,7 +201,7 @@ public class IntegrationTestHelper {
     collectionExercise.setMetadata(TEST_COLLECTION_EXERCISE_UPDATE_METADATA);
     collectionExercise.setCollectionInstrumentSelectionRules(
         new CollectionInstrumentSelectionRule[] {
-          new CollectionInstrumentSelectionRule(0, null, "test instrument")
+          new CollectionInstrumentSelectionRule(0, null, "test instrument", null)
         });
     collectionExercise = collectionExerciseRepository.saveAndFlush(collectionExercise);
 
