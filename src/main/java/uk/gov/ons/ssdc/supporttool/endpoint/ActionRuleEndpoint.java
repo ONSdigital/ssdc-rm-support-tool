@@ -219,6 +219,9 @@ public class ActionRuleEndpoint {
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
         }
         break;
+      case EQ_FLUSH:
+        userActivity = CREATE_DEACTIVATE_UAC_ACTION_RULE; // TODO new permission for EQ_FLUSH
+        break;
       default:
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
     }
