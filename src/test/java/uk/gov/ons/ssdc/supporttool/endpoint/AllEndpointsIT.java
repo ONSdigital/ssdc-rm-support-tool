@@ -143,6 +143,18 @@ class AllEndpointsIT {
           actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
           return actionRuleDto;
         });
+
+    integrationTestHelper.testPost(
+        port,
+        UserGroupAuthorisedActivityType.CREATE_EQ_FLUSH_ACTION_RULE,
+        (bundle) -> "actionRules",
+        (bundle) -> {
+          ActionRuleDto actionRuleDto = new ActionRuleDto();
+          actionRuleDto.setType(ActionRuleType.EQ_FLUSH);
+          actionRuleDto.setCollectionExerciseId(bundle.getCollexId());
+          actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
+          return actionRuleDto;
+        });
   }
 
   @Test

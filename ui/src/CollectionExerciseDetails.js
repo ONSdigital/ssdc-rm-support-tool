@@ -470,7 +470,7 @@ class CollectionExerciseDetails extends Component {
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"OUTBOUND_TELEPHONE"}>Outbound phone</MenuItem>
+        <MenuItem value={"OUTBOUND_TELEPHONE"}>Outbound Phone</MenuItem>
       );
     }
     if (
@@ -480,6 +480,13 @@ class CollectionExerciseDetails extends Component {
     ) {
       allowedActionRuleTypeMenuItems.push(
         <MenuItem value={"DEACTIVATE_UAC"}>Deactivate UAC</MenuItem>
+      );
+    }
+    if (
+      this.state.authorisedActivities.includes("CREATE_EQ_FLUSH_ACTION_RULE")
+    ) {
+      allowedActionRuleTypeMenuItems.push(
+        <MenuItem value={"EQ_FLUSH"}>EQ Flush</MenuItem>
       );
     }
 

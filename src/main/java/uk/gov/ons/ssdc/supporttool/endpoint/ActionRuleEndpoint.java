@@ -11,11 +11,9 @@ import static uk.gov.ons.ssdc.supporttool.utility.ColumnHelper.getSurveyColumns;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
