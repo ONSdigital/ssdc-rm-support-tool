@@ -2,6 +2,7 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_DEACTIVATE_UAC_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EMAIL_ACTION_RULE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EQ_FLUSH_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_FACE_TO_FACE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE;
@@ -10,9 +11,11 @@ import static uk.gov.ons.ssdc.supporttool.utility.ColumnHelper.getSurveyColumns;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -220,7 +223,7 @@ public class ActionRuleEndpoint {
         }
         break;
       case EQ_FLUSH:
-        userActivity = CREATE_DEACTIVATE_UAC_ACTION_RULE; // TODO new permission for EQ_FLUSH
+        userActivity = CREATE_EQ_FLUSH_ACTION_RULE;
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
