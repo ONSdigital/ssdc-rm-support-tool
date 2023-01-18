@@ -2,6 +2,7 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_DEACTIVATE_UAC_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EMAIL_ACTION_RULE;
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EQ_FLUSH_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_FACE_TO_FACE_ACTION_RULE;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_OUTBOUND_PHONE_ACTION_RULE;
@@ -218,6 +219,9 @@ public class ActionRuleEndpoint {
               .warn("Failed to insert action rule, email column does not exist");
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
         }
+        break;
+      case EQ_FLUSH:
+        userActivity = CREATE_EQ_FLUSH_ACTION_RULE;
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
