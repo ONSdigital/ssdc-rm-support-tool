@@ -20,7 +20,7 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:6432/rm?readOnly=true
-    username: postgres
+    username: appuser
     password: postgres
     driverClassName: org.postgresql.Driver
     hikari:
