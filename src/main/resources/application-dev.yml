@@ -6,6 +6,6 @@ spring:
         project-id: our-project
 
 queueconfig:
-  shared-pubsub-project: shared-project
+  shared-pubsub-project: our-project
 
 dummyuseridentity-allowed: true # This ** MUST ALWAYS!! ** be false in production!!!

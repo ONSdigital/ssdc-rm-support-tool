@@ -19,8 +19,8 @@ spring:
       max-request-size: 100MB
 
   datasource:
-    url: jdbc:postgresql://localhost:6432/postgres?readOnly=true
-    username: postgres
+    url: jdbc:postgresql://localhost:6432/rm?readOnly=true
+    username: appuser
     password: postgres
     driverClassName: org.postgresql.Driver
     hikari:
