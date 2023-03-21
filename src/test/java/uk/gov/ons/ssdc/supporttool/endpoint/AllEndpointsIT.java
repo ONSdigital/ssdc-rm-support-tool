@@ -349,7 +349,7 @@ class AllEndpointsIT {
         (bundle) -> {
           ExportFileTemplateDto exportFileTemplateDto = new ExportFileTemplateDto();
           exportFileTemplateDto.setTemplate(new String[] {"foo"});
-          exportFileTemplateDto.setExportFileDestination("SUPPLIER_A");
+          exportFileTemplateDto.setExportFileDestination("test_supplier");
           exportFileTemplateDto.setPackCode("TEST_" + UUID.randomUUID());
           exportFileTemplateDto.setDescription("Test description");
           exportFileTemplateDto.setMetadata(Map.of("foo", "bar"));
