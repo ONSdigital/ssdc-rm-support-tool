@@ -1,9 +1,9 @@
 {
-  "SUPPLIER_A": {
+  "test_supplier": {
     "sftpDirectory": "foo",
     "encryptionKeyFilename": "bar"
   },
-  "SUPPLIER_B": {
+  "internal_reprographics": {
     "sftpDirectory": "foo",
     "encryptionKeyFilename": "bar"
   }

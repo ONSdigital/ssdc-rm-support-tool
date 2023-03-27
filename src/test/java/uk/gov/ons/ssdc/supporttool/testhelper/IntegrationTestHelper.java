@@ -222,7 +222,7 @@ public class IntegrationTestHelper {
     ExportFileTemplate exportFileTemplate = new ExportFileTemplate();
     exportFileTemplate.setPackCode("TEST_PRINT_PACK_CODE_" + UUID.randomUUID());
     exportFileTemplate.setTemplate(new String[] {"foo", "bar"});
-    exportFileTemplate.setExportFileDestination("SUPPLIER_A");
+    exportFileTemplate.setExportFileDestination("test_supplier");
     exportFileTemplate.setDescription("Test description");
     exportFileTemplate = exportFileTemplateRepository.saveAndFlush(exportFileTemplate);
 
