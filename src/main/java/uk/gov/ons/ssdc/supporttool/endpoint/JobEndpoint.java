@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,6 +53,8 @@ public class JobEndpoint {
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final UserIdentity userIdentity;
   private final JobTypeHelper jobTypeHelper;
+
+  private final List<UUID> downloadableErroredJobIds = new ArrayList<>();
 
   @Value("${file-upload-storage-path}")
   private String fileUploadStoragePath;
@@ -108,6 +111,7 @@ public class JobEndpoint {
 
   @GetMapping(value = "/{id}/error")
   @ResponseBody
+  @Transactional
   public String getErrorCsv(
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail,
@@ -146,11 +150,19 @@ public class JobEndpoint {
       throw new RuntimeException(e);
     }
 
+    if (downloadableErroredJobIds.contains(job.getId())) {
+      jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_ERROR);
+      downloadableErroredJobIds.remove(job.getId());
+    } else {
+      downloadableErroredJobIds.add(job.getId());
+    }
+
     return csvContent;
   }
 
   @GetMapping(value = "/{id}/errorDetail")
   @ResponseBody
+  @Transactional
   public String getErrorDetailCsv(
       @PathVariable("id") UUID id,
       @Value("#{request.getAttribute('userEmail')}") String userEmail,
@@ -188,6 +200,13 @@ public class JobEndpoint {
       csvContent = stringWriter.toString();
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+
+    if (downloadableErroredJobIds.contains(job.getId())) {
+      jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_ERROR);
+      downloadableErroredJobIds.remove(job.getId());
+    } else {
+      downloadableErroredJobIds.add(job.getId());
     }
 
     return csvContent;
