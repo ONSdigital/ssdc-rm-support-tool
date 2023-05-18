@@ -54,8 +54,6 @@ public class JobEndpoint {
   private final UserIdentity userIdentity;
   private final JobTypeHelper jobTypeHelper;
 
-  private final List<UUID> downloadableErroredJobIds = new ArrayList<>();
-
   @Value("${file-upload-storage-path}")
   private String fileUploadStoragePath;
 
@@ -150,13 +148,6 @@ public class JobEndpoint {
       throw new RuntimeException(e);
     }
 
-    if (downloadableErroredJobIds.contains(job.getId())) {
-      jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_ERROR);
-      downloadableErroredJobIds.remove(job.getId());
-    } else {
-      downloadableErroredJobIds.add(job.getId());
-    }
-
     return csvContent;
   }
 
@@ -200,13 +191,6 @@ public class JobEndpoint {
       csvContent = stringWriter.toString();
     } catch (IOException e) {
       throw new RuntimeException(e);
-    }
-
-    if (downloadableErroredJobIds.contains(job.getId())) {
-      jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_ERROR);
-      downloadableErroredJobIds.remove(job.getId());
-    } else {
-      downloadableErroredJobIds.add(job.getId());
     }
 
     return csvContent;
@@ -254,6 +238,7 @@ public class JobEndpoint {
       jobRepository.saveAndFlush(job);
 
       jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
+      jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_ERROR);
     } else {
       log.with("jobId", id)
           .with("httpStatus", HttpStatus.BAD_REQUEST)
