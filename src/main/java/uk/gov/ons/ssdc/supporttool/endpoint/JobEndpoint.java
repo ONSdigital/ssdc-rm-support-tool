@@ -235,6 +235,7 @@ public class JobEndpoint {
       jobRepository.saveAndFlush(job);
 
       jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
+      jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_ERROR);
     } else {
       log.with("jobId", id)
           .with("httpStatus", HttpStatus.BAD_REQUEST)
