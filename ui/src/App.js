@@ -12,11 +12,14 @@ import MyGroupsAdmin from "./MyGroupsAdmin";
 import MyGroupUserAdmin from "./MyGroupUserAdmin";
 import BulkUploads from "./BulkUploads";
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useLocation,
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    useLocation,
+    Link,
 } from "react-router-dom";
+
+
 
 class App extends Component {
   render() {
@@ -26,8 +29,8 @@ class App extends Component {
           <AppBar position="static">
             <Toolbar>
               <Typography variant="h6" color="inherit">
-                RM Support Tool
-              </Typography>
+                  <Link to="/" style={{ color: 'inherit', textDecoration: 'inherit' }}>RM Support Tool</Link>
+             </Typography>
             </Toolbar>
           </AppBar>
 
