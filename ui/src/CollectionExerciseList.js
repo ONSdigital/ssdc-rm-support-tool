@@ -231,13 +231,16 @@ class CollectionExerciseList extends Component {
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(
       (collex) => (
-        <TableRow key={collex.name}>
+        <TableRow key={collex.name} style={{ whiteSpace: "nowrap" }}>
           <TableCell component="th" scope="row">
             <Link
               to={`/collex?surveyId=${this.props.surveyId}&collexId=${collex.id}`}
             >
               {collex.name}
             </Link>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {collex.id}
           </TableCell>
           <TableCell component="th" scope="row">
             {collex.reference}
@@ -250,6 +253,9 @@ class CollectionExerciseList extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             {JSON.stringify(collex.metadata)}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(collex.collectionInstrumentSelectionRules)}
           </TableCell>
         </TableRow>
       )
@@ -269,10 +275,12 @@ class CollectionExerciseList extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Collection Exercise Name</TableCell>
+                    <TableCell>ID</TableCell>
                     <TableCell>Reference</TableCell>
                     <TableCell>Start Date</TableCell>
                     <TableCell>End Date</TableCell>
                     <TableCell>Metadata</TableCell>
+                    <TableCell>Rules</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{collectionExerciseTableRows}</TableBody>
