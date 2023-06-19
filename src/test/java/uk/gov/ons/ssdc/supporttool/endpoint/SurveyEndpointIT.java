@@ -27,7 +27,7 @@ import uk.gov.ons.ssdc.supporttool.testhelper.QueueSpy;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class SurveyEndpointIT {
-  private static final String SURVEY_UPDATE_TEST_SUBSCRIPTION = "event_survey-update_rh";
+  private static final String SURVEY_UPDATE_TEST_SUBSCRIPTION = "event_survey-update_it";
 
   @Autowired private IntegrationTestHelper integrationTestHelper;
 
