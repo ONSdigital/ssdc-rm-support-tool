@@ -243,7 +243,6 @@ class CollectionExerciseList extends Component {
   render() {
     const collectionExerciseTableRows = this.state.collectionExercises.map(
       (collex) => (
-        // <TableRow key={collex.name} style={{ whiteSpace: "nowrap" }}>
         <TableRow key={collex.name}>
           <TableCell component="th" scope="row">
             <Link
