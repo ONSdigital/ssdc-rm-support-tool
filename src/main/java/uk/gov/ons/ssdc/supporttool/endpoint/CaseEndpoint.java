@@ -75,6 +75,7 @@ public class CaseEndpoint {
     caseDto.setInvalid(caze.isInvalid());
     caseDto.setCreatedAt(caze.getCreatedAt());
     caseDto.setLastUpdatedAt(caze.getLastUpdatedAt());
+    caseDto.setSample(caze.getSample());
 
     List<EventDto> events = new LinkedList<>();
     for (Event event : caze.getEvents()) {
