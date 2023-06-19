@@ -65,7 +65,9 @@ class CollectionExerciseList extends Component {
   };
 
   openCollectionInstrumentRulesDialog = (collectionInstrumentRulesToShow) => {
-    this.setState({collectionInstrumentRulesToShow: collectionInstrumentRulesToShow });
+    this.setState({
+      collectionInstrumentRulesToShow: collectionInstrumentRulesToShow,
+    });
   };
 
   closeCollectionInstrumentRulesDialog = () => {
@@ -267,8 +269,12 @@ class CollectionExerciseList extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             <Button
-                variant="contained"
-                onClick={() => this.openCollectionInstrumentRulesDialog(collex.collectionInstrumentSelectionRules)}
+              variant="contained"
+              onClick={() =>
+                this.openCollectionInstrumentRulesDialog(
+                  collex.collectionInstrumentSelectionRules
+                )
+              }
             >
               View Rules
             </Button>
@@ -305,26 +311,30 @@ class CollectionExerciseList extends Component {
           </>
         )}
         {this.state.collectionInstrumentRulesToShow && (
-            <Dialog open={true}>
-              <DialogContent style={{ padding: 30 }}>
-                <div>
-                  <JSONPretty
-                      id="json-pretty"
-                      data={this.state.collectionInstrumentRulesToShow}
-                      style={{ margin: 10 }}
-                  />
-                </div>
-                <div>
-                  <Button
-                      onClick={this.closeCollectionInstrumentRulesDialog}
-                      variant="contained"
-                      style={{ margin: 10, padding: 10 }}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+          <Dialog open={true}>
+            <DialogContent style={{ padding: 30 }}>
+              <div>
+                <JSONPretty
+                  id="json-pretty"
+                  data={this.state.collectionInstrumentRulesToShow}
+                  style={{
+                    overflowY: "scroll",
+                    margin: 10,
+                    maxHeight: 500,
+                  }}
+                />
+              </div>
+              <div>
+                <Button
+                  onClick={this.closeCollectionInstrumentRulesDialog}
+                  variant="contained"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Close
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
 
         {this.state.authorisedActivities.includes(

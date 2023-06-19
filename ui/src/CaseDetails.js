@@ -29,9 +29,10 @@ import { errorAlert } from "./Utils";
 class CaseDetails extends Component {
   state = {
     authorisedActivities: [],
-    case: null,
+    case: [],
     events: [],
     uacQidLinks: [],
+    sample: [],
     eventToShow: null,
     surveyName: "",
     collexName: "",
@@ -92,6 +93,7 @@ class CaseDetails extends Component {
         case: caseJson,
         uacQidLinks: caseJson.uacQidLinks,
         events: caseJson.events,
+        sample: caseJson.sample,
       });
     }
   };
@@ -205,6 +207,16 @@ class CaseDetails extends Component {
         </TableCell>
       </TableRow>
     ));
+
+    const sampleDataHeaders = Object.keys(this.state.sample).map(
+      (sampleHeader, index) => <TableCell key={index}>{sampleHeader}</TableCell>
+    );
+
+    const sampleDataRows = Object.keys(this.state.sample).map(
+      (sampleHeader, index) => (
+        <TableCell key={index}>{this.state.sample[sampleHeader]}</TableCell>
+      )
+    );
 
     return (
       <div>
@@ -332,6 +344,17 @@ class CaseDetails extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>{uacQids}</TableBody>
+              </Table>
+            </TableContainer>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              Sample Data (Non-Sensitive)
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>{sampleDataHeaders}</TableRow>
+                </TableHead>
+                <TableBody>{sampleDataRows}</TableBody>
               </Table>
             </TableContainer>
           </div>

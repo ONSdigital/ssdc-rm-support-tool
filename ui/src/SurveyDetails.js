@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import {Button, Dialog, DialogContent, Paper, Typography} from "@material-ui/core";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  Paper,
+  Typography,
+} from "@material-ui/core";
 import { Link } from "react-router-dom";
 import CollectionExerciseList from "./CollectionExerciseList";
 import AllowedExportFileTemplatesActionRulesList from "./AllowedExportFileTemplatesActionRulesList";
@@ -21,8 +27,8 @@ import JSONPretty from "react-json-pretty";
 class SurveyDetails extends Component {
   state = {
     authorisedActivities: [],
-      showSampleValidationRulesDialog: false,
-      surveyDetails: [],
+    showSampleValidationRulesDialog: false,
+    surveyDetails: [],
   };
 
   componentDidMount() {
@@ -59,44 +65,42 @@ class SurveyDetails extends Component {
     this.setState({ surveyDetails: surveyJson });
   };
 
+  openSampleValidationRulesDialog = () => {
+    this.setState({ showSampleValidationRulesDialog: true });
+  };
 
-openSampleValidationRulesDialog = () => {
-        this.setState({showSampleValidationRulesDialog: true });
-    };
-
-closeSampleValidationRulesDialog = () => {
+  closeSampleValidationRulesDialog = () => {
     this.setState({ showSampleValidationRulesDialog: false });
-};
+  };
 
   render() {
-
-      const surveyDetailsRow = (
-          <TableRow>
-              <TableCell component="th" scope="row">
-                  {this.state.surveyDetails.id}
-              </TableCell>
-              <TableCell component="th" scope="row">
-                  {JSON.stringify(this.state.surveyDetails.metadata)}
-              </TableCell>
-              <TableCell component="th" scope="row">
-                  {this.state.surveyDetails.sampleDefinitionUrl}
-              </TableCell>
-              <TableCell component="th" scope="row">
-                  {this.state.surveyDetails.sampleWithHeaderRow ? "YES" : "NO"}
-              </TableCell>
-              <TableCell component="th" scope="row">
-                  {this.state.surveyDetails.sampleSeparator}
-              </TableCell>
-              <TableCell component="th" scope="row">
-              <Button
-                  variant="contained"
-                  onClick={() => this.openSampleValidationRulesDialog()}
-              >
-                  View Rules
-              </Button>
-              </TableCell>
-          </TableRow>
-      );
+    const surveyDetailsRow = (
+      <TableRow>
+        <TableCell component="th" scope="row">
+          {this.state.surveyDetails.id}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {JSON.stringify(this.state.surveyDetails.metadata)}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {this.state.surveyDetails.sampleDefinitionUrl}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {this.state.surveyDetails.sampleWithHeaderRow ? "YES" : "NO"}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {this.state.surveyDetails.sampleSeparator}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          <Button
+            variant="contained"
+            onClick={() => this.openSampleValidationRulesDialog()}
+          >
+            View Rules
+          </Button>
+        </TableCell>
+      </TableRow>
+    );
 
     return (
       <div style={{ padding: 20 }}>
@@ -113,54 +117,47 @@ closeSampleValidationRulesDialog = () => {
         )}
         <div>
           <Typography variant="h6" color="inherit">
-              Survey Details
+            Survey Details
           </Typography>
           <TableContainer component={Paper}>
-              <Table id="surveyDetailsTable">
-                  <TableHead>
-                      <TableRow>
-                          <TableCell>ID</TableCell>
-                          <TableCell>Metadata</TableCell>
-                          <TableCell>Sample Definition URL</TableCell>
-                          <TableCell>Sample With Header Row</TableCell>
-                          <TableCell>Sample Separator</TableCell>
-                          <TableCell>Sample Validation Rules</TableCell>
-                      </TableRow>
-                  </TableHead>
-                  <TableBody>{surveyDetailsRow}</TableBody>
-              </Table>
+            <Table id="surveyDetailsTable">
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Metadata</TableCell>
+                  <TableCell>Sample Definition URL</TableCell>
+                  <TableCell>Sample With Header Row</TableCell>
+                  <TableCell>Sample Separator</TableCell>
+                  <TableCell>Sample Validation Rules</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{surveyDetailsRow}</TableBody>
+            </Table>
           </TableContainer>
-            {this.state.showSampleValidationRulesDialog && (
-                <Dialog open={true}>
-                    <DialogContent style={{ padding: 30 }}>
-                        <div>
-                            <Button
-                                onClick={this.closeSampleValidationRulesDialog}
-                                variant="contained"
-                                style={{ margin: 10 }}
-                            >
-                                Close
-                            </Button>
-                        </div>
-                        <div>
-                                <JSONPretty
-                                    id="json-pretty"
-                                    data={this.state.surveyDetails.sampleValidationRules}
-                                    style={{ margin: 10 }}
-                                />
-                        </div>
-                        <div>
-                            <Button
-                                onClick={this.closeSampleValidationRulesDialog}
-                                variant="contained"
-                                style={{ margin: 10, padding: 10 }}
-                            >
-                                Close
-                            </Button>
-                        </div>
-                    </DialogContent>
-                </Dialog>
-            )}
+          {this.state.showSampleValidationRulesDialog && (
+            <Dialog open={true}>
+              <DialogContent>
+                <JSONPretty
+                  id="json-pretty"
+                  data={this.state.surveyDetails.sampleValidationRules}
+                  style={{
+                    overflowY: "scroll",
+                    margin: 10,
+                    maxHeight: 500,
+                  }}
+                />
+                <div>
+                  <Button
+                    onClick={this.closeSampleValidationRulesDialog}
+                    variant="contained"
+                    style={{ margin: 10, padding: 10 }}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
 
         <CollectionExerciseList surveyId={this.props.surveyId} />
