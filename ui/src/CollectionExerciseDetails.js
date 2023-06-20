@@ -388,35 +388,34 @@ class CollectionExerciseDetails extends Component {
   };
 
   render() {
-
     const collectionExerciseDetails = (
-        <>
-          <TableRow key={this.state.collectionExerciseDetails.id}>
-        <TableCell component="th" scope="row">
-          {this.state.collectionExerciseDetails.id}
-        </TableCell>
-    <TableCell component="th" scope="row">
-      {this.state.collectionExerciseDetails.reference}
-    </TableCell>
-    <TableCell component="th" scope="row">
-      {this.state.collectionExerciseDetails.startDate}
-    </TableCell>
-    <TableCell component="th" scope="row">
-      {this.state.collectionExerciseDetails.endDate}
-    </TableCell>
-    <TableCell component="th" scope="row">
-      {JSON.stringify(this.state.collectionExerciseDetails.metadata)}
-    </TableCell>
-    <TableCell component="th" scope="row">
-      <Button
-          variant="contained"
-          onClick={() => this.openCollectionInstrumentRulesDialog()}
-      >
-        View Rules
-      </Button>
-    </TableCell>
-  </TableRow>
-        </>
+      <>
+        <TableRow key={this.state.collectionExerciseDetails.id}>
+          <TableCell component="th" scope="row">
+            {this.state.collectionExerciseDetails.id}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {this.state.collectionExerciseDetails.reference}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {this.state.collectionExerciseDetails.startDate}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {this.state.collectionExerciseDetails.endDate}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {JSON.stringify(this.state.collectionExerciseDetails.metadata)}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            <Button
+              variant="contained"
+              onClick={() => this.openCollectionInstrumentRulesDialog()}
+            >
+              View Rules
+            </Button>
+          </TableCell>
+        </TableRow>
+      </>
     );
 
     const sortedActionRules = this.state.actionRules.sort((first, second) =>
@@ -539,53 +538,58 @@ class CollectionExerciseDetails extends Component {
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Collection Exercise: {this.state.collectionExerciseDetails.name}
         </Typography>
-        {this.state.authorisedActivities.includes("VIEW_COLLECTION_EXERCISE") && (
-            <>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-                Collection Exercise Details
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table id="collectionExerciseTableList">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>ID</TableCell>
-                      <TableCell>Reference</TableCell>
-                      <TableCell>Start Date</TableCell>
-                      <TableCell>End Date</TableCell>
-                      <TableCell>Metadata</TableCell>
-                      <TableCell>Collection Instrument Rules</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{collectionExerciseDetails}</TableBody>
-                </Table>
-              </TableContainer>
-            </>
-    )}
+        {this.state.authorisedActivities.includes(
+          "VIEW_COLLECTION_EXERCISE"
+        ) && (
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              Collection Exercise Details
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table id="collectionExerciseTableList">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Reference</TableCell>
+                    <TableCell>Start Date</TableCell>
+                    <TableCell>End Date</TableCell>
+                    <TableCell>Metadata</TableCell>
+                    <TableCell>Collection Instrument Rules</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{collectionExerciseDetails}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
         {this.state.collectionInstrumentRulesDisplayed && (
-            <Dialog open={true}>
-              <DialogContent style={{ padding: 30 }}>
-                <div>
-                  <JSONPretty
-                      id="json-pretty"
-                      data={this.state.collectionExerciseDetails.collectionInstrumentSelectionRules}
-                      style={{
-                        overflowY: "scroll",
-                        margin: 10,
-                        maxHeight: 500,
-                      }}
-                  />
-                </div>
-                <div>
-                  <Button
-                      onClick={this.closeCollectionInstrumentRulesDialog}
-                      variant="contained"
-                      style={{ margin: 10, padding: 10 }}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+          <Dialog open={true}>
+            <DialogContent style={{ padding: 30 }}>
+              <div>
+                <JSONPretty
+                  id="json-pretty"
+                  data={
+                    this.state.collectionExerciseDetails
+                      .collectionInstrumentSelectionRules
+                  }
+                  style={{
+                    overflowY: "scroll",
+                    margin: 10,
+                    maxHeight: 500,
+                  }}
+                />
+              </div>
+              <div>
+                <Button
+                  onClick={this.closeCollectionInstrumentRulesDialog}
+                  variant="contained"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Close
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
         {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
           <>
