@@ -32,7 +32,7 @@ class CaseDetails extends Component {
     case: null,
     events: [],
     uacQidLinks: [],
-    sample: [],
+    sample: {},
     eventToShow: null,
     surveyName: "",
     collexName: "",
@@ -208,11 +208,12 @@ class CaseDetails extends Component {
       </TableRow>
     ));
 
-    const sampleDataHeaders = Object.keys(this.state.sample).map(
+    let sampleData = Object.keys(this.state.sample);
+    const sampleDataHeaders = sampleData.map(
       (sampleHeader, index) => <TableCell key={index}>{sampleHeader}</TableCell>
     );
 
-    const sampleDataRows = Object.keys(this.state.sample).map(
+    const sampleDataRows = sampleData.map(
       (sampleHeader, index) => (
         <TableCell key={index}>{this.state.sample[sampleHeader]}</TableCell>
       )

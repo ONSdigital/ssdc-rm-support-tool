@@ -27,6 +27,7 @@ import {
   errorAlert,
 } from "./Utils";
 import { Link } from "react-router-dom";
+import JSONPretty from "react-json-pretty";
 
 class CollectionExerciseDetails extends Component {
   state = {
@@ -36,6 +37,7 @@ class CollectionExerciseDetails extends Component {
     sensitiveSampleColumns: [],
     smsPackCodes: [],
     emailPackCodes: [],
+    collectionInstrumentRulesDisplayed: false,
     createActionRulesDialogDisplayed: false,
     exportFilePackCodeValidationError: false,
     smsPackCodeValidationError: false,
@@ -44,7 +46,7 @@ class CollectionExerciseDetails extends Component {
     emailColumnValidationError: false,
     actionRuleTypeValidationError: false,
     uacQidMetadataValidationError: false,
-    collectionExerciseName: "",
+    collectionExerciseDetails: {},
     newActionRuleExportFilePackCode: "",
     newActionRuleSmsPackCode: "",
     newActionRuleSmsPhoneNumberColumn: "",
@@ -61,7 +63,7 @@ class CollectionExerciseDetails extends Component {
 
   getAuthorisedBackendData = async () => {
     const authorisedActivities = await this.getAuthorisedActivities(); // Only need to do this once; don't refresh it repeatedly as it changes infrequently
-    this.getCollectionExerciseName(authorisedActivities);
+    this.getCollectionExerciseDetails(authorisedActivities);
     this.getActionRules(authorisedActivities);
     this.getExportFileTemplates(authorisedActivities);
     this.getSmsTemplates(authorisedActivities);
@@ -92,7 +94,7 @@ class CollectionExerciseDetails extends Component {
     this.setState({ sensitiveSampleColumns: sensitiveSampleColumns });
   };
 
-  getCollectionExerciseName = async (authorisedActivities) => {
+  getCollectionExerciseDetails = async (authorisedActivities) => {
     if (!authorisedActivities.includes("VIEW_COLLECTION_EXERCISE")) return;
 
     const response = await fetch(
@@ -106,7 +108,7 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
-    this.setState({ collectionExerciseName: responseJson.name });
+    this.setState({ collectionExerciseDetails: responseJson });
   };
 
   getActionRules = async (authorisedActivities) => {
@@ -165,6 +167,14 @@ class CollectionExerciseDetails extends Component {
       this.props.surveyId
     );
     this.setState({ emailPackCodes: packCodes });
+  };
+
+  openCollectionInstrumentRulesDialog = () => {
+    this.setState({ collectionInstrumentRulesDisplayed: true });
+  };
+
+  closeCollectionInstrumentRulesDialog = () => {
+    this.setState({ collectionInstrumentRulesDisplayed: false });
   };
 
   openDialog = () => {
@@ -378,6 +388,37 @@ class CollectionExerciseDetails extends Component {
   };
 
   render() {
+
+    const collectionExerciseDetails = (
+        <>
+          <TableRow key={this.state.collectionExerciseDetails.id}>
+        <TableCell component="th" scope="row">
+          {this.state.collectionExerciseDetails.id}
+        </TableCell>
+    <TableCell component="th" scope="row">
+      {this.state.collectionExerciseDetails.reference}
+    </TableCell>
+    <TableCell component="th" scope="row">
+      {this.state.collectionExerciseDetails.startDate}
+    </TableCell>
+    <TableCell component="th" scope="row">
+      {this.state.collectionExerciseDetails.endDate}
+    </TableCell>
+    <TableCell component="th" scope="row">
+      {JSON.stringify(this.state.collectionExerciseDetails.metadata)}
+    </TableCell>
+    <TableCell component="th" scope="row">
+      <Button
+          variant="contained"
+          onClick={() => this.openCollectionInstrumentRulesDialog()}
+      >
+        View Rules
+      </Button>
+    </TableCell>
+  </TableRow>
+        </>
+    );
+
     const sortedActionRules = this.state.actionRules.sort((first, second) =>
       first.triggerDateTime.localeCompare(second.triggerDateTime)
     );
@@ -496,8 +537,56 @@ class CollectionExerciseDetails extends Component {
           ← Back to survey
         </Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
-          Collection Exercise Details - {this.state.collectionExerciseName}
+          Collection Exercise: {this.state.collectionExerciseDetails.name}
         </Typography>
+        {this.state.authorisedActivities.includes("VIEW_COLLECTION_EXERCISE") && (
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+                Collection Exercise Details
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table id="collectionExerciseTableList">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>ID</TableCell>
+                      <TableCell>Reference</TableCell>
+                      <TableCell>Start Date</TableCell>
+                      <TableCell>End Date</TableCell>
+                      <TableCell>Metadata</TableCell>
+                      <TableCell>Collection Instrument Rules</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{collectionExerciseDetails}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+    )}
+        {this.state.collectionInstrumentRulesDisplayed && (
+            <Dialog open={true}>
+              <DialogContent style={{ padding: 30 }}>
+                <div>
+                  <JSONPretty
+                      id="json-pretty"
+                      data={this.state.collectionExerciseDetails.collectionInstrumentSelectionRules}
+                      style={{
+                        overflowY: "scroll",
+                        margin: 10,
+                        maxHeight: 500,
+                      }}
+                  />
+                </div>
+                <div>
+                  <Button
+                      onClick={this.closeCollectionInstrumentRulesDialog}
+                      variant="contained"
+                      style={{ margin: 10, padding: 10 }}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+        )}
         {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
