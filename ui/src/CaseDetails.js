@@ -29,7 +29,7 @@ import { errorAlert } from "./Utils";
 class CaseDetails extends Component {
   state = {
     authorisedActivities: [],
-    case: [],
+    case: null,
     events: [],
     uacQidLinks: [],
     sample: [],
