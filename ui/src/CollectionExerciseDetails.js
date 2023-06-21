@@ -541,7 +541,7 @@ class CollectionExerciseDetails extends Component {
         {this.state.authorisedActivities.includes(
           "VIEW_COLLECTION_EXERCISE"
         ) && (
-          <>
+          <div>
             <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
               Collection Exercise Details
             </Typography>
@@ -560,12 +560,9 @@ class CollectionExerciseDetails extends Component {
                 <TableBody>{collectionExerciseDetails}</TableBody>
               </Table>
             </TableContainer>
-          </>
-        )}
         {this.state.collectionInstrumentRulesDisplayed && (
           <Dialog open={true}>
             <DialogContent style={{ padding: 30 }}>
-              <div>
                 <JSONPretty
                   id="json-pretty"
                   data={
@@ -578,7 +575,6 @@ class CollectionExerciseDetails extends Component {
                     maxHeight: 500,
                   }}
                 />
-              </div>
               <div>
                 <Button
                   onClick={this.closeCollectionInstrumentRulesDialog}
@@ -590,6 +586,8 @@ class CollectionExerciseDetails extends Component {
               </div>
             </DialogContent>
           </Dialog>
+          )}
+          </div>
         )}
         {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
           <>

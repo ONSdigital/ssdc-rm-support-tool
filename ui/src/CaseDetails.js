@@ -346,7 +346,7 @@ class CaseDetails extends Component {
               </Table>
             </TableContainer>
             {this.state.authorisedActivities.includes("VIEW_CASE_DETAILS") && (
-              <>
+              <div>
                 <Typography
                   variant="h6"
                   color="inherit"
@@ -362,7 +362,7 @@ class CaseDetails extends Component {
                     <TableBody>{sampleDataRows}</TableBody>
                   </Table>
                 </TableContainer>
-              </>
+              </div>
             )}
           </div>
         )}
