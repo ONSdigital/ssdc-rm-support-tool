@@ -560,33 +560,33 @@ class CollectionExerciseDetails extends Component {
                 <TableBody>{collectionExerciseDetails}</TableBody>
               </Table>
             </TableContainer>
-        {this.state.collectionInstrumentRulesDisplayed && (
-          <Dialog open={true}>
-            <DialogContent style={{ padding: 30 }}>
-                <JSONPretty
-                  id="json-pretty"
-                  data={
-                    this.state.collectionExerciseDetails
-                      .collectionInstrumentSelectionRules
-                  }
-                  style={{
-                    overflowY: "scroll",
-                    margin: 10,
-                    maxHeight: 500,
-                  }}
-                />
-              <div>
-                <Button
-                  onClick={this.closeCollectionInstrumentRulesDialog}
-                  variant="contained"
-                  style={{ margin: 10, padding: 10 }}
-                >
-                  Close
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-          )}
+            {this.state.collectionInstrumentRulesDisplayed && (
+              <Dialog open={true}>
+                <DialogContent style={{ padding: 30 }}>
+                  <JSONPretty
+                    id="json-pretty"
+                    data={
+                      this.state.collectionExerciseDetails
+                        .collectionInstrumentSelectionRules
+                    }
+                    style={{
+                      overflowY: "scroll",
+                      margin: 10,
+                      maxHeight: 500,
+                    }}
+                  />
+                  <div>
+                    <Button
+                      onClick={this.closeCollectionInstrumentRulesDialog}
+                      variant="contained"
+                      style={{ margin: 10, padding: 10 }}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
         )}
         {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
