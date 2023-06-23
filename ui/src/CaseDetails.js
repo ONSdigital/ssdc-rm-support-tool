@@ -32,6 +32,7 @@ class CaseDetails extends Component {
     case: null,
     events: [],
     uacQidLinks: [],
+    sample: {},
     eventToShow: null,
     surveyName: "",
     collexName: "",
@@ -92,6 +93,7 @@ class CaseDetails extends Component {
         case: caseJson,
         uacQidLinks: caseJson.uacQidLinks,
         events: caseJson.events,
+        sample: caseJson.sample,
       });
     }
   };
@@ -204,6 +206,15 @@ class CaseDetails extends Component {
             )}
         </TableCell>
       </TableRow>
+    ));
+
+    let sampleData = Object.keys(this.state.sample);
+    const sampleDataHeaders = sampleData.map((sampleHeader, index) => (
+      <TableCell key={index}>{sampleHeader}</TableCell>
+    ));
+
+    const sampleDataRows = sampleData.map((sampleHeader, index) => (
+      <TableCell key={index}>{this.state.sample[sampleHeader]}</TableCell>
     ));
 
     return (
@@ -334,6 +345,25 @@ class CaseDetails extends Component {
                 <TableBody>{uacQids}</TableBody>
               </Table>
             </TableContainer>
+            {this.state.authorisedActivities.includes("VIEW_CASE_DETAILS") && (
+              <div>
+                <Typography
+                  variant="h6"
+                  color="inherit"
+                  style={{ marginTop: 20 }}
+                >
+                  Sample Data (Non-Sensitive)
+                </Typography>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>{sampleDataHeaders}</TableRow>
+                    </TableHead>
+                    <TableBody>{sampleDataRows}</TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
+            )}
           </div>
         )}
         {this.state.eventToShow && (

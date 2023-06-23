@@ -132,6 +132,8 @@ public class CollectionExerciseEndpoint {
     collectionExerciseDto.setStartDate(collex.getStartDate());
     collectionExerciseDto.setEndDate(collex.getEndDate());
     collectionExerciseDto.setMetadata(collex.getMetadata());
+    collectionExerciseDto.setCollectionInstrumentSelectionRules(
+        collex.getCollectionInstrumentSelectionRules());
     return collectionExerciseDto;
   }
 

@@ -16,12 +16,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { errorAlert, getAuthorisedActivities } from "./Utils";
 import { Link } from "react-router-dom";
+import JSONPretty from "react-json-pretty";
 
 class CollectionExerciseList extends Component {
   state = {
     authorisedActivities: [],
     collectionExercises: [],
-    createCollectionExerciseDialogDisplayed: false,
+    showCreateCollectionExerciseDialog: false,
+    collectionInstrumentRulesToShow: null,
     newCollectionExerciseName: "",
     newCollectionExerciseNameError: false,
     newCollectionExerciseReference: "",
@@ -62,6 +64,16 @@ class CollectionExerciseList extends Component {
     });
   };
 
+  openCollectionInstrumentRulesDialog = (collectionInstrumentRulesToShow) => {
+    this.setState({
+      collectionInstrumentRulesToShow: collectionInstrumentRulesToShow,
+    });
+  };
+
+  closeCollectionInstrumentRulesDialog = () => {
+    this.setState({ collectionInstrumentRulesToShow: null });
+  };
+
   openCreateCollectionExerciseDialog = () => {
     this.createCollectionExerciseInProgress = false;
 
@@ -73,7 +85,7 @@ class CollectionExerciseList extends Component {
       newCollectionExerciseMetadata: "",
       newCollectionExerciseNameError: false,
       newCollectionExerciseReferenceError: false,
-      createCollectionExerciseDialogDisplayed: true,
+      showCreateCollectionExerciseDialog: true,
       newCollectionExerciseMetadataError: false,
       newCollectionExerciseDateError: "",
       newCollectionExerciseCIRules: "",
@@ -88,7 +100,7 @@ class CollectionExerciseList extends Component {
   };
 
   closeCreateCollectionExerciseDialog = () => {
-    this.setState({ createCollectionExerciseDialogDisplayed: false });
+    this.setState({ showCreateCollectionExerciseDialog: false });
   };
 
   onNewCollectionExerciseNameChange = (event) => {
@@ -219,7 +231,7 @@ class CollectionExerciseList extends Component {
     });
 
     if (response.ok) {
-      this.setState({ createCollectionExerciseDialogDisplayed: false });
+      this.setState({ showCreateCollectionExerciseDialog: false });
     } else {
       this.createCollectionExerciseInProgress = false;
       const responseJson = await response.json();
@@ -240,6 +252,9 @@ class CollectionExerciseList extends Component {
             </Link>
           </TableCell>
           <TableCell component="th" scope="row">
+            {collex.id}
+          </TableCell>
+          <TableCell component="th" scope="row">
             {collex.reference}
           </TableCell>
           <TableCell component="th" scope="row">
@@ -250,6 +265,18 @@ class CollectionExerciseList extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             {JSON.stringify(collex.metadata)}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            <Button
+              variant="contained"
+              onClick={() =>
+                this.openCollectionInstrumentRulesDialog(
+                  collex.collectionInstrumentSelectionRules
+                )
+              }
+            >
+              View Rules
+            </Button>
           </TableCell>
         </TableRow>
       )
@@ -268,11 +295,13 @@ class CollectionExerciseList extends Component {
               <Table id="collectionExerciseTableList">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Collection Exercise Name</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>ID</TableCell>
                     <TableCell>Reference</TableCell>
                     <TableCell>Start Date</TableCell>
                     <TableCell>End Date</TableCell>
                     <TableCell>Metadata</TableCell>
+                    <TableCell>Collection Instrument Rules</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{collectionExerciseTableRows}</TableBody>
@@ -280,6 +309,33 @@ class CollectionExerciseList extends Component {
             </TableContainer>
           </>
         )}
+        {this.state.collectionInstrumentRulesToShow && (
+          <Dialog open={true}>
+            <DialogContent style={{ padding: 30 }}>
+              <div>
+                <JSONPretty
+                  id="json-pretty"
+                  data={this.state.collectionInstrumentRulesToShow}
+                  style={{
+                    overflowY: "scroll",
+                    margin: 10,
+                    maxHeight: 500,
+                  }}
+                />
+              </div>
+              <div>
+                <Button
+                  onClick={this.closeCollectionInstrumentRulesDialog}
+                  variant="contained"
+                  style={{ margin: 10, padding: 10 }}
+                >
+                  Close
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
         {this.state.authorisedActivities.includes(
           "CREATE_COLLECTION_EXERCISE"
         ) && (
@@ -292,7 +348,7 @@ class CollectionExerciseList extends Component {
             Create Collection Exercise
           </Button>
         )}
-        <Dialog open={this.state.createCollectionExerciseDialogDisplayed}>
+        <Dialog open={this.state.showCreateCollectionExerciseDialog}>
           <DialogContent style={{ padding: 30 }}>
             <div>
               <div>
