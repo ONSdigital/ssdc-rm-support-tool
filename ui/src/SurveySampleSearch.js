@@ -61,9 +61,7 @@ class SurveySampleSearch extends Component {
       this.props.surveyId
     }?searchTerm=${encodeURIComponent(this.state.searchTerm)}`;
 
-    if (this.state.selectedCollectionExercise) {
-      searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
-    }
+    searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
 
     if (this.state.selectedRefusalFilter) {
       searchUrl += `&refusal=${this.state.selectedRefusalFilter}`;
