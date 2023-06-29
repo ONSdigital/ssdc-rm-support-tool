@@ -81,6 +81,7 @@ class SurveySampleSearch extends Component {
   onFilterCollectionExercise = (event) => {
     this.setState({
       selectedCollectionExercise: event.target.value,
+      searchCollectionExerciseError: false,
     });
   };
 
@@ -136,6 +137,7 @@ class SurveySampleSearch extends Component {
       <div id="sampleSearchDiv">
         <div id="searchCollexAndTextDiv" style={{ margin: 10 }}>
           <FormControl
+            error={this.state.searchCollectionExerciseError}
             style={{
               minWidth: 200,
               marginLeft: 10,
@@ -143,11 +145,10 @@ class SurveySampleSearch extends Component {
               padding: 0,
             }}
           >
-            <InputLabel>Collection Exercise</InputLabel>
+            <InputLabel required>Collection Exercise</InputLabel>
             <Select
               onChange={this.onFilterCollectionExercise}
               value={this.state.selectedCollectionExercise}
-              error={this.state.searchCollectionExerciseError}
             >
               {collectionExerciseMenuItems}
             </Select>
