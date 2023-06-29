@@ -44,7 +44,9 @@ class SurveySampleSearch extends Component {
   };
 
   onSearch = async () => {
-    if (!this.state.selectedCollectionExercise) {
+    if (
+      !this.props.searchTermValidator(this.state.selectedCollectionExercise)
+    ) {
       this.setState({ searchCollectionExerciseError: true });
       return;
     }
