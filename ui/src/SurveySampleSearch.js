@@ -22,6 +22,7 @@ class SurveySampleSearch extends Component {
     selectedRefusalFilter: "",
     selectedInvalidFilter: "",
     searchTerm: "",
+    searchCollectionExerciseError: false,
   };
 
   componentDidMount() {
@@ -43,6 +44,14 @@ class SurveySampleSearch extends Component {
   };
 
   onSearch = async () => {
+    if (
+      !this.props.searchTermValidator(this.state.selectedCollectionExercise)
+    ) {
+      this.setState({ searchCollectionExerciseError: true });
+      return;
+    }
+    this.setState({ searchCollectionExerciseError: false });
+
     if (!this.props.searchTermValidator(this.state.searchTerm)) {
       this.setState({ searchTermFailedValidation: true });
       return;
@@ -52,9 +61,7 @@ class SurveySampleSearch extends Component {
       this.props.surveyId
     }?searchTerm=${encodeURIComponent(this.state.searchTerm)}`;
 
-    if (this.state.selectedCollectionExercise) {
-      searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
-    }
+    searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
 
     if (this.state.selectedRefusalFilter) {
       searchUrl += `&refusal=${this.state.selectedRefusalFilter}`;
@@ -74,6 +81,7 @@ class SurveySampleSearch extends Component {
   onFilterCollectionExercise = (event) => {
     this.setState({
       selectedCollectionExercise: event.target.value,
+      searchCollectionExerciseError: false,
     });
   };
 
@@ -96,7 +104,6 @@ class SurveySampleSearch extends Component {
       </MenuItem>
     );
     let collectionExerciseMenuItems = [];
-    collectionExerciseMenuItems.push(noFilterMenuItem);
     collectionExerciseMenuItems.push(
       this.props.collectionExercises.map((collex) => (
         <MenuItem key={collex.name} value={collex.id}>
@@ -128,7 +135,24 @@ class SurveySampleSearch extends Component {
 
     return (
       <div id="sampleSearchDiv">
-        <div id="searchTxtDiv" style={{ margin: 10 }}>
+        <div id="searchCollexAndTextDiv" style={{ margin: 10 }}>
+          <FormControl
+            error={this.state.searchCollectionExerciseError}
+            style={{
+              minWidth: 200,
+              marginLeft: 10,
+              marginRight: 20,
+              padding: 0,
+            }}
+          >
+            <InputLabel required>Collection Exercise</InputLabel>
+            <Select
+              onChange={this.onFilterCollectionExercise}
+              value={this.state.selectedCollectionExercise}
+            >
+              {collectionExerciseMenuItems}
+            </Select>
+          </FormControl>
           <TextField
             required
             style={{ minWidth: SEARCH_FIELD_WIDTH }}
@@ -151,22 +175,6 @@ class SurveySampleSearch extends Component {
               Optional search filters:
             </Typography>
           </Box>
-          <FormControl
-            style={{
-              minWidth: 200,
-              marginLeft: 10,
-              marginRight: 20,
-              padding: 0,
-            }}
-          >
-            <InputLabel>Collection Exercise</InputLabel>
-            <Select
-              onChange={this.onFilterCollectionExercise}
-              value={this.state.selectedCollectionExercise}
-            >
-              {collectionExerciseMenuItems}
-            </Select>
-          </FormControl>
 
           <FormControl
             style={{ minWidth: 200, marginLeft: 20, marginRight: 20 }}
