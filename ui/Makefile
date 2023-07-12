@@ -9,3 +9,6 @@ package-audit:
 
 package-audit-dev:
 	npx audit-ci --moderate
+
+install:
+	npm install

@@ -65,6 +65,9 @@ jobs:
   node-ui-checks:
     name: Node UI Checks
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
     steps:
 
       - name: Checkout
@@ -74,18 +77,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 14
-      - run: npm --version
-      - run: npx --version
+
       - name: Update NPM
         # The setup node action links the version of NPM to the version of node
         # However, locally we use an up-to-date NPM so CI needs to match this
         # See https://github.com/actions/setup-node/issues/529
         run: npm install -g npm@latest
 
-      - run: npm --version
-      - run: npx --version
+      - name: Install Dependencies
+        run: make install
+
       - name: Run Format Check
-        run: make format-check-ui
+        run: make format-check
 
       - name: Run Package Audit
-        run: make package-audit-ui
+        run: make package-audit
