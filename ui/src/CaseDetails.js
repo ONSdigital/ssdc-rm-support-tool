@@ -456,7 +456,7 @@ class CaseDetails extends Component {
               Are you sure you want to deactivate this UAC?
             </DialogContentText>
           </DialogContent>
-          <div align="center">
+          <div style={{ textAlign: 'center' }}>
             <Button
               onClick={this.confirmDeactivate}
               variant="contained"

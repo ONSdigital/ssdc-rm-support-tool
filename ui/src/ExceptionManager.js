@@ -285,7 +285,7 @@ class ExceptionManager extends Component {
               Are you sure you want to quarantine this message?
             </DialogContentText>
           </DialogContent>
-          <div align="center">
+          <div style={{ textAlign: 'center' }}>
             <Button
               onClick={this.quarantineMessage}
               variant="contained"
