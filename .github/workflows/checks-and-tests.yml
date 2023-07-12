@@ -75,6 +75,7 @@ jobs:
         with:
           node-version: 14
 
+      - run: npx --version # DEBUG
       - name: Run Format Check
         run: make format-check-ui
 
