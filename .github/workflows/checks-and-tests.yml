@@ -62,8 +62,8 @@ jobs:
           # If Codecov has outage issues in the future, this can be toggled to false to allow the action to pass.
           fail_ci_if_error: true
 
-  node-ui-checks:
-    name: Node UI Checks
+  node-checks:
+    name: Node Checks
     runs-on: ubuntu-latest
     defaults:
       run:
