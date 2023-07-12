@@ -75,7 +75,11 @@ jobs:
         with:
           node-version: 14
 
-      - run: npx --version # DEBUG
+      - name: Update NPM
+        # The setup node action links the version of NPM to the version of node
+        # However, locally we use an up-to-date NPM so CI needs to match this
+        run: npm install -g npm@latest
+
       - name: Run Format Check
         run: make format-check-ui
 
