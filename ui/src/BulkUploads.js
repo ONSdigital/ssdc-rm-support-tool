@@ -64,7 +64,7 @@ class BulkUploads extends Component {
     // Left in but increased to refresh upload status button
     this.interval = setInterval(
       () => this.refreshDataFromBackend(authorisedActivities),
-      10000
+      10000,
     );
   };
 
@@ -73,25 +73,25 @@ class BulkUploads extends Component {
       authorisedActivities,
       BULK_REFUSAL_JOB_TYPE,
       BULK_REFUSAL_VIEW_PERMISSION,
-      "bulkRefusalJobs"
+      "bulkRefusalJobs",
     );
     this.refreshBulkJobsFromBackend(
       authorisedActivities,
       BULK_INVALID_JOB_TYPE,
       BULK_INVALID_VIEW_PERMISSION,
-      "bulkInvalidJobs"
+      "bulkInvalidJobs",
     );
     this.refreshBulkJobsFromBackend(
       authorisedActivities,
       BULK_UPDATE_SAMPLE_JOB_TYPE,
       BULK_UPDATE_SAMPLE_VIEW_PERMISSION,
-      "bulkUpdateSampleJobs"
+      "bulkUpdateSampleJobs",
     );
     this.refreshBulkJobsFromBackend(
       authorisedActivities,
       BULK_UPDATE_SAMPLE_SENSITIVE,
       BULK_UPDATE_SAMPLE_SENSITIVE_VIEW_PERMISSION,
-      "bulkUpdateSampleSensitiveJobs"
+      "bulkUpdateSampleSensitiveJobs",
     );
   };
 
@@ -114,12 +114,12 @@ class BulkUploads extends Component {
     authorisedActivities,
     jobType,
     viewPermission,
-    bulkJobsKey
+    bulkJobsKey,
   ) => {
     if (!authorisedActivities.includes(viewPermission)) return;
 
     const response = await fetch(
-      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=${jobType}`
+      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=${jobType}`,
     );
     const bulkJobs = await response.json();
 
@@ -144,7 +144,7 @@ class BulkUploads extends Component {
           max_file_size_in_mb +
           "MB. This file size is: " +
           file_size_in_mb +
-          "MB."
+          "MB.",
       );
       return;
     }
@@ -248,7 +248,7 @@ class BulkUploads extends Component {
     jobType,
     jobTitle,
     loadPermission,
-    viewerPermission
+    viewerPermission,
   ) {
     const bulkJobTableRows = bulkJobs.map((job, index) => (
       <TableRow key={index}>
@@ -329,28 +329,28 @@ class BulkUploads extends Component {
     switch (this.state.selectedJobType) {
       case BULK_REFUSAL_JOB_TYPE:
         selectedJob = this.state.bulkRefusalJobs.find(
-          (job) => job.id === this.state.selectedJob
+          (job) => job.id === this.state.selectedJob,
         );
         detailsDialogTitle = "Bulk Refusal Detail";
         loadPermission = BULK_REFUSAL_LOAD_PERMISSION;
         break;
       case BULK_INVALID_JOB_TYPE:
         selectedJob = this.state.bulkInvalidJobs.find(
-          (job) => job.id === this.state.selectedJob
+          (job) => job.id === this.state.selectedJob,
         );
         detailsDialogTitle = "Bulk Case Invalidation Detail";
         loadPermission = BULK_INVALID_LOAD_PERMISSION;
         break;
       case BULK_UPDATE_SAMPLE_JOB_TYPE:
         selectedJob = this.state.bulkUpdateSampleJobs.find(
-          (job) => job.id === this.state.selectedJob
+          (job) => job.id === this.state.selectedJob,
         );
         detailsDialogTitle = "Bulk Update Sample Detail";
         loadPermission = BULK_UPDATE_SAMPLE_LOAD_PERMISSION;
         break;
       case BULK_UPDATE_SAMPLE_SENSITIVE:
         selectedJob = this.state.bulkUpdateSampleSensitiveJobs.find(
-          (job) => job.id === this.state.selectedJob
+          (job) => job.id === this.state.selectedJob,
         );
         detailsDialogTitle = "Bulk Update Sample Sensitive Detail";
         loadPermission = BULK_UPDATE_SAMPLE_SENSITIVE_LOAD_PERMISSION;
@@ -374,7 +374,7 @@ class BulkUploads extends Component {
           BULK_REFUSAL_JOB_TYPE,
           "Bulk Refusals",
           BULK_REFUSAL_LOAD_PERMISSION,
-          BULK_REFUSAL_VIEW_PERMISSION
+          BULK_REFUSAL_VIEW_PERMISSION,
         )}
 
         {this.buildBulkProcessTable(
@@ -382,7 +382,7 @@ class BulkUploads extends Component {
           BULK_INVALID_JOB_TYPE,
           "Bulk Case Invalidation",
           BULK_INVALID_LOAD_PERMISSION,
-          BULK_INVALID_VIEW_PERMISSION
+          BULK_INVALID_VIEW_PERMISSION,
         )}
 
         {this.buildBulkProcessTable(
@@ -390,7 +390,7 @@ class BulkUploads extends Component {
           BULK_UPDATE_SAMPLE_JOB_TYPE,
           "Bulk Update Sample",
           BULK_UPDATE_SAMPLE_LOAD_PERMISSION,
-          BULK_UPDATE_SAMPLE_VIEW_PERMISSION
+          BULK_UPDATE_SAMPLE_VIEW_PERMISSION,
         )}
 
         {this.buildBulkProcessTable(
@@ -398,7 +398,7 @@ class BulkUploads extends Component {
           BULK_UPDATE_SAMPLE_SENSITIVE,
           "Bulk Update Sample Sensitive",
           BULK_UPDATE_SAMPLE_SENSITIVE_LOAD_PERMISSION,
-          BULK_UPDATE_SAMPLE_SENSITIVE_VIEW_PERMISSION
+          BULK_UPDATE_SAMPLE_SENSITIVE_VIEW_PERMISSION,
         )}
 
         <Dialog open={this.state.uploadInProgress}>

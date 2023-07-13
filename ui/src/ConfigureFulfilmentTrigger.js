@@ -39,7 +39,7 @@ class ConfigureFulfilmentTrigger extends Component {
     if (!response.ok) {
       this.setState({
         nextFulfilmentTriggerDateTime: this.getDateTimeForDateTimePicker(
-          new Date()
+          new Date(),
         ),
       });
     } else {
@@ -78,14 +78,14 @@ class ConfigureFulfilmentTrigger extends Component {
     this.updateFulfilmentTriggerDateTimeInProgress = true;
 
     const triggerDateTime = new Date(
-      this.state.nextFulfilmentTriggerDateTime
+      this.state.nextFulfilmentTriggerDateTime,
     ).toISOString();
 
     const response = await fetch(
       `/api/fulfilmentNextTriggers/?triggerDateTime=${triggerDateTime}`,
       {
         method: "POST",
-      }
+      },
     );
 
     if (response.ok) {
@@ -97,7 +97,7 @@ class ConfigureFulfilmentTrigger extends Component {
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "CONFIGURE_FULFILMENT_TRIGGER"
+          "CONFIGURE_FULFILMENT_TRIGGER",
         ) && (
           <div>
             <Button

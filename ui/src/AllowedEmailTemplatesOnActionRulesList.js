@@ -45,12 +45,12 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
 
   refreshDataFromBackend = async (authorisedActivities) => {
     const allEmailFulfilmentPackCodes = await getAllEmailPackCodes(
-      authorisedActivities
+      authorisedActivities,
     );
 
     const actionRuleEmailPackCodes = await getActionRuleEmailPackCodesForSurvey(
       authorisedActivities,
-      this.props.surveyId
+      this.props.surveyId,
     );
 
     let allowableActionRuleEmailPackCodes = [];
@@ -145,7 +145,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES"
+          "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES",
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
@@ -165,7 +165,7 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
         )}
 
         {this.state.authorisedActivities.includes(
-          "ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE"
+          "ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE",
         ) && (
           <Button
             variant="contained"

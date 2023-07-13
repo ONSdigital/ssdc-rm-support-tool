@@ -144,7 +144,7 @@ class ExportFileTemplateList extends Component {
       this.state.exportFileTemplates.some(
         (exportFileTemplate) =>
           exportFileTemplate.packCode.toUpperCase() ===
-          this.state.packCode.toUpperCase()
+          this.state.packCode.toUpperCase(),
       )
     ) {
       this.setState({
@@ -283,7 +283,7 @@ class ExportFileTemplateList extends Component {
             {JSON.stringify(exportFileTemplate.metadata)}
           </TableCell>
         </TableRow>
-      )
+      ),
     );
 
     const exportFileDestinationMenuItems =
@@ -296,7 +296,7 @@ class ExportFileTemplateList extends Component {
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "LIST_EXPORT_FILE_TEMPLATES"
+          "LIST_EXPORT_FILE_TEMPLATES",
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
@@ -319,7 +319,7 @@ class ExportFileTemplateList extends Component {
           </>
         )}
         {this.state.authorisedActivities.includes(
-          "CREATE_EXPORT_FILE_TEMPLATE"
+          "CREATE_EXPORT_FILE_TEMPLATE",
         ) && (
           <Button
             variant="contained"

@@ -46,16 +46,16 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
 
   refreshDataFromBackend = async (authorisedActivities) => {
     const allEmailFulfilmentPackCodes = await getAllEmailPackCodes(
-      authorisedActivities
+      authorisedActivities,
     );
 
     const emailFulfilmentTemplates = await getEmailFulfilmentTemplatesForSurvey(
       authorisedActivities,
-      this.props.surveyId
+      this.props.surveyId,
     );
 
     const emailFulfilmentPackCodes = emailFulfilmentTemplates.map(
-      (template) => template.packCode
+      (template) => template.packCode,
     );
 
     let allowableEmailFulfilmentPackCodes = [];
@@ -150,7 +150,7 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS"
+          "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS",
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
@@ -170,7 +170,7 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
         )}
 
         {this.state.authorisedActivities.includes(
-          "ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT"
+          "ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT",
         ) && (
           <Button
             variant="contained"

@@ -36,18 +36,18 @@ export const getAllEmailPackCodes = async (authorisedActivities) => {
 
 export const getFulfilmentExportFileTemplatesForSurvey = async (
   authorisedActivities,
-  surveyId
+  surveyId,
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (
     !authorisedActivities.includes(
-      "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS"
+      "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS",
     )
   )
     return [];
 
   const response = await fetch(
-    `/api/fulfilmentSurveyExportFileTemplates/?surveyId=${surveyId}`
+    `/api/fulfilmentSurveyExportFileTemplates/?surveyId=${surveyId}`,
   );
   const fulfilmentExportFileTemplates = await response.json();
   return fulfilmentExportFileTemplates;
@@ -55,7 +55,7 @@ export const getFulfilmentExportFileTemplatesForSurvey = async (
 
 export const getSmsFulfilmentTemplatesForSurvey = async (
   authorisedActivities,
-  surveyId
+  surveyId,
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (
@@ -64,7 +64,7 @@ export const getSmsFulfilmentTemplatesForSurvey = async (
     return [];
 
   const response = await fetch(
-    `/api/fulfilmentSurveySmsTemplates/?surveyId=${surveyId}`
+    `/api/fulfilmentSurveySmsTemplates/?surveyId=${surveyId}`,
   );
   const smsFulfilmentTemplatesJson = await response.json();
 
@@ -73,18 +73,18 @@ export const getSmsFulfilmentTemplatesForSurvey = async (
 
 export const getEmailFulfilmentTemplatesForSurvey = async (
   authorisedActivities,
-  surveyId
+  surveyId,
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (
     !authorisedActivities.includes(
-      "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS"
+      "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS",
     )
   )
     return [];
 
   const response = await fetch(
-    `/api/fulfilmentSurveyEmailTemplates/?surveyId=${surveyId}`
+    `/api/fulfilmentSurveyEmailTemplates/?surveyId=${surveyId}`,
   );
   const emailFulfilmentTemplatesJson = await response.json();
 
@@ -93,18 +93,18 @@ export const getEmailFulfilmentTemplatesForSurvey = async (
 
 export const getActionRuleExportFilePackCodesForSurvey = async (
   authorisedActivities,
-  surveyId
+  surveyId,
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (
     !authorisedActivities.includes(
-      "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES"
+      "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES",
     )
   )
     return [];
 
   const response = await fetch(
-    `/api/actionRuleSurveyExportFileTemplates/?surveyId=${surveyId}`
+    `/api/actionRuleSurveyExportFileTemplates/?surveyId=${surveyId}`,
   );
   const exportFileTemplatesJson = await response.json();
 
@@ -113,7 +113,7 @@ export const getActionRuleExportFilePackCodesForSurvey = async (
 
 export const getActionRuleSmsPackCodesForSurvey = async (
   authorisedActivities,
-  surveyId
+  surveyId,
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (
@@ -122,7 +122,7 @@ export const getActionRuleSmsPackCodesForSurvey = async (
     return [];
 
   const response = await fetch(
-    `/api/actionRuleSurveySmsTemplates/?surveyId=${surveyId}`
+    `/api/actionRuleSurveySmsTemplates/?surveyId=${surveyId}`,
   );
   const smsTemplatesJson = await response.json();
 
@@ -131,18 +131,18 @@ export const getActionRuleSmsPackCodesForSurvey = async (
 
 export const getActionRuleEmailPackCodesForSurvey = async (
   authorisedActivities,
-  surveyId
+  surveyId,
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (
     !authorisedActivities.includes(
-      "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES"
+      "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES",
     )
   )
     return [];
 
   const response = await fetch(
-    `/api/actionRuleSurveyEmailTemplates/?surveyId=${surveyId}`
+    `/api/actionRuleSurveyEmailTemplates/?surveyId=${surveyId}`,
   );
   const emailTemplatesJson = await response.json();
 
@@ -151,7 +151,7 @@ export const getActionRuleEmailPackCodesForSurvey = async (
 
 export const getSensitiveSampleColumns = async (
   authorisedActivities,
-  surveyId
+  surveyId,
 ) => {
   // The caller should probably check this, but it's here as a belt-and-braces in case of badly behaved programmers
   if (!authorisedActivities.includes("VIEW_SURVEY")) return [];
@@ -201,6 +201,6 @@ export const getAuthorisedActivities = async () => {
 
 export function errorAlert(errorJson) {
   alert(
-    `Something went wrong\nStatus: ${errorJson.status}\nError: ${errorJson.error}\nPath: ${errorJson.path}`
+    `Something went wrong\nStatus: ${errorJson.status}\nError: ${errorJson.error}\nPath: ${errorJson.path}`,
   );
 }
