@@ -38,7 +38,7 @@ jobs:
           - $HOME/.m2
 
     - language: node_js
-      node_js: 14
+      node_js: 16
       name: UI Checks
 
       before_install:
