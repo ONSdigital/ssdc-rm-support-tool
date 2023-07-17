@@ -115,7 +115,7 @@ class SmsTemplatesList extends Component {
       this.state.smsTemplates.some(
         (smsTemplate) =>
           smsTemplate.packCode.toUpperCase() ===
-          this.state.packCode.toUpperCase()
+          this.state.packCode.toUpperCase(),
       )
     ) {
       this.setState({

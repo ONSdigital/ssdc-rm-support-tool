@@ -63,7 +63,7 @@ class MyGroupUserAdmin extends Component {
 
   getGroupMembers = async () => {
     const response = await fetch(
-      `/api/userGroupMembers/findByGroup/${this.props.groupId}`
+      `/api/userGroupMembers/findByGroup/${this.props.groupId}`,
     );
 
     const responseJson = await response.json();
@@ -80,7 +80,7 @@ class MyGroupUserAdmin extends Component {
       (user) =>
         !groupMembers
           .map((memberOfGroup) => memberOfGroup.userId)
-          .includes(user.id)
+          .includes(user.id),
     );
 
     this.setState({
@@ -182,7 +182,7 @@ class MyGroupUserAdmin extends Component {
       `/api/userGroupMembers/${this.state.groupMemberIdToRemove}`,
       {
         method: "DELETE",
-      }
+      },
     );
 
     if (response.ok) {

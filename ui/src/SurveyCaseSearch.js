@@ -53,7 +53,7 @@ class SurveyCaseSearch extends Component {
     if (!authorisedActivities.includes("LIST_COLLECTION_EXERCISES")) return;
 
     const response = await fetch(
-      `/api/collectionExercises/?surveyId=${this.props.surveyId}`
+      `/api/collectionExercises/?surveyId=${this.props.surveyId}`,
     );
     const collexJson = await response.json();
 
@@ -65,7 +65,7 @@ class SurveyCaseSearch extends Component {
   onSearchExecuteAndPopulateList = async (
     searchUrl,
     searchTerm,
-    searchDesc
+    searchDesc,
   ) => {
     this.setState({ isWaitingForResults: true });
 
@@ -123,15 +123,15 @@ class SurveyCaseSearch extends Component {
         {!this.state.authorisedActivities.includes("VIEW_CASE_DETAILS") && (
           <>{caze.caseRef}</>
         )}
-      </TableCell>
+      </TableCell>,
     );
     caseCells.push(
-      <TableCell key={1}>{caze.collectionExerciseName}</TableCell>
+      <TableCell key={1}>{caze.collectionExerciseName}</TableCell>,
     );
     caseCells.push(
       this.state.sampleColumns.map((sampleColumn, index) => (
         <TableCell key={index + 2}>{caze.sample[sampleColumn]}</TableCell>
-      ))
+      )),
     );
 
     return caseCells;
@@ -146,7 +146,7 @@ class SurveyCaseSearch extends Component {
     tableHeaderRows.push(
       this.state.sampleColumns.map((sampleColumn, index) => (
         <TableCell key={index + 2}>{sampleColumn}</TableCell>
-      ))
+      )),
     );
 
     return tableHeaderRows;
