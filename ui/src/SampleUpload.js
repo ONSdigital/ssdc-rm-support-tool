@@ -28,6 +28,19 @@ class SampleUpload extends Component {
     fileUploadSuccess: false, // Flag to flash the snackbar message on the screen, when file uploads successfully
     uploadInProgress: false, // Flag to display the file upload progress modal dialog
     showDetails: false, // Flag to display the job details dialog
+    showCancelDialog: false,
+  };
+
+  closeCancelDialog = () => {
+    this.setState({
+      showCancelDialog: false
+    });
+  };
+
+  openCancelDialog = () => {
+    this.setState({
+      showCancelDialog: true
+    });
   };
 
   componentDidMount() {
@@ -168,6 +181,7 @@ class SampleUpload extends Component {
   };
 
   onCancelJob = () => {
+    this.closeCancelDialog
     fetch(`/api/job/${this.state.selectedJob}/cancel`, {
       method: "POST",
     });
@@ -285,6 +299,9 @@ class SampleUpload extends Component {
           handleClosedDetails={this.handleClosedDetails}
           onClickAway={this.handleClosedDetails}
           onProcessJob={this.onProcessJob}
+          showCancelDialog={this.state.showCancelDialog}
+          openCancelDialog={this.openCancelDialog}
+          closeCancelDialog={this.closeCancelDialog}
           onCancelJob={this.onCancelJob}
           authorisedActivities={this.props.authorisedActivities}
           loadPermission={"LOAD_SAMPLE"}
