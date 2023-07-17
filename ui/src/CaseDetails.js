@@ -53,7 +53,7 @@ class CaseDetails extends Component {
     // Left in to refresh event list
     this.interval = setInterval(
       () => this.getCasesAndQidData(authorisedActivities),
-      10000
+      10000,
     );
   };
 
@@ -140,7 +140,7 @@ class CaseDetails extends Component {
 
   render() {
     const sortedCaseEvents = this.state.events.sort((first, second) =>
-      first.dateTime.localeCompare(second.dateTime)
+      first.dateTime.localeCompare(second.dateTime),
     );
     sortedCaseEvents.reverse();
 
@@ -167,7 +167,7 @@ class CaseDetails extends Component {
     ));
 
     const sortedUacQidLinks = this.state.uacQidLinks.sort((first, second) =>
-      first.createdAt.localeCompare(second.createdAt)
+      first.createdAt.localeCompare(second.createdAt),
     );
     sortedUacQidLinks.reverse();
 
@@ -255,7 +255,7 @@ class CaseDetails extends Component {
                   </TableCell>
                   <TableCell align="right">
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_REFUSAL"
+                      "CREATE_CASE_REFUSAL",
                     ) && (
                       <Refusal
                         caseId={this.props.caseId}
@@ -263,10 +263,10 @@ class CaseDetails extends Component {
                       />
                     )}
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_INVALID_CASE"
+                      "CREATE_CASE_INVALID_CASE",
                     ) && <InvalidCase caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
-                      "UPDATE_SAMPLE"
+                      "UPDATE_SAMPLE",
                     ) && (
                       <SampleData
                         caseId={this.props.caseId}
@@ -274,7 +274,7 @@ class CaseDetails extends Component {
                       />
                     )}
                     {this.state.authorisedActivities.includes(
-                      "UPDATE_SAMPLE_SENSITIVE"
+                      "UPDATE_SAMPLE_SENSITIVE",
                     ) && (
                       <SensitiveData
                         caseId={this.props.caseId}
@@ -282,7 +282,7 @@ class CaseDetails extends Component {
                       />
                     )}
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_EXPORT_FILE_FULFILMENT"
+                      "CREATE_CASE_EXPORT_FILE_FULFILMENT",
                     ) && (
                       <PrintFulfilment
                         caseId={this.props.caseId}
@@ -290,7 +290,7 @@ class CaseDetails extends Component {
                       />
                     )}
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_SMS_FULFILMENT"
+                      "CREATE_CASE_SMS_FULFILMENT",
                     ) && (
                       <SmsFulfilment
                         caseId={this.props.caseId}
@@ -298,7 +298,7 @@ class CaseDetails extends Component {
                       />
                     )}
                     {this.state.authorisedActivities.includes(
-                      "CREATE_CASE_EMAIL_FULFILMENT"
+                      "CREATE_CASE_EMAIL_FULFILMENT",
                     ) && (
                       <EmailFulfilment
                         caseId={this.props.caseId}
@@ -456,7 +456,7 @@ class CaseDetails extends Component {
               Are you sure you want to deactivate this UAC?
             </DialogContentText>
           </DialogContent>
-          <div align="center">
+          <div style={{ textAlign: "center" }}>
             <Button
               onClick={this.confirmDeactivate}
               variant="contained"

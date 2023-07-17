@@ -99,7 +99,7 @@ class GroupDetails extends Component {
     if (!authorisedActivities.includes("SUPER_USER")) return;
 
     const response = await fetch(
-      `/api/userGroupAdmins/findByGroup/${this.props.groupId}`
+      `/api/userGroupAdmins/findByGroup/${this.props.groupId}`,
     );
 
     const responseJson = await response.json();
@@ -129,7 +129,7 @@ class GroupDetails extends Component {
   filterAllUsers = (allUsers, groupAdmins) => {
     const allUsersAutocompleteOptions = allUsers.filter(
       (user) =>
-        !groupAdmins.map((groupAdmin) => groupAdmin.userId).includes(user.id)
+        !groupAdmins.map((groupAdmin) => groupAdmin.userId).includes(user.id),
     );
 
     this.setState({
@@ -141,7 +141,7 @@ class GroupDetails extends Component {
     if (!authorisedActivities.includes("SUPER_USER")) return;
 
     const permissionsResponse = await fetch(
-      `/api/userGroupPermissions/?groupId=${this.props.groupId}`
+      `/api/userGroupPermissions/?groupId=${this.props.groupId}`,
     );
 
     const permissionsJson = await permissionsResponse.json();
@@ -181,7 +181,7 @@ class GroupDetails extends Component {
   getGlobalActivities = async () => {
     // This is not an RBAC protected endpoint
     const activitiesResponse = await fetch(
-      "/api/authorisedActivityTypes?globalOnly=true"
+      "/api/authorisedActivityTypes?globalOnly=true",
     );
     const activitiesJson = await activitiesResponse.json();
 
@@ -247,12 +247,12 @@ class GroupDetails extends Component {
       `/api/userGroupPermissions/${this.state.userGroupPermissionId}`,
       {
         method: "DELETE",
-      }
+      },
     );
     this.closeRemoveDialog();
     this.refreshBackendData(
       this.state.authorisedActivities,
-      this.state.allUsers
+      this.state.allUsers,
     );
   };
 
@@ -277,7 +277,7 @@ class GroupDetails extends Component {
     allowedSurveys.push(
       ...this.state.allSurveys
         .filter((survey) => !existingPermissionSurveyIds.includes(survey.id))
-        .sort((a, b) => a.name.localeCompare(b.name)) // Sort by survey name alphabetically
+        .sort((a, b) => a.name.localeCompare(b.name)), // Sort by survey name alphabetically
     );
 
     this.setState({
@@ -351,7 +351,7 @@ class GroupDetails extends Component {
     this.setState({ showAllowDialog: false });
     this.refreshBackendData(
       this.state.authorisedActivities,
-      this.state.allUsers
+      this.state.allUsers,
     );
   };
 
@@ -375,7 +375,7 @@ class GroupDetails extends Component {
       `/api/userGroupAdmins/${this.state.adminIdToRemove}`,
       {
         method: "DELETE",
-      }
+      },
     );
 
     if (response.ok) {
@@ -384,7 +384,7 @@ class GroupDetails extends Component {
 
     this.refreshBackendData(
       this.state.authorisedActivities,
-      this.state.allUsers
+      this.state.allUsers,
     );
   };
 
@@ -433,7 +433,7 @@ class GroupDetails extends Component {
     this.addAdminInProgress = false;
     this.refreshBackendData(
       this.state.authorisedActivities,
-      this.state.allUsers
+      this.state.allUsers,
     );
   };
 
@@ -503,7 +503,7 @@ class GroupDetails extends Component {
                   this.openRemoveDialog(
                     groupActivity.authorisedActivity,
                     surveyName,
-                    groupActivity.id
+                    groupActivity.id,
                   )
                 }
               >
@@ -512,7 +512,7 @@ class GroupDetails extends Component {
             </TableCell>
           </TableRow>
         );
-      }
+      },
     );
 
     const activityMenuItems = this.state.allActivities
@@ -535,7 +535,7 @@ class GroupDetails extends Component {
         ];
       } else {
         surveyMenuItems = this.state.allowedSurveys.map((survey) =>
-          this.buildSurveyMenuItem(survey)
+          this.buildSurveyMenuItem(survey),
         );
       }
     }

@@ -60,7 +60,7 @@ class SampleUpload extends Component {
           max_file_size_in_mb +
           "MB. This file size is: " +
           file_size_in_mb +
-          " MB"
+          " MB",
       );
       return;
     }
@@ -140,7 +140,7 @@ class SampleUpload extends Component {
   getJobs = async () => {
     // TODO: Job Type Temp hardcoded to SAMPLE
     const response = await fetch(
-      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=SAMPLE`
+      `/api/job?collectionExercise=${this.props.collectionExerciseId}&jobType=SAMPLE`,
     );
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
@@ -175,7 +175,7 @@ class SampleUpload extends Component {
 
   render() {
     const selectedJob = this.state.jobs.find(
-      (job) => job.id === this.state.selectedJob
+      (job) => job.id === this.state.selectedJob,
     );
 
     const jobTableRows = this.state.jobs.map((job, index) => (
@@ -206,7 +206,7 @@ class SampleUpload extends Component {
     return (
       <div style={{ marginTop: 20 }}>
         {this.props.authorisedActivities.includes(
-          "VIEW_SAMPLE_LOAD_PROGRESS"
+          "VIEW_SAMPLE_LOAD_PROGRESS",
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>

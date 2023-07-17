@@ -56,7 +56,7 @@ class InvalidCase extends Component {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(invalidCase),
-      }
+      },
     );
 
     if (response.ok) {

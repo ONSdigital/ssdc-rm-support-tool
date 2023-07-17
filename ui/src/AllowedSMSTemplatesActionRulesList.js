@@ -45,12 +45,12 @@ class AllowedSMSTemplatesActionRulesList extends Component {
 
   refreshDataFromBackend = async (authorisedActivities) => {
     const allSmsFulfilmentPackCodes = await getAllSmsPackCodes(
-      authorisedActivities
+      authorisedActivities,
     );
 
     const actionRuleSmsPackCodes = await getActionRuleSmsPackCodesForSurvey(
       authorisedActivities,
-      this.props.surveyId
+      this.props.surveyId,
     );
 
     let allowableActionRuleSmsPackCodes = [];
@@ -147,7 +147,7 @@ class AllowedSMSTemplatesActionRulesList extends Component {
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES"
+          "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES",
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
@@ -167,7 +167,7 @@ class AllowedSMSTemplatesActionRulesList extends Component {
         )}
 
         {this.state.authorisedActivities.includes(
-          "ALLOW_SMS_TEMPLATE_ON_ACTION_RULE"
+          "ALLOW_SMS_TEMPLATE_ON_ACTION_RULE",
         ) && (
           <Button
             variant="contained"
