@@ -56,13 +56,13 @@ class BulkUploads extends Component {
 
   closeCancelDialog = () => {
     this.setState({
-      showCancelDialog: false
+      showCancelDialog: false,
     });
   };
 
   openCancelDialog = () => {
     this.setState({
-      showCancelDialog: true
+      showCancelDialog: true,
     });
   };
 
@@ -251,7 +251,7 @@ class BulkUploads extends Component {
   };
 
   onCancelJob = () => {
-    this.closeCancelDialog()
+    this.closeCancelDialog();
     fetch(`/api/job/${this.state.selectedJob}/cancel`, {
       method: "POST",
     });

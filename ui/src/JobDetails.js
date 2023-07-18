@@ -215,11 +215,9 @@ class JobDetails extends Component {
     var buttonFragment;
     if (
       this.props.job &&
-      [
-        "VALIDATED_WITH_ERRORS",
-        "PROCESSING_IN_PROGRESS",
-        "PROCESSED",
-      ].includes(this.props.job.jobStatus) &&
+      ["VALIDATED_WITH_ERRORS", "PROCESSING_IN_PROGRESS", "PROCESSED"].includes(
+        this.props.job.jobStatus
+      ) &&
       this.props.job.rowErrorCount > 0 &&
       this.props.authorisedActivities.includes(this.props.loadPermission)
     ) {
@@ -303,30 +301,32 @@ class JobDetails extends Component {
               ) &&
               ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
                 this.props.job.jobStatus
-              ) && this.props.showCancelDialog == true && (
-            <Dialog open={this.props.showCancelDialog}>
-              <DialogTitle id="alert-dialog-title">
-                {"Really Cancel?"}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you wish cancel the upload? All error data will be lost!
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={this.props.onCancelJob} color="primary">
-                  Yes
-                </Button>
-                <Button
-                  onClick={this.props.closeCancelDialog}
-                  variant="contained"
-                  color="primary"
-                  autoFocus
-                >
-                  No
-                </Button>
-              </DialogActions>
-            </Dialog>
+              ) &&
+              this.props.showCancelDialog == true && (
+                <Dialog open={this.props.showCancelDialog}>
+                  <DialogTitle id="alert-dialog-title">
+                    {"Really Cancel?"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you wish cancel the upload? All error data
+                      will be lost!
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={this.props.onCancelJob} color="primary">
+                      Yes
+                    </Button>
+                    <Button
+                      onClick={this.props.closeCancelDialog}
+                      variant="contained"
+                      color="primary"
+                      autoFocus
+                    >
+                      No
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               )}
           </Grid>
         </DialogContent>
