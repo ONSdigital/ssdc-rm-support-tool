@@ -181,7 +181,7 @@ class SampleUpload extends Component {
   };
 
   onCancelJob = () => {
-    this.closeCancelDialog
+    this.closeCancelDialog()
     fetch(`/api/job/${this.state.selectedJob}/cancel`, {
       method: "POST",
     });

@@ -51,6 +51,19 @@ class BulkUploads extends Component {
     bulkInvalidJobs: [],
     bulkUpdateSampleJobs: [],
     bulkUpdateSampleSensitiveJobs: [],
+    showCancelDialog: false,
+  };
+
+  closeCancelDialog = () => {
+    this.setState({
+      showCancelDialog: false
+    });
+  };
+
+  openCancelDialog = () => {
+    this.setState({
+      showCancelDialog: true
+    });
   };
 
   componentDidMount() {
@@ -238,6 +251,7 @@ class BulkUploads extends Component {
   };
 
   onCancelJob = () => {
+    this.closeCancelDialog()
     fetch(`/api/job/${this.state.selectedJob}/cancel`, {
       method: "POST",
     });
@@ -437,6 +451,9 @@ class BulkUploads extends Component {
           handleClosedDetails={this.handleClosedDetails}
           onClickAway={this.handleClosedDetails}
           onProcessJob={this.onProcessJob}
+          showCancelDialog={this.state.showCancelDialog}
+          openCancelDialog={this.openCancelDialog}
+          closeCancelDialog={this.closeCancelDialog}
           onCancelJob={this.onCancelJob}
           authorisedActivities={this.state.authorisedActivities}
           loadPermission={loadPermission}
