@@ -302,7 +302,7 @@ class JobDetails extends Component {
               ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
                 this.props.job.jobStatus
               ) &&
-              this.props.showCancelDialog == true && (
+              this.props.showCancelDialog === true && (
                 <Dialog open={this.props.showCancelDialog}>
                   <DialogTitle id="alert-dialog-title">
                     {"Really Cancel?"}
