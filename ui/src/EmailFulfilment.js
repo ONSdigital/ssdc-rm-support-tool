@@ -83,14 +83,14 @@ class EmailFulfilment extends Component {
   refreshDataFromBackend = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS"
+        "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS",
       )
     )
       return;
 
     const fulfilmentEmailTemplates = await getEmailFulfilmentTemplatesForSurvey(
       authorisedActivities,
-      this.props.surveyId
+      this.props.surveyId,
     );
 
     this.setState({
@@ -166,7 +166,7 @@ class EmailFulfilment extends Component {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(emailFulfilment),
-      }
+      },
     );
 
     if (response.ok) {

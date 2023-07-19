@@ -128,7 +128,7 @@ class PrintFulfilment extends Component {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(printFulfilment),
-      }
+      },
     );
 
     if (response.ok) {
@@ -148,7 +148,7 @@ class PrintFulfilment extends Component {
   refreshDataFromBackend = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS"
+        "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS",
       )
     )
       return;
@@ -156,7 +156,7 @@ class PrintFulfilment extends Component {
     const fulfilmentPrintTemplates =
       await getFulfilmentExportFileTemplatesForSurvey(
         authorisedActivities,
-        this.props.surveyId
+        this.props.surveyId,
       );
 
     this.setState({
