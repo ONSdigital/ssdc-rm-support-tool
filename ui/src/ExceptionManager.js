@@ -43,7 +43,7 @@ class ExceptionManager extends Component {
     // This has an interval still, as we presume devs doing support may wish to keep this screen up
     this.interval = setInterval(
       () => this.refreshDataFromBackend(authorisedActivities),
-      10000
+      10000,
     );
   };
 
@@ -75,7 +75,7 @@ class ExceptionManager extends Component {
 
   openDetailsDialog = async (messageHash) => {
     const response = await fetch(
-      `/api/exceptionManager/badMessage/${messageHash}`
+      `/api/exceptionManager/badMessage/${messageHash}`,
     );
     const exceptionDetails = await response.json();
 
@@ -96,13 +96,13 @@ class ExceptionManager extends Component {
     this.setState({ peekResult: "", showPeekDialog: true });
 
     this.peekMessage(
-      this.state.exceptionDetails[0].exceptionReport.messageHash
+      this.state.exceptionDetails[0].exceptionReport.messageHash,
     );
   };
 
   peekMessage = async (messageHash) => {
     const response = await fetch(
-      `/api/exceptionManager/peekMessage/${messageHash}`
+      `/api/exceptionManager/peekMessage/${messageHash}`,
     );
     const peekText = await response.text();
 
@@ -134,7 +134,7 @@ class ExceptionManager extends Component {
     this.quarantineInProgress = true;
 
     const response = await fetch(
-      `/api/exceptionManager/skipMessage/${this.state.exceptionDetails[0].exceptionReport.messageHash}`
+      `/api/exceptionManager/skipMessage/${this.state.exceptionDetails[0].exceptionReport.messageHash}`,
     );
 
     if (response.ok) {
@@ -149,11 +149,11 @@ class ExceptionManager extends Component {
 
   render() {
     const activeExceptions = this.state.exceptions.filter(
-      (exception) => !exception.quarantined
+      (exception) => !exception.quarantined,
     );
 
     var sortedExceptions = activeExceptions.sort((firstEx, secondEx) =>
-      firstEx.firstSeen.localeCompare(secondEx.firstSeen)
+      firstEx.firstSeen.localeCompare(secondEx.firstSeen),
     );
     sortedExceptions.reverse();
 
@@ -197,7 +197,7 @@ class ExceptionManager extends Component {
               Root cause: {exceptionDetail.exceptionReport.exceptionRootCause}
             </div>
           </div>
-        )
+        ),
       );
     }
 
@@ -227,7 +227,7 @@ class ExceptionManager extends Component {
               <div>{exceptionDetailsSections}</div>
               <div>
                 {this.state.authorisedActivities.includes(
-                  "EXCEPTION_MANAGER_PEEK"
+                  "EXCEPTION_MANAGER_PEEK",
                 ) && (
                   <Button
                     onClick={this.onPeek}
@@ -238,7 +238,7 @@ class ExceptionManager extends Component {
                   </Button>
                 )}
                 {this.state.authorisedActivities.includes(
-                  "EXCEPTION_MANAGER_QUARANTINE"
+                  "EXCEPTION_MANAGER_QUARANTINE",
                 ) && (
                   <Button
                     onClick={this.openQuarantineDialog}
@@ -285,7 +285,7 @@ class ExceptionManager extends Component {
               Are you sure you want to quarantine this message?
             </DialogContentText>
           </DialogContent>
-          <div align="center">
+          <div style={{ textAlign: "center" }}>
             <Button
               onClick={this.quarantineMessage}
               variant="contained"

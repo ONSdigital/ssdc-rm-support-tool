@@ -25,7 +25,7 @@ class SurveySimpleSearchInput extends Component {
     this.props.onSearchExecuteAndPopulateList(
       `/api/surveyCases/${this.props.surveyId}/${this.props.urlpathName}/${this.state.searchTerm}`,
       this.state.searchTerm,
-      this.props.searchDesc
+      this.props.searchDesc,
     );
   };
 

@@ -158,7 +158,7 @@ class EmailTemplateList extends Component {
       this.state.emailTemplates.some(
         (emailTemplate) =>
           emailTemplate.packCode.toUpperCase() ===
-          this.state.packCode.toUpperCase()
+          this.state.packCode.toUpperCase(),
       )
     ) {
       this.setState({

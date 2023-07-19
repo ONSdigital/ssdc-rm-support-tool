@@ -46,15 +46,15 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
 
   refreshDataFromBackend = async (authorisedActivities) => {
     const allSmsFulfilmentPackCodes = await getAllSmsPackCodes(
-      authorisedActivities
+      authorisedActivities,
     );
 
     const smsFulfilmentTemplates = await getSmsFulfilmentTemplatesForSurvey(
       authorisedActivities,
-      this.props.surveyId
+      this.props.surveyId,
     );
     const smsFulfilmentPackCodes = smsFulfilmentTemplates.map(
-      (template) => template.packCode
+      (template) => template.packCode,
     );
 
     let allowableSmsFulfilmentPackCodes = [];
@@ -149,7 +149,7 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
+          "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS",
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
@@ -169,7 +169,7 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
         )}
 
         {this.state.authorisedActivities.includes(
-          "ALLOW_SMS_TEMPLATE_ON_FULFILMENT"
+          "ALLOW_SMS_TEMPLATE_ON_FULFILMENT",
         ) && (
           <Button
             variant="contained"
