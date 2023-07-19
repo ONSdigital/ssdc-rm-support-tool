@@ -7,6 +7,9 @@ import {
   Dialog,
   DialogContent,
   LinearProgress,
+  DialogTitle,
+  DialogContentText,
+  DialogActions,
 } from "@material-ui/core";
 import { convertStatusText } from "./common";
 
@@ -212,12 +215,9 @@ class JobDetails extends Component {
     var buttonFragment;
     if (
       this.props.job &&
-      [
-        "VALIDATED_WITH_ERRORS",
-        "PROCESSING_IN_PROGRESS",
-        "PROCESSED",
-        "CANCELLED",
-      ].includes(this.props.job.jobStatus) &&
+      ["VALIDATED_WITH_ERRORS", "PROCESSING_IN_PROGRESS", "PROCESSED"].includes(
+        this.props.job.jobStatus,
+      ) &&
       this.props.job.rowErrorCount > 0 &&
       this.props.authorisedActivities.includes(this.props.loadPermission)
     ) {
@@ -280,7 +280,7 @@ class JobDetails extends Component {
                 this.props.job.jobStatus,
               ) && (
                 <Button
-                  onClick={this.props.onCancelJob}
+                  onClick={this.props.openCancelDialog}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
@@ -295,6 +295,39 @@ class JobDetails extends Component {
             >
               Close
             </Button>
+            {this.props.job &&
+              this.props.authorisedActivities.includes(
+                this.props.loadPermission,
+              ) &&
+              ["VALIDATED_OK", "VALIDATED_WITH_ERRORS"].includes(
+                this.props.job.jobStatus,
+              ) &&
+              this.props.showCancelDialog === true && (
+                <Dialog open={this.props.showCancelDialog}>
+                  <DialogTitle id="alert-dialog-title">
+                    {"Really Cancel?"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you wish cancel the upload? All error data
+                      will be lost!
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={this.props.onCancelJob} color="primary">
+                      Yes
+                    </Button>
+                    <Button
+                      onClick={this.props.closeCancelDialog}
+                      variant="contained"
+                      color="primary"
+                      autoFocus
+                    >
+                      No
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              )}
           </Grid>
         </DialogContent>
       </Dialog>
