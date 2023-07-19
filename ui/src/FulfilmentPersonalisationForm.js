@@ -13,7 +13,7 @@ class FulfilmentPersonalisationForm extends Component {
     let requestTemplateKeys = [];
     if (selectedTemplate !== "") {
       requestTemplateKeys = this.getTemplateRequestPersonalisationKeys(
-        this.props.template.template,
+        this.props.template.template
       );
     }
 
@@ -27,7 +27,7 @@ class FulfilmentPersonalisationForm extends Component {
             onChange={this.props.onPersonalisationValueChange}
           />
         </FormControl>
-      ),
+      )
     );
 
     return (

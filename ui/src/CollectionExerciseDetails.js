@@ -89,7 +89,7 @@ class CollectionExerciseDetails extends Component {
   getSensitiveSampleColumns = async (authorisedActivities) => {
     const sensitiveSampleColumns = await getSensitiveSampleColumns(
       authorisedActivities,
-      this.props.surveyId,
+      this.props.surveyId
     );
     this.setState({ sensitiveSampleColumns: sensitiveSampleColumns });
   };
@@ -98,7 +98,7 @@ class CollectionExerciseDetails extends Component {
     if (!authorisedActivities.includes("VIEW_COLLECTION_EXERCISE")) return;
 
     const response = await fetch(
-      `api/collectionExercises/${this.props.collectionExerciseId}`,
+      `api/collectionExercises/${this.props.collectionExerciseId}`
     );
 
     // TODO: We need more elegant error handling throughout the whole application, but this will at least protect temporarily
@@ -115,7 +115,7 @@ class CollectionExerciseDetails extends Component {
     if (!authorisedActivities.includes("LIST_ACTION_RULES")) return;
 
     const response = await fetch(
-      `/api/actionRules/?collectionExercise=${this.props.collectionExerciseId}`,
+      `/api/actionRules/?collectionExercise=${this.props.collectionExerciseId}`
     );
     const actionRuleJson = await response.json();
 
@@ -127,14 +127,14 @@ class CollectionExerciseDetails extends Component {
   getExportFileTemplates = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES",
+        "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES"
       )
     )
       return;
 
     const packCodes = await getActionRuleExportFilePackCodesForSurvey(
       authorisedActivities,
-      this.props.surveyId,
+      this.props.surveyId
     );
     this.setState({ exportFilePackCodes: packCodes });
   };
@@ -142,14 +142,14 @@ class CollectionExerciseDetails extends Component {
   getSmsTemplates = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES",
+        "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES"
       )
     )
       return;
 
     const packCodes = await getActionRuleSmsPackCodesForSurvey(
       authorisedActivities,
-      this.props.surveyId,
+      this.props.surveyId
     );
     this.setState({ smsPackCodes: packCodes });
   };
@@ -157,14 +157,14 @@ class CollectionExerciseDetails extends Component {
   getEmailTemplates = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES",
+        "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES"
       )
     )
       return;
 
     const packCodes = await getActionRuleEmailPackCodesForSurvey(
       authorisedActivities,
-      this.props.surveyId,
+      this.props.surveyId
     );
     this.setState({ emailPackCodes: packCodes });
   };
@@ -359,7 +359,7 @@ class CollectionExerciseDetails extends Component {
     const newActionRule = {
       type: this.state.newActionRuleType,
       triggerDateTime: new Date(
-        this.state.newActionRuleTriggerDate,
+        this.state.newActionRuleTriggerDate
       ).toISOString(),
       classifiers: this.state.newActionRuleClassifiers,
       packCode: newActionRulePackCode,
@@ -419,7 +419,7 @@ class CollectionExerciseDetails extends Component {
     );
 
     const sortedActionRules = this.state.actionRules.sort((first, second) =>
-      first.triggerDateTime.localeCompare(second.triggerDateTime),
+      first.triggerDateTime.localeCompare(second.triggerDateTime)
     );
 
     const actionRuleTableRows = sortedActionRules.map((actionRule, index) => {
@@ -452,7 +452,7 @@ class CollectionExerciseDetails extends Component {
         <MenuItem key={packCode} value={packCode} id={packCode}>
           {packCode}
         </MenuItem>
-      ),
+      )
     );
 
     const smsPackCodeMenuItems = this.state.smsPackCodes.map((packCode) => (
@@ -479,54 +479,54 @@ class CollectionExerciseDetails extends Component {
       this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_ACTION_RULE")
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"EXPORT_FILE"}>Export File</MenuItem>,
+        <MenuItem value={"EXPORT_FILE"}>Export File</MenuItem>
       );
     }
 
     if (this.state.authorisedActivities.includes("CREATE_SMS_ACTION_RULE")) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"SMS"}>SMS</MenuItem>,
+        <MenuItem value={"SMS"}>SMS</MenuItem>
       );
     }
 
     if (this.state.authorisedActivities.includes("CREATE_EMAIL_ACTION_RULE")) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"EMAIL"}>Email</MenuItem>,
+        <MenuItem value={"EMAIL"}>Email</MenuItem>
       );
     }
 
     if (
       this.state.authorisedActivities.includes(
-        "CREATE_FACE_TO_FACE_ACTION_RULE",
+        "CREATE_FACE_TO_FACE_ACTION_RULE"
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"FACE_TO_FACE"}>Face to face</MenuItem>,
+        <MenuItem value={"FACE_TO_FACE"}>Face to face</MenuItem>
       );
     }
     if (
       this.state.authorisedActivities.includes(
-        "CREATE_OUTBOUND_PHONE_ACTION_RULE",
+        "CREATE_OUTBOUND_PHONE_ACTION_RULE"
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"OUTBOUND_TELEPHONE"}>Outbound Phone</MenuItem>,
+        <MenuItem value={"OUTBOUND_TELEPHONE"}>Outbound Phone</MenuItem>
       );
     }
     if (
       this.state.authorisedActivities.includes(
-        "CREATE_DEACTIVATE_UAC_ACTION_RULE",
+        "CREATE_DEACTIVATE_UAC_ACTION_RULE"
       )
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"DEACTIVATE_UAC"}>Deactivate UAC</MenuItem>,
+        <MenuItem value={"DEACTIVATE_UAC"}>Deactivate UAC</MenuItem>
       );
     }
     if (
       this.state.authorisedActivities.includes("CREATE_EQ_FLUSH_ACTION_RULE")
     ) {
       allowedActionRuleTypeMenuItems.push(
-        <MenuItem value={"EQ_FLUSH"}>EQ Flush</MenuItem>,
+        <MenuItem value={"EQ_FLUSH"}>EQ Flush</MenuItem>
       );
     }
 
@@ -539,7 +539,7 @@ class CollectionExerciseDetails extends Component {
           Collection Exercise: {this.state.collectionExerciseDetails.name}
         </Typography>
         {this.state.authorisedActivities.includes(
-          "VIEW_COLLECTION_EXERCISE",
+          "VIEW_COLLECTION_EXERCISE"
         ) && (
           <div>
             <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
@@ -624,7 +624,7 @@ class CollectionExerciseDetails extends Component {
         )}
         {(this.state.authorisedActivities.includes("LOAD_SAMPLE") ||
           this.state.authorisedActivities.includes(
-            "VIEW_SAMPLE_LOAD_PROGRESS",
+            "VIEW_SAMPLE_LOAD_PROGRESS"
           )) && (
           <SampleUpload
             authorisedActivities={this.state.authorisedActivities}
@@ -778,7 +778,7 @@ class CollectionExerciseDetails extends Component {
           </DialogContent>
         </Dialog>
         {["LOAD_BULK_REFUSAL", "VIEW_BULK_REFUSAL_PROGRESS"].some((p) =>
-          this.state.authorisedActivities.includes(p),
+          this.state.authorisedActivities.includes(p)
         ) && (
           <>
             <div style={{ marginTop: 20 }}>

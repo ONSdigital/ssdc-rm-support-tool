@@ -74,7 +74,7 @@ class SurveySampleSearch extends Component {
     this.props.onSearchExecuteAndPopulateList(
       searchUrl,
       this.state.searchTerm,
-      "sample data containing",
+      "sample data containing"
     );
   };
 
@@ -109,7 +109,7 @@ class SurveySampleSearch extends Component {
         <MenuItem key={collex.name} value={collex.id}>
           {collex.name}
         </MenuItem>
-      )),
+      ))
     );
 
     const refusalMenuItems = [];
@@ -119,7 +119,7 @@ class SurveySampleSearch extends Component {
         <MenuItem key={refusalType} value={refusalType}>
           {refusalType}
         </MenuItem>
-      )),
+      ))
     );
 
     const trueOrFalseFilterMenuItems = [];

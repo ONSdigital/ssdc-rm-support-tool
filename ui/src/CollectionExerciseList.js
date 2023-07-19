@@ -55,7 +55,7 @@ class CollectionExerciseList extends Component {
     if (!authorisedActivities.includes("LIST_COLLECTION_EXERCISES")) return;
 
     const response = await fetch(
-      `/api/collectionExercises/?surveyId=${this.props.surveyId}`,
+      `/api/collectionExercises/?surveyId=${this.props.surveyId}`
     );
     const collexJson = await response.json();
 
@@ -217,7 +217,7 @@ class CollectionExerciseList extends Component {
       surveyId: this.props.surveyId,
       reference: this.state.newCollectionExerciseReference,
       startDate: new Date(
-        this.state.newCollectionExerciseStartDate,
+        this.state.newCollectionExerciseStartDate
       ).toISOString(),
       endDate: new Date(this.state.newCollectionExerciseEndDate).toISOString(),
       metadata: metadataJson,
@@ -271,7 +271,7 @@ class CollectionExerciseList extends Component {
               variant="contained"
               onClick={() =>
                 this.openCollectionInstrumentRulesDialog(
-                  collex.collectionInstrumentSelectionRules,
+                  collex.collectionInstrumentSelectionRules
                 )
               }
             >
@@ -279,13 +279,13 @@ class CollectionExerciseList extends Component {
             </Button>
           </TableCell>
         </TableRow>
-      ),
+      )
     );
 
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "LIST_COLLECTION_EXERCISES",
+          "LIST_COLLECTION_EXERCISES"
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
@@ -337,7 +337,7 @@ class CollectionExerciseList extends Component {
         )}
 
         {this.state.authorisedActivities.includes(
-          "CREATE_COLLECTION_EXERCISE",
+          "CREATE_COLLECTION_EXERCISE"
         ) && (
           <Button
             id="createCollectionExerciseBtn"

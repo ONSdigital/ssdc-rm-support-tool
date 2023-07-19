@@ -51,7 +51,7 @@ class SampleData extends Component {
 
     const nonSensitiveColumns = await getSampleColumns(
       authorisedActivities,
-      this.props.surveyId,
+      this.props.surveyId
     );
     this.setState({
       allowableSampleDataColumns: nonSensitiveColumns,
@@ -112,7 +112,7 @@ class SampleData extends Component {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateSample),
-      },
+      }
     );
 
     if (response.ok) {
@@ -133,7 +133,7 @@ class SampleData extends Component {
         <MenuItem key={columnName} value={columnName}>
           {columnName}
         </MenuItem>
-      ),
+      )
     );
 
     return (

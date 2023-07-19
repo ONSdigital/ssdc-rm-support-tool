@@ -51,7 +51,7 @@ class SensitiveData extends Component {
 
     const sensitiveColumns = await getSensitiveSampleColumns(
       authorisedActivities,
-      this.props.surveyId,
+      this.props.surveyId
     );
     this.setState({
       allowableSensitiveDataColumns: sensitiveColumns,
@@ -112,7 +112,7 @@ class SensitiveData extends Component {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateSampleSensitive),
-      },
+      }
     );
 
     if (response.ok) {

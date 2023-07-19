@@ -65,7 +65,7 @@ class UserDetails extends Component {
     if (!authorisedActivities.includes("SUPER_USER")) return;
 
     const userMemberOfResponse = await fetch(
-      `/api/userGroupMembers/?userId=${this.props.userId}`,
+      `/api/userGroupMembers/?userId=${this.props.userId}`
     );
 
     const userMemberOfJson = await userMemberOfResponse.json();
@@ -209,7 +209,7 @@ class UserDetails extends Component {
                 onClick={() =>
                   this.openRemoveDialog(
                     memberOfGroup.groupName,
-                    memberOfGroup.id,
+                    memberOfGroup.id
                   )
                 }
               >
@@ -218,7 +218,7 @@ class UserDetails extends Component {
             </TableCell>
           </TableRow>
         );
-      },
+      }
     );
 
     const addGroupMenuItems = this.state.groups
@@ -226,7 +226,7 @@ class UserDetails extends Component {
         (group) =>
           !this.state.memberOfGroups
             .map((memberOfGroup) => memberOfGroup.groupId)
-            .includes(group.id),
+            .includes(group.id)
       )
       .sort((a, b) => a.name.localeCompare(b.name)) // Sort by group name alphabetically
       .map((group) => (

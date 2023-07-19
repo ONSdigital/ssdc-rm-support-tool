@@ -46,13 +46,13 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
 
   refreshDataFromBackend = async (authorisedActivities) => {
     const allExportFileFulfilmentTemplates = await getAllExportFilePackCodes(
-      authorisedActivities,
+      authorisedActivities
     );
 
     const actionRuleExportFilePackCodes =
       await getActionRuleExportFilePackCodesForSurvey(
         authorisedActivities,
-        this.props.surveyId,
+        this.props.surveyId
       );
 
     let allowableActionRuleExportFilePackCodes = [];
@@ -150,7 +150,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES",
+          "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES"
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
@@ -169,7 +169,7 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
           </>
         )}
         {this.state.authorisedActivities.includes(
-          "ALLOW_EXPORT_FILE_TEMPLATE_ON_ACTION_RULE",
+          "ALLOW_EXPORT_FILE_TEMPLATE_ON_ACTION_RULE"
         ) && (
           <Button
             variant="contained"

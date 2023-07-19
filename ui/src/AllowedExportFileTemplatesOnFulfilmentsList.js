@@ -47,16 +47,16 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
 
   refreshDataFromBackend = async (authorisedActivities) => {
     const allExportFileFulfilmentPackCodes = await getAllExportFilePackCodes(
-      authorisedActivities,
+      authorisedActivities
     );
 
     const fulfilmentExportFileTemplates =
       await getFulfilmentExportFileTemplatesForSurvey(
         authorisedActivities,
-        this.props.surveyId,
+        this.props.surveyId
       );
     const fulfilmentExportFilePackCodes = fulfilmentExportFileTemplates.map(
-      (template) => template.packCode,
+      (template) => template.packCode
     );
     let allowableFulfilmentExportFilePackCodes = [];
 
@@ -153,7 +153,7 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
     return (
       <>
         {this.state.authorisedActivities.includes(
-          "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS",
+          "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS"
         ) && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
@@ -172,7 +172,7 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
           </>
         )}
         {this.state.authorisedActivities.includes(
-          "ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT",
+          "ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT"
         ) && (
           <Button
             variant="contained"

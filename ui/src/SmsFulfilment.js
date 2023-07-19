@@ -83,14 +83,14 @@ class SmsFulfilment extends Component {
   refreshDataFromBackend = async (authorisedActivities) => {
     if (
       !authorisedActivities.includes(
-        "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS",
+        "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS"
       )
     )
       return;
 
     const fulfilmentSmsTemplates = await getSmsFulfilmentTemplatesForSurvey(
       authorisedActivities,
-      this.props.surveyId,
+      this.props.surveyId
     );
 
     this.setState({
@@ -166,7 +166,7 @@ class SmsFulfilment extends Component {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(smsFulfilment),
-      },
+      }
     );
 
     if (response.ok) {
