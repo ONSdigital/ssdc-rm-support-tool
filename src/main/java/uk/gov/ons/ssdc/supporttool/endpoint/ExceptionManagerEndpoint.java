@@ -18,6 +18,9 @@ public class ExceptionManagerEndpoint {
   private final ExceptionManagerClient exceptionManagerClient;
   private final UserIdentity userIdentity;
 
+  @Value("${exceptionmanager.exceptioncountthreshold}")
+  private int exceptionCountThreshold;
+
   public ExceptionManagerEndpoint(
       ExceptionManagerClient exceptionManagerClient, UserIdentity userIdentity) {
     this.exceptionManagerClient = exceptionManagerClient;
@@ -30,7 +33,20 @@ public class ExceptionManagerEndpoint {
     userIdentity.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
+    if (Integer.parseInt(exceptionManagerClient.getBadMessagesCount()) > exceptionCountThreshold) {
+      return new ResponseEntity<>("", HttpStatus.OK);
+    }
+
     return new ResponseEntity<>(exceptionManagerClient.getBadMessagesSummary(), HttpStatus.OK);
+  }
+
+  @GetMapping(value = "/badMessagesCount", produces = "application/json")
+  public ResponseEntity<String> getBadMessagesCount(
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    userIdentity.checkGlobalUserPermission(
+        userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
+
+    return new ResponseEntity<>(exceptionManagerClient.getBadMessagesCount(), HttpStatus.OK);
   }
 
   @GetMapping(value = "/badMessage/{messageHash}", produces = "application/json")
