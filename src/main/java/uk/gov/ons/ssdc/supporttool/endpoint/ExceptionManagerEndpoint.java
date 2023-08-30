@@ -34,7 +34,7 @@ public class ExceptionManagerEndpoint {
         userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
     if (Integer.parseInt(exceptionManagerClient.getBadMessagesCount()) > exceptionCountThreshold) {
-      return new ResponseEntity<>("", HttpStatus.OK);
+      return new ResponseEntity<>("[]", HttpStatus.OK);
     }
 
     return new ResponseEntity<>(exceptionManagerClient.getBadMessagesSummary(), HttpStatus.OK);
