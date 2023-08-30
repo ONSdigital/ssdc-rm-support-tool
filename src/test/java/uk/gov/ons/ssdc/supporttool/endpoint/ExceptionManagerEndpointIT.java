@@ -40,6 +40,7 @@ class ExceptionManagerEndpointIT {
   private static final String QUARANTINE_MESSAGE_ENDPOINT = "api/exceptionManager/skipMessage";
   private static final String BAD_MESSAGE_DETAILS_API_ENDPOINT = "/badmessage";
   private static final String BAD_MESSAGES_SUMMARY_API_ENDPOINT = "/badmessages/summary";
+  private static final String BAD_MESSAGES_COUNT_API_ENDPOINT = "/badmessages/count";
   private static final String PEEK_MESSAGE_ENDPOINT_API_ENDPOINT = "/peekmessage";
   private static final String QUARANTINE_MESSAGE_ENDPOINT_API_ENDPOINT = "/skipmessage";
 
@@ -81,6 +82,15 @@ class ExceptionManagerEndpointIT {
                 WireMock.aResponse()
                     .withStatus(200)
                     .withBody(exceptionManagerApiResponse)
+                    .withHeader("Content-Type", "application/json")));
+
+    String exceptionManagerApiCountResponse = "10";
+    wireMockServer.stubFor(
+        WireMock.get(WireMock.urlEqualTo(BAD_MESSAGES_COUNT_API_ENDPOINT))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withBody(exceptionManagerApiCountResponse)
                     .withHeader("Content-Type", "application/json")));
 
     RestTemplate restTemplate = new RestTemplate();
