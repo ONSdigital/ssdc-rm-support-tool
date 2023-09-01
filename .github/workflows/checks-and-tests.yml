@@ -82,7 +82,7 @@ jobs:
         # The setup node action links the version of NPM to the version of node
         # However, locally we use an up-to-date NPM so CI needs to match this
         # See https://github.com/actions/setup-node/issues/529
-        run: npm install -g npm@latest
+        run: npm install -g npm@9.8.1
 
       - name: Install Dependencies
         run: make install
