@@ -45,9 +45,8 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allEmailFulfilmentPackCodes = await getAllEmailPackCodes(
-      authorisedActivities,
-    );
+    const allEmailFulfilmentPackCodes =
+      await getAllEmailPackCodes(authorisedActivities);
 
     const emailFulfilmentTemplates = await getEmailFulfilmentTemplatesForSurvey(
       authorisedActivities,

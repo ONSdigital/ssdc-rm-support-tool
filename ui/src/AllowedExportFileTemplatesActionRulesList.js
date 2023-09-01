@@ -45,9 +45,8 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allExportFileFulfilmentTemplates = await getAllExportFilePackCodes(
-      authorisedActivities,
-    );
+    const allExportFileFulfilmentTemplates =
+      await getAllExportFilePackCodes(authorisedActivities);
 
     const actionRuleExportFilePackCodes =
       await getActionRuleExportFilePackCodesForSurvey(

@@ -46,9 +46,8 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allExportFileFulfilmentPackCodes = await getAllExportFilePackCodes(
-      authorisedActivities,
-    );
+    const allExportFileFulfilmentPackCodes =
+      await getAllExportFilePackCodes(authorisedActivities);
 
     const fulfilmentExportFileTemplates =
       await getFulfilmentExportFileTemplatesForSurvey(

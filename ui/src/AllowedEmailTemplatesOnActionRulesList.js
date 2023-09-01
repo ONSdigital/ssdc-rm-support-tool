@@ -44,9 +44,8 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allEmailFulfilmentPackCodes = await getAllEmailPackCodes(
-      authorisedActivities,
-    );
+    const allEmailFulfilmentPackCodes =
+      await getAllEmailPackCodes(authorisedActivities);
 
     const actionRuleEmailPackCodes = await getActionRuleEmailPackCodesForSurvey(
       authorisedActivities,
