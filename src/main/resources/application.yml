@@ -104,6 +104,7 @@ exceptionmanager:
     scheme: http
     host: localhost
     port: 8666
+  exceptioncountthreshold: 50
 
 
 CSP-upgrade-policy: "upgrade-insecure-requests;"

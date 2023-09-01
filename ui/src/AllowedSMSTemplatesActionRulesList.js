@@ -44,9 +44,8 @@ class AllowedSMSTemplatesActionRulesList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allSmsFulfilmentPackCodes = await getAllSmsPackCodes(
-      authorisedActivities,
-    );
+    const allSmsFulfilmentPackCodes =
+      await getAllSmsPackCodes(authorisedActivities);
 
     const actionRuleSmsPackCodes = await getActionRuleSmsPackCodesForSurvey(
       authorisedActivities,

@@ -26,6 +26,7 @@ class ExceptionManager extends Component {
     showPeekDialog: false,
     showQuarantineDialog: false,
     peekResult: "",
+    exceptionCount: "",
   };
 
   componentDidMount() {
@@ -50,10 +51,16 @@ class ExceptionManager extends Component {
   refreshDataFromBackend = async (authorisedActivities) => {
     if (!authorisedActivities.includes("EXCEPTION_MANAGER_VIEWER")) return;
 
+    const countResponse = await fetch("/api/exceptionManager/badMessagesCount");
+    const count = await countResponse.json();
+
     const response = await fetch("/api/exceptionManager/badMessagesSummary");
     const exceptions = await response.json();
 
-    this.setState({ exceptions: exceptions });
+    this.setState({
+      exceptionCount: count,
+      exceptions: exceptions,
+    });
   };
 
   getAuthorisedActivities = async () => {
@@ -206,6 +213,9 @@ class ExceptionManager extends Component {
         <Link to="/">← Back to home</Link>
         <Typography variant="h4" color="inherit" style={{ marginBottom: 20 }}>
           Exception Manager
+        </Typography>
+        <Typography variant="h6" color="inherit" style={{ marginBottom: 20 }}>
+          Exception Count: {this.state.exceptionCount}
         </Typography>
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
           <Table>

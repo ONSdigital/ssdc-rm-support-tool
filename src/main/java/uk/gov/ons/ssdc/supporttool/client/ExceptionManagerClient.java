@@ -19,6 +19,16 @@ public class ExceptionManagerClient {
   @Value("${exceptionmanager.connection.port}")
   private String port;
 
+  public String getBadMessagesCount() {
+
+    RestTemplate restTemplate = new RestTemplate();
+    UriComponents uriComponents = createUriComponents("/badmessages/count");
+
+    String result = restTemplate.getForObject(uriComponents.toUri(), String.class);
+
+    return result;
+  }
+
   public String getBadMessagesSummary() {
 
     RestTemplate restTemplate = new RestTemplate();

@@ -45,9 +45,8 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    const allSmsFulfilmentPackCodes = await getAllSmsPackCodes(
-      authorisedActivities,
-    );
+    const allSmsFulfilmentPackCodes =
+      await getAllSmsPackCodes(authorisedActivities);
 
     const smsFulfilmentTemplates = await getSmsFulfilmentTemplatesForSurvey(
       authorisedActivities,
