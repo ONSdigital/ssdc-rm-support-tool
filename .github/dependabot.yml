@@ -8,7 +8,7 @@ updates:
       - "patch"
       - "dependencies"
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/ui"
     schedule:
       interval: "daily"
     labels:
