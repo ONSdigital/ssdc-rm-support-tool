@@ -13,6 +13,7 @@ public class SmsTemplateDto {
   private UUID notifyTemplateId;
   private String description;
   private Object metadata;
+  private String notifyServiceRef;
 
   public SmsTemplateDto(SmsTemplate smsTemplate) {
     packCode = smsTemplate.getPackCode();
@@ -20,5 +21,6 @@ public class SmsTemplateDto {
     notifyTemplateId = smsTemplate.getNotifyTemplateId();
     description = smsTemplate.getDescription();
     metadata = smsTemplate.getMetadata();
+    notifyServiceRef = smsTemplate.getNotifyServiceRef();
   }
 }
