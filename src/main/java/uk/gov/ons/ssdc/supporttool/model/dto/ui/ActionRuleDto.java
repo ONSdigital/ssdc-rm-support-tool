@@ -8,6 +8,8 @@ import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
 @Data
 public class ActionRuleDto {
 
+  private UUID actionRuleId;
+
   private UUID collectionExerciseId;
 
   private String packCode;
