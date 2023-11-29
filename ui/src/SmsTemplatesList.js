@@ -11,7 +11,7 @@ import {
   DialogContent,
   TextField,
   Paper,
-  Typography,
+  Typography, MenuItem, FormControl, InputLabel, Select,
 } from "@material-ui/core";
 import { errorAlert, getAuthorisedActivities } from "./Utils";
 
@@ -22,6 +22,8 @@ class SmsTemplatesList extends Component {
     createSmsTemplateError: "",
     createSMSTemplatePackCodeError: "",
     authorisedActivities: [],
+    notifyServiceRef: "",
+    notifyServiceRefs: [],
     notifyTemplateId: "",
     packCode: "",
     description: "",
@@ -48,13 +50,30 @@ class SmsTemplatesList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
+    this.getSmsTemplates(authorisedActivities)
+    this.getNotifyServiceRefs(authorisedActivities)
+  };
+  getNotifyServiceRefs = async (authorisedActivities) => {
+    // TODO Create new activity called LIST_NOTIFY_SERVICES
+
+    if (!authorisedActivities.includes("LIST_EMAIL_TEMPLATES")) return;
+
+    const supplierResponse = await fetch("/api/notifyServiceRefs");
+    const supplierJson = await supplierResponse.json();
+
+    this.setState({
+      notifyServiceRefs: supplierJson,
+    });
+  };
+  getSmsTemplates = async (authorisedActivities) => {
     if (!authorisedActivities.includes("LIST_SMS_TEMPLATES")) return;
 
     const response = await fetch("/api/smsTemplates");
     const templateJson = await response.json();
 
     this.setState({ smsTemplates: templateJson });
-  };
+  }
+
 
   openSmsTemplateDialog = () => {
     this.createSmsTemplateInProgress = false;
@@ -66,6 +85,7 @@ class SmsTemplatesList extends Component {
       template: "",
       newTemplateMetadata: "",
       notifyTemplateId: "",
+      notifyServiceRef: "",
       packCodeValidationError: false,
       descriptionValidationError: false,
       templateValidationError: false,
@@ -73,6 +93,7 @@ class SmsTemplatesList extends Component {
       newTemplateMetadataValidationError: false,
       notifyTemplateIdValidationError: false,
       createSmsTemplateDialogDisplayed: true,
+      notifyServiceRefValidationError: false,
       createSmsTemplateError: "",
       notifyTemplateIdErrorMessage: "",
       createSMSTemplatePackCodeError: "",
@@ -166,7 +187,10 @@ class SmsTemplatesList extends Component {
         });
       }
     }
-
+    if (!this.state.notifyServiceRef.trim()) {
+      this.setState({ notifyServiceRefValidationError: true });
+      failedValidation = true;
+    }
     let metadata = null;
 
     if (this.state.newTemplateMetadata) {
@@ -192,6 +216,7 @@ class SmsTemplatesList extends Component {
       packCode: this.state.packCode,
       description: this.state.description,
       template: JSON.parse(this.state.template),
+      notifyServiceRef: this.state.notifyServiceRef,
       metadata: metadata,
     };
 
@@ -221,6 +246,13 @@ class SmsTemplatesList extends Component {
     this.setState({
       packCode: event.target.value,
       packCodeValidationError: resetValidation,
+    });
+  };
+
+  onNotifyServiceRefChange = (event) => {
+    this.setState({
+      notifyServiceRef: event.target.value,
+      notifyServiceRefValidationError: false,
     });
   };
 
@@ -276,8 +308,17 @@ class SmsTemplatesList extends Component {
         <TableCell component="th" scope="row">
           {JSON.stringify(smsTemplate.metadata)}
         </TableCell>
+        <TableCell component="th" scope="row">
+          {smsTemplate.notifyServiceRef}
+        </TableCell>
       </TableRow>
     ));
+    const notifyConfigMenuItems =
+        this.state.notifyServiceRefs.map((supplier) => (
+            <MenuItem key={supplier} value={supplier} id={supplier}>
+              {supplier}
+            </MenuItem>
+        ));
 
     return (
       <>
@@ -295,6 +336,8 @@ class SmsTemplatesList extends Component {
                     <TableCell>Template</TableCell>
                     <TableCell>Gov Notify Template ID</TableCell>
                     <TableCell>Metadata</TableCell>
+                    <TableCell>Gov Notify Service Ref</TableCell>
+
                   </TableRow>
                 </TableHead>
                 <TableBody>{smsTemplateRows}</TableBody>
@@ -370,6 +413,22 @@ class SmsTemplatesList extends Component {
                   onChange={this.onNewTemplateMetadataChange}
                   value={this.state.newTemplateMetadata}
                 />
+                <FormControl
+                    required
+                    fullWidth={true}
+                    style={{ marginTop: 10 }}
+                    id="form"
+                >
+                  <InputLabel>Notify services</InputLabel>
+                  <Select
+                      onChange={this.onNotifyServiceRefChange}
+                      value={this.state.notifyServiceRef}
+                      error={this.state.notifyServiceRefValidationError}
+                      id="SmsNotifyServiceRef"
+                  >
+                    {notifyConfigMenuItems}
+                  </Select>
+                </FormControl>
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button

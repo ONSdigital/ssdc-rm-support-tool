@@ -56,6 +56,7 @@ class EmailTemplateList extends Component {
   };
 
   getNotifyServiceRefs = async (authorisedActivities) => {
+    // TODO Create new activity called LIST_NOTIFY_SERVICES
     if (!authorisedActivities.includes("LIST_EMAIL_TEMPLATES")) return;
 
     const supplierResponse = await fetch("/api/notifyServiceRefs");
@@ -133,14 +134,6 @@ class EmailTemplateList extends Component {
     this.setState({
       notifyTemplateId: event.target.value,
       notifyTemplateIdValidationError: resetValidation,
-    });
-  };
-
-  onNotifyServiceRefChange = (event) => {
-
-    this.setState({
-      NotifyServiceRef: event.target.value,
-      NotifyServiceRefValidationError: false,
     });
   };
 
@@ -439,7 +432,7 @@ class EmailTemplateList extends Component {
                       onChange={this.onNotifyServiceRefChange}
                       value={this.state.notifyServiceRef}
                       error={this.state.notifyServiceRefValidationError}
-                      id="notifyServiceRef"
+                      id="EmailNotifyServiceRef"
                   >
                     {notifyConfigMenuItems}
                   </Select>
