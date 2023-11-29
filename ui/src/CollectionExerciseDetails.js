@@ -39,6 +39,7 @@ class CollectionExerciseDetails extends Component {
     emailPackCodes: [],
     collectionInstrumentRulesDisplayed: false,
     createActionRulesDialogDisplayed: false,
+    rescheduleActionRulesDialogDisplayed: false,
     exportFilePackCodeValidationError: false,
     smsPackCodeValidationError: false,
     smsPhoneNumberColumnValidationError: false,
@@ -55,6 +56,9 @@ class CollectionExerciseDetails extends Component {
     newActionRuleClassifiers: "",
     newActionRuleType: "",
     newUacQidMetadata: "",
+    rescheduleActionRuleDisabled: false,
+    actionRuleToBeUpdated: {},
+    updatedTriggerDateTime: "",
   };
 
   componentDidMount() {
@@ -177,7 +181,7 @@ class CollectionExerciseDetails extends Component {
     this.setState({ collectionInstrumentRulesDisplayed: false });
   };
 
-  openDialog = () => {
+  openCreateActionDialog = () => {
     this.createActionRuleDisabled = false;
 
     this.setState({
@@ -199,9 +203,28 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
+  openRescheduleDialog = (actionRule) => {
+    this.rescheduleActionRuleDisabled = false;
+
+    this.setState({
+      actionRuleToBeUpdated: actionRule,
+      rescheduleActionRulesDialogDisplayed: true,
+      updatedTriggerDateTime: this.getTimeNowForDateTimePicker(),
+      newActionRuleTriggerDate: this.getTimeNowForDateTimePicker(),
+    });
+  };
+
   closeDialog = () => {
     this.setState({ createActionRulesDialogDisplayed: false });
   };
+
+  closeRescheduleDialog = () => {
+    //this.rescheduleActionRuleDisabled({ rescheduleActionRulesDialogDisplayed: false})
+    this.setState({
+      actionRuleToBeUpdated: {},
+      rescheduleActionRulesDialogDisplayed: false,
+    })
+}
 
   onNewActionRuleExportFilePackCodeChange = (event) => {
     this.setState({
@@ -381,6 +404,39 @@ class CollectionExerciseDetails extends Component {
     this.getActionRules(this.state.authorisedActivities);
   };
 
+  onRescheduleActionRule = async () => {
+    if (this.rescheduleActionRuleDisabled) {
+      return;
+    }
+
+    this.rescheduleActionRuleDisabled = true;
+
+    // Error checking in case action rule doesn't exist anymore
+    if (!this.state.actionRules.includes(this.state.actionRuleToBeUpdated)) {
+      this.rescheduleActionRuleDisabled = false;
+      return;
+    }
+
+    const actionRule = this.state.actionRuleToBeUpdated
+    actionRule.triggerDateTime = new Date(this.state.newActionRuleTriggerDate).toISOString()
+
+    const response = await fetch("/api/actionRules", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(actionRule),
+    });
+
+    if (response.ok) {
+      this.setState({
+        createActionRulesDialogDisplayed: false,
+        actionRuleToBeUpdated: {} });
+    } else {
+      alert("Something went wrong\n" + response.statusText)
+    }
+
+    this.getActionRules(this.state.authorisedActivities);
+  };
+
   getTimeNowForDateTimePicker = () => {
     var dateNow = new Date();
     dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
@@ -442,6 +498,15 @@ class CollectionExerciseDetails extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             {actionRule.packCode}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            <Button
+                variant="contained"
+                onClick={() => this.openRescheduleDialog(actionRule)}
+                id='createActionRuleDialogBtn'
+            >
+              Reschedule
+            </Button>
           </TableCell>
         </TableRow>
       );
@@ -604,6 +669,7 @@ class CollectionExerciseDetails extends Component {
                     <TableCell>UAC Metadata</TableCell>
                     <TableCell>Classifiers</TableCell>
                     <TableCell>Pack Code</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{actionRuleTableRows}</TableBody>
@@ -615,7 +681,7 @@ class CollectionExerciseDetails extends Component {
           <div style={{ marginTop: 10 }}>
             <Button
               variant="contained"
-              onClick={this.openDialog}
+              onClick={this.openCreateActionDialog}
               id="createActionRuleDialogBtn"
             >
               Create Action Rule
@@ -770,6 +836,41 @@ class CollectionExerciseDetails extends Component {
                   onClick={this.closeDialog}
                   variant="contained"
                   style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={this.state.rescheduleActionRulesDialogDisplayed}>
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <div>
+                <TextField
+                    label="Trigger Date"
+                    type="datetime-local"
+                    value={this.state.newActionRuleTriggerDate}
+                    onChange={this.onNewActionRuleTriggerDateChange}
+                    style={{ marginTop: 20 }}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                    onClick={this.onRescheduleActionRule}
+                    variant="contained"
+                    style={{ margin: 10 }}
+                    id="createActionRuleBtn"
+                >
+                  Reschedule
+                </Button>
+                <Button
+                    onClick={this.closeRescheduleDialog}
+                    variant="contained"
+                    style={{ margin: 10 }}
                 >
                   Cancel
                 </Button>
