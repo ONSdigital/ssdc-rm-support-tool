@@ -219,7 +219,6 @@ class CollectionExerciseDetails extends Component {
   };
 
   closeRescheduleDialog = () => {
-    //this.rescheduleActionRuleDisabled({ rescheduleActionRulesDialogDisplayed: false})
     this.setState({
       actionRuleToBeUpdated: {},
       rescheduleActionRulesDialogDisplayed: false,
@@ -418,7 +417,18 @@ class CollectionExerciseDetails extends Component {
     }
 
     const actionRule = this.state.actionRuleToBeUpdated
-    actionRule.triggerDateTime = new Date(this.state.newActionRuleTriggerDate).toISOString()
+    const dateISOString = new Date(this.state.newActionRuleTriggerDate).toISOString()
+
+    if (!confirm(`Are you sure you wish to change the date for
+${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`)) {
+      this.setState({
+        actionRuleToBeUpdated: {},
+        rescheduleActionRulesDialogDisplayed: false,
+      })
+      return;
+    }
+
+    actionRule.triggerDateTime = dateISOString
 
     const response = await fetch("/api/actionRules", {
       method: "PUT",
