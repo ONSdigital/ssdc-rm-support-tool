@@ -422,8 +422,9 @@ class CollectionExerciseDetails extends Component {
     ).toISOString();
 
     if (
-      !confirm(`Are you sure you wish to change the date for
-${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`)
+      !confirm(
+        `Are you sure you wish to change the date for ${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`,
+      )
     ) {
       this.setState({
         actionRuleToBeUpdated: {},
@@ -442,8 +443,8 @@ ${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`)
 
     if (response.ok) {
       this.setState({
-        createActionRulesDialogDisplayed: false,
         actionRuleToBeUpdated: {},
+        rescheduleActionRulesDialogDisplayed: false,
       });
     } else {
       alert("Something went wrong\n" + response.statusText);
