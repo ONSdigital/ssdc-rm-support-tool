@@ -222,8 +222,8 @@ class CollectionExerciseDetails extends Component {
     this.setState({
       actionRuleToBeUpdated: {},
       rescheduleActionRulesDialogDisplayed: false,
-    })
-}
+    });
+  };
 
   onNewActionRuleExportFilePackCodeChange = (event) => {
     this.setState({
@@ -416,19 +416,23 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
-    const actionRule = this.state.actionRuleToBeUpdated
-    const dateISOString = new Date(this.state.newActionRuleTriggerDate).toISOString()
+    const actionRule = this.state.actionRuleToBeUpdated;
+    const dateISOString = new Date(
+      this.state.newActionRuleTriggerDate,
+    ).toISOString();
 
-    if (!confirm(`Are you sure you wish to change the date for
-${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`)) {
+    if (
+      !confirm(`Are you sure you wish to change the date for
+${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`)
+    ) {
       this.setState({
         actionRuleToBeUpdated: {},
         rescheduleActionRulesDialogDisplayed: false,
-      })
+      });
       return;
     }
 
-    actionRule.triggerDateTime = dateISOString
+    actionRule.triggerDateTime = dateISOString;
 
     const response = await fetch("/api/actionRules", {
       method: "PUT",
@@ -439,9 +443,10 @@ ${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`)) {
     if (response.ok) {
       this.setState({
         createActionRulesDialogDisplayed: false,
-        actionRuleToBeUpdated: {} });
+        actionRuleToBeUpdated: {},
+      });
     } else {
-      alert("Something went wrong\n" + response.statusText)
+      alert("Something went wrong\n" + response.statusText);
     }
 
     this.getActionRules(this.state.authorisedActivities);
@@ -511,9 +516,9 @@ ${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`)) {
           </TableCell>
           <TableCell component="th" scope="row">
             <Button
-                variant="contained"
-                onClick={() => this.openRescheduleDialog(actionRule)}
-                id='createActionRuleDialogBtn'
+              variant="contained"
+              onClick={() => this.openRescheduleDialog(actionRule)}
+              id="createActionRuleDialogBtn"
             >
               Reschedule
             </Button>
@@ -858,29 +863,29 @@ ${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`)) {
             <div>
               <div>
                 <TextField
-                    label="Trigger Date"
-                    type="datetime-local"
-                    value={this.state.newActionRuleTriggerDate}
-                    onChange={this.onNewActionRuleTriggerDateChange}
-                    style={{ marginTop: 20 }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                  label="Trigger Date"
+                  type="datetime-local"
+                  value={this.state.newActionRuleTriggerDate}
+                  onChange={this.onNewActionRuleTriggerDateChange}
+                  style={{ marginTop: 20 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button
-                    onClick={this.onRescheduleActionRule}
-                    variant="contained"
-                    style={{ margin: 10 }}
-                    id="createActionRuleBtn"
+                  onClick={this.onRescheduleActionRule}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                  id="createActionRuleBtn"
                 >
                   Reschedule
                 </Button>
                 <Button
-                    onClick={this.closeRescheduleDialog}
-                    variant="contained"
-                    style={{ margin: 10 }}
+                  onClick={this.closeRescheduleDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
                 >
                   Cancel
                 </Button>
