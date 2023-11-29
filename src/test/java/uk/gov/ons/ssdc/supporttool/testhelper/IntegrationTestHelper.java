@@ -6,7 +6,11 @@ import static org.assertj.core.api.Assertions.fail;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -150,6 +154,43 @@ public class IntegrationTestHelper {
     } catch (HttpClientErrorException expectedException) {
       assertThat(expectedException.getStatusCode())
           .as("POST is FORBIDDEN")
+          .isEqualTo(HttpStatus.FORBIDDEN);
+    }
+  }
+
+  public void testPut(
+      int port,
+      UserGroupAuthorisedActivityType activity,
+      BundleUrlGetter bundleUrlGetter,
+      BundlePostObjectGetter bundlePostObjectGetter) {
+    setUpTestUserPermission(activity);
+    BundleOfUsefulTestStuff bundle = getTestBundle();
+
+    String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
+    Object objectToPost = bundlePostObjectGetter.getObject(bundle);
+    // ResponseEntity<String> response = restTemplate.postForEntity(url, objectToPost,
+    // String.class);
+    String requestBody = "{\"status\":\"testStatus2\"}";
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+    ResponseEntity<String> response =
+        restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+    /*
+       ResponseEntity<String> response =
+           restTemplate.exchange(url, )
+           restTemplate.exchange(url, HttpMethod.PUT, (ActionRuleDto) objectToPost, String.class);
+    */
+    assertThat(response.getStatusCode()).as("PUT is CREATED").isEqualTo(HttpStatus.CREATED);
+    deleteAllPermissions();
+    restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
+
+    try {
+      restTemplate.postForEntity(url, objectToPost, String.class);
+      fail("PUT API call was not forbidden, but should have been");
+    } catch (HttpClientErrorException expectedException) {
+      assertThat(expectedException.getStatusCode())
+          .as("PUT is FORBIDDEN")
           .isEqualTo(HttpStatus.FORBIDDEN);
     }
   }
