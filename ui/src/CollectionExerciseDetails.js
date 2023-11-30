@@ -420,12 +420,10 @@ class CollectionExerciseDetails extends Component {
     }
 
     const actionRule = this.state.actionRuleToBeUpdated;
-    const date = new Date(
-        this.state.updatedTriggerDateTime,
-    )
+    const date = new Date(this.state.updatedTriggerDateTime);
 
     if (date.getTime() < new Date()) {
-      alert("Trigger time cannot be in the past")
+      alert("Trigger time cannot be in the past");
       this.setState({
         actionRuleToBeUpdated: {},
         rescheduleActionRulesDialogDisplayed: false,
