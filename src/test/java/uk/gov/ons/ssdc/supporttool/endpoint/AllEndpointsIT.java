@@ -373,6 +373,8 @@ class AllEndpointsIT {
           smsTemplateDto.setPackCode("TEST_" + UUID.randomUUID());
           smsTemplateDto.setDescription("Test description");
           smsTemplateDto.setMetadata(Map.of("foo", "bar"));
+          smsTemplateDto.setNotifyServiceRef("test_service");
+
           return smsTemplateDto;
         });
   }
@@ -393,6 +395,7 @@ class AllEndpointsIT {
           emailTemplateDto.setPackCode("TEST_" + UUID.randomUUID());
           emailTemplateDto.setDescription("Test description");
           emailTemplateDto.setMetadata(Map.of("foo", "bar"));
+          emailTemplateDto.setNotifyServiceRef("test_service");
           return emailTemplateDto;
         });
   }

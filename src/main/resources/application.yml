@@ -83,7 +83,7 @@ dummyuseridentity: dummy@fake-email.com
 dummysuperuseridentity: dummy@fake-email.com
 
 exportfiledestinationconfigfile: dummy-export-file-destination-config.json
-notifyserviceconfig: dummy-notify-config.json
+notifyserviceconfigfile: dummy-notify-config.json
 queueconfig:
   new-case-topic: event_new-case
   print-fulfilment-topic: event_print-fulfilment

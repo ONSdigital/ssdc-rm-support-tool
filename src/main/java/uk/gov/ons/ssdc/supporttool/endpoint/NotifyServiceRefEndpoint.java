@@ -1,23 +1,21 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
+import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LIST_EMAIL_TEMPLATES;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
-import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
-
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LIST_EMAIL_TEMPLATES;
-import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.LIST_EXPORT_FILE_DESTINATIONS;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
 @RequestMapping(value = "/api/notifyServiceRefs")
@@ -27,7 +25,7 @@ public class NotifyServiceRefEndpoint {
 
   private final UserIdentity userIdentity;
 
-  @Value("${notifyserviceconfig}")
+  @Value("${notifyserviceconfigfile}")
   private String configFile;
 
   private Set<String> notifyServiceRefs = null;
