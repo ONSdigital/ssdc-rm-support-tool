@@ -131,18 +131,7 @@ public class ActionRuleEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String createdBy) {
 
     CollectionExercise collectionExercise =
-        collectionExerciseRepository
-            .findById(actionRuleDTO.getCollectionExerciseId())
-            .orElseThrow(
-                () -> {
-                  log.with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("userEmail", createdBy)
-                      .warn("Failed to insert action rule, collection exercise not found");
-                  return new ResponseStatusException(
-                      HttpStatus.BAD_REQUEST, "Collection exercise not found");
-                });
-
+        getCollectionExercise(actionRuleDTO.getCollectionExerciseId(), createdBy);
     UserGroupAuthorisedActivityType userActivity;
 
     ExportFileTemplate exportFileTemplate = null;
@@ -260,17 +249,7 @@ public class ActionRuleEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String createdBy) {
 
     CollectionExercise collectionExercise =
-        collectionExerciseRepository
-            .findById(actionRuleDTO.getCollectionExerciseId())
-            .orElseThrow(
-                () -> {
-                  log.with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("userEmail", createdBy)
-                      .warn("Failed to insert action rule, collection exercise not found");
-                  return new ResponseStatusException(
-                      HttpStatus.NOT_FOUND, "Collection exercise not found");
-                });
+        getCollectionExercise(actionRuleDTO.getCollectionExerciseId(), createdBy);
 
     UserGroupAuthorisedActivityType userActivity =
         switch (actionRuleDTO.getType()) {
@@ -307,5 +286,20 @@ public class ActionRuleEndpoint {
     actionRuleRepository.saveAndFlush(actionRule);
 
     return new ResponseEntity<>(actionRule.getId(), HttpStatus.OK);
+  }
+
+  private CollectionExercise getCollectionExercise(UUID uuid, String createdBy)
+      throws ResponseStatusException {
+    return collectionExerciseRepository
+        .findById(uuid)
+        .orElseThrow(
+            () -> {
+              log.with("collectionExerciseId", uuid)
+                  .with("httpStatus", HttpStatus.BAD_REQUEST)
+                  .with("userEmail", createdBy)
+                  .warn("Failed to insert action rule, collection exercise not found");
+              return new ResponseStatusException(
+                  HttpStatus.NOT_FOUND, "Collection exercise not found");
+            });
   }
 }
