@@ -435,7 +435,13 @@ class CollectionExerciseDetails extends Component {
 
     if (
       !confirm(
-        `Are you sure you wish to change the date for ${actionRule.type} from ${actionRule.triggerDateTime} to ${dateISOString}?`,
+        `Are you sure you wish to change the date for ${
+          actionRule.type
+        } from ${actionRule.triggerDateTime
+          .slice(0, 16)
+          .replace("T", " ")} to ${dateISOString
+          .slice(0, 16)
+          .replace("T", " ")}?`,
       )
     ) {
       this.setState({
