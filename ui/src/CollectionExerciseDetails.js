@@ -209,9 +209,9 @@ class CollectionExerciseDetails extends Component {
     this.setState({
       actionRuleToBeUpdated: actionRule,
       rescheduleActionRulesDialogDisplayed: true,
-      updatedTriggerDateTime: this.getTimeNowForDateTimePicker(),
-      newActionRuleTriggerDate: this.getTimeNowForDateTimePicker(),
+      updatedTriggerDateTime: actionRule.triggerDateTime.slice(0, 16),
     });
+    console.log(actionRule)
   };
 
   closeDialog = () => {
@@ -254,6 +254,10 @@ class CollectionExerciseDetails extends Component {
 
   onNewActionRuleTriggerDateChange = (event) => {
     this.setState({ newActionRuleTriggerDate: event.target.value });
+  };
+
+  onUpdateTriggerDateChange = (event) => {
+    this.setState({ updatedTriggerDateTime: event.target.value });
   };
 
   onNewActionRuleTypeChange = (event) => {
@@ -410,16 +414,27 @@ class CollectionExerciseDetails extends Component {
 
     this.rescheduleActionRuleDisabled = true;
 
-    // Error checking in case action rule doesn't exist anymore
+    // Error checking
     if (!this.state.actionRules.includes(this.state.actionRuleToBeUpdated)) {
       this.rescheduleActionRuleDisabled = false;
       return;
     }
 
     const actionRule = this.state.actionRuleToBeUpdated;
-    const dateISOString = new Date(
-      this.state.newActionRuleTriggerDate,
-    ).toISOString();
+    const date = new Date(
+        this.state.updatedTriggerDateTime,
+    )
+
+    if (date.getTime() < new Date()) {
+      alert("Trigger time cannot be in the past")
+      this.setState({
+        actionRuleToBeUpdated: {},
+        rescheduleActionRulesDialogDisplayed: false,
+      });
+      return;
+    }
+
+    const dateISOString = date.toISOString();
 
     if (
       !confirm(
@@ -866,8 +881,8 @@ class CollectionExerciseDetails extends Component {
                 <TextField
                   label="Trigger Date"
                   type="datetime-local"
-                  value={this.state.newActionRuleTriggerDate}
-                  onChange={this.onNewActionRuleTriggerDateChange}
+                  value={this.state.updatedTriggerDateTime}
+                  onChange={this.onUpdateTriggerDateChange}
                   style={{ marginTop: 20 }}
                   InputLabelProps={{
                     shrink: true,
