@@ -211,7 +211,6 @@ class CollectionExerciseDetails extends Component {
       rescheduleActionRulesDialogDisplayed: true,
       updatedTriggerDateTime: actionRule.triggerDateTime.slice(0, 16),
     });
-    console.log(actionRule)
   };
 
   closeDialog = () => {

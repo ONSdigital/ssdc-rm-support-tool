@@ -269,7 +269,7 @@ public class ActionRuleEndpoint {
                       .with("userEmail", createdBy)
                       .warn("Failed to insert action rule, collection exercise not found");
                   return new ResponseStatusException(
-                      HttpStatus.BAD_REQUEST, "Collection exercise not found");
+                      HttpStatus.NOT_FOUND, "Collection exercise not found");
                 });
 
     UserGroupAuthorisedActivityType userActivity =
@@ -299,7 +299,7 @@ public class ActionRuleEndpoint {
                       .with("userEmail", createdBy)
                       .warn("Failed to insert action rule, action rule not found");
                   return new ResponseStatusException(
-                      HttpStatus.BAD_REQUEST, "Action Rule Id not found");
+                      HttpStatus.NOT_FOUND, "Action Rule Id not found");
                 });
 
     actionRule.setTriggerDateTime(actionRuleDTO.getTriggerDateTime());
