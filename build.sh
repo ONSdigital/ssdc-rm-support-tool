@@ -16,7 +16,7 @@ cp -r ui/build/* src/main/resources/static
 rm -r ui/build/* || true
 
 if [ "$SKIP_TESTS" = true ] ; then
-  mvn clean install -Dmaven.test.skip=true -DdockerCompose.skip=true
+  mvn clean install -Dmaven.test.skip=true -Dexec.skip=true
 else
   mvn clean install
 fi
