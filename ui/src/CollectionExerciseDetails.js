@@ -534,13 +534,15 @@ class CollectionExerciseDetails extends Component {
             {actionRule.packCode}
           </TableCell>
           <TableCell component="th" scope="row">
-            <Button
-              variant="contained"
-              onClick={() => this.openRescheduleDialog(actionRule)}
-              id="createActionRuleDialogBtn"
-            >
-              Reschedule
-            </Button>
+            {actionRule.hasTriggered ? null : (
+              <Button
+                variant="contained"
+                onClick={() => this.openRescheduleDialog(actionRule)}
+                id="rescheduleActionRuleDialogBtn"
+              >
+                Reschedule
+              </Button>
+            )}
           </TableCell>
         </TableRow>
       );
