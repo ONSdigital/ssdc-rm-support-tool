@@ -274,9 +274,9 @@ public class ActionRuleEndpoint {
                 () -> {
                   log.with("actionRuleId", actionRuleDTO.getActionRuleId())
                       .with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
+                      .with("httpStatus", HttpStatus.NOT_FOUND)
                       .with("userEmail", createdBy)
-                      .warn("Failed to insert action rule, action rule not found");
+                      .warn("Failed to update action rule, action rule not found");
                   return new ResponseStatusException(
                       HttpStatus.NOT_FOUND, "Action Rule Id not found");
                 });
@@ -295,9 +295,9 @@ public class ActionRuleEndpoint {
         .orElseThrow(
             () -> {
               log.with("collectionExerciseId", uuid)
-                  .with("httpStatus", HttpStatus.BAD_REQUEST)
+                  .with("httpStatus", HttpStatus.NOT_FOUND)
                   .with("userEmail", createdBy)
-                  .warn("Failed to insert action rule, collection exercise not found");
+                  .warn("Failed to edit action rules, collection exercise not found");
               return new ResponseStatusException(
                   HttpStatus.NOT_FOUND, "Collection exercise not found");
             });
