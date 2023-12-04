@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "@fontsource/roboto";
 import {
   Button,
@@ -20,13 +20,13 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import SampleUpload from "./SampleUpload";
 import {
+  errorAlert,
+  getActionRuleEmailPackCodesForSurvey,
   getActionRuleExportFilePackCodesForSurvey,
   getActionRuleSmsPackCodesForSurvey,
-  getActionRuleEmailPackCodesForSurvey,
   getSensitiveSampleColumns,
-  errorAlert,
 } from "./Utils";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import JSONPretty from "react-json-pretty";
 
 class CollectionExerciseDetails extends Component {
@@ -477,6 +477,18 @@ class CollectionExerciseDetails extends Component {
     return dateNow.toJSON().slice(0, 16);
   };
 
+  hasReschedulePerms = (actionRuleType) => {
+    return ({
+      "EXPORT_FILE": this.state.authorisedActivities.includes("CREATE_EXPORT_FILE_ACTION_RULE"),
+      "OUTBOUND_TELEPHONE": this.state.authorisedActivities.includes("CREATE_OUTBOUND_PHONE_ACTION_RULE"),
+      "FACE_TO_FACE": this.state.authorisedActivities.includes("CREATE_FACE_TO_FACE_ACTION_RULE"),
+      "DEACTIVATE_UAC": this.state.authorisedActivities.includes("CREATE_DEACTIVATE_UAC_ACTION_RULE"),
+      "SMS": this.state.authorisedActivities.includes("CREATE_SMS_ACTION_RULE"),
+      "EMAIL": this.state.authorisedActivities.includes("CREATE_EMAIL_ACTION_RULE"),
+      "EQ_FLUSH": this.state.authorisedActivities.includes("CREATE_EQ_FLUSH_ACTION_RULE")
+    })[actionRuleType] ?? false
+  }
+
   render() {
     const collectionExerciseDetails = (
       <>
@@ -521,6 +533,17 @@ class CollectionExerciseDetails extends Component {
           <TableCell component="th" scope="row">
             {actionRule.triggerDateTime}
           </TableCell>
+          <TableCell component="th" scope="row">
+            {!actionRule.hasTriggered && this.hasReschedulePerms(actionRule.type) ? (
+                <Button
+                    variant="contained"
+                    onClick={() => this.openRescheduleDialog(actionRule)}
+                    id="rescheduleActionRuleDialogBtn"
+                >
+                  Reschedule
+                </Button>
+            ) : null}
+          </TableCell>
           <TableCell component="th" scope="row" id="hasTriggered">
             {actionRule.hasTriggered ? "YES" : "NO"}
           </TableCell>
@@ -532,17 +555,6 @@ class CollectionExerciseDetails extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             {actionRule.packCode}
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {actionRule.hasTriggered ? null : (
-              <Button
-                variant="contained"
-                onClick={() => this.openRescheduleDialog(actionRule)}
-                id="rescheduleActionRuleDialogBtn"
-              >
-                Reschedule
-              </Button>
-            )}
           </TableCell>
         </TableRow>
       );
@@ -701,11 +713,11 @@ class CollectionExerciseDetails extends Component {
                   <TableRow>
                     <TableCell>Type</TableCell>
                     <TableCell>Trigger date</TableCell>
+                    <TableCell></TableCell>
                     <TableCell>Has triggered?</TableCell>
                     <TableCell>UAC Metadata</TableCell>
                     <TableCell>Classifiers</TableCell>
                     <TableCell>Pack Code</TableCell>
-                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{actionRuleTableRows}</TableBody>
