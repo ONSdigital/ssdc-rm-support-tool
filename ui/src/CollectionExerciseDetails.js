@@ -59,6 +59,7 @@ class CollectionExerciseDetails extends Component {
     rescheduleActionRuleDisabled: false,
     actionRuleToBeUpdated: {},
     updatedTriggerDateTime: "",
+    confirmRescheduleDialogDisplayed: false,
   };
 
   componentDidMount() {
@@ -406,7 +407,7 @@ class CollectionExerciseDetails extends Component {
     this.getActionRules(this.state.authorisedActivities);
   };
 
-  onRescheduleActionRule = async () => {
+  onRescheduleActionRule = () => {
     if (this.rescheduleActionRuleDisabled) {
       return;
     }
@@ -419,7 +420,6 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
-    const actionRule = this.state.actionRuleToBeUpdated;
     const date = new Date(this.state.updatedTriggerDateTime);
 
     if (date.getTime() < new Date()) {
@@ -431,27 +431,17 @@ class CollectionExerciseDetails extends Component {
       return;
     }
 
-    const dateISOString = date.toISOString();
+    // Opens confirm dialog
+    this.setState({
+      rescheduleActionRulesDialogDisplayed: false,
+      confirmRescheduleDialogDisplayed: true,
+    });
+  };
 
-    if (
-      !confirm(
-        `Are you sure you wish to change the date for ${
-          actionRule.type
-        } from ${actionRule.triggerDateTime
-          .slice(0, 16)
-          .replace("T", " ")} to ${dateISOString
-          .slice(0, 16)
-          .replace("T", " ")}?`,
-      )
-    ) {
-      this.setState({
-        actionRuleToBeUpdated: {},
-        rescheduleActionRulesDialogDisplayed: false,
-      });
-      return;
-    }
+  onRescheduleConfirm = async () => {
+    const actionRule = this.state.actionRuleToBeUpdated;
 
-    actionRule.triggerDateTime = dateISOString;
+    actionRule.triggerDateTime = this.getUpdatedTriggerDateTimeString();
 
     const response = await fetch("/api/actionRules", {
       method: "PUT",
@@ -461,6 +451,7 @@ class CollectionExerciseDetails extends Component {
 
     if (response.ok) {
       this.setState({
+        confirmRescheduleDialogDisplayed: false,
         actionRuleToBeUpdated: {},
         rescheduleActionRulesDialogDisplayed: false,
       });
@@ -469,6 +460,15 @@ class CollectionExerciseDetails extends Component {
     }
 
     this.getActionRules(this.state.authorisedActivities);
+  };
+
+  onRescheduleCancel = () => {
+    this.setState({
+      confirmRescheduleDialogDisplayed: false,
+      rescheduleActionRulesDialogDisplayed: false,
+    });
+
+    this.openRescheduleDialog(this.state.actionRuleToBeUpdated);
   };
 
   getTimeNowForDateTimePicker = () => {
@@ -501,6 +501,23 @@ class CollectionExerciseDetails extends Component {
         ),
       }[actionRuleType] ?? false
     );
+  };
+
+  getConfirmRescheduleText = () => {
+    if (this.state.updatedTriggerDateTime === "") {
+      return "";
+    }
+
+    const dateISOString = this.getUpdatedTriggerDateTimeString();
+    return `Are you sure you wish to change the date for ${
+      this.state.actionRuleToBeUpdated.type
+    } from ${dateISOString.slice(0, 16).replace("T", " ")} to ${dateISOString
+      .slice(0, 16)
+      .replace("T", " ")}?`;
+  };
+
+  getUpdatedTriggerDateTimeString = () => {
+    return new Date(this.state.updatedTriggerDateTime).toISOString();
   };
 
   render() {
@@ -932,6 +949,33 @@ class CollectionExerciseDetails extends Component {
                 </Button>
                 <Button
                   onClick={this.closeRescheduleDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={this.state.confirmRescheduleDialogDisplayed}>
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <div>
+                <p style={{ marginTop: 20 }}>
+                  {this.getConfirmRescheduleText()}
+                </p>
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                  onClick={this.onRescheduleConfirm}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Confirm
+                </Button>
+                <Button
+                  onClick={this.onRescheduleCancel}
                   variant="contained"
                   style={{ margin: 10 }}
                 >
