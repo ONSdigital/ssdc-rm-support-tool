@@ -8,6 +8,7 @@ public class BundleOfUsefulTestStuff {
   private UUID surveyId;
   private UUID collexId;
   private UUID caseId;
+  private UUID actionRuleId;
   private String qid;
   private String exportFileTemplatePackCode;
   private String smsTemplatePackCode;

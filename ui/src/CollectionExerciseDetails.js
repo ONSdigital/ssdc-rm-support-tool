@@ -20,11 +20,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import SampleUpload from "./SampleUpload";
 import {
+  errorAlert,
+  getActionRuleEmailPackCodesForSurvey,
   getActionRuleExportFilePackCodesForSurvey,
   getActionRuleSmsPackCodesForSurvey,
-  getActionRuleEmailPackCodesForSurvey,
   getSensitiveSampleColumns,
-  errorAlert,
 } from "./Utils";
 import { Link } from "react-router-dom";
 import JSONPretty from "react-json-pretty";
@@ -39,6 +39,7 @@ class CollectionExerciseDetails extends Component {
     emailPackCodes: [],
     collectionInstrumentRulesDisplayed: false,
     createActionRulesDialogDisplayed: false,
+    rescheduleActionRulesDialogDisplayed: false,
     exportFilePackCodeValidationError: false,
     smsPackCodeValidationError: false,
     smsPhoneNumberColumnValidationError: false,
@@ -55,6 +56,10 @@ class CollectionExerciseDetails extends Component {
     newActionRuleClassifiers: "",
     newActionRuleType: "",
     newUacQidMetadata: "",
+    rescheduleActionRuleDisabled: false,
+    actionRuleToBeUpdated: {},
+    updatedTriggerDateTime: "",
+    confirmRescheduleDialogDisplayed: false,
   };
 
   componentDidMount() {
@@ -177,7 +182,7 @@ class CollectionExerciseDetails extends Component {
     this.setState({ collectionInstrumentRulesDisplayed: false });
   };
 
-  openDialog = () => {
+  openCreateActionDialog = () => {
     this.createActionRuleDisabled = false;
 
     this.setState({
@@ -199,8 +204,25 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
+  openRescheduleDialog = (actionRule) => {
+    this.rescheduleActionRuleDisabled = false;
+
+    this.setState({
+      actionRuleToBeUpdated: actionRule,
+      rescheduleActionRulesDialogDisplayed: true,
+      updatedTriggerDateTime: actionRule.triggerDateTime.slice(0, 16),
+    });
+  };
+
   closeDialog = () => {
     this.setState({ createActionRulesDialogDisplayed: false });
+  };
+
+  closeRescheduleDialog = () => {
+    this.setState({
+      actionRuleToBeUpdated: {},
+      rescheduleActionRulesDialogDisplayed: false,
+    });
   };
 
   onNewActionRuleExportFilePackCodeChange = (event) => {
@@ -232,6 +254,10 @@ class CollectionExerciseDetails extends Component {
 
   onNewActionRuleTriggerDateChange = (event) => {
     this.setState({ newActionRuleTriggerDate: event.target.value });
+  };
+
+  onUpdateTriggerDateChange = (event) => {
+    this.setState({ updatedTriggerDateTime: event.target.value });
   };
 
   onNewActionRuleTypeChange = (event) => {
@@ -381,10 +407,117 @@ class CollectionExerciseDetails extends Component {
     this.getActionRules(this.state.authorisedActivities);
   };
 
+  onRescheduleActionRule = () => {
+    if (this.rescheduleActionRuleDisabled) {
+      return;
+    }
+
+    this.rescheduleActionRuleDisabled = true;
+
+    // Error checking
+    if (!this.state.actionRules.includes(this.state.actionRuleToBeUpdated)) {
+      this.rescheduleActionRuleDisabled = false;
+      return;
+    }
+
+    const date = new Date(this.state.updatedTriggerDateTime);
+
+    if (date.getTime() < new Date()) {
+      alert("Trigger time cannot be in the past");
+      this.setState({
+        actionRuleToBeUpdated: {},
+        rescheduleActionRulesDialogDisplayed: false,
+      });
+      return;
+    }
+
+    // Opens confirm dialog
+    this.setState({
+      rescheduleActionRulesDialogDisplayed: false,
+      confirmRescheduleDialogDisplayed: true,
+    });
+  };
+
+  onRescheduleConfirm = async () => {
+    const actionRule = this.state.actionRuleToBeUpdated;
+
+    actionRule.triggerDateTime = this.getUpdatedTriggerDateTimeString();
+
+    const response = await fetch("/api/actionRules", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(actionRule),
+    });
+
+    if (response.ok) {
+      this.setState({
+        confirmRescheduleDialogDisplayed: false,
+        actionRuleToBeUpdated: {},
+        rescheduleActionRulesDialogDisplayed: false,
+      });
+    } else {
+      alert("Something went wrong\n" + response.statusText);
+    }
+
+    this.getActionRules(this.state.authorisedActivities);
+  };
+
+  onRescheduleCancel = () => {
+    this.setState({
+      confirmRescheduleDialogDisplayed: false,
+      rescheduleActionRulesDialogDisplayed: false,
+    });
+
+    this.openRescheduleDialog(this.state.actionRuleToBeUpdated);
+  };
+
   getTimeNowForDateTimePicker = () => {
     var dateNow = new Date();
     dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
     return dateNow.toJSON().slice(0, 16);
+  };
+
+  hasReschedulePerms = (actionRuleType) => {
+    return (
+      {
+        EXPORT_FILE: this.state.authorisedActivities.includes(
+          "CREATE_EXPORT_FILE_ACTION_RULE",
+        ),
+        OUTBOUND_TELEPHONE: this.state.authorisedActivities.includes(
+          "CREATE_OUTBOUND_PHONE_ACTION_RULE",
+        ),
+        FACE_TO_FACE: this.state.authorisedActivities.includes(
+          "CREATE_FACE_TO_FACE_ACTION_RULE",
+        ),
+        DEACTIVATE_UAC: this.state.authorisedActivities.includes(
+          "CREATE_DEACTIVATE_UAC_ACTION_RULE",
+        ),
+        SMS: this.state.authorisedActivities.includes("CREATE_SMS_ACTION_RULE"),
+        EMAIL: this.state.authorisedActivities.includes(
+          "CREATE_EMAIL_ACTION_RULE",
+        ),
+        EQ_FLUSH: this.state.authorisedActivities.includes(
+          "CREATE_EQ_FLUSH_ACTION_RULE",
+        ),
+      }[actionRuleType] ?? false
+    );
+  };
+
+  getConfirmRescheduleText = () => {
+    if (this.state.updatedTriggerDateTime === "") {
+      return "";
+    }
+
+    const dateISOString = this.getUpdatedTriggerDateTimeString();
+    return `Are you sure you wish to change the date for ${
+      this.state.actionRuleToBeUpdated.type
+    } from ${dateISOString.slice(0, 16).replace("T", " ")} to ${dateISOString
+      .slice(0, 16)
+      .replace("T", " ")}?`;
+  };
+
+  getUpdatedTriggerDateTimeString = () => {
+    return new Date(this.state.updatedTriggerDateTime).toISOString();
   };
 
   render() {
@@ -430,6 +563,18 @@ class CollectionExerciseDetails extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             {actionRule.triggerDateTime}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {!actionRule.hasTriggered &&
+            this.hasReschedulePerms(actionRule.type) ? (
+              <Button
+                variant="contained"
+                onClick={() => this.openRescheduleDialog(actionRule)}
+                id="rescheduleActionRuleDialogBtn"
+              >
+                Reschedule
+              </Button>
+            ) : null}
           </TableCell>
           <TableCell component="th" scope="row" id="hasTriggered">
             {actionRule.hasTriggered ? "YES" : "NO"}
@@ -600,6 +745,7 @@ class CollectionExerciseDetails extends Component {
                   <TableRow>
                     <TableCell>Type</TableCell>
                     <TableCell>Trigger date</TableCell>
+                    <TableCell></TableCell>
                     <TableCell>Has triggered?</TableCell>
                     <TableCell>UAC Metadata</TableCell>
                     <TableCell>Classifiers</TableCell>
@@ -615,7 +761,7 @@ class CollectionExerciseDetails extends Component {
           <div style={{ marginTop: 10 }}>
             <Button
               variant="contained"
-              onClick={this.openDialog}
+              onClick={this.openCreateActionDialog}
               id="createActionRuleDialogBtn"
             >
               Create Action Rule
@@ -768,6 +914,68 @@ class CollectionExerciseDetails extends Component {
                 </Button>
                 <Button
                   onClick={this.closeDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={this.state.rescheduleActionRulesDialogDisplayed}>
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <div>
+                <TextField
+                  label="Trigger Date"
+                  type="datetime-local"
+                  value={this.state.updatedTriggerDateTime}
+                  onChange={this.onUpdateTriggerDateChange}
+                  style={{ marginTop: 20 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                  onClick={this.onRescheduleActionRule}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                  id="createActionRuleBtn"
+                >
+                  Reschedule
+                </Button>
+                <Button
+                  onClick={this.closeRescheduleDialog}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={this.state.confirmRescheduleDialogDisplayed}>
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <div>
+                <p style={{ marginTop: 20 }}>
+                  {this.getConfirmRescheduleText()}
+                </p>
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                  onClick={this.onRescheduleConfirm}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Confirm
+                </Button>
+                <Button
+                  onClick={this.onRescheduleCancel}
                   variant="contained"
                   style={{ margin: 10 }}
                 >

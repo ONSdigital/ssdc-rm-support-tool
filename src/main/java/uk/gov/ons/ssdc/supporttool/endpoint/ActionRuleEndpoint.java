@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -108,6 +109,7 @@ public class ActionRuleEndpoint {
                     actionRuleDTO.setPackCode(actionRule.getEmailTemplate().getPackCode());
                   }
 
+                  actionRuleDTO.setActionRuleId(actionRule.getId());
                   actionRuleDTO.setType(actionRule.getType());
                   actionRuleDTO.setCollectionExerciseId(actionRule.getCollectionExercise().getId());
                   actionRuleDTO.setPhoneNumberColumn(actionRule.getPhoneNumberColumn());
@@ -129,18 +131,7 @@ public class ActionRuleEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String createdBy) {
 
     CollectionExercise collectionExercise =
-        collectionExerciseRepository
-            .findById(actionRuleDTO.getCollectionExerciseId())
-            .orElseThrow(
-                () -> {
-                  log.with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("userEmail", createdBy)
-                      .warn("Failed to insert action rule, collection exercise not found");
-                  return new ResponseStatusException(
-                      HttpStatus.BAD_REQUEST, "Collection exercise not found");
-                });
-
+        getCollectionExercise(actionRuleDTO.getCollectionExerciseId(), createdBy);
     UserGroupAuthorisedActivityType userActivity;
 
     ExportFileTemplate exportFileTemplate = null;
@@ -246,5 +237,69 @@ public class ActionRuleEndpoint {
     actionRuleRepository.saveAndFlush(actionRule);
 
     return new ResponseEntity<>(actionRule.getId(), HttpStatus.CREATED);
+  }
+
+  /*
+   *  Updates triggerDateTime
+   */
+  @PutMapping
+  @Transactional
+  public ResponseEntity<UUID> updateActionRules(
+      @RequestBody() ActionRuleDto actionRuleDTO,
+      @Value("#{request.getAttribute('userEmail')}") String createdBy) {
+
+    CollectionExercise collectionExercise =
+        getCollectionExercise(actionRuleDTO.getCollectionExerciseId(), createdBy);
+
+    UserGroupAuthorisedActivityType userActivity =
+        switch (actionRuleDTO.getType()) {
+          case EXPORT_FILE -> CREATE_EXPORT_FILE_ACTION_RULE;
+          case OUTBOUND_TELEPHONE -> CREATE_OUTBOUND_PHONE_ACTION_RULE;
+          case FACE_TO_FACE -> CREATE_FACE_TO_FACE_ACTION_RULE;
+          case DEACTIVATE_UAC -> CREATE_DEACTIVATE_UAC_ACTION_RULE;
+          case SMS -> CREATE_SMS_ACTION_RULE;
+          case EMAIL -> CREATE_EMAIL_ACTION_RULE;
+          case EQ_FLUSH -> CREATE_EQ_FLUSH_ACTION_RULE;
+          default -> throw new IllegalStateException(
+              "Unexpected value: " + actionRuleDTO.getType());
+        };
+
+    userIdentity.checkUserPermission(createdBy, collectionExercise.getSurvey(), userActivity);
+
+    ActionRule actionRule =
+        collectionExercise.getActionRules().stream()
+            .filter(action -> action.getId().equals(actionRuleDTO.getActionRuleId()))
+            .findAny()
+            .orElseThrow(
+                () -> {
+                  log.with("actionRuleId", actionRuleDTO.getActionRuleId())
+                      .with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
+                      .with("httpStatus", HttpStatus.NOT_FOUND)
+                      .with("userEmail", createdBy)
+                      .warn("Failed to update action rule, action rule not found");
+                  return new ResponseStatusException(
+                      HttpStatus.NOT_FOUND, "Action Rule Id not found");
+                });
+
+    actionRule.setTriggerDateTime(actionRuleDTO.getTriggerDateTime());
+
+    actionRuleRepository.saveAndFlush(actionRule);
+
+    return new ResponseEntity<>(actionRule.getId(), HttpStatus.OK);
+  }
+
+  private CollectionExercise getCollectionExercise(UUID uuid, String createdBy)
+      throws ResponseStatusException {
+    return collectionExerciseRepository
+        .findById(uuid)
+        .orElseThrow(
+            () -> {
+              log.with("collectionExerciseId", uuid)
+                  .with("httpStatus", HttpStatus.NOT_FOUND)
+                  .with("userEmail", createdBy)
+                  .warn("Failed to edit action rules, collection exercise not found");
+              return new ResponseStatusException(
+                  HttpStatus.NOT_FOUND, "Collection exercise not found");
+            });
   }
 }

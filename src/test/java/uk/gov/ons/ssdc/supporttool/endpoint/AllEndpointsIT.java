@@ -155,6 +155,19 @@ class AllEndpointsIT {
           actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
           return actionRuleDto;
         });
+
+    integrationTestHelper.testPut(
+        port,
+        UserGroupAuthorisedActivityType.CREATE_EMAIL_ACTION_RULE,
+        (bundle) -> "actionRules",
+        (bundle) -> {
+          ActionRuleDto actionRuleDto = new ActionRuleDto();
+          actionRuleDto.setType(ActionRuleType.EMAIL);
+          actionRuleDto.setActionRuleId(bundle.getActionRuleId());
+          actionRuleDto.setCollectionExerciseId(bundle.getCollexId());
+          actionRuleDto.setTriggerDateTime(OffsetDateTime.now());
+          return actionRuleDto;
+        });
   }
 
   @Test

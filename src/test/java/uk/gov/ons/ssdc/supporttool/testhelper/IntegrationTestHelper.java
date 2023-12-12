@@ -4,14 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.ons.ssdc.common.model.entity.ActionRule;
+import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
 import uk.gov.ons.ssdc.common.model.entity.Case;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.CollectionInstrumentSelectionRule;
@@ -28,6 +33,7 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupMember;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.common.validation.ColumnValidator;
 import uk.gov.ons.ssdc.common.validation.Rule;
+import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.CaseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
@@ -48,6 +54,9 @@ public class IntegrationTestHelper {
 
   private final SurveyRepository surveyRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
+
+  private final ActionRuleRepository actionRuleRepository;
+
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final SmsTemplateRepository smsTemplateRepository;
   private final EmailTemplateRepository emailTemplateRepository;
@@ -66,6 +75,7 @@ public class IntegrationTestHelper {
   public IntegrationTestHelper(
       SurveyRepository surveyRepository,
       CollectionExerciseRepository collectionExerciseRepository,
+      ActionRuleRepository actionRuleRepository,
       ExportFileTemplateRepository exportFileTemplateRepository,
       SmsTemplateRepository smsTemplateRepository,
       EmailTemplateRepository emailTemplateRepository,
@@ -78,6 +88,7 @@ public class IntegrationTestHelper {
       UserGroupPermissionRepository userGroupPermissionRepository) {
     this.surveyRepository = surveyRepository;
     this.collectionExerciseRepository = collectionExerciseRepository;
+    this.actionRuleRepository = actionRuleRepository;
     this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.smsTemplateRepository = smsTemplateRepository;
     this.emailTemplateRepository = emailTemplateRepository;
@@ -154,6 +165,31 @@ public class IntegrationTestHelper {
     }
   }
 
+  public void testPut(
+      int port,
+      UserGroupAuthorisedActivityType activity,
+      BundleUrlGetter bundleUrlGetter,
+      BundlePostObjectGetter bundlePostObjectGetter) {
+    setUpTestUserPermission(activity);
+    BundleOfUsefulTestStuff bundle = getTestBundle();
+
+    String url = String.format("http://localhost:%d/api/%s", port, bundleUrlGetter.getUrl(bundle));
+    Object objectToPost = bundlePostObjectGetter.getObject(bundle);
+
+    restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(objectToPost), String.class);
+
+    deleteAllPermissions();
+    restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
+    try {
+      restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(objectToPost), String.class);
+      fail("PUT API call was not forbidden, but should have been");
+    } catch (HttpClientErrorException expectedException) {
+      assertThat(expectedException.getStatusCode())
+          .as("PUT is FORBIDDEN")
+          .isEqualTo(HttpStatus.FORBIDDEN);
+    }
+  }
+
   public void testDelete(
       int port, UserGroupAuthorisedActivityType activity, BundleUrlGetter bundleUrlGetter) {
     setUpTestUserPermission(activity);
@@ -203,6 +239,7 @@ public class IntegrationTestHelper {
         new CollectionInstrumentSelectionRule[] {
           new CollectionInstrumentSelectionRule(0, null, "test instrument", null)
         });
+
     collectionExercise = collectionExerciseRepository.saveAndFlush(collectionExercise);
 
     Case caze = new Case();
@@ -247,6 +284,22 @@ public class IntegrationTestHelper {
     UserGroupAdmin userGroupAdmin = setupDummyGroupAdmin(UUID.randomUUID(), user, group);
     UserGroupPermission userGroupPermission = setupDummyGroupPermission(UUID.randomUUID(), group);
 
+    ActionRule actionRule = new ActionRule();
+    actionRule.setId(UUID.randomUUID());
+    actionRule.setCollectionExercise(collectionExercise);
+    actionRule.setType(ActionRuleType.EMAIL);
+
+    actionRule.setClassifiers("sample ->> 'ORG_SIZE' = 'HUGE'");
+
+    actionRule.setTriggerDateTime(OffsetDateTime.now());
+    actionRule.setCreatedBy("TEST_USER");
+    actionRule.setEmailTemplate(emailTemplate);
+    actionRule.setEmailColumn("emailAddress");
+
+    actionRuleRepository.saveAndFlush(actionRule);
+
+    collectionExercise.setActionRules(List.of(actionRule));
+
     BundleOfUsefulTestStuff bundle = new BundleOfUsefulTestStuff();
     bundle.setSurveyId(survey.getId());
     bundle.setCollexId(collectionExercise.getId());
@@ -261,6 +314,7 @@ public class IntegrationTestHelper {
     bundle.setGroupAdminId(userGroupAdmin.getId());
     bundle.setGroupPermissionId(userGroupPermission.getId());
     bundle.setSecondGroupId(secondGroup.getId());
+    bundle.setActionRuleId(collectionExercise.getActionRules().get(0).getId());
 
     return bundle;
   }
