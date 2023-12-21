@@ -268,6 +268,7 @@ public class IntegrationTestHelper {
     smsTemplate.setTemplate(new String[] {"foo", "bar"});
     smsTemplate.setNotifyTemplateId(UUID.randomUUID());
     smsTemplate.setDescription("Test description");
+    smsTemplate.setNotifyServiceRef("test_service");
     smsTemplate = smsTemplateRepository.saveAndFlush(smsTemplate);
 
     EmailTemplate emailTemplate = new EmailTemplate();
@@ -275,6 +276,7 @@ public class IntegrationTestHelper {
     emailTemplate.setTemplate(new String[] {"foo", "bar"});
     emailTemplate.setNotifyTemplateId(UUID.randomUUID());
     emailTemplate.setDescription("Test description");
+    emailTemplate.setNotifyServiceRef("test_service");
     emailTemplate = emailTemplateRepository.saveAndFlush(emailTemplate);
 
     User user = setupDummyUser(UUID.randomUUID());

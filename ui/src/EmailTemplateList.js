@@ -12,6 +12,10 @@ import {
   TextField,
   Paper,
   Typography,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@material-ui/core";
 import { errorAlert, getAuthorisedActivities } from "./Utils";
 
@@ -27,11 +31,14 @@ class EmailTemplateList extends Component {
     description: "",
     template: "",
     metadata: "",
+    notifyServiceRefs: [],
+    notifyServiceRef: "",
     packCodeValidationError: "",
     descriptionValidationError: false,
     templateValidationError: false,
     templateValidationErrorMessage: "",
     newTemplateMetadataValidationError: false,
+    notifyServiceRefValidationError: false,
     notifyTemplateIdValidationError: false,
     notifyTemplateIdErrorMessage: "",
     createEmailTemplateDescriptionError: "",
@@ -48,6 +55,23 @@ class EmailTemplateList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
+    this.getEmailTemplates(authorisedActivities);
+    this.getNotifyServiceRefs(authorisedActivities);
+  };
+
+  getNotifyServiceRefs = async (authorisedActivities) => {
+    // TODO Create new activity called LIST_NOTIFY_SERVICES
+    if (!authorisedActivities.includes("LIST_EMAIL_TEMPLATES")) return;
+
+    const supplierResponse = await fetch("/api/notifyServiceRefs");
+    const supplierJson = await supplierResponse.json();
+
+    this.setState({
+      notifyServiceRefs: supplierJson,
+    });
+  };
+
+  getEmailTemplates = async (authorisedActivities) => {
     if (!authorisedActivities.includes("LIST_EMAIL_TEMPLATES")) return;
 
     const response = await fetch("/api/emailTemplates");
@@ -66,15 +90,18 @@ class EmailTemplateList extends Component {
       template: "",
       newTemplateMetadata: "",
       notifyTemplateId: "",
+      notifyServiceRef: "",
       packCodeValidationError: false,
       descriptionValidationError: false,
       templateValidationError: false,
       templateValidationErrorMessage: "",
       newTemplateMetadataValidationError: false,
       notifyTemplateIdValidationError: false,
+      notifyServiceRefValidationError: false,
       createEmailTemplateDialogDisplayed: true,
       createEmailTemplateError: "",
       notifyTemplateIdErrorMessage: "",
+      notifyServiceRefErrorMessage: "",
       createEmailTemplatePackCodeError: "",
       createEmailTemplateDescriptionError: "",
     });
@@ -130,6 +157,12 @@ class EmailTemplateList extends Component {
     });
   };
 
+  onNotifyServiceRefChange = (event) => {
+    this.setState({
+      notifyServiceRef: event.target.value,
+      notifyServiceRefValidationError: false,
+    });
+  };
   onCreateEmailTemplate = async () => {
     if (this.createEmailTemplateInProgress) {
       return;
@@ -225,6 +258,10 @@ class EmailTemplateList extends Component {
         failedValidation = true;
       }
     }
+    if (!this.state.notifyServiceRef.trim()) {
+      this.setState({ notifyServiceRefValidationError: true });
+      failedValidation = true;
+    }
 
     if (failedValidation) {
       this.createEmailTemplateInProgress = false;
@@ -237,6 +274,7 @@ class EmailTemplateList extends Component {
       description: this.state.description,
       template: JSON.parse(this.state.template),
       metadata: metadata,
+      notifyServiceRef: this.state.notifyServiceRef,
     };
 
     const response = await fetch("/api/emailTemplates", {
@@ -253,6 +291,7 @@ class EmailTemplateList extends Component {
       const responseJson = await response.json();
       errorAlert(responseJson);
     } else {
+      this.setState({ createEmailTemplateDialogDisplayed: false });
       this.setState({ createEmailTemplateDialogDisplayed: false });
     }
     this.refreshDataFromBackend(this.state.authorisedActivities);
@@ -276,8 +315,19 @@ class EmailTemplateList extends Component {
         <TableCell component="th" scope="row">
           {JSON.stringify(emailTemplate.metadata)}
         </TableCell>
+        <TableCell component="th" scope="row">
+          {emailTemplate.notifyServiceRef}
+        </TableCell>
       </TableRow>
     ));
+
+    const notifyConfigMenuItems = this.state.notifyServiceRefs.map(
+      (supplier) => (
+        <MenuItem key={supplier} value={supplier} id={supplier}>
+          {supplier}
+        </MenuItem>
+      ),
+    );
 
     return (
       <>
@@ -295,6 +345,7 @@ class EmailTemplateList extends Component {
                     <TableCell>Template</TableCell>
                     <TableCell>Gov Notify Template ID</TableCell>
                     <TableCell>Metadata</TableCell>
+                    <TableCell>Gov Notify Service Ref</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{emailTemplateRows}</TableBody>
@@ -375,6 +426,22 @@ class EmailTemplateList extends Component {
                   onChange={this.onNewTemplateMetadataChange}
                   value={this.state.newTemplateMetadata}
                 />
+                <FormControl
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  id="form"
+                >
+                  <InputLabel>Notify services</InputLabel>
+                  <Select
+                    onChange={this.onNotifyServiceRefChange}
+                    value={this.state.notifyServiceRef}
+                    error={this.state.notifyServiceRefValidationError}
+                    id="EmailNotifyServiceRef"
+                  >
+                    {notifyConfigMenuItems}
+                  </Select>
+                </FormControl>
               </div>
               <div style={{ marginTop: 10 }}>
                 <Button

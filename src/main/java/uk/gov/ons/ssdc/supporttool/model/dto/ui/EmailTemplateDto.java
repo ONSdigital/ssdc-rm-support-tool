@@ -13,6 +13,7 @@ public class EmailTemplateDto {
   private UUID notifyTemplateId;
   private String description;
   private Object metadata;
+  private String notifyServiceRef;
 
   public EmailTemplateDto(EmailTemplate emailTemplate) {
     packCode = emailTemplate.getPackCode();
@@ -20,5 +21,6 @@ public class EmailTemplateDto {
     notifyTemplateId = emailTemplate.getNotifyTemplateId();
     description = emailTemplate.getDescription();
     metadata = emailTemplate.getMetadata();
+    notifyServiceRef = emailTemplate.getNotifyServiceRef();
   }
 }
