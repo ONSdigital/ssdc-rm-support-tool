@@ -11,7 +11,11 @@ import {
   DialogContent,
   TextField,
   Paper,
-  Typography, MenuItem, FormControl, InputLabel, Select,
+  Typography,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@material-ui/core";
 import { errorAlert, getAuthorisedActivities } from "./Utils";
 
@@ -50,8 +54,8 @@ class SmsTemplatesList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    this.getSmsTemplates(authorisedActivities)
-    this.getNotifyServiceRefs(authorisedActivities)
+    this.getSmsTemplates(authorisedActivities);
+    this.getNotifyServiceRefs(authorisedActivities);
   };
   getNotifyServiceRefs = async (authorisedActivities) => {
     // TODO Create new activity called LIST_NOTIFY_SERVICES
@@ -72,8 +76,7 @@ class SmsTemplatesList extends Component {
     const templateJson = await response.json();
 
     this.setState({ smsTemplates: templateJson });
-  }
-
+  };
 
   openSmsTemplateDialog = () => {
     this.createSmsTemplateInProgress = false;
@@ -313,12 +316,13 @@ class SmsTemplatesList extends Component {
         </TableCell>
       </TableRow>
     ));
-    const notifyConfigMenuItems =
-        this.state.notifyServiceRefs.map((supplier) => (
-            <MenuItem key={supplier} value={supplier} id={supplier}>
-              {supplier}
-            </MenuItem>
-        ));
+    const notifyConfigMenuItems = this.state.notifyServiceRefs.map(
+      (supplier) => (
+        <MenuItem key={supplier} value={supplier} id={supplier}>
+          {supplier}
+        </MenuItem>
+      ),
+    );
 
     return (
       <>
@@ -337,7 +341,6 @@ class SmsTemplatesList extends Component {
                     <TableCell>Gov Notify Template ID</TableCell>
                     <TableCell>Metadata</TableCell>
                     <TableCell>Gov Notify Service Ref</TableCell>
-
                   </TableRow>
                 </TableHead>
                 <TableBody>{smsTemplateRows}</TableBody>
@@ -414,17 +417,17 @@ class SmsTemplatesList extends Component {
                   value={this.state.newTemplateMetadata}
                 />
                 <FormControl
-                    required
-                    fullWidth={true}
-                    style={{ marginTop: 10 }}
-                    id="form"
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  id="form"
                 >
                   <InputLabel>Notify services</InputLabel>
                   <Select
-                      onChange={this.onNotifyServiceRefChange}
-                      value={this.state.notifyServiceRef}
-                      error={this.state.notifyServiceRefValidationError}
-                      id="SmsNotifyServiceRef"
+                    onChange={this.onNotifyServiceRefChange}
+                    value={this.state.notifyServiceRef}
+                    error={this.state.notifyServiceRefValidationError}
+                    id="SmsNotifyServiceRef"
                   >
                     {notifyConfigMenuItems}
                   </Select>

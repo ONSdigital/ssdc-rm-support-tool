@@ -11,7 +11,11 @@ import {
   DialogContent,
   TextField,
   Paper,
-  Typography, MenuItem, FormControl, InputLabel, Select,
+  Typography,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@material-ui/core";
 import { errorAlert, getAuthorisedActivities } from "./Utils";
 
@@ -51,8 +55,8 @@ class EmailTemplateList extends Component {
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
-    this.getEmailTemplates(authorisedActivities)
-    this.getNotifyServiceRefs(authorisedActivities)
+    this.getEmailTemplates(authorisedActivities);
+    this.getNotifyServiceRefs(authorisedActivities);
   };
 
   getNotifyServiceRefs = async (authorisedActivities) => {
@@ -74,7 +78,7 @@ class EmailTemplateList extends Component {
     const templateJson = await response.json();
 
     this.setState({ emailTemplates: templateJson });
-  }
+  };
 
   openEmailTemplateDialog = () => {
     this.createEmailTemplateInProgress = false;
@@ -270,7 +274,7 @@ class EmailTemplateList extends Component {
       description: this.state.description,
       template: JSON.parse(this.state.template),
       metadata: metadata,
-      notifyServiceRef: this.state.notifyServiceRef
+      notifyServiceRef: this.state.notifyServiceRef,
     };
 
     const response = await fetch("/api/emailTemplates", {
@@ -317,12 +321,13 @@ class EmailTemplateList extends Component {
       </TableRow>
     ));
 
-    const notifyConfigMenuItems =
-        this.state.notifyServiceRefs.map((supplier) => (
-            <MenuItem key={supplier} value={supplier} id={supplier}>
-              {supplier}
-            </MenuItem>
-        ));
+    const notifyConfigMenuItems = this.state.notifyServiceRefs.map(
+      (supplier) => (
+        <MenuItem key={supplier} value={supplier} id={supplier}>
+          {supplier}
+        </MenuItem>
+      ),
+    );
 
     return (
       <>
@@ -422,22 +427,22 @@ class EmailTemplateList extends Component {
                   value={this.state.newTemplateMetadata}
                 />
                 <FormControl
-                    required
-                    fullWidth={true}
-                    style={{ marginTop: 10 }}
-                    id="form"
+                  required
+                  fullWidth={true}
+                  style={{ marginTop: 10 }}
+                  id="form"
                 >
                   <InputLabel>Notify services</InputLabel>
                   <Select
-                      onChange={this.onNotifyServiceRefChange}
-                      value={this.state.notifyServiceRef}
-                      error={this.state.notifyServiceRefValidationError}
-                      id="EmailNotifyServiceRef"
+                    onChange={this.onNotifyServiceRefChange}
+                    value={this.state.notifyServiceRef}
+                    error={this.state.notifyServiceRefValidationError}
+                    id="EmailNotifyServiceRef"
                   >
                     {notifyConfigMenuItems}
                   </Select>
                 </FormControl>
-            </div>
+              </div>
               <div style={{ marginTop: 10 }}>
                 <Button
                   onClick={this.onCreateEmailTemplate}
