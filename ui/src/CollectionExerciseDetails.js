@@ -513,7 +513,9 @@ class CollectionExerciseDetails extends Component {
     const currentDateISOString = this.getCurrentTriggerDateTimeString();
     return `Are you sure you wish to change the date for ${
       this.state.actionRuleToBeUpdated.type
-    } from ${currentDateISOString.slice(0, 16).replace("T", " ")} to ${updatedDateISOString
+    } from ${currentDateISOString
+      .slice(0, 16)
+      .replace("T", " ")} to ${updatedDateISOString
       .slice(0, 16)
       .replace("T", " ")}?`;
   };
