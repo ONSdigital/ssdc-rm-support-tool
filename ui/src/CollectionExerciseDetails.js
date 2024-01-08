@@ -58,6 +58,7 @@ class CollectionExerciseDetails extends Component {
     newUacQidMetadata: "",
     rescheduleActionRuleDisabled: false,
     actionRuleToBeUpdated: {},
+    currentTriggerDateTime: "",
     updatedTriggerDateTime: "",
     confirmRescheduleDialogDisplayed: false,
   };
@@ -210,7 +211,7 @@ class CollectionExerciseDetails extends Component {
     this.setState({
       actionRuleToBeUpdated: actionRule,
       rescheduleActionRulesDialogDisplayed: true,
-      updatedTriggerDateTime: actionRule.triggerDateTime.slice(0, 16),
+      currentTriggerDateTime: actionRule.triggerDateTime.slice(0, 16),
     });
   };
 
@@ -508,16 +509,23 @@ class CollectionExerciseDetails extends Component {
       return "";
     }
 
-    const dateISOString = this.getUpdatedTriggerDateTimeString();
+    const updatedDateISOString = this.getUpdatedTriggerDateTimeString();
+    const currentDateISOString = this.getCurrentTriggerDateTimeString();
     return `Are you sure you wish to change the date for ${
       this.state.actionRuleToBeUpdated.type
-    } from ${dateISOString.slice(0, 16).replace("T", " ")} to ${dateISOString
+    } from ${currentDateISOString
+      .slice(0, 16)
+      .replace("T", " ")} to ${updatedDateISOString
       .slice(0, 16)
       .replace("T", " ")}?`;
   };
 
   getUpdatedTriggerDateTimeString = () => {
     return new Date(this.state.updatedTriggerDateTime).toISOString();
+  };
+
+  getCurrentTriggerDateTimeString = () => {
+    return new Date(this.state.currentTriggerDateTime).toISOString();
   };
 
   render() {
