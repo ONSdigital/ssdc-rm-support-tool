@@ -16,11 +16,9 @@
     "react-router-dom": "^5.3.4",
     "web-vitals": "^3.5.2"
   },
-
   "overrides": {
     "nth-check@1.x": "2.0.1"
-  }
-  ,
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
