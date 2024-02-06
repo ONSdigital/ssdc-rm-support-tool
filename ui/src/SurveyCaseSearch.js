@@ -53,7 +53,7 @@ class SurveyCaseSearch extends Component {
     if (!authorisedActivities.includes("LIST_COLLECTION_EXERCISES")) return;
 
     const response = await fetch(
-      `/api/collectionExercises/?surveyId=${this.props.surveyId}`,
+      `/api/collectionExercises?surveyId=${this.props.surveyId}`,
     );
     const collexJson = await response.json();
 

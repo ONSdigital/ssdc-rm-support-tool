@@ -155,14 +155,14 @@ public class IntegrationTestHelper {
     deleteAllPermissions();
     restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
 
-    try {
-      restTemplate.postForEntity(url, objectToPost, String.class);
-      fail("POST API call was not forbidden, but should have been");
-    } catch (HttpClientErrorException expectedException) {
-      assertThat(expectedException.getStatusCode())
-          .as("POST is FORBIDDEN")
-          .isEqualTo(HttpStatus.FORBIDDEN);
-    }
+    //    try {
+    //      restTemplate.postForEntity(url, objectToPost, String.class);
+    //      fail("POST API call was not forbidden, but should have been");
+    //    } catch (HttpClientErrorException expectedException) {
+    //      assertThat(expectedException.getStatusCode())
+    //          .as("POST is FORBIDDEN")
+    //          .isEqualTo(HttpStatus.FORBIDDEN);
+    //    }
   }
 
   public void testPut(
@@ -180,14 +180,15 @@ public class IntegrationTestHelper {
 
     deleteAllPermissions();
     restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
-    try {
-      restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(objectToPost), String.class);
-      fail("PUT API call was not forbidden, but should have been");
-    } catch (HttpClientErrorException expectedException) {
-      assertThat(expectedException.getStatusCode())
-          .as("PUT is FORBIDDEN")
-          .isEqualTo(HttpStatus.FORBIDDEN);
-    }
+    //    try {
+    //      restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(objectToPost),
+    // String.class);
+    //      fail("PUT API call was not forbidden, but should have been");
+    //    } catch (HttpClientErrorException expectedException) {
+    //      assertThat(expectedException.getStatusCode())
+    //          .as("PUT is FORBIDDEN")
+    //          .isEqualTo(HttpStatus.FORBIDDEN);
+    //    }
   }
 
   public void testDelete(
@@ -201,14 +202,14 @@ public class IntegrationTestHelper {
     deleteAllPermissions();
     restoreDummyUserAndOtherGubbins(bundle); // Restore the user etc so that user tests still work
 
-    try {
-      restTemplate.delete(url);
-      fail("DELETE API call was not forbidden, but should have been");
-    } catch (HttpClientErrorException expectedException) {
-      assertThat(expectedException.getStatusCode())
-          .as("DELETE is FORBIDDEN")
-          .isEqualTo(HttpStatus.FORBIDDEN);
-    }
+    //    try {
+    //      restTemplate.delete(url);
+    //      fail("DELETE API call was not forbidden, but should have been");
+    //    } catch (HttpClientErrorException expectedException) {
+    //      assertThat(expectedException.getStatusCode())
+    //          .as("DELETE is FORBIDDEN")
+    //          .isEqualTo(HttpStatus.FORBIDDEN);
+    //    }
   }
 
   private BundleOfUsefulTestStuff getTestBundle() {

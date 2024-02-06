@@ -121,7 +121,7 @@ class CollectionExerciseDetails extends Component {
     if (!authorisedActivities.includes("LIST_ACTION_RULES")) return;
 
     const response = await fetch(
-      `/api/actionRules/?collectionExercise=${this.props.collectionExerciseId}`,
+      `/api/actionRules?collectionExercise=${this.props.collectionExerciseId}`,
     );
     const actionRuleJson = await response.json();
 
