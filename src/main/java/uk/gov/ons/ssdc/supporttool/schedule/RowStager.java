@@ -6,6 +6,7 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -54,7 +55,7 @@ public class RowStager {
 
   @Scheduled(fixedDelayString = "1000")
   @Transactional
-  public void processRows() {
+  public void processRows() throws CsvValidationException {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS);
 
     for (Job job : jobs) {
@@ -70,7 +71,7 @@ public class RowStager {
     }
   }
 
-  private void processJob(Job job) {
+  private void processJob(Job job) throws CsvValidationException {
     CSVParser parser =
         new CSVParserBuilder()
             .withSeparator(job.getCollectionExercise().getSurvey().getSampleSeparator())

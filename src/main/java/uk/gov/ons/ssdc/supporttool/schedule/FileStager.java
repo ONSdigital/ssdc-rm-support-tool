@@ -6,6 +6,7 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -43,7 +44,7 @@ public class FileStager {
   }
 
   @Scheduled(fixedDelayString = "1000")
-  public void processFiles() {
+  public void processFiles() throws CsvValidationException {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.FILE_UPLOADED);
 
     for (Job job : jobs) {
@@ -66,7 +67,7 @@ public class FileStager {
     }
   }
 
-  private JobStatus checkHeaderRow(Job job) {
+  private JobStatus checkHeaderRow(Job job) throws CsvValidationException {
     CSVParser parser =
         new CSVParserBuilder()
             .withSeparator(job.getCollectionExercise().getSurvey().getSampleSeparator())
