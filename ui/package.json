@@ -20,6 +20,9 @@
     "nth-check@1.x": "^2.0.1",
     "postcss": "^8.4.31"
   },
+  "engines": {
+    "npm": "^10.4.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
