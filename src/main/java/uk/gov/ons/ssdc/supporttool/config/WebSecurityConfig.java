@@ -35,7 +35,6 @@ public class WebSecurityConfig {
     http.headers(
         headers ->
             headers
-                //                .defaultsDisabled()
                 .contentSecurityPolicy(
                     cps ->
                         cps.policyDirectives(
