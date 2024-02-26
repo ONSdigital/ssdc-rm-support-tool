@@ -82,7 +82,7 @@ class ConfigureFulfilmentTrigger extends Component {
     ).toISOString();
 
     const response = await fetch(
-      `/api/fulfilmentNextTriggers/?triggerDateTime=${triggerDateTime}`,
+      `/api/fulfilmentNextTriggers?triggerDateTime=${triggerDateTime}`,
       {
         method: "POST",
       },

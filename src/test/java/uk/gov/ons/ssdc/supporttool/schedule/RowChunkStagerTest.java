@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class RowChunkStagerTest {
   @InjectMocks RowChunkStager underTest;
 
   @Test
-  void testRowChunkStagerFailedWithNullChunk() throws IOException {
+  void testRowChunkStagerFailedWithNullChunk() throws IOException, CsvValidationException {
     Job job = getJob();
 
     String[] headerRow = {"a", "b", "c"};
@@ -53,7 +54,7 @@ public class RowChunkStagerTest {
   }
 
   @Test
-  void testRowChunkStagerSuccess() throws IOException {
+  void testRowChunkStagerSuccess() throws IOException, CsvValidationException {
     Job job = getJob();
 
     String[] headerRow = {"a", "b", "c"};
@@ -77,7 +78,7 @@ public class RowChunkStagerTest {
   }
 
   @Test
-  void testRowChunkStagerFailedWithIOException() throws IOException {
+  void testRowChunkStagerFailedWithIOException() throws IOException, CsvValidationException {
     Job job = getJob();
 
     String[] headerRow = {"a", "b", "c"};

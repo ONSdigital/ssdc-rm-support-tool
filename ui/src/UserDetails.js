@@ -65,7 +65,7 @@ class UserDetails extends Component {
     if (!authorisedActivities.includes("SUPER_USER")) return;
 
     const userMemberOfResponse = await fetch(
-      `/api/userGroupMembers/?userId=${this.props.userId}`,
+      `/api/userGroupMembers?userId=${this.props.userId}`,
     );
 
     const userMemberOfJson = await userMemberOfResponse.json();

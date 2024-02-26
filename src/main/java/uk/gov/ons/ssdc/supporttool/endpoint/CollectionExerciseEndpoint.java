@@ -7,6 +7,7 @@ import com.godaddy.logging.LoggerFactory;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -196,7 +196,7 @@ public class CollectionExerciseEndpoint {
 
     String topic =
         toProjectTopicName(collectionExerciseUpdateEventTopic, sharedPubsubProject).toString();
-    ListenableFuture<String> future = pubSubTemplate.publish(topic, event);
+    CompletableFuture<String> future = pubSubTemplate.publish(topic, event);
 
     try {
       future.get(publishTimeout, TimeUnit.SECONDS);

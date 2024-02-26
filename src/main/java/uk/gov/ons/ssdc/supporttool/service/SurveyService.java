@@ -5,13 +5,13 @@ import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectT
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFuture;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.AllowedFulfilmentDto;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
@@ -118,7 +118,7 @@ public class SurveyService {
     event.setPayload(payloadDTO);
 
     String topic = toProjectTopicName(surveyUpdateEventTopic, sharedPubsubProject).toString();
-    ListenableFuture<String> future = pubSubTemplate.publish(topic, event);
+    CompletableFuture<String> future = pubSubTemplate.publish(topic, event);
 
     try {
       future.get(publishTimeout, TimeUnit.SECONDS);

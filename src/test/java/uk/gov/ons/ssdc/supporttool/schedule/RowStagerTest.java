@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static uk.gov.ons.ssdc.supporttool.testhelper.ScheduleHelper.*;
 
+import com.opencsv.exceptions.CsvValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class RowStagerTest {
   }
 
   @Test
-  void testRowStagerSuccess() throws IOException {
+  void testRowStagerSuccess() throws IOException, CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.STAGING_IN_PROGRESS);
     job.setStagingRowNumber(1);
@@ -71,7 +72,7 @@ public class RowStagerTest {
   }
 
   @Test
-  void testRowStagerFailedToStageChunk() throws IOException {
+  void testRowStagerFailedToStageChunk() throws IOException, CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", false, JobStatus.STAGING_IN_PROGRESS);
     List<Job> jobList = new ArrayList<>();
@@ -92,7 +93,7 @@ public class RowStagerTest {
   }
 
   @Test
-  void testRowStagerThrowIOException() throws IOException {
+  void testRowStagerThrowIOException() throws IOException, CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.STAGING_IN_PROGRESS);
     List<Job> jobList = new ArrayList<>();
@@ -111,7 +112,7 @@ public class RowStagerTest {
   }
 
   @Test
-  void testFileStagerFileDoesNotExist() {
+  void testFileStagerFileDoesNotExist() throws CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.STAGING_IN_PROGRESS);
     List<Job> jobList = new ArrayList<>();

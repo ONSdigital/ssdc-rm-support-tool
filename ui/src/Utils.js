@@ -47,7 +47,7 @@ export const getFulfilmentExportFileTemplatesForSurvey = async (
     return [];
 
   const response = await fetch(
-    `/api/fulfilmentSurveyExportFileTemplates/?surveyId=${surveyId}`,
+    `/api/fulfilmentSurveyExportFileTemplates?surveyId=${surveyId}`,
   );
   const fulfilmentExportFileTemplates = await response.json();
   return fulfilmentExportFileTemplates;
@@ -64,7 +64,7 @@ export const getSmsFulfilmentTemplatesForSurvey = async (
     return [];
 
   const response = await fetch(
-    `/api/fulfilmentSurveySmsTemplates/?surveyId=${surveyId}`,
+    `/api/fulfilmentSurveySmsTemplates?surveyId=${surveyId}`,
   );
   const smsFulfilmentTemplatesJson = await response.json();
 
@@ -84,7 +84,7 @@ export const getEmailFulfilmentTemplatesForSurvey = async (
     return [];
 
   const response = await fetch(
-    `/api/fulfilmentSurveyEmailTemplates/?surveyId=${surveyId}`,
+    `/api/fulfilmentSurveyEmailTemplates?surveyId=${surveyId}`,
   );
   const emailFulfilmentTemplatesJson = await response.json();
 
@@ -104,7 +104,7 @@ export const getActionRuleExportFilePackCodesForSurvey = async (
     return [];
 
   const response = await fetch(
-    `/api/actionRuleSurveyExportFileTemplates/?surveyId=${surveyId}`,
+    `/api/actionRuleSurveyExportFileTemplates?surveyId=${surveyId}`,
   );
   const exportFileTemplatesJson = await response.json();
 
@@ -122,7 +122,7 @@ export const getActionRuleSmsPackCodesForSurvey = async (
     return [];
 
   const response = await fetch(
-    `/api/actionRuleSurveySmsTemplates/?surveyId=${surveyId}`,
+    `/api/actionRuleSurveySmsTemplates?surveyId=${surveyId}`,
   );
   const smsTemplatesJson = await response.json();
 
@@ -142,7 +142,7 @@ export const getActionRuleEmailPackCodesForSurvey = async (
     return [];
 
   const response = await fetch(
-    `/api/actionRuleSurveyEmailTemplates/?surveyId=${surveyId}`,
+    `/api/actionRuleSurveyEmailTemplates?surveyId=${surveyId}`,
   );
   const emailTemplatesJson = await response.json();
 

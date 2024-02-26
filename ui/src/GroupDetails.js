@@ -141,7 +141,7 @@ class GroupDetails extends Component {
     if (!authorisedActivities.includes("SUPER_USER")) return;
 
     const permissionsResponse = await fetch(
-      `/api/userGroupPermissions/?groupId=${this.props.groupId}`,
+      `/api/userGroupPermissions?groupId=${this.props.groupId}`,
     );
 
     const permissionsJson = await permissionsResponse.json();

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
@@ -65,7 +65,7 @@ class AllEndpointsIT {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.LIST_ACTION_RULES,
-        (bundle) -> String.format("actionRules/?collectionExercise=%s", bundle.getCollexId()));
+        (bundle) -> String.format("actionRules?collectionExercise=%s", bundle.getCollexId()));
 
     integrationTestHelper.testPost(
         port,
@@ -176,8 +176,7 @@ class AllEndpointsIT {
         port,
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES,
         (bundle) ->
-            String.format(
-                "actionRuleSurveyExportFileTemplates/?surveyId=%s", bundle.getSurveyId()));
+            String.format("actionRuleSurveyExportFileTemplates?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
@@ -197,7 +196,7 @@ class AllEndpointsIT {
         port,
         UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES,
         (bundle) ->
-            String.format("actionRuleSurveySmsTemplates/?surveyId=%s", bundle.getSurveyId()));
+            String.format("actionRuleSurveySmsTemplates?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
@@ -217,7 +216,7 @@ class AllEndpointsIT {
         port,
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES,
         (bundle) ->
-            String.format("actionRuleSurveyEmailTemplates/?surveyId=%s", bundle.getSurveyId()));
+            String.format("actionRuleSurveyEmailTemplates?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
@@ -249,7 +248,7 @@ class AllEndpointsIT {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES,
-        (bundle) -> String.format("collectionExercises/?surveyId=%s", bundle.getSurveyId()));
+        (bundle) -> String.format("collectionExercises?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
@@ -285,8 +284,7 @@ class AllEndpointsIT {
         port,
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS,
         (bundle) ->
-            String.format(
-                "fulfilmentSurveyExportFileTemplates/?surveyId=%s", bundle.getSurveyId()));
+            String.format("fulfilmentSurveyExportFileTemplates?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
@@ -306,7 +304,7 @@ class AllEndpointsIT {
         port,
         UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS,
         (bundle) ->
-            String.format("fulfilmentSurveySmsTemplates/?surveyId=%s", bundle.getSurveyId()));
+            String.format("fulfilmentSurveySmsTemplates?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
@@ -326,7 +324,7 @@ class AllEndpointsIT {
         port,
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS,
         (bundle) ->
-            String.format("fulfilmentSurveyEmailTemplates/?surveyId=%s", bundle.getSurveyId()));
+            String.format("fulfilmentSurveyEmailTemplates?surveyId=%s", bundle.getSurveyId()));
 
     integrationTestHelper.testPost(
         port,
@@ -509,7 +507,7 @@ class AllEndpointsIT {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.SUPER_USER,
-        (bundle) -> String.format("userGroupMembers/?userId=%s", bundle.getUserId()));
+        (bundle) -> String.format("userGroupMembers?userId=%s", bundle.getUserId()));
 
     integrationTestHelper.testPost(
         port,
@@ -538,7 +536,7 @@ class AllEndpointsIT {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.SUPER_USER,
-        (bundle) -> String.format("userGroupPermissions/?groupId=%s", bundle.getGroupId()));
+        (bundle) -> String.format("userGroupPermissions?groupId=%s", bundle.getGroupId()));
 
     integrationTestHelper.testPost(
         port,

@@ -3,6 +3,7 @@ package uk.gov.ons.ssdc.supporttool.schedule;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
+import com.opencsv.exceptions.CsvValidationException;
 import java.io.*;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ public class FileStagerTest {
   }
 
   @Test
-  void testFileStagerSuccess() throws IOException {
+  void testFileStagerSuccess() throws IOException, CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
@@ -57,7 +58,7 @@ public class FileStagerTest {
   }
 
   @Test
-  void testFileStagerUnexpectedColumnName() throws IOException {
+  void testFileStagerUnexpectedColumnName() throws IOException, CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
@@ -77,7 +78,7 @@ public class FileStagerTest {
   }
 
   @Test
-  void testFileStagerMismatchColumns() throws IOException {
+  void testFileStagerMismatchColumns() throws IOException, CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
@@ -99,7 +100,7 @@ public class FileStagerTest {
   }
 
   @Test
-  void testRowChunkStagerFailedWithIOException() throws IOException {
+  void testRowChunkStagerFailedWithIOException() throws IOException, CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();
@@ -120,7 +121,7 @@ public class FileStagerTest {
   }
 
   @Test
-  void testFileStagerFileDoesNotExist() {
+  void testFileStagerFileDoesNotExist() throws CsvValidationException {
     // Given
     Job job = ScheduleHelper.getJob("Junk", true, JobStatus.FILE_UPLOADED);
     List<Job> jobList = new ArrayList<>();

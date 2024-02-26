@@ -3,6 +3,7 @@ package uk.gov.ons.ssdc.supporttool.schedule;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import java.io.IOException;
 import java.util.*;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,8 @@ public class RowChunkStager {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public JobStatus stageChunk(Job job, String[] headerRow, CSVReader csvReader) {
+  public JobStatus stageChunk(Job job, String[] headerRow, CSVReader csvReader)
+      throws CsvValidationException {
     JobStatus jobStatus = JobStatus.VALIDATION_IN_PROGRESS;
 
     try {
