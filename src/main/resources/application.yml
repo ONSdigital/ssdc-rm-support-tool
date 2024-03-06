@@ -77,11 +77,8 @@ notifyservice:
     host: localhost
     port: 8162
 
-iapaudience: DUMMY
-
-dummyuseridentity-allowed: false # This ** MUST ALWAYS!! ** be false in production!!!
-dummyuseridentity: dummy@fake-email.com
-dummysuperuseridentity: dummy@fake-email.com
+# false FOR TESTING ONLY, REMOVE ENTIRELY WHENN COMMITTING
+iapaudience: false
 
 exportfiledestinationconfigfile: dummy-export-file-destination-config.json
 notifyserviceconfigfile: dummy-notify-config.json
