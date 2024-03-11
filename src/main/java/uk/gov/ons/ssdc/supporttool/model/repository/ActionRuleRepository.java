@@ -8,4 +8,5 @@ import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 
 public interface ActionRuleRepository extends JpaRepository<ActionRule, UUID> {
   List<ActionRule> findByCollectionExercise(CollectionExercise collectionExercise);
+  Integer getCaseCount(String classifier);
 }

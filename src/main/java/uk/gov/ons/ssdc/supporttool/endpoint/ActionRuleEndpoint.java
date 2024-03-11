@@ -52,6 +52,7 @@ public class ActionRuleEndpoint {
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final SmsTemplateRepository smsTemplateRepository;
   private final EmailTemplateRepository emailTemplateRepository;
+  private final JdbcTemplate jdbcTemplate;
 
   public ActionRuleEndpoint(
       ActionRuleRepository actionRuleRepository,
@@ -302,4 +303,19 @@ public class ActionRuleEndpoint {
                   HttpStatus.NOT_FOUND, "Collection exercise not found");
             });
   }
+
+  @GetMapping
+  public ResponseEntity<Integer> getActionRuleCaseCount(
+      @RequestBody() ActionRuleDto actionRuleDTO) {
+
+    StringBuilder actionRuleQuery = new StringBuilder();
+    actionRuleQuery.append(
+        String.format("SELECT COUNT(*) FROM casev3.cases WHERE collection_exercise_id='%s'",
+        actionRuleDTO.getCollectionExerciseId().toString())).append(" AND ")
+        .append(actionRule.getClassifiers()).append(";");
+
+    return actionRuleRepository.getCaseCount(actionRuleQuery.toString());
+  }
+
 }
+
