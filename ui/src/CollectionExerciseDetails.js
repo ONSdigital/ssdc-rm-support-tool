@@ -61,7 +61,7 @@ class CollectionExerciseDetails extends Component {
     currentTriggerDateTime: "",
     updatedTriggerDateTime: "",
     confirmRescheduleDialogDisplayed: false,
-    caseCount: "",
+    caseCount: 0,
     displayCaseCount: false,
   };
 
@@ -135,15 +135,11 @@ class CollectionExerciseDetails extends Component {
   getDryRunCaseCount = async (authorisedActivities, actionRule) => {
     if (!authorisedActivities.includes("LIST_ACTION_RULES")) return;
 
-    const response = await fetch(`/api/actionRules`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(actionRule),
+    const response = await fetch(`/api/actionRules/caseCount?actionRuleId=${actionRule.actionRuleId}`,);
+
+    this.setState({
+      caseCount: await response.json(),
     });
-    const actionRuleCaseCount = await response.json();
-
-    return actionRuleCaseCount
-
   };
 
   getExportFileTemplates = async (authorisedActivities) => {
@@ -232,8 +228,8 @@ class CollectionExerciseDetails extends Component {
   };
 
   openCaseCountDialog = (actionRule) => {
+    this.getDryRunCaseCount(this.state.authorisedActivities, actionRule),
     this.setState({
-      caseCount: this.getDryRunCaseCount(this.state.authorisedActivities, actionRule),
       displayCaseCount: true
     });
   }
@@ -497,7 +493,8 @@ class CollectionExerciseDetails extends Component {
 
   onCloseCaseCount = () => {
     this.setState({
-      displayCaseCount: false
+      displayCaseCount: false,
+      caseCount: 0
     });
   };
 
@@ -628,7 +625,7 @@ class CollectionExerciseDetails extends Component {
           <TableCell component="th" scope="row">
             <Button
               variant="contained"
-              onClick={this.openCaseCountDialog(actionRule)}
+              onClick={() => this.openCaseCountDialog(actionRule)}
               id="dryRunCaseCountBtn"
             >
               Dry Run
@@ -1036,7 +1033,7 @@ class CollectionExerciseDetails extends Component {
             <div>
               <div>
                 <p style={{ marginTop: 20 }}>
-                  {JSON.stringify(this.state.caseCount)}
+                  {"Expected case count for Action Rule: " + JSON.stringify(this.state.caseCount)}
                 </p>
               </div>
               <div style={{ marginTop: 10 }}>
