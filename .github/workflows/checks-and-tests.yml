@@ -85,7 +85,7 @@ jobs:
       - name: Set Up Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
 
       - name: Update NPM
         # The setup node action links the version of NPM to the version of node
