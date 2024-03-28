@@ -18,7 +18,8 @@
   },
   "overrides": {
     "nth-check@1.x": "^2.0.1",
-    "postcss": "^8.4.31"
+    "postcss": "^8.4.31",
+    "follow-redirects@1.15.5": "^1.15.6"
   },
   "engines": {
     "npm": "^10.4.0"
