@@ -119,7 +119,7 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
             .countActionRuleSurveyExportFileTemplateByExportFileTemplateAndSurvey(
                 exportFileTemplate, survey)
         != 0) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+      log.with("httpStatus", HttpStatus.CONFLICT)
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)
           .warn(
@@ -130,7 +130,7 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
 
     Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.CONFLICT)
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
           .warn(
