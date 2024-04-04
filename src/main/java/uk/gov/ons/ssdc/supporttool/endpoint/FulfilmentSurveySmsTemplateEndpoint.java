@@ -119,8 +119,7 @@ public class FulfilmentSurveySmsTemplateEndpoint {
       log.with("httpStatus", HttpStatus.CONFLICT)
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)
-          .warn(
-              "Failed to create fulfilment sms template, SMS Template already exists for survey");
+          .warn("Failed to create fulfilment sms template, SMS Template already exists for survey");
       return new ResponseEntity<>("SMS Template already exists for survey", HttpStatus.CONFLICT);
     }
 
