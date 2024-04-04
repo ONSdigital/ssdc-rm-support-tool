@@ -129,7 +129,7 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
 
     Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+      log.with("httpStatus", HttpStatus.CONFLICT)
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
           .warn(
