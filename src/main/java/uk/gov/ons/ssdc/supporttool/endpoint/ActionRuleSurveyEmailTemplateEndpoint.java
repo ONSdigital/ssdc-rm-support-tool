@@ -129,8 +129,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
           .with("userEmail", userEmail)
           .warn(
               "Failed to create action rule survey email template, Email Template already exists for survey");
-      return new ResponseEntity<>(
-          "Export Email already exists for survey", HttpStatus.CONFLICT);
+      return new ResponseEntity<>("Export Email already exists for survey", HttpStatus.CONFLICT);
     }
 
     ActionRuleSurveyEmailTemplate actionRuleSurveyEmailTemplate =

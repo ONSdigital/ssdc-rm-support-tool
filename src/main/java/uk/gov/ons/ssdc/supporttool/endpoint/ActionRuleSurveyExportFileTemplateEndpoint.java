@@ -124,7 +124,8 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
           .with("userEmail", userEmail)
           .warn(
               "Failed to create action rule survey Export File template, Export File Template already exists for survey");
-      return new ResponseEntity<>("Export File Template already exists for survey", HttpStatus.CONFLICT);
+      return new ResponseEntity<>(
+          "Export File Template already exists for survey", HttpStatus.CONFLICT);
     }
 
     Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));
