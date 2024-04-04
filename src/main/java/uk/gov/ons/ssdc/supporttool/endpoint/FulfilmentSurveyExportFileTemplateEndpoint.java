@@ -127,7 +127,7 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)
           .warn(
-              "Failed to create action rule survey export file template, Export File Template already exists for survey");
+              "Failed to create fulfilment export file template, Export File Template already exists for survey");
       return new ResponseEntity<>(
           "Export File Template already exists for survey", HttpStatus.CONFLICT);
     }

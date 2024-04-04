@@ -126,7 +126,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
           .warn(
-              "Failed to create action rule survey sms template, there were errors validating the sms template");
+              "Failed to create action rule sms template, there were errors validating the sms template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 
