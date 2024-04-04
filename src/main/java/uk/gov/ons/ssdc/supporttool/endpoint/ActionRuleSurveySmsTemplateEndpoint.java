@@ -116,7 +116,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)
           .warn(
-              "Failed to create action rule survey sms template, SMS Template already exists for survey");
+              "Failed to create action rule sms template, SMS Template already exists for survey");
       return new ResponseEntity<>("SMS Template already exists for survey", HttpStatus.CONFLICT);
     }
 
