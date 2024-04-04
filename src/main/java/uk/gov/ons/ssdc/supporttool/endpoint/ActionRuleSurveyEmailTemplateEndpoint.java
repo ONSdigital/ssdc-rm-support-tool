@@ -121,6 +121,18 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 
+    if (actionRuleSurveyEmailTemplateRepository
+            .countActionRuleSurveyEmailTemplateByEmailTemplateAndAndSurvey(emailTemplate, survey)
+        != 0) {
+      log.with("httpStatus", HttpStatus.BAD_REQUEST)
+          .with("packCode", allowTemplateOnSurvey.getPackCode())
+          .with("userEmail", userEmail)
+          .warn(
+              "Failed to create action rule survey email template, Email Template already exists for survey");
+      return new ResponseEntity<>(
+          "Export Email already exists for survey", HttpStatus.CONFLICT);
+    }
+
     ActionRuleSurveyEmailTemplate actionRuleSurveyEmailTemplate =
         new ActionRuleSurveyEmailTemplate();
     actionRuleSurveyEmailTemplate.setId(UUID.randomUUID());
