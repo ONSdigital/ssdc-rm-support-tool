@@ -12,6 +12,5 @@ public interface FulfilmentSurveyEmailTemplateRepository
   List<FulfilmentSurveyEmailTemplate> findBySurvey(Survey survey);
 
   boolean existsFulfilmentSurveyEmailTemplateByEmailTemplateAndSurvey(
-      EmailTemplate emailTemplate, Survey survey
-      );
+      EmailTemplate emailTemplate, Survey survey);
 }

@@ -12,6 +12,5 @@ public interface FulfilmentSurveySmsTemplateRepository
   List<FulfilmentSurveySmsTemplate> findBySurvey(Survey survey);
 
   boolean existsFulfilmentSurveySmsTemplateBySmsTemplateAndSurvey(
-    SmsTemplate smsTemplate, Survey survey
-  );
+      SmsTemplate smsTemplate, Survey survey);
 }

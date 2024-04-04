@@ -12,6 +12,5 @@ public interface ActionRuleSurveyExportFileTemplateRepository
   List<ActionRuleSurveyExportFileTemplate> findBySurvey(Survey survey);
 
   boolean existsActionRuleSurveyExportFileTemplateByExportFileTemplateAndSurvey(
-    ExportFileTemplate exportFileTemplate, Survey survey
-  );
+      ExportFileTemplate exportFileTemplate, Survey survey);
 }

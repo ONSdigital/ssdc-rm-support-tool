@@ -12,5 +12,5 @@ public interface ActionRuleSurveySmsTemplateRepository
   List<ActionRuleSurveySmsTemplate> findBySurvey(Survey survey);
 
   boolean existsActionRuleSurveySmsTemplateBySmsTemplateAndSurvey(
-    SmsTemplate smsTemplate, Survey survey);
+      SmsTemplate smsTemplate, Survey survey);
 }

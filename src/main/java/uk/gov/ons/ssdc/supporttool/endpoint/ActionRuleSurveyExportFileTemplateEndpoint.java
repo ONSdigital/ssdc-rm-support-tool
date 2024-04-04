@@ -116,8 +116,8 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                 });
 
     if (actionRuleSurveyExportFileTemplateRepository
-            .existsActionRuleSurveyExportFileTemplateByExportFileTemplateAndSurvey(
-                exportFileTemplate, survey)) {
+        .existsActionRuleSurveyExportFileTemplateByExportFileTemplateAndSurvey(
+            exportFileTemplate, survey)) {
       log.with("httpStatus", HttpStatus.CONFLICT)
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)

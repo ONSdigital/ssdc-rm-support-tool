@@ -12,6 +12,5 @@ public interface FulfilmentSurveyExportFileTemplateRepository
   List<FulfilmentSurveyExportFileTemplate> findBySurvey(Survey survey);
 
   boolean existsFulfilmentSurveyExportFileTemplateByExportFileTemplateAndSurvey(
-    ExportFileTemplate exportFileTemplate, Survey survey
-  );
+      ExportFileTemplate exportFileTemplate, Survey survey);
 }
