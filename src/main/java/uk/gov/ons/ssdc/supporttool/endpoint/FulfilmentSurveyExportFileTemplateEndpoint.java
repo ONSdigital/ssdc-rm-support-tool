@@ -120,9 +120,8 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
                 });
 
     if (fulfilmentSurveyExportFileTemplateRepository
-            .countFulfilmentSurveyExportFileTemplateByExportFileTemplateAndSurvey(
-                exportFileTemplate, survey)
-        != 0) {
+            .existsFulfilmentSurveyExportFileTemplateByExportFileTemplateAndSurvey(
+                exportFileTemplate, survey)) {
       log.with("httpStatus", HttpStatus.CONFLICT)
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)

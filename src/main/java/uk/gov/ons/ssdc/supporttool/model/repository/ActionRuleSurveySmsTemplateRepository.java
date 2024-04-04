@@ -11,6 +11,6 @@ public interface ActionRuleSurveySmsTemplateRepository
     extends JpaRepository<ActionRuleSurveySmsTemplate, UUID> {
   List<ActionRuleSurveySmsTemplate> findBySurvey(Survey survey);
 
-  int countActionRuleSurveySmsTemplateBySmsTemplateAndSurvey(
-      SmsTemplate smsTemplate, Survey survey);
+  boolean existsActionRuleSurveySmsTemplateBySmsTemplateAndSurvey(
+    SmsTemplate smsTemplate, Survey survey);
 }

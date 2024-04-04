@@ -115,8 +115,7 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                 });
 
     if (fulfilmentSurveyEmailTemplateRepository
-            .countFulfilmentSurveyEmailTemplateByEmailTemplateAndSurvey(emailTemplate, survey)
-        != 0) {
+            .existsFulfilmentSurveyEmailTemplateByEmailTemplateAndSurvey(emailTemplate, survey)) {
       log.with("httpStatus", HttpStatus.CONFLICT)
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)

@@ -11,6 +11,7 @@ public interface FulfilmentSurveyEmailTemplateRepository
     extends JpaRepository<FulfilmentSurveyEmailTemplate, UUID> {
   List<FulfilmentSurveyEmailTemplate> findBySurvey(Survey survey);
 
-  int countFulfilmentSurveyEmailTemplateByEmailTemplateAndSurvey(
-      EmailTemplate emailTemplate, Survey survey);
+  boolean existsFulfilmentSurveyEmailTemplateByEmailTemplateAndSurvey(
+      EmailTemplate emailTemplate, Survey survey
+      );
 }

@@ -110,8 +110,7 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                 });
 
     if (actionRuleSurveySmsTemplateRepository
-            .countActionRuleSurveySmsTemplateBySmsTemplateAndSurvey(smsTemplate, survey)
-        != 0) {
+            .existsActionRuleSurveySmsTemplateBySmsTemplateAndSurvey(smsTemplate, survey)) {
       log.with("httpStatus", HttpStatus.CONFLICT)
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)

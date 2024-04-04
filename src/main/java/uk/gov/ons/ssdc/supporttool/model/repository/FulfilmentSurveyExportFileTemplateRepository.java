@@ -11,6 +11,7 @@ public interface FulfilmentSurveyExportFileTemplateRepository
     extends JpaRepository<FulfilmentSurveyExportFileTemplate, UUID> {
   List<FulfilmentSurveyExportFileTemplate> findBySurvey(Survey survey);
 
-  int countFulfilmentSurveyExportFileTemplateByExportFileTemplateAndSurvey(
-      ExportFileTemplate exportFileTemplate, Survey survey);
+  boolean existsFulfilmentSurveyExportFileTemplateByExportFileTemplateAndSurvey(
+    ExportFileTemplate exportFileTemplate, Survey survey
+  );
 }

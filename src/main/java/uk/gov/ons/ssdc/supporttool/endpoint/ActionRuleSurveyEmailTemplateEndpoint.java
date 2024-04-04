@@ -112,8 +112,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                 });
 
     if (actionRuleSurveyEmailTemplateRepository
-            .countActionRuleSurveyEmailTemplateByEmailTemplateAndAndSurvey(emailTemplate, survey)
-        != 0) {
+        .existsActionRuleSurveyEmailTemplateByEmailTemplateAndSurvey(emailTemplate, survey)) {
       log.with("httpStatus", HttpStatus.CONFLICT)
           .with("packCode", allowTemplateOnSurvey.getPackCode())
           .with("userEmail", userEmail)

@@ -11,6 +11,7 @@ public interface ActionRuleSurveyExportFileTemplateRepository
     extends JpaRepository<ActionRuleSurveyExportFileTemplate, UUID> {
   List<ActionRuleSurveyExportFileTemplate> findBySurvey(Survey survey);
 
-  int countActionRuleSurveyExportFileTemplateByExportFileTemplateAndSurvey(
-      ExportFileTemplate exportFileTemplate, Survey survey);
+  boolean existsActionRuleSurveyExportFileTemplateByExportFileTemplateAndSurvey(
+    ExportFileTemplate exportFileTemplate, Survey survey
+  );
 }

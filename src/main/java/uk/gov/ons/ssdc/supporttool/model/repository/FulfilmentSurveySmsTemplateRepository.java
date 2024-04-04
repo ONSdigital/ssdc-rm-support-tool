@@ -11,6 +11,7 @@ public interface FulfilmentSurveySmsTemplateRepository
     extends JpaRepository<FulfilmentSurveySmsTemplate, UUID> {
   List<FulfilmentSurveySmsTemplate> findBySurvey(Survey survey);
 
-  int countFulfilmentSurveySmsTemplateBySmsTemplateAndSurvey(
-      SmsTemplate smsTemplate, Survey survey);
+  boolean existsFulfilmentSurveySmsTemplateBySmsTemplateAndSurvey(
+    SmsTemplate smsTemplate, Survey survey
+  );
 }
