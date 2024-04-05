@@ -70,7 +70,8 @@ class AllEndpointsIT {
     integrationTestHelper.testGet(
         port,
         UserGroupAuthorisedActivityType.LIST_ACTION_RULES,
-        (bundle) -> String.format("caseCount?actionRuleId=%s", bundle.getActionRuleId()));
+        (bundle) ->
+            String.format("actionRules/caseCount?actionRuleId=%s", bundle.getActionRuleId()));
 
     integrationTestHelper.testPost(
         port,
