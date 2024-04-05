@@ -115,6 +115,18 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                       HttpStatus.BAD_REQUEST, "Export File template not found");
                 });
 
+    if (actionRuleSurveyExportFileTemplateRepository
+        .existsActionRuleSurveyExportFileTemplateByExportFileTemplateAndSurvey(
+            exportFileTemplate, survey)) {
+      log.with("httpStatus", HttpStatus.CONFLICT)
+          .with("packCode", allowTemplateOnSurvey.getPackCode())
+          .with("userEmail", userEmail)
+          .warn(
+              "Failed to create action rule Export File template, Export File Template already exists for survey");
+      return new ResponseEntity<>(
+          "Export File Template already exists for survey", HttpStatus.CONFLICT);
+    }
+
     Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)

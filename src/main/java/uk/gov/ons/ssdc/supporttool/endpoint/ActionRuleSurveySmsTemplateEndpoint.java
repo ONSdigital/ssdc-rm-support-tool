@@ -109,13 +109,23 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                       HttpStatus.BAD_REQUEST, "SMS template not found");
                 });
 
+    if (actionRuleSurveySmsTemplateRepository
+        .existsActionRuleSurveySmsTemplateBySmsTemplateAndSurvey(smsTemplate, survey)) {
+      log.with("httpStatus", HttpStatus.CONFLICT)
+          .with("packCode", allowTemplateOnSurvey.getPackCode())
+          .with("userEmail", userEmail)
+          .warn(
+              "Failed to create action rule sms template, SMS Template already exists for survey");
+      return new ResponseEntity<>("SMS Template already exists for survey", HttpStatus.CONFLICT);
+    }
+
     Optional<String> errorOpt = validate(survey, Set.of(smsTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
           .with("userEmail", userEmail)
           .with("validationErrors", errorOpt.get())
           .warn(
-              "Failed to create action rule survey sms template, there were errors validating the sms template");
+              "Failed to create action rule sms template, there were errors validating the sms template");
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 
