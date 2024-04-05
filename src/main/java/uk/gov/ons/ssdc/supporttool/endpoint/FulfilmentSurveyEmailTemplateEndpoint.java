@@ -114,6 +114,16 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                       HttpStatus.BAD_REQUEST, "Email template not found");
                 });
 
+    if (fulfilmentSurveyEmailTemplateRepository
+        .existsFulfilmentSurveyEmailTemplateByEmailTemplateAndSurvey(emailTemplate, survey)) {
+      log.with("httpStatus", HttpStatus.CONFLICT)
+          .with("packCode", allowTemplateOnSurvey.getPackCode())
+          .with("userEmail", userEmail)
+          .warn(
+              "Failed to create fulfilment email template, Email Template already exists for survey");
+      return new ResponseEntity<>("Email Template already exists for survey", HttpStatus.CONFLICT);
+    }
+
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);

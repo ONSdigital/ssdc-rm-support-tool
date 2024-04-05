@@ -113,6 +113,15 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                       HttpStatus.BAD_REQUEST, "SMS template not found");
                 });
 
+    if (fulfilmentSurveySmsTemplateRepository
+        .existsFulfilmentSurveySmsTemplateBySmsTemplateAndSurvey(smsTemplate, survey)) {
+      log.with("httpStatus", HttpStatus.CONFLICT)
+          .with("packCode", allowTemplateOnSurvey.getPackCode())
+          .with("userEmail", userEmail)
+          .warn("Failed to create fulfilment sms template, SMS Template already exists for survey");
+      return new ResponseEntity<>("SMS Template already exists for survey", HttpStatus.CONFLICT);
+    }
+
     Optional<String> errorOpt = validate(survey, Set.of(smsTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);

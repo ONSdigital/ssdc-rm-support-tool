@@ -111,6 +111,16 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                       HttpStatus.BAD_REQUEST, "Email template not found");
                 });
 
+    if (actionRuleSurveyEmailTemplateRepository
+        .existsActionRuleSurveyEmailTemplateByEmailTemplateAndSurvey(emailTemplate, survey)) {
+      log.with("httpStatus", HttpStatus.CONFLICT)
+          .with("packCode", allowTemplateOnSurvey.getPackCode())
+          .with("userEmail", userEmail)
+          .warn(
+              "Failed to create action rule email template, Email Template already exists for survey");
+      return new ResponseEntity<>("Email Template already exists for survey", HttpStatus.CONFLICT);
+    }
+
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
       log.with("httpStatus", HttpStatus.BAD_REQUEST)
