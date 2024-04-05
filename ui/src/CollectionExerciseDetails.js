@@ -135,7 +135,9 @@ class CollectionExerciseDetails extends Component {
   getDryRunCaseCount = async (authorisedActivities, actionRule) => {
     if (!authorisedActivities.includes("LIST_ACTION_RULES")) return;
 
-    const response = await fetch(`/api/actionRules/caseCount?actionRuleId=${actionRule.actionRuleId}`,);
+    const response = await fetch(
+      `/api/actionRules/caseCount?actionRuleId=${actionRule.actionRuleId}`,
+    );
 
     this.setState({
       caseCount: await response.json(),
@@ -229,10 +231,10 @@ class CollectionExerciseDetails extends Component {
 
   openCaseCountDialog = (actionRule) => {
     this.getDryRunCaseCount(this.state.authorisedActivities, actionRule),
-    this.setState({
-      displayCaseCount: true
-    });
-  }
+      this.setState({
+        displayCaseCount: true,
+      });
+  };
 
   closeDialog = () => {
     this.setState({ createActionRulesDialogDisplayed: false });
@@ -494,7 +496,7 @@ class CollectionExerciseDetails extends Component {
   onCloseCaseCount = () => {
     this.setState({
       displayCaseCount: false,
-      caseCount: 0
+      caseCount: 0,
     });
   };
 
@@ -623,13 +625,15 @@ class CollectionExerciseDetails extends Component {
             {actionRule.packCode}
           </TableCell>
           <TableCell component="th" scope="row">
-            <Button
-              variant="contained"
-              onClick={() => this.openCaseCountDialog(actionRule)}
-              id="dryRunCaseCountBtn"
-            >
-              Dry Run
-            </Button>
+            {!actionRule.hasTriggered ? (
+              <Button
+                variant="contained"
+                onClick={() => this.openCaseCountDialog(actionRule)}
+                id="dryRunCaseCountBtn"
+              >
+                Dry Run
+              </Button>
+            ) : null}
           </TableCell>
         </TableRow>
       );
@@ -793,6 +797,7 @@ class CollectionExerciseDetails extends Component {
                     <TableCell>UAC Metadata</TableCell>
                     <TableCell>Classifiers</TableCell>
                     <TableCell>Pack Code</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{actionRuleTableRows}</TableBody>
@@ -1033,7 +1038,8 @@ class CollectionExerciseDetails extends Component {
             <div>
               <div>
                 <p style={{ marginTop: 20 }}>
-                  {"Expected case count for Action Rule: " + JSON.stringify(this.state.caseCount)}
+                  {"Expected case count for Action Rule: " +
+                    JSON.stringify(this.state.caseCount)}
                 </p>
               </div>
               <div style={{ marginTop: 10 }}>

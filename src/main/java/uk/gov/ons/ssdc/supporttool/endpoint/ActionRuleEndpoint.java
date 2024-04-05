@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -330,13 +331,14 @@ public class ActionRuleEndpoint {
         UserGroupAuthorisedActivityType.LIST_ACTION_RULES);
 
     StringBuilder query = new StringBuilder();
-    query
-        .append(
-            String.format(
-                "SELECT COUNT(*) FROM casev3.cases WHERE collection_exercise_id='%s'",
-                actionRule.getCollectionExercise().getId().toString()))
-        .append(" AND ")
-        .append(actionRule.getClassifiers());
+    query.append(
+        String.format(
+            "SELECT COUNT(*) FROM casev3.cases WHERE collection_exercise_id='%s'",
+            actionRule.getCollectionExercise().getId().toString()));
+
+    if (StringUtils.hasText(actionRule.getClassifiers())) {
+      query.append(" AND ").append(actionRule.getClassifiers());
+    }
 
     return jdbcTemplate.queryForObject(query.toString(), Integer.class);
   }
