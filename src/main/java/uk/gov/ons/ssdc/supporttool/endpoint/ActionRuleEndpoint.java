@@ -17,7 +17,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,6 +54,7 @@ public class ActionRuleEndpoint {
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final SmsTemplateRepository smsTemplateRepository;
   private final EmailTemplateRepository emailTemplateRepository;
+  private final JdbcTemplate jdbcTemplate;
 
   public ActionRuleEndpoint(
       ActionRuleRepository actionRuleRepository,
@@ -59,13 +62,15 @@ public class ActionRuleEndpoint {
       CollectionExerciseRepository collectionExerciseRepository,
       ExportFileTemplateRepository exportFileTemplateRepository,
       SmsTemplateRepository smsTemplateRepository,
-      EmailTemplateRepository emailTemplateRepository) {
+      EmailTemplateRepository emailTemplateRepository,
+      JdbcTemplate jdbcTemplate) {
     this.actionRuleRepository = actionRuleRepository;
     this.userIdentity = userIdentity;
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.smsTemplateRepository = smsTemplateRepository;
     this.emailTemplateRepository = emailTemplateRepository;
+    this.jdbcTemplate = jdbcTemplate;
   }
 
   @GetMapping
@@ -301,5 +306,40 @@ public class ActionRuleEndpoint {
               return new ResponseStatusException(
                   HttpStatus.NOT_FOUND, "Collection exercise not found");
             });
+  }
+
+  @GetMapping(value = "/caseCount")
+  public Integer getActionRuleCaseCount(
+      @RequestParam(value = "actionRuleId") UUID actionRuleId,
+      @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    ActionRule actionRule =
+        actionRuleRepository
+            .findById(actionRuleId)
+            .orElseThrow(
+                () -> {
+                  log.with("actionRuleId", actionRuleId)
+                      .with("httpStatus", HttpStatus.NOT_FOUND)
+                      .with("userEmail", userEmail)
+                      .warn("Failed to dry run action rule, Action Rule not found");
+                  return new ResponseStatusException(HttpStatus.NOT_FOUND, "Action Rule not found");
+                });
+
+    userIdentity.checkUserPermission(
+        userEmail,
+        actionRule.getCollectionExercise().getSurvey(),
+        UserGroupAuthorisedActivityType.LIST_ACTION_RULES);
+
+    StringBuilder query = new StringBuilder();
+    query.append(
+        String.format(
+            "SELECT COUNT(*) FROM casev3.cases WHERE collection_exercise_id='%s'",
+            actionRule.getCollectionExercise().getId().toString()));
+
+    if (StringUtils.hasText(actionRule.getClassifiers())) {
+      query.append(" AND ").append(actionRule.getClassifiers());
+    }
+
+    return jdbcTemplate.queryForObject(query.toString(), Integer.class);
   }
 }

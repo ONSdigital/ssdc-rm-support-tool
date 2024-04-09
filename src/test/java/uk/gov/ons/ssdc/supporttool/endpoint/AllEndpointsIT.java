@@ -67,6 +67,12 @@ class AllEndpointsIT {
         UserGroupAuthorisedActivityType.LIST_ACTION_RULES,
         (bundle) -> String.format("actionRules?collectionExercise=%s", bundle.getCollexId()));
 
+    integrationTestHelper.testGet(
+        port,
+        UserGroupAuthorisedActivityType.LIST_ACTION_RULES,
+        (bundle) ->
+            String.format("actionRules/caseCount?actionRuleId=%s", bundle.getActionRuleId()));
+
     integrationTestHelper.testPost(
         port,
         UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_ACTION_RULE,

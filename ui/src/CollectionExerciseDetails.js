@@ -61,6 +61,8 @@ class CollectionExerciseDetails extends Component {
     currentTriggerDateTime: "",
     updatedTriggerDateTime: "",
     confirmRescheduleDialogDisplayed: false,
+    caseCount: 0,
+    displayCaseCount: false,
   };
 
   componentDidMount() {
@@ -127,6 +129,18 @@ class CollectionExerciseDetails extends Component {
 
     this.setState({
       actionRules: actionRuleJson,
+    });
+  };
+
+  getDryRunCaseCount = async (authorisedActivities, actionRule) => {
+    if (!authorisedActivities.includes("LIST_ACTION_RULES")) return;
+
+    const response = await fetch(
+      `/api/actionRules/caseCount?actionRuleId=${actionRule.actionRuleId}`,
+    );
+
+    this.setState({
+      caseCount: await response.json(),
     });
   };
 
@@ -213,6 +227,13 @@ class CollectionExerciseDetails extends Component {
       rescheduleActionRulesDialogDisplayed: true,
       currentTriggerDateTime: actionRule.triggerDateTime.slice(0, 16),
     });
+  };
+
+  openCaseCountDialog = (actionRule) => {
+    this.getDryRunCaseCount(this.state.authorisedActivities, actionRule),
+      this.setState({
+        displayCaseCount: true,
+      });
   };
 
   closeDialog = () => {
@@ -472,6 +493,13 @@ class CollectionExerciseDetails extends Component {
     this.openRescheduleDialog(this.state.actionRuleToBeUpdated);
   };
 
+  onCloseCaseCount = () => {
+    this.setState({
+      displayCaseCount: false,
+      caseCount: 0,
+    });
+  };
+
   getTimeNowForDateTimePicker = () => {
     var dateNow = new Date();
     dateNow.setMinutes(dateNow.getMinutes() - dateNow.getTimezoneOffset());
@@ -595,6 +623,17 @@ class CollectionExerciseDetails extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             {actionRule.packCode}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {!actionRule.hasTriggered ? (
+              <Button
+                variant="contained"
+                onClick={() => this.openCaseCountDialog(actionRule)}
+                id="dryRunCaseCountBtn"
+              >
+                Dry Run
+              </Button>
+            ) : null}
           </TableCell>
         </TableRow>
       );
@@ -758,6 +797,7 @@ class CollectionExerciseDetails extends Component {
                     <TableCell>UAC Metadata</TableCell>
                     <TableCell>Classifiers</TableCell>
                     <TableCell>Pack Code</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{actionRuleTableRows}</TableBody>
@@ -988,6 +1028,27 @@ class CollectionExerciseDetails extends Component {
                   style={{ margin: 10 }}
                 >
                   Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={this.state.displayCaseCount}>
+          <DialogContent style={{ padding: 30 }}>
+            <div>
+              <div>
+                <p style={{ marginTop: 20 }}>
+                  {"Expected case count for Action Rule: " +
+                    JSON.stringify(this.state.caseCount)}
+                </p>
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <Button
+                  onClick={this.onCloseCaseCount}
+                  variant="contained"
+                  style={{ margin: 10 }}
+                >
+                  Close
                 </Button>
               </div>
             </div>
