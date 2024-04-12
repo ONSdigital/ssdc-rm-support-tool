@@ -23,33 +23,24 @@ public class UserIdentity {
   private static final String IAP_ISSUER_URL = "https://cloud.google.com/iap";
 
   private final UserRepository userRepository;
+  private final DummyUser dummyUser;
   private final String iapAudience;
-  private final boolean dummyUserIdentityAllowed;
-  private final String dummyUserIdentity;
-  private final String dummySuperUserIdentity;
 
   private TokenVerifier tokenVerifier = null;
 
   public UserIdentity(
       UserRepository userRepository,
-      @Value("${iapaudience}") String iapAudience,
-      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed,
-      @Value("${dummyuseridentity}") String dummyUserIdentity,
-      @Value("${dummysuperuseridentity}") String dummySuperUserIdentity) {
+      DummyUser dummyUser,
+      @Value("${iapaudience}") String iapAudience) {
     this.userRepository = userRepository;
+    this.dummyUser = dummyUser;
     this.iapAudience = iapAudience;
-    this.dummyUserIdentityAllowed = dummyUserIdentityAllowed;
-    this.dummyUserIdentity = dummyUserIdentity;
-    this.dummySuperUserIdentity = dummySuperUserIdentity;
-
-    if (dummyUserIdentityAllowed) {
-      log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
-    }
   }
 
   public void checkUserPermission(
       String userEmail, Survey survey, UserGroupAuthorisedActivityType activity) {
-    if (dummyUserIdentityAllowed && userEmail.equalsIgnoreCase(dummySuperUserIdentity)) {
+
+    if (dummyUser.isDummyUserAllowedAndDoesEmailMatch(userEmail)) {
       // Dummy test super user is fully authorised, bypassing all security
       // This is **STRICTLY** for ease of dev/testing in non-production environments
       return;
@@ -97,9 +88,7 @@ public class UserIdentity {
   public void checkGlobalUserPermission(
       String userEmail, UserGroupAuthorisedActivityType activity) {
 
-    if (dummyUserIdentityAllowed && userEmail.equalsIgnoreCase(dummySuperUserIdentity)) {
-      // Dummy test super user is fully authorised, bypassing all security
-      // This is **STRICTLY** for ease of dev/testing in non-production environments
+    if (dummyUser.isDummyUserAllowedAndDoesEmailMatch(userEmail)) {
       return;
     }
 
@@ -136,11 +125,16 @@ public class UserIdentity {
   }
 
   public String getUserEmail(String jwtToken) {
-    if (dummyUserIdentityAllowed && !StringUtils.hasText(jwtToken)) {
-      // If there's no JWT header and dummy test user is enabled, use it
-      // This is **STRICTLY** for ease of dev/testing in non-production environments
-      return dummyUserIdentity;
-    } else if (!StringUtils.hasText(jwtToken)) {
+    if (!StringUtils.hasText(jwtToken)) {
+
+      Optional<String> dummyUserIndentity = dummyUser.getDummyUserIfAllowed();
+
+      if (dummyUserIndentity.isPresent()) {
+        // If there's no JWT header and dummy test user is enabled, use it
+        // This is **STRICTLY** for ease of dev/testing in non-production environments
+        return dummyUserIndentity.get();
+      }
+
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
       log.with("httpStatus", HttpStatus.FORBIDDEN)
           .warn("Requests bypassing IAP are strictly forbidden");

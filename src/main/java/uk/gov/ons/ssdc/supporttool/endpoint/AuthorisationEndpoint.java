@@ -22,25 +22,21 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupMember;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
+import uk.gov.ons.ssdc.supporttool.security.DummyUser;
 
 @RestController
 @RequestMapping(value = "/api/auth")
 public class AuthorisationEndpoint {
   private static final Logger log = LoggerFactory.getLogger(AuthorisationEndpoint.class);
 
-  private final UserRepository userRepository;
-  private final boolean dummyUserIdentityAllowed;
-  private final String dummySuperUserIdentity;
+  private UserRepository userRepository;
+  private final DummyUser dummyUser;
 
-  public AuthorisationEndpoint(
-      UserRepository userRepository,
-      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed,
-      @Value("${dummysuperuseridentity}") String dummySuperUserIdentity) {
+  public AuthorisationEndpoint(UserRepository userRepository, DummyUser dummyUser) {
     this.userRepository = userRepository;
-    this.dummyUserIdentityAllowed = dummyUserIdentityAllowed;
-    this.dummySuperUserIdentity = dummySuperUserIdentity;
+    this.dummyUser = dummyUser;
 
-    if (dummyUserIdentityAllowed) {
+    if (dummyUser.isDummyUserIdentityAllowed()) {
       log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
     }
   }
@@ -50,7 +46,7 @@ public class AuthorisationEndpoint {
       @RequestParam(required = false, value = "surveyId") Optional<UUID> surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
-    if (dummyUserIdentityAllowed && userEmail.equalsIgnoreCase(dummySuperUserIdentity)) {
+    if (dummyUser.isDummyUserAllowedAndDoesEmailMatch(userEmail)) {
       // Dummy test super user is fully authorised, bypassing all security
       // This is **STRICTLY** for ease of dev/testing in non-production environments
       return Set.of(UserGroupAuthorisedActivityType.values());
