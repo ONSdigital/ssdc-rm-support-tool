@@ -19,6 +19,8 @@ public class DummyUser implements AuthUser {
 
   private String userEmail;
 
+  public DummyUser() {}
+
   public DummyUser(String userEmail) {
     log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
     this.userEmail = userEmail;
@@ -34,6 +36,26 @@ public class DummyUser implements AuthUser {
         .with("userEmail", userEmail)
         .warn("Failed to get authorised activities, User not known to RM");
     throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
+  }
+
+  @Override
+  public void checkUserPermission() {
+    checkGlobalUserPermission();
+  }
+
+  @Override
+  public void checkGlobalUserPermission() {
+    if (!isEmailValid(userEmail)) {
+      log.with("userEmail", userEmail)
+          .with("httpStatus", HttpStatus.FORBIDDEN)
+          .warn("User not known to RM");
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
+    }
+  }
+
+  @Override
+  public String getUserEmail() {
+    return dummyUserIdentity;
   }
 
   private boolean isEmailValid(String userEmail) {

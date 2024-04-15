@@ -4,7 +4,11 @@ import java.util.Set;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 
 public interface AuthUser {
-  // public boolean checkEmail();
-
   public Set<UserGroupAuthorisedActivityType> getUserGroupPermission();
+
+  public void checkUserPermission();
+
+  public void checkGlobalUserPermission();
+
+  public String getUserEmail();
 }
