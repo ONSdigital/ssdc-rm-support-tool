@@ -5,6 +5,8 @@ import com.godaddy.logging.LoggerFactory;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,9 @@ public class AuthorisationEndpoint {
   private final boolean dummyUserIdentityAllowed;
   private final String dummySuperUserIdentity;
 
+  @Autowired
+  AuthUser authUser;
+
   public AuthorisationEndpoint(
       UserRepository userRepository,
       @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed,
@@ -43,13 +48,6 @@ public class AuthorisationEndpoint {
       @RequestParam(required = false, value = "surveyId") Optional<UUID> surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
-    AuthUser user;
-    if (dummyUserIdentityAllowed) {
-      user = new DummyUser(userEmail);
-    } else {
-      user = new IAPUser(userRepository, surveyId, userEmail);
-    }
-
-    return user.getUserGroupPermission();
+    return authUser.getUserGroupPermission(userRepository, surveyId, userEmail);
   }
 }

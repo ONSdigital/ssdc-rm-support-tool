@@ -12,7 +12,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.User;
@@ -21,62 +24,23 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupMember;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
+@Component
+@ConditionalOnProperty(name = "dummyuseridentity-allowed", havingValue = "false", matchIfMissing = true)
 public class IAPUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(IAPUser.class);
-
-  private UserRepository userRepository;
-  private Optional<UUID> optionalSurveyId;
-
-  private UUID surveyId;
-
-  private String userEmail;
-
-  private UserGroupAuthorisedActivityType activity;
-
-  private TokenVerifier tokenVerifier;
-
-  private String jwtToken;
-
-  public IAPUser(UserRepository userRepository, Optional<UUID> surveyId, String userEmail) {
-    this.userRepository = userRepository;
-    this.optionalSurveyId = surveyId;
-    this.userEmail = userEmail;
-  }
-
-  public IAPUser(TokenVerifier tokenVerifier, String jwtToken) {
-    this.tokenVerifier = tokenVerifier;
-    this.jwtToken = jwtToken;
-  }
-
-  public IAPUser(
-      UserRepository userRepository,
-      UUID surveyId,
-      String userEmail,
-      UserGroupAuthorisedActivityType activity) {
-    this.userRepository = userRepository;
-    this.surveyId = surveyId;
-    this.userEmail = userEmail;
-    this.activity = activity;
-  }
-
-  public IAPUser(
-      UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
-    this.userRepository = userRepository;
-    this.userEmail = userEmail;
-    this.activity = activity;
-  }
+  public IAPUser() {}
 
   @Override
-  public Set<UserGroupAuthorisedActivityType> getUserGroupPermission() {
-    User user = getUser();
+  public Set<UserGroupAuthorisedActivityType> getUserGroupPermission(UserRepository userRepository, Optional<UUID> surveyId, String userEmail) {
+    User user = getUser(userRepository, userEmail);
 
     Set<UserGroupAuthorisedActivityType> result = new HashSet<>();
     for (UserGroupMember groupMember : user.getMemberOf()) {
       for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
         if (permission.getAuthorisedActivity() == SUPER_USER
             && (permission.getSurvey() == null
-                || (optionalSurveyId.isPresent()
-                    && permission.getSurvey().getId().equals(optionalSurveyId.get())))) {
+                || (surveyId.isPresent()
+                    && permission.getSurvey().getId().equals(surveyId.get())))) {
           if (permission.getSurvey() == null) {
             // User is a global super user so give ALL permissions
             return Set.of(UserGroupAuthorisedActivityType.values());
@@ -88,8 +52,8 @@ public class IAPUser implements AuthUser {
                     .collect(Collectors.toSet()));
           }
         } else if (permission.getSurvey() != null
-            && optionalSurveyId.isPresent()
-            && permission.getSurvey().getId().equals(optionalSurveyId.get())) {
+            && surveyId.isPresent()
+            && permission.getSurvey().getId().equals(surveyId.get())) {
           // The user has permission on a specific survey, so we can include it
           result.add(permission.getAuthorisedActivity());
         } else if (permission.getSurvey() == null) {
@@ -103,8 +67,11 @@ public class IAPUser implements AuthUser {
   }
 
   @Override
-  public void checkUserPermission() {
-    User user = getUser();
+  public void checkUserPermission(UserRepository userRepository,
+                                  UUID surveyId,
+                                  String userEmail,
+                                  UserGroupAuthorisedActivityType activity) {
+    User user = getUser(userRepository, userEmail);
 
     for (UserGroupMember groupMember : user.getMemberOf()) {
       for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
@@ -127,8 +94,8 @@ public class IAPUser implements AuthUser {
   }
 
   @Override
-  public void checkGlobalUserPermission() {
-    User user = getUser();
+  public void checkGlobalUserPermission(UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
+    User user = getUser(userRepository, userEmail);
 
     for (UserGroupMember groupMember : user.getMemberOf()) {
       for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
@@ -152,7 +119,7 @@ public class IAPUser implements AuthUser {
   }
 
   @Override
-  public String getUserEmail() {
+  public String getUserEmail(UserRepository userRepository, TokenVerifier tokenVerifier, String jwtToken) {
     if (!StringUtils.hasText(jwtToken)) {
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
       log.with("httpStatus", HttpStatus.FORBIDDEN)
@@ -160,11 +127,11 @@ public class IAPUser implements AuthUser {
       throw new ResponseStatusException(
           HttpStatus.FORBIDDEN, String.format("Requests bypassing IAP are strictly forbidden"));
     } else {
-      return verifyJwtAndGetEmail(jwtToken);
+      return verifyJwtAndGetEmail(jwtToken, tokenVerifier);
     }
   }
 
-  private User getUser() {
+  private User getUser(UserRepository userRepository, String userEmail) {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (userOpt.isEmpty()) {
@@ -177,7 +144,7 @@ public class IAPUser implements AuthUser {
     return userOpt.get();
   }
 
-  private String verifyJwtAndGetEmail(String jwtToken) {
+  private String verifyJwtAndGetEmail(String jwtToken, TokenVerifier tokenVerifier) {
     try {
       JsonWebToken jsonWebToken = tokenVerifier.verify(jwtToken);
 

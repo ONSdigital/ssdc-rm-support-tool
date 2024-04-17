@@ -3,10 +3,15 @@ package uk.gov.ons.ssdc.supporttool.security;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.google.auth.oauth2.TokenVerifier;
+import org.apache.catalina.core.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
+import uk.gov.ons.ssdc.supporttool.config.AppConfig;
+import uk.gov.ons.ssdc.supporttool.config.DummyConfig;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
@@ -21,6 +26,9 @@ public class UserIdentity {
   private final String dummySuperUserIdentity;
 
   private TokenVerifier tokenVerifier = null;
+
+  @Autowired
+  AuthUser authUser;
 
   public UserIdentity(
       UserRepository userRepository,
@@ -41,41 +49,35 @@ public class UserIdentity {
 
   public void checkUserPermission(
       String userEmail, Survey survey, UserGroupAuthorisedActivityType activity) {
-    AuthUser user;
-
-    if (dummyUserIdentityAllowed) {
-      user = new DummyUser(userEmail);
-    } else {
-      user = new IAPUser(userRepository, survey.getId(), userEmail, activity);
-    }
-
-    user.checkUserPermission();
+//    AuthUser user;
+//
+//    if (dummyUserIdentityAllowed) {
+//      user = new DummyUser(userEmail);
+//    } else {
+//      user = new IAPUser(userRepository, survey.getId(), userEmail, activity);
+//    }
+//
+//    user.checkUserPermission();
+    authUser.checkUserPermission(userRepository, survey.getId(), userEmail, activity);
   }
 
   public void checkGlobalUserPermission(
       String userEmail, UserGroupAuthorisedActivityType activity) {
 
-    AuthUser user;
+//    AuthUser user;
+//    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DummyConfig.class);
+//    if (dummyUserIdentityAllowed) {
+//      user = context.getBean(DummyUser.class, userEmail);
+//      //user = new DummyUser(userEmail);
+//    } else {
+//      user = new IAPUser(userRepository, userEmail, activity);
+//    }
 
-    if (dummyUserIdentityAllowed) {
-      user = new DummyUser(userEmail);
-    } else {
-      user = new IAPUser(userRepository, userEmail, activity);
-    }
-
-    user.checkGlobalUserPermission();
+    authUser.checkGlobalUserPermission(userRepository, userEmail, activity);
   }
 
   public String getUserEmail(String jwtToken) {
-    AuthUser user;
-
-    if (dummyUserIdentityAllowed) {
-      user = new DummyUser();
-    } else {
-      user = new IAPUser(getTokenVerifier(), jwtToken);
-    }
-
-    return user.getUserEmail();
+    return authUser.getUserEmail(userRepository, getTokenVerifier(), jwtToken);
   }
 
   private synchronized TokenVerifier getTokenVerifier() {
