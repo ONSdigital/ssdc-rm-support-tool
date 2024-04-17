@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.google.auth.oauth2.TokenVerifier;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;

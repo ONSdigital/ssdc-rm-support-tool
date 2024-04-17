@@ -3,15 +3,11 @@ package uk.gov.ons.ssdc.supporttool.security;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.google.auth.oauth2.TokenVerifier;
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.config.AppConfig;
-import uk.gov.ons.ssdc.supporttool.config.DummyConfig;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
