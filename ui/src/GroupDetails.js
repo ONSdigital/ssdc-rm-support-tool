@@ -48,6 +48,7 @@ class GroupDetails extends Component {
     surveyValidationError: false,
     userGroupPermissionId: null,
     adminIdToRemove: null,
+    adminEmailToRemove: null,
     showRemoveAdminDialog: false,
     showAddAdminToGroupDialog: false,
     newAdminUserId: "",
@@ -355,11 +356,12 @@ class GroupDetails extends Component {
     );
   };
 
-  openRemoveAdminDialog = (adminIdToRemove) => {
+  openRemoveAdminDialog = (adminToRemove) => {
     this.removeAdminInProgress = false;
 
     this.setState({
-      adminIdToRemove: adminIdToRemove,
+      adminIdToRemove: adminToRemove.id,
+      adminEmailToRemove: adminToRemove.userEmail,
       showRemoveAdminDialog: true,
     });
   };
@@ -391,6 +393,7 @@ class GroupDetails extends Component {
   closeRemoveAdminDialog = () => {
     this.setState({
       adminIdToRemove: null,
+      adminEmailToRemove: null,
       showRemoveAdminDialog: false,
     });
   };
@@ -474,7 +477,7 @@ class GroupDetails extends Component {
         <TableCell component="th" scope="row">
           <Button
             variant="contained"
-            onClick={() => this.openRemoveAdminDialog(admin.id)}
+            onClick={() => this.openRemoveAdminDialog(admin)}
           >
             Remove
           </Button>
@@ -712,7 +715,8 @@ class GroupDetails extends Component {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  Are you sure you wish to remove group admin?
+                  Are you sure you wish to remove group admin{" "}
+                  {this.state.adminEmailToRemove}?
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
