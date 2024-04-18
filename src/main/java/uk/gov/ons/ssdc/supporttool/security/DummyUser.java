@@ -14,8 +14,10 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
 @ConditionalOnProperty(name = "dummyuseridentity-allowed", havingValue = "true")
-public class DummyUser extends IAPUser {
+public class DummyUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(DummyUser.class);
+
+  private static final IAPUser iapUser = new IAPUser();
 
   @Value("${dummyuseridentity}")
   private String dummyUserIdentity;
@@ -31,10 +33,11 @@ public class DummyUser extends IAPUser {
   public Set<UserGroupAuthorisedActivityType> getUserGroupPermission(
       UserRepository userRepository, Optional<UUID> surveyId, String userEmail) {
 
-    if (isEmailValid(userEmail)) {
+    if (isDummyUser(userEmail)) {
       return Set.of(UserGroupAuthorisedActivityType.values());
     }
-    return super.getUserGroupPermission(userRepository, surveyId, userEmail);
+    // If user isn't the dummy user, it should be treated as an IAPUser
+    return iapUser.getUserGroupPermission(userRepository, surveyId, userEmail);
   }
 
   @Override
@@ -43,16 +46,18 @@ public class DummyUser extends IAPUser {
       UUID surveyId,
       String userEmail,
       UserGroupAuthorisedActivityType activity) {
-    if (!isEmailValid(userEmail)) {
-      super.checkUserPermission(userRepository, surveyId, userEmail, activity);
+    // If user isn't the dummy user, it should be treated as an IAPUser
+    if (!isDummyUser(userEmail)) {
+      iapUser.checkUserPermission(userRepository, surveyId, userEmail, activity);
     }
   }
 
   @Override
   public void checkGlobalUserPermission(
       UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
-    if (!isEmailValid(userEmail)) {
-      super.checkGlobalUserPermission(userRepository, userEmail, activity);
+    // If user isn't the dummy user, it should be treated as an IAPUser
+    if (!isDummyUser(userEmail)) {
+      iapUser.checkGlobalUserPermission(userRepository, userEmail, activity);
     }
   }
 
@@ -62,7 +67,13 @@ public class DummyUser extends IAPUser {
     return dummyUserIdentity;
   }
 
-  private boolean isEmailValid(String userEmail) {
+  /**
+   * Checks if the user is a DummyUser
+   *
+   * @param userEmail Email to check
+   * @return If email is Dummy's email
+   */
+  private boolean isDummyUser(String userEmail) {
     return userEmail.equalsIgnoreCase(dummySuperUserIdentity);
   }
 }
