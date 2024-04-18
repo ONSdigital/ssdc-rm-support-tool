@@ -23,8 +23,7 @@ public class UserIdentity {
 
   private TokenVerifier tokenVerifier = null;
 
-  @Autowired
-  AuthUser authUser;
+  @Autowired private AuthUser authUser;
 
   public UserIdentity(
       UserRepository userRepository,
@@ -45,30 +44,11 @@ public class UserIdentity {
 
   public void checkUserPermission(
       String userEmail, Survey survey, UserGroupAuthorisedActivityType activity) {
-//    AuthUser user;
-//
-//    if (dummyUserIdentityAllowed) {
-//      user = new DummyUser(userEmail);
-//    } else {
-//      user = new IAPUser(userRepository, survey.getId(), userEmail, activity);
-//    }
-//
-//    user.checkUserPermission();
     authUser.checkUserPermission(userRepository, survey.getId(), userEmail, activity);
   }
 
   public void checkGlobalUserPermission(
       String userEmail, UserGroupAuthorisedActivityType activity) {
-
-//    AuthUser user;
-//    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DummyConfig.class);
-//    if (dummyUserIdentityAllowed) {
-//      user = context.getBean(DummyUser.class, userEmail);
-//      //user = new DummyUser(userEmail);
-//    } else {
-//      user = new IAPUser(userRepository, userEmail, activity);
-//    }
-
     authUser.checkGlobalUserPermission(userRepository, userEmail, activity);
   }
 

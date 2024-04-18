@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -25,13 +24,18 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
-@ConditionalOnProperty(name = "dummyuseridentity-allowed", havingValue = "false", matchIfMissing = true)
+@ConditionalOnProperty(
+    name = "dummyuseridentity-allowed",
+    havingValue = "false",
+    matchIfMissing = true)
 public class IAPUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(IAPUser.class);
+
   public IAPUser() {}
 
   @Override
-  public Set<UserGroupAuthorisedActivityType> getUserGroupPermission(UserRepository userRepository, Optional<UUID> surveyId, String userEmail) {
+  public Set<UserGroupAuthorisedActivityType> getUserGroupPermission(
+      UserRepository userRepository, Optional<UUID> surveyId, String userEmail) {
     User user = getUser(userRepository, userEmail);
 
     Set<UserGroupAuthorisedActivityType> result = new HashSet<>();
@@ -67,10 +71,11 @@ public class IAPUser implements AuthUser {
   }
 
   @Override
-  public void checkUserPermission(UserRepository userRepository,
-                                  UUID surveyId,
-                                  String userEmail,
-                                  UserGroupAuthorisedActivityType activity) {
+  public void checkUserPermission(
+      UserRepository userRepository,
+      UUID surveyId,
+      String userEmail,
+      UserGroupAuthorisedActivityType activity) {
     User user = getUser(userRepository, userEmail);
 
     for (UserGroupMember groupMember : user.getMemberOf()) {
@@ -94,7 +99,8 @@ public class IAPUser implements AuthUser {
   }
 
   @Override
-  public void checkGlobalUserPermission(UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
+  public void checkGlobalUserPermission(
+      UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
     User user = getUser(userRepository, userEmail);
 
     for (UserGroupMember groupMember : user.getMemberOf()) {
@@ -119,7 +125,8 @@ public class IAPUser implements AuthUser {
   }
 
   @Override
-  public String getUserEmail(UserRepository userRepository, TokenVerifier tokenVerifier, String jwtToken) {
+  public String getUserEmail(
+      UserRepository userRepository, TokenVerifier tokenVerifier, String jwtToken) {
     if (!StringUtils.hasText(jwtToken)) {
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
       log.with("httpStatus", HttpStatus.FORBIDDEN)

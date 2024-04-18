@@ -5,7 +5,6 @@ import com.godaddy.logging.LoggerFactory;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 import uk.gov.ons.ssdc.supporttool.security.AuthUser;
-import uk.gov.ons.ssdc.supporttool.security.DummyUser;
-import uk.gov.ons.ssdc.supporttool.security.IAPUser;
 
 @RestController
 @RequestMapping(value = "/api/auth")
@@ -27,8 +24,7 @@ public class AuthorisationEndpoint {
   private final boolean dummyUserIdentityAllowed;
   private final String dummySuperUserIdentity;
 
-  @Autowired
-  AuthUser authUser;
+  @Autowired private AuthUser authUser;
 
   public AuthorisationEndpoint(
       UserRepository userRepository,
