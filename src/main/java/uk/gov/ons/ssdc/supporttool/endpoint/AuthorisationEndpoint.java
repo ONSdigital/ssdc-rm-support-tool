@@ -24,14 +24,8 @@ public class AuthorisationEndpoint {
 
   @Autowired private IAPUser authUser;
 
-  public AuthorisationEndpoint(
-      UserRepository userRepository,
-      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed) {
+  public AuthorisationEndpoint(UserRepository userRepository) {
     this.userRepository = userRepository;
-
-    if (dummyUserIdentityAllowed) {
-      log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
-    }
   }
 
   @GetMapping
