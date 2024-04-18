@@ -79,7 +79,7 @@ notifyservice:
 
 iapaudience: DUMMY
 
-dummyuseridentity-allowed: false # This ** MUST ALWAYS!! ** be false in production!!!
+iap-enabled: true # This ** MUST ALWAYS!! ** be true in production!!!
 dummyuseridentity: dummy@fake-email.com
 dummysuperuseridentity: dummy@fake-email.com
 

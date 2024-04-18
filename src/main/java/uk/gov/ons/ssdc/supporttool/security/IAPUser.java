@@ -24,10 +24,7 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupPermission;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
-@ConditionalOnProperty(
-    name = "dummyuseridentity-allowed",
-    havingValue = "false",
-    matchIfMissing = true)
+@ConditionalOnProperty(name = "iap-enabled", havingValue = "true", matchIfMissing = true)
 public class IAPUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(IAPUser.class);
 
