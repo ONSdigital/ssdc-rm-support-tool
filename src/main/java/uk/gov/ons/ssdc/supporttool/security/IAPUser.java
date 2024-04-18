@@ -28,12 +28,11 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
     name = "dummyuseridentity-allowed",
     havingValue = "false",
     matchIfMissing = true)
-public class IAPUser implements AuthUser {
+public class IAPUser {
   private static final Logger log = LoggerFactory.getLogger(IAPUser.class);
 
   public IAPUser() {}
 
-  @Override
   public Set<UserGroupAuthorisedActivityType> getUserGroupPermission(
       UserRepository userRepository, Optional<UUID> surveyId, String userEmail) {
     User user = getUser(userRepository, userEmail);
@@ -70,7 +69,6 @@ public class IAPUser implements AuthUser {
     return result;
   }
 
-  @Override
   public void checkUserPermission(
       UserRepository userRepository,
       UUID surveyId,
@@ -98,7 +96,6 @@ public class IAPUser implements AuthUser {
     }
   }
 
-  @Override
   public void checkGlobalUserPermission(
       UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
     User user = getUser(userRepository, userEmail);
@@ -124,7 +121,6 @@ public class IAPUser implements AuthUser {
         String.format("User not authorised for activity %s", activity.name()));
   }
 
-  @Override
   public String getUserEmail(
       UserRepository userRepository, TokenVerifier tokenVerifier, String jwtToken) {
     if (!StringUtils.hasText(jwtToken)) {

@@ -23,7 +23,7 @@ public class UserIdentity {
 
   private TokenVerifier tokenVerifier = null;
 
-  @Autowired private AuthUser authUser;
+  @Autowired private IAPUser authUser;
 
   public UserIdentity(
       UserRepository userRepository,

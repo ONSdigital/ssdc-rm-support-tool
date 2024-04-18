@@ -8,15 +8,13 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
 @ConditionalOnProperty(name = "dummyuseridentity-allowed", havingValue = "true")
-public class DummyUser implements AuthUser {
+public class DummyUser extends IAPUser {
   private static final Logger log = LoggerFactory.getLogger(DummyUser.class);
 
   @Value("${dummyuseridentity}")
@@ -36,10 +34,7 @@ public class DummyUser implements AuthUser {
     if (isEmailValid(userEmail)) {
       return Set.of(UserGroupAuthorisedActivityType.values());
     }
-    log.with("httpStatus", HttpStatus.FORBIDDEN)
-        .with("userEmail", userEmail)
-        .warn("Failed to get authorised activities, User not known to RM");
-    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
+    return super.getUserGroupPermission(userRepository, surveyId, userEmail);
   }
 
   @Override
@@ -49,8 +44,7 @@ public class DummyUser implements AuthUser {
       String userEmail,
       UserGroupAuthorisedActivityType activity) {
     if (!isEmailValid(userEmail)) {
-      IAPUser user = new IAPUser();
-      user.checkUserPermission(userRepository, surveyId, userEmail, activity);
+      super.checkUserPermission(userRepository, surveyId, userEmail, activity);
     }
   }
 
@@ -58,8 +52,7 @@ public class DummyUser implements AuthUser {
   public void checkGlobalUserPermission(
       UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
     if (!isEmailValid(userEmail)) {
-      IAPUser user = new IAPUser();
-      user.checkGlobalUserPermission(userRepository, userEmail, activity);
+      super.checkGlobalUserPermission(userRepository, userEmail, activity);
     }
   }
 
