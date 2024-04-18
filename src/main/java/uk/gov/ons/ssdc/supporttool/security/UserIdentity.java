@@ -17,29 +17,14 @@ public class UserIdentity {
 
   private final UserRepository userRepository;
   private final String iapAudience;
-  private final boolean dummyUserIdentityAllowed;
-  private final String dummyUserIdentity;
-  private final String dummySuperUserIdentity;
 
   private TokenVerifier tokenVerifier = null;
 
   @Autowired private IAPUser authUser;
 
-  public UserIdentity(
-      UserRepository userRepository,
-      @Value("${iapaudience}") String iapAudience,
-      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed,
-      @Value("${dummyuseridentity}") String dummyUserIdentity,
-      @Value("${dummysuperuseridentity}") String dummySuperUserIdentity) {
+  public UserIdentity(UserRepository userRepository, @Value("${iapaudience}") String iapAudience) {
     this.userRepository = userRepository;
     this.iapAudience = iapAudience;
-    this.dummyUserIdentityAllowed = dummyUserIdentityAllowed;
-    this.dummyUserIdentity = dummyUserIdentity;
-    this.dummySuperUserIdentity = dummySuperUserIdentity;
-
-    if (dummyUserIdentityAllowed) {
-      log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
-    }
   }
 
   public void checkUserPermission(

@@ -21,18 +21,13 @@ public class AuthorisationEndpoint {
   private static final Logger log = LoggerFactory.getLogger(AuthorisationEndpoint.class);
 
   private final UserRepository userRepository;
-  private final boolean dummyUserIdentityAllowed;
-  private final String dummySuperUserIdentity;
 
   @Autowired private IAPUser authUser;
 
   public AuthorisationEndpoint(
       UserRepository userRepository,
-      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed,
-      @Value("${dummysuperuseridentity}") String dummySuperUserIdentity) {
+      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed) {
     this.userRepository = userRepository;
-    this.dummyUserIdentityAllowed = dummyUserIdentityAllowed;
-    this.dummySuperUserIdentity = dummySuperUserIdentity;
 
     if (dummyUserIdentityAllowed) {
       log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
