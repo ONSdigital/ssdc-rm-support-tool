@@ -9,18 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/auth")
 public class AuthorisationEndpoint {
-  private final UserRepository userRepository;
 
   private final AuthUser authUser;
 
-  public AuthorisationEndpoint(UserRepository userRepository, AuthUser authUser) {
-    this.userRepository = userRepository;
+  public AuthorisationEndpoint(AuthUser authUser) {
     this.authUser = authUser;
   }
 
@@ -29,6 +26,6 @@ public class AuthorisationEndpoint {
       @RequestParam(required = false, value = "surveyId") Optional<UUID> surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
-    return authUser.getUserGroupPermission(userRepository, surveyId, userEmail);
+    return authUser.getUserGroupPermission(surveyId, userEmail);
   }
 }

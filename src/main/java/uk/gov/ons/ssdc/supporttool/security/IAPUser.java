@@ -28,12 +28,16 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 public class IAPUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(IAPUser.class);
 
-  public IAPUser() {}
+  private final UserRepository userRepository;
+
+  public IAPUser(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   @Override
   public Set<UserGroupAuthorisedActivityType> getUserGroupPermission(
-      UserRepository userRepository, Optional<UUID> surveyId, String userEmail) {
-    User user = getUser(userRepository, userEmail);
+      Optional<UUID> surveyId, String userEmail) {
+    User user = getUser(userEmail);
 
     Set<UserGroupAuthorisedActivityType> result = new HashSet<>();
     for (UserGroupMember groupMember : user.getMemberOf()) {
@@ -69,11 +73,8 @@ public class IAPUser implements AuthUser {
 
   @Override
   public void checkUserPermission(
-      UserRepository userRepository,
-      UUID surveyId,
-      String userEmail,
-      UserGroupAuthorisedActivityType activity) {
-    User user = getUser(userRepository, userEmail);
+      UUID surveyId, String userEmail, UserGroupAuthorisedActivityType activity) {
+    User user = getUser(userEmail);
 
     for (UserGroupMember groupMember : user.getMemberOf()) {
       for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
@@ -97,8 +98,8 @@ public class IAPUser implements AuthUser {
 
   @Override
   public void checkGlobalUserPermission(
-      UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
-    User user = getUser(userRepository, userEmail);
+      String userEmail, UserGroupAuthorisedActivityType activity) {
+    User user = getUser(userEmail);
 
     for (UserGroupMember groupMember : user.getMemberOf()) {
       for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
@@ -122,22 +123,20 @@ public class IAPUser implements AuthUser {
   }
 
   @Override
-  public String getUserEmail(
-      UserRepository userRepository, TokenVerifier tokenVerifier, String jwtToken) {
+  public String getUserEmail(TokenVerifier tokenVerifier, String jwtToken) {
     if (!StringUtils.hasText(jwtToken)) {
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
       log.with("httpStatus", HttpStatus.FORBIDDEN)
           .warn("Requests bypassing IAP are strictly forbidden");
       throw new ResponseStatusException(
-          HttpStatus.FORBIDDEN, String.format("Requests bypassing IAP are strictly forbidden"));
+          HttpStatus.FORBIDDEN, "Requests bypassing IAP are strictly forbidden");
     } else {
       return verifyJwtAndGetEmail(jwtToken, tokenVerifier);
     }
   }
 
-  private User getUser(UserRepository userRepository, String userEmail) {
+  private User getUser(String userEmail) {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
-
     if (userOpt.isEmpty()) {
       log.with("userEmail", userEmail)
           .with("httpStatus", HttpStatus.FORBIDDEN)

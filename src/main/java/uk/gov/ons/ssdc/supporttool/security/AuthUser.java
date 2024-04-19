@@ -5,21 +5,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
-import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 public interface AuthUser {
   public Set<UserGroupAuthorisedActivityType> getUserGroupPermission(
-      UserRepository userRepository, Optional<UUID> surveyId, String userEmail);
+      Optional<UUID> surveyId, String userEmail);
 
   public void checkUserPermission(
-      UserRepository userRepository,
-      UUID surveyId,
-      String userEmail,
-      UserGroupAuthorisedActivityType activity);
+      UUID surveyId, String userEmail, UserGroupAuthorisedActivityType activity);
 
-  public void checkGlobalUserPermission(
-      UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity);
+  public void checkGlobalUserPermission(String userEmail, UserGroupAuthorisedActivityType activity);
 
-  public String getUserEmail(
-      UserRepository userRepository, TokenVerifier tokenVerifier, String jwtToken);
+  public String getUserEmail(TokenVerifier tokenVerifier, String jwtToken);
 }

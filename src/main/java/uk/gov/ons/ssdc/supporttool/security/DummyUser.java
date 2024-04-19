@@ -17,7 +17,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 public class DummyUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(DummyUser.class);
 
-  private static final IAPUser iapUser = new IAPUser();
+  private final IAPUser iapUser;
 
   @Value("${dummyuseridentity}")
   private String dummyUserIdentity;
@@ -25,45 +25,41 @@ public class DummyUser implements AuthUser {
   @Value("${dummysuperuseridentity}")
   private String dummySuperUserIdentity;
 
-  public DummyUser() {
+  public DummyUser(UserRepository userRepository) {
     log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
+    this.iapUser = new IAPUser(userRepository);
   }
 
   @Override
   public Set<UserGroupAuthorisedActivityType> getUserGroupPermission(
-      UserRepository userRepository, Optional<UUID> surveyId, String userEmail) {
-
+      Optional<UUID> surveyId, String userEmail) {
     if (isDummyUser(userEmail)) {
       return Set.of(UserGroupAuthorisedActivityType.values());
     }
     // If user isn't the dummy user, it should be treated as an IAPUser
-    return iapUser.getUserGroupPermission(userRepository, surveyId, userEmail);
+    return iapUser.getUserGroupPermission(surveyId, userEmail);
   }
 
   @Override
   public void checkUserPermission(
-      UserRepository userRepository,
-      UUID surveyId,
-      String userEmail,
-      UserGroupAuthorisedActivityType activity) {
+      UUID surveyId, String userEmail, UserGroupAuthorisedActivityType activity) {
     // If user isn't the dummy user, it should be treated as an IAPUser
     if (!isDummyUser(userEmail)) {
-      iapUser.checkUserPermission(userRepository, surveyId, userEmail, activity);
+      iapUser.checkUserPermission(surveyId, userEmail, activity);
     }
   }
 
   @Override
   public void checkGlobalUserPermission(
-      UserRepository userRepository, String userEmail, UserGroupAuthorisedActivityType activity) {
+      String userEmail, UserGroupAuthorisedActivityType activity) {
     // If user isn't the dummy user, it should be treated as an IAPUser
     if (!isDummyUser(userEmail)) {
-      iapUser.checkGlobalUserPermission(userRepository, userEmail, activity);
+      iapUser.checkGlobalUserPermission(userEmail, activity);
     }
   }
 
   @Override
-  public String getUserEmail(
-      UserRepository userRepository, TokenVerifier tokenVerifier, String jwtToken) {
+  public String getUserEmail(TokenVerifier tokenVerifier, String jwtToken) {
     return dummyUserIdentity;
   }
 
