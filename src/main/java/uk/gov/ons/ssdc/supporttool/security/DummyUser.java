@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
@@ -60,6 +61,10 @@ public class DummyUser implements AuthUser {
 
   @Override
   public String getUserEmail(TokenVerifier tokenVerifier, String jwtToken) {
+    if (StringUtils.hasText(jwtToken)) {
+      // If there is a token, we should get the user email for that token and not the dummy
+      return iapUser.getUserEmail(tokenVerifier, jwtToken);
+    }
     return dummyUserIdentity;
   }
 
