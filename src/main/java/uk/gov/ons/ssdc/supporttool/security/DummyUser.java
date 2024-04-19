@@ -63,7 +63,7 @@ public class DummyUser implements AuthUser {
   public String getUserEmail(TokenVerifier tokenVerifier, String jwtToken) {
     if (StringUtils.hasText(jwtToken)) {
       // If there is a token, we should get the user email for that token and not the dummy
-      return iapUser.getUserEmail(tokenVerifier, jwtToken);
+      return iapUser.verifyJwtAndGetEmail(jwtToken, tokenVerifier);
     }
     return dummyUserIdentity;
   }

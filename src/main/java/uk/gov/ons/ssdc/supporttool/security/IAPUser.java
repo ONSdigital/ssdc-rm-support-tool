@@ -135,19 +135,7 @@ public class IAPUser implements AuthUser {
     }
   }
 
-  private User getUser(String userEmail) {
-    Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
-    if (userOpt.isEmpty()) {
-      log.with("userEmail", userEmail)
-          .with("httpStatus", HttpStatus.FORBIDDEN)
-          .warn("User not known to RM");
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
-    }
-
-    return userOpt.get();
-  }
-
-  private String verifyJwtAndGetEmail(String jwtToken, TokenVerifier tokenVerifier) {
+  public String verifyJwtAndGetEmail(String jwtToken, TokenVerifier tokenVerifier) {
     try {
       JsonWebToken jsonWebToken = tokenVerifier.verify(jwtToken);
 
@@ -161,5 +149,17 @@ public class IAPUser implements AuthUser {
     } catch (TokenVerifier.VerificationException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private User getUser(String userEmail) {
+    Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
+    if (userOpt.isEmpty()) {
+      log.with("userEmail", userEmail)
+          .with("httpStatus", HttpStatus.FORBIDDEN)
+          .warn("User not known to RM");
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
+    }
+
+    return userOpt.get();
   }
 }
