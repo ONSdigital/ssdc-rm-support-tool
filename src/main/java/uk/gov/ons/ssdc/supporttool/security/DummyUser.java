@@ -20,14 +20,17 @@ public class DummyUser implements AuthUser {
 
   private final IAPUser iapUser;
 
-  @Value("${dummyuseridentity}")
-  private String dummyUserIdentity;
+  private final String dummyUserIdentity;
 
-  @Value("${dummysuperuseridentity}")
-  private String dummySuperUserIdentity;
+  private final String dummySuperUserIdentity;
 
-  public DummyUser(UserRepository userRepository) {
+  public DummyUser(
+      UserRepository userRepository,
+      @Value("${dummyuseridentity}") String dummyUserIdentity,
+      @Value("${dummysuperuseridentity}") String dummySuperUserIdentity) {
     log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
+    this.dummySuperUserIdentity = dummySuperUserIdentity;
+    this.dummyUserIdentity = dummyUserIdentity;
     this.iapUser = new IAPUser(userRepository);
   }
 
