@@ -31,6 +31,7 @@ public class DummyUser implements AuthUser {
     log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
     this.dummySuperUserIdentity = dummySuperUserIdentity;
     this.dummyUserIdentity = dummyUserIdentity;
+    // Can't use spring injection due to ConditionOnProperty
     this.iapUser = new IAPUser(userRepository);
   }
 
