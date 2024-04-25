@@ -29,32 +29,15 @@ public class AuthorisationEndpoint {
   private static final Logger log = LoggerFactory.getLogger(AuthorisationEndpoint.class);
 
   private final UserRepository userRepository;
-  private final boolean dummyUserIdentityAllowed;
-  private final String dummySuperUserIdentity;
 
-  public AuthorisationEndpoint(
-      UserRepository userRepository,
-      @Value("${dummyuseridentity-allowed}") boolean dummyUserIdentityAllowed,
-      @Value("${dummysuperuseridentity}") String dummySuperUserIdentity) {
+  public AuthorisationEndpoint(UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.dummyUserIdentityAllowed = dummyUserIdentityAllowed;
-    this.dummySuperUserIdentity = dummySuperUserIdentity;
-
-    if (dummyUserIdentityAllowed) {
-      log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
-    }
   }
 
   @GetMapping
   public Set<UserGroupAuthorisedActivityType> getAuthorisedActivities(
       @RequestParam(required = false, value = "surveyId") Optional<UUID> surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-
-    if (dummyUserIdentityAllowed && userEmail.equalsIgnoreCase(dummySuperUserIdentity)) {
-      // Dummy test super user is fully authorised, bypassing all security
-      // This is **STRICTLY** for ease of dev/testing in non-production environments
-      return Set.of(UserGroupAuthorisedActivityType.values());
-    }
 
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
