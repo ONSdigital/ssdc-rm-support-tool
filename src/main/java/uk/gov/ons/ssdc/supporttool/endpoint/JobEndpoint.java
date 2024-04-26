@@ -1,7 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import com.opencsv.CSVWriter;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -15,6 +13,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,10 +78,12 @@ public class JobEndpoint {
         collectionExerciseRepository.findById(collectionExerciseId);
 
     if (collexOpt.isEmpty()) {
-      log.with("collexId", collectionExerciseId)
-          .with("userEmail", userEmail)
-          .with("httpStatus", HttpStatus.BAD_REQUEST)
-          .warn("Failed to find collection exercise for jobs, collection exercise not found");
+      log.atWarn()
+          .setMessage("Failed to find collection exercise for jobs, collection exercise not found")
+          .addKeyValue("collexId", collectionExerciseId)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .log();
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 
@@ -210,10 +212,12 @@ public class JobEndpoint {
       job.setProcessedAt(OffsetDateTime.now());
       jobRepository.saveAndFlush(job);
     } else {
-      log.with("jobId", id)
-          .with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .warn("Failed to process job, can't process a job which isn't validated");
+      log.atWarn()
+          .setMessage("Failed to process job, can't process a job which isn't validated")
+          .addKeyValue("jobId", id)
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .log();
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't process a job which isn't validated");
     }
@@ -237,10 +241,12 @@ public class JobEndpoint {
       jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_OK);
       jobRowRepository.deleteByJobAndJobRowStatus(job, JobRowStatus.VALIDATED_ERROR);
     } else {
-      log.with("jobId", id)
-          .with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .warn("Failed to cancel job, can't cancel a job which isn't validated");
+      log.atWarn()
+          .setMessage("Failed to cancel job, can't cancel a job which isn't validated")
+          .addKeyValue("jobId", id)
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .log();
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Can't cancel a job which isn't validated");
     }
@@ -258,10 +264,12 @@ public class JobEndpoint {
     Optional<CollectionExercise> collexOpt =
         collectionExerciseRepository.findById(collectionExerciseId);
     if (collexOpt.isEmpty()) {
-      log.with("collexId", collectionExerciseId)
-          .with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .warn("Failed to submit job, collection exercise not found");
+      log.atWarn()
+          .setMessage("Failed to submit job, collection exercise not found")
+          .addKeyValue("collexId", collectionExerciseId)
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .log();
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Collection exercise not found");
     }
 

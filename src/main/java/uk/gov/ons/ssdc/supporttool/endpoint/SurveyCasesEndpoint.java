@@ -1,12 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -142,10 +142,12 @@ public class SurveyCasesEndpoint {
   private void checkSurveySearchCasesPermission(String userEmail, UUID surveyId) {
     Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
     if (surveyOptional.isEmpty()) {
-      log.with("surveyId", surveyId)
-          .with("userEmail", userEmail)
-          .with("httpStatus", HttpStatus.NOT_FOUND)
-          .warn("Failed to get case for survey, survey not found");
+      log.atWarn()
+          .setMessage("Failed to get case for survey, survey not found")
+          .addKeyValue("surveyId", surveyId)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("httpStatus", HttpStatus.NOT_FOUND)
+          .log();
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Survey not found");
     }
     userIdentity.checkUserPermission(

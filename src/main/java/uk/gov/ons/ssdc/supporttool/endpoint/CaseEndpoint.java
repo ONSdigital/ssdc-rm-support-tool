@@ -1,12 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -139,10 +139,12 @@ public class CaseEndpoint {
     if (!validationErrors.isEmpty()) {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .warn(
-              "Failed to update sensitive field, there are case validation errors in the provided data");
+      log.atWarn()
+          .setMessage(
+              "Failed to update sensitive field, there are case validation errors in the provided data")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .log();
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -169,9 +171,12 @@ public class CaseEndpoint {
     if (!validationErrors.isEmpty()) {
       String validationErrorStr = String.join(", ", validationErrors);
       Map<String, String> body = Map.of("errors", validationErrorStr);
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .warn("Failed to update sample field, there are validation errors in the provided data");
+      log.atWarn()
+          .setMessage(
+              "Failed to update sample field, there are validation errors in the provided data")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .log();
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -299,11 +304,13 @@ public class CaseEndpoint {
 
     Optional<String> errorOpt = requestSmsFulfilment(smsFulfilmentRequest);
     if (errorOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .with("caseId", caseId)
-          .warn(
-              "Failed to request sms fulfilment, there are validation errors in the provided data");
+      log.atWarn()
+          .setMessage(
+              "Failed to request sms fulfilment, there are validation errors in the provided data")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("caseId", caseId)
+          .log();
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(HttpStatus.OK);
@@ -344,9 +351,11 @@ public class CaseEndpoint {
 
     Optional<String> errorOpt = requestEmailFulfilment(emailFulfilmentRequest);
     if (errorOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .warn("There are validation errors in the provided data");
+      log.atWarn()
+          .setMessage("There are validation errors in the provided data")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .log();
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(HttpStatus.OK);

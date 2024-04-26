@@ -1,10 +1,10 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,10 +59,13 @@ public class UserGroupPermissionEndpoint {
             .findById(groupId)
             .orElseThrow(
                 () -> {
-                  log.with("groupId", groupId)
-                      .with("userEmail", userEmail)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Failed to find user group permissiosn, group not found");
+                  log.atWarn()
+                      .setMessage("Failed to find user group permissiosn, group not found")
+                      .addKeyValue("groupId", groupId)
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .log();
+                  ;
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -95,10 +98,12 @@ public class UserGroupPermissionEndpoint {
             .findById(userGroupPermissionDto.getGroupId())
             .orElseThrow(
                 () -> {
-                  log.with("groupId", userGroupPermissionDto.getGroupId())
-                      .with("userEmail", userEmail)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Failed to add permission to group, group not found");
+                  log.atWarn()
+                      .setMessage("Failed to add permission to group, group not found")
+                      .addKeyValue("groupId", userGroupPermissionDto.getGroupId())
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -106,10 +111,13 @@ public class UserGroupPermissionEndpoint {
     if (userGroupPermissionDto.getSurveyId() != null) {
       if (userGroupPermissionDto.getAuthorisedActivity().isGlobal()) {
         // Not allowed to use a global permission on a specific survey... doesn't work; nonsensical!
-        log.with("authorisedActivity", userGroupPermissionDto.getAuthorisedActivity().name())
-            .with("httpStatus", HttpStatus.BAD_REQUEST)
-            .with("userEmail", userEmail)
-            .warn("Failed to add permission to group, global permissions must be global");
+        log.atWarn()
+            .setMessage("Failed to add permission to group, global permissions must be global")
+            .addKeyValue(
+                "authorisedActivity", userGroupPermissionDto.getAuthorisedActivity().name())
+            .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+            .addKeyValue("userEmail", userEmail)
+            .log();
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Global permissions must be global");
       }
@@ -119,10 +127,12 @@ public class UserGroupPermissionEndpoint {
               .findById(userGroupPermissionDto.getSurveyId())
               .orElseThrow(
                   () -> {
-                    log.with("surveyId", userGroupPermissionDto.getSurveyId())
-                        .with("httpStatus", HttpStatus.BAD_REQUEST)
-                        .with("userEmail", userEmail)
-                        .warn("Failed to add permission to group, survey not found");
+                    log.atWarn()
+                        .setMessage("Failed to add permission to group, survey not found")
+                        .addKeyValue("surveyId", userGroupPermissionDto.getSurveyId())
+                        .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                        .addKeyValue("userEmail", userEmail)
+                        .log();
                     return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                   });
     }
@@ -136,11 +146,13 @@ public class UserGroupPermissionEndpoint {
           && ((survey == null && existingPermission.getSurvey() == null)
               || (existingPermission.getSurvey() != null
                   && existingPermission.getSurvey().equals(survey)))) {
-        log.with("authorisedActivity", existingPermission.getAuthorisedActivity())
-            .with("surveyName", survey.getName())
-            .with("userEmail", userEmail)
-            .with("httpStatus", HttpStatus.CONFLICT)
-            .warn("Failed to add permission to group, permission already exists");
+        log.atWarn()
+            .setMessage("Failed to add permission to group, permission already exists")
+            .addKeyValue("authorisedActivity", existingPermission.getAuthorisedActivity())
+            .addKeyValue("surveyName", survey.getName())
+            .addKeyValue("userEmail", userEmail)
+            .addKeyValue("httpStatus", HttpStatus.CONFLICT)
+            .log();
         throw new ResponseStatusException(HttpStatus.CONFLICT, "Permission already exists");
       }
     }

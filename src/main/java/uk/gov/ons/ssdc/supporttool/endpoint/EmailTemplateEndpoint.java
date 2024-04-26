@@ -1,12 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,10 +83,12 @@ public class EmailTemplateEndpoint {
 
     Set<String> templateSet = new HashSet<>(Arrays.asList(emailTemplateDto.getTemplate()));
     if (templateSet.size() != emailTemplateDto.getTemplate().length) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .with("template", templateSet)
-          .warn("Failed to create email template, template cannot have duplicate columns");
+      log.atWarn()
+          .setMessage("Failed to create email template, template cannot have duplicate columns")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("template", templateSet)
+          .log();
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -96,10 +98,12 @@ public class EmailTemplateEndpoint {
         .forEach(
             emailTemplate -> {
               if (emailTemplate.getPackCode().equalsIgnoreCase(emailTemplateDto.getPackCode())) {
-                log.with("httpStatus", HttpStatus.BAD_REQUEST)
-                    .with("userEmail", userEmail)
-                    .with("packCode", emailTemplate.getPackCode())
-                    .warn("Failed to create email template, Pack code already exists");
+                log.atWarn()
+                    .setMessage("Failed to create email template, Pack code already exists")
+                    .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                    .addKeyValue("userEmail", userEmail)
+                    .addKeyValue("packCode", emailTemplate.getPackCode())
+                    .log();
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }
