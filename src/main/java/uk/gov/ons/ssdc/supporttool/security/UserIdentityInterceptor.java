@@ -1,9 +1,9 @@
 package uk.gov.ons.ssdc.supporttool.security;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,11 +36,13 @@ public class UserIdentityInterceptor implements HandlerInterceptor {
       Object handler,
       ModelAndView modelAndView)
       throws Exception {
-    log.with("audit", true)
-        .with("userEmail", request.getAttribute("userEmail"))
-        .with("requestURI", request.getRequestURI())
-        .with("requestMethod", request.getMethod())
-        .with("responseStatus", response.getStatus())
-        .info("API Audit");
+    log.atInfo()
+        .setMessage("API Audit")
+        .addKeyValue("audit", true)
+        .addKeyValue("userEmail", request.getAttribute("userEmail"))
+        .addKeyValue("requestURI", request.getRequestURI())
+        .addKeyValue("requestMethod", request.getMethod())
+        .addKeyValue("responseStatus", response.getStatus())
+        .log();
   }
 }

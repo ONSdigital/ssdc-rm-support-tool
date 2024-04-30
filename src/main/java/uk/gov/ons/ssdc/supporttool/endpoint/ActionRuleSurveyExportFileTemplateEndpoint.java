@@ -2,13 +2,13 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,10 +62,12 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("userEmail", userEmail)
-                      .with("surveyId", surveyId)
-                      .warn("Failed to get allowed pack codes, Survey not found");
+                  log.atWarn()
+                      .setMessage("Failed to get allowed pack codes, Survey not found")
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("surveyId", surveyId)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -88,11 +90,13 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("userEmail", userEmail)
-                      .with("surveyId", allowTemplateOnSurvey.getSurveyId())
-                      .warn(
-                          "Failed to create action rule survey export file template, survey not found");
+                  log.atWarn()
+                      .setMessage(
+                          "Failed to create action rule survey export file template, survey not found")
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -106,11 +110,13 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
                 () -> {
-                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("userEmail", userEmail)
-                      .with("packCode", allowTemplateOnSurvey.getPackCode())
-                      .warn(
-                          "Failed to create action rule survey export file template, export File template not found");
+                  log.atWarn()
+                      .setMessage(
+                          "Failed to create action rule survey export file template, export File template not found")
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("packCode", allowTemplateOnSurvey.getPackCode())
+                      .log();
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Export File template not found");
                 });
@@ -118,22 +124,26 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
     if (actionRuleSurveyExportFileTemplateRepository
         .existsActionRuleSurveyExportFileTemplateByExportFileTemplateAndSurvey(
             exportFileTemplate, survey)) {
-      log.with("httpStatus", HttpStatus.CONFLICT)
-          .with("packCode", allowTemplateOnSurvey.getPackCode())
-          .with("userEmail", userEmail)
-          .warn(
-              "Failed to create action rule Export File template, Export File Template already exists for survey");
+      log.atWarn()
+          .setMessage(
+              "Failed to create action rule Export File template, Export File Template already exists for survey")
+          .addKeyValue("httpStatus", HttpStatus.CONFLICT)
+          .addKeyValue("packCode", allowTemplateOnSurvey.getPackCode())
+          .addKeyValue("userEmail", userEmail)
+          .log();
       return new ResponseEntity<>(
           "Export File Template already exists for survey", HttpStatus.CONFLICT);
     }
 
     Optional<String> errorOpt = validate(survey, Set.of(exportFileTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .with("validationErrors", errorOpt.get())
-          .warn(
-              "Failed to create action rule survey export file template, there were errors validating the export file template");
+      log.atWarn()
+          .setMessage(
+              "Failed to create action rule survey export file template, there were errors validating the export file template")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("validationErrors", errorOpt.get())
+          .log();
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 

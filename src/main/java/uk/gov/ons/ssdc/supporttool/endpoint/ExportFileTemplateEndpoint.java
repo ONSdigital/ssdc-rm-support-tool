@@ -1,12 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,10 +73,12 @@ public class ExportFileTemplateEndpoint {
               if (exportFileTemplate
                   .getPackCode()
                   .equalsIgnoreCase(exportFileTemplateDto.getPackCode())) {
-                log.with("httpStatus", HttpStatus.BAD_REQUEST)
-                    .with("userEmail", userEmail)
-                    .with("packCode", exportFileTemplateDto.getPackCode())
-                    .warn("Failed to create export file template, pack code already exists");
+                log.atWarn()
+                    .setMessage("Failed to create export file template, pack code already exists")
+                    .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                    .addKeyValue("userEmail", userEmail)
+                    .addKeyValue("packCode", exportFileTemplateDto.getPackCode())
+                    .log();
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
               }
             });
@@ -100,10 +102,12 @@ public class ExportFileTemplateEndpoint {
         new HashSet<>(Arrays.asList(exportFileTemplateDto.getTemplate()));
 
     if (exportFileTemplateDtoItemsSet.size() != exportFileTemplateDto.getTemplate().length) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .with("template", exportFileTemplateDtoItemsSet)
-          .warn("Failed to create export file template, duplicate column in template");
+      log.atWarn()
+          .setMessage("Failed to create export file template, duplicate column in template")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("template", exportFileTemplateDtoItemsSet)
+          .log();
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
   }

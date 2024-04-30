@@ -1,11 +1,11 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import java.io.IOException;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,12 +39,14 @@ public class RowChunkStager {
       for (int i = 0; i < CHUNK_SIZE; i++) {
         String[] line = csvReader.readNext();
         if (line == null && i == 0) {
-          log.with("linesRead", csvReader.getRecordsRead())
-              .with("fileId", job.getFileId())
-              .with("jobId", job.getId())
-              .with("fileName", job.getFileName())
-              .error(
-                  "Failed to process job due to an empty chunk, this probably indicates a mismatch between file line count and row count");
+          log.atError()
+              .setMessage(
+                  "Failed to process job due to an empty chunk, this probably indicates a mismatch between file line count and row count")
+              .addKeyValue("linesRead", csvReader.getRecordsRead())
+              .addKeyValue("fileId", job.getFileId())
+              .addKeyValue("jobId", job.getId())
+              .addKeyValue("fileName", job.getFileName())
+              .log();
           jobStatus = JobStatus.VALIDATED_TOTAL_FAILURE;
           job.setFatalErrorDescription(
               "Failed to process job due to an empty chunk, this probably indicates a mismatch between file line count and row count");
@@ -81,11 +83,13 @@ public class RowChunkStager {
       jobRepository.saveAndFlush(job);
       jobRowRepository.saveAll(jobRows);
     } catch (IOException e) {
-      log.with("Lines read", csvReader.getRecordsRead())
-          .with("file_id", job.getFileId())
-          .with("job_id", job.getId())
-          .with("file_name", job.getFileName())
-          .error("IOException staging job row, CSV data is malformed");
+      log.atError()
+          .setMessage("IOException staging job row, CSV data is malformed")
+          .addKeyValue("Lines read", csvReader.getRecordsRead())
+          .addKeyValue("file_id", job.getFileId())
+          .addKeyValue("job_id", job.getId())
+          .addKeyValue("file_name", job.getFileName())
+          .log();
 
       job.setFatalErrorDescription("Exception Message: " + e.getMessage());
       jobRepository.saveAndFlush(job);

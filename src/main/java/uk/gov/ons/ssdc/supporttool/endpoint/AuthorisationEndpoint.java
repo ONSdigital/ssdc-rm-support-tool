@@ -2,14 +2,14 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.SUPER_USER;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +41,10 @@ public class AuthorisationEndpoint {
     this.dummySuperUserIdentity = dummySuperUserIdentity;
 
     if (dummyUserIdentityAllowed) {
-      log.error("*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!");
+      log.atError()
+          .setMessage(
+              "*** SECURITY ALERT *** IF YOU SEE THIS IN PRODUCTION, SHUT DOWN IMMEDIATELY!!!")
+          .log();
     }
   }
 
@@ -59,9 +62,11 @@ public class AuthorisationEndpoint {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
 
     if (!userOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.FORBIDDEN)
-          .with("userEmail", userEmail)
-          .warn("Failed to get authorised activities, User not known to RM");
+      log.atWarn()
+          .setMessage("Failed to get authorised activities, User not known to RM")
+          .addKeyValue("httpStatus", HttpStatus.FORBIDDEN)
+          .addKeyValue("userEmail", userEmail)
+          .log();
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 

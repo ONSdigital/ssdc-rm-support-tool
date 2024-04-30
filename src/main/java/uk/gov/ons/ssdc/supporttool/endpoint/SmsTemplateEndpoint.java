@@ -1,12 +1,12 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,10 +81,12 @@ public class SmsTemplateEndpoint {
   private void validateTemplate(SmsTemplateDto smsTemplateDto, String userEmail) {
     Set<String> templateSet = new HashSet<>(Arrays.asList(smsTemplateDto.getTemplate()));
     if (templateSet.size() != smsTemplateDto.getTemplate().length) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .with("template", smsTemplateDto.getTemplate())
-          .warn("Failed to create sms template, template cannot have duplicate columns");
+      log.atWarn()
+          .setMessage("Failed to create sms template, template cannot have duplicate columns")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("template", smsTemplateDto.getTemplate())
+          .log();
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Template cannot have duplicate columns");
     }
@@ -94,10 +96,12 @@ public class SmsTemplateEndpoint {
         .forEach(
             smsTemplate -> {
               if (smsTemplate.getPackCode().equalsIgnoreCase(smsTemplateDto.getPackCode())) {
-                log.with("packCode", smsTemplateDto.getPackCode())
-                    .with("userEmail", userEmail)
-                    .with("httpStatus", HttpStatus.BAD_REQUEST)
-                    .warn("Failed to create sms template, Pack code already exists");
+                log.atWarn()
+                    .setMessage("Failed to create sms template, Pack code already exists")
+                    .addKeyValue("packCode", smsTemplateDto.getPackCode())
+                    .addKeyValue("userEmail", userEmail)
+                    .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                    .log();
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Pack code already exists");
               }

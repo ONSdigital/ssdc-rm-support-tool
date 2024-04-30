@@ -9,11 +9,11 @@ import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityTyp
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.CREATE_SMS_ACTION_RULE;
 import static uk.gov.ons.ssdc.supporttool.utility.ColumnHelper.getSurveyColumns;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,10 +83,12 @@ public class ActionRuleEndpoint {
             .findById(collectionExerciseId)
             .orElseThrow(
                 () -> {
-                  log.with("collectionExerciseId", collectionExerciseId)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("userEmail", userEmail)
-                      .warn("Failed to find action rule, Collection exercise not found");
+                  log.atWarn()
+                      .setMessage("Failed to find action rule, Collection exercise not found")
+                      .addKeyValue("collectionExerciseId", collectionExerciseId)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .addKeyValue("userEmail", userEmail)
+                      .log();
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
@@ -150,10 +152,13 @@ public class ActionRuleEndpoint {
                 .findById(actionRuleDTO.getPackCode())
                 .orElseThrow(
                     () -> {
-                      log.with("packcode", actionRuleDTO.getPackCode())
-                          .with("httpStatus", HttpStatus.BAD_REQUEST)
-                          .with("userEmail", createdBy)
-                          .warn("Failed to insert action rule, export file template not found");
+                      log.atWarn()
+                          .setMessage(
+                              "Failed to insert action rule, export file template not found")
+                          .addKeyValue("packcode", actionRuleDTO.getPackCode())
+                          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                          .addKeyValue("userEmail", createdBy)
+                          .log();
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST, "Export file template not found");
                     });
@@ -174,21 +179,25 @@ public class ActionRuleEndpoint {
                 .findById(actionRuleDTO.getPackCode())
                 .orElseThrow(
                     () -> {
-                      log.with("packcode", actionRuleDTO.getPackCode())
-                          .with("httpStatus", HttpStatus.BAD_REQUEST)
-                          .with("userEmail", createdBy)
-                          .warn("Failed to insert action rule, SMS template not found");
+                      log.atWarn()
+                          .setMessage("Failed to insert action rule, SMS template not found")
+                          .addKeyValue("packcode", actionRuleDTO.getPackCode())
+                          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                          .addKeyValue("userEmail", createdBy)
+                          .log();
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST,
                           "Failed to insert action rule, SMS template not found");
                     });
         if (!getSurveyColumns(collectionExercise.getSurvey(), true)
             .contains(actionRuleDTO.getPhoneNumberColumn())) {
-          log.with("requestedColumn", actionRuleDTO.getPhoneNumberColumn())
-              .with("httpStatus", HttpStatus.BAD_REQUEST)
-              .with("userEmail", createdBy)
-              .with("survey", actionRuleDTO)
-              .warn("Failed to insert action rule, phone number column does not exist");
+          log.atWarn()
+              .setMessage("Failed to insert action rule, phone number column does not exist")
+              .addKeyValue("requestedColumn", actionRuleDTO.getPhoneNumberColumn())
+              .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+              .addKeyValue("userEmail", createdBy)
+              .addKeyValue("survey", actionRuleDTO)
+              .log();
           throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Phone number column does not exist");
         }
@@ -200,19 +209,23 @@ public class ActionRuleEndpoint {
                 .findById(actionRuleDTO.getPackCode())
                 .orElseThrow(
                     () -> {
-                      log.with("packcode", actionRuleDTO.getPackCode())
-                          .with("httpStatus", HttpStatus.BAD_REQUEST)
-                          .with("userEmail", createdBy)
-                          .warn("Failed to insert action rule, email template not found");
+                      log.atWarn()
+                          .setMessage("Failed to insert action rule, email template not found")
+                          .addKeyValue("packcode", actionRuleDTO.getPackCode())
+                          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                          .addKeyValue("userEmail", createdBy)
+                          .log();
                       return new ResponseStatusException(
                           HttpStatus.BAD_REQUEST, "Email template not found");
                     });
         if (!getSurveyColumns(collectionExercise.getSurvey(), true)
             .contains(actionRuleDTO.getEmailColumn())) {
-          log.with("requestedColumn", actionRuleDTO.getEmailColumn())
-              .with("httpStatus", HttpStatus.BAD_REQUEST)
-              .with("userEmail", createdBy)
-              .warn("Failed to insert action rule, email column does not exist");
+          log.atWarn()
+              .setMessage("Failed to insert action rule, email column does not exist")
+              .addKeyValue("requestedColumn", actionRuleDTO.getEmailColumn())
+              .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+              .addKeyValue("userEmail", createdBy)
+              .log();
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
         }
         break;
@@ -277,11 +290,13 @@ public class ActionRuleEndpoint {
             .findAny()
             .orElseThrow(
                 () -> {
-                  log.with("actionRuleId", actionRuleDTO.getActionRuleId())
-                      .with("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
-                      .with("httpStatus", HttpStatus.NOT_FOUND)
-                      .with("userEmail", createdBy)
-                      .warn("Failed to update action rule, action rule not found");
+                  log.atWarn()
+                      .setMessage("Failed to update action rule, action rule not found")
+                      .addKeyValue("actionRuleId", actionRuleDTO.getActionRuleId())
+                      .addKeyValue("collectionExerciseId", actionRuleDTO.getCollectionExerciseId())
+                      .addKeyValue("httpStatus", HttpStatus.NOT_FOUND)
+                      .addKeyValue("userEmail", createdBy)
+                      .log();
                   return new ResponseStatusException(
                       HttpStatus.NOT_FOUND, "Action Rule Id not found");
                 });
@@ -299,10 +314,12 @@ public class ActionRuleEndpoint {
         .findById(uuid)
         .orElseThrow(
             () -> {
-              log.with("collectionExerciseId", uuid)
-                  .with("httpStatus", HttpStatus.NOT_FOUND)
-                  .with("userEmail", createdBy)
-                  .warn("Failed to edit action rules, collection exercise not found");
+              log.atWarn()
+                  .setMessage("Failed to edit action rules, collection exercise not found")
+                  .addKeyValue("collectionExerciseId", uuid)
+                  .addKeyValue("httpStatus", HttpStatus.NOT_FOUND)
+                  .addKeyValue("userEmail", createdBy)
+                  .log();
               return new ResponseStatusException(
                   HttpStatus.NOT_FOUND, "Collection exercise not found");
             });
@@ -318,10 +335,12 @@ public class ActionRuleEndpoint {
             .findById(actionRuleId)
             .orElseThrow(
                 () -> {
-                  log.with("actionRuleId", actionRuleId)
-                      .with("httpStatus", HttpStatus.NOT_FOUND)
-                      .with("userEmail", userEmail)
-                      .warn("Failed to dry run action rule, Action Rule not found");
+                  log.atWarn()
+                      .setMessage("Failed to dry run action rule, Action Rule not found")
+                      .addKeyValue("actionRuleId", actionRuleId)
+                      .addKeyValue("httpStatus", HttpStatus.NOT_FOUND)
+                      .addKeyValue("userEmail", userEmail)
+                      .log();
                   return new ResponseStatusException(HttpStatus.NOT_FOUND, "Action Rule not found");
                 });
 

@@ -3,10 +3,10 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 import static com.google.cloud.spring.pubsub.support.PubSubTopicUtils.toProjectTopicName;
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.DEACTIVATE_UAC;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,10 +53,12 @@ public class DeactivateUacEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Optional<UacQidLink> uacQidLinkOpt = qidLinkRepository.findByQid(qid);
     if (!uacQidLinkOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.NOT_FOUND)
-          .with("userEmail", userEmail)
-          .with("qid", qid)
-          .warn("Failed to deactivate UAC, could not find QID");
+      log.atWarn()
+          .setMessage("Failed to deactivate UAC, could not find QID")
+          .addKeyValue("httpStatus", HttpStatus.NOT_FOUND)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("qid", qid)
+          .log();
       throw new ResponseStatusException(
           HttpStatus.NOT_FOUND, String.format("Could not find QID %s", qid));
     }
