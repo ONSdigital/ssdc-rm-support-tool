@@ -21,22 +21,22 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupAdminRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/users")
 public class UserEndpoint {
   private static final Logger log = LoggerFactory.getLogger(UserEndpoint.class);
   private final UserRepository userRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final UserGroupAdminRepository userGroupAdminRepository;
 
   public UserEndpoint(
       UserRepository userRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       UserGroupAdminRepository userGroupAdminRepository) {
     this.userRepository = userRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.userGroupAdminRepository = userGroupAdminRepository;
   }
 
@@ -44,7 +44,7 @@ public class UserEndpoint {
   public UserDto getUser(
       @PathVariable(value = "userId") UUID userId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     User user =
         userRepository
@@ -65,7 +65,7 @@ public class UserEndpoint {
   public List<UserDto> getUsers(@Value("#{request.getAttribute('userEmail')}") String userEmail) {
     if (!userGroupAdminRepository.existsByUserEmailIgnoreCase(userEmail)) {
       // If you're not admin of a group, you have to be super user
-      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+      authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
     }
 
     return userRepository.findAll().stream().map(this::mapDto).collect(Collectors.toList());
@@ -82,7 +82,7 @@ public class UserEndpoint {
   public ResponseEntity<?> createUser(
       @RequestBody UserDto userDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     if (userRepository.findByEmailIgnoreCase(userDto.getEmail()).isPresent()) {
       return new ResponseEntity<>(Map.of("errors", "email already exists"), HttpStatus.BAD_REQUEST);

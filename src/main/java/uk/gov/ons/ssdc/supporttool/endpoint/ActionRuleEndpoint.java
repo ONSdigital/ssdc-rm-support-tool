@@ -41,7 +41,7 @@ import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository
 import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/actionRules")
@@ -49,7 +49,7 @@ public class ActionRuleEndpoint {
 
   private static final Logger log = LoggerFactory.getLogger(ActionRuleEndpoint.class);
   private final ActionRuleRepository actionRuleRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final ExportFileTemplateRepository exportFileTemplateRepository;
   private final SmsTemplateRepository smsTemplateRepository;
@@ -58,14 +58,14 @@ public class ActionRuleEndpoint {
 
   public ActionRuleEndpoint(
       ActionRuleRepository actionRuleRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       CollectionExerciseRepository collectionExerciseRepository,
       ExportFileTemplateRepository exportFileTemplateRepository,
       SmsTemplateRepository smsTemplateRepository,
       EmailTemplateRepository emailTemplateRepository,
       JdbcTemplate jdbcTemplate) {
     this.actionRuleRepository = actionRuleRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.exportFileTemplateRepository = exportFileTemplateRepository;
     this.smsTemplateRepository = smsTemplateRepository;
@@ -91,9 +91,9 @@ public class ActionRuleEndpoint {
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        collectionExercise.getSurvey(),
+        collectionExercise.getSurvey().getId(),
         UserGroupAuthorisedActivityType.LIST_ACTION_RULES);
 
     List<ActionRule> actionRules =
@@ -223,7 +223,7 @@ public class ActionRuleEndpoint {
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
     }
 
-    userIdentity.checkUserPermission(createdBy, collectionExercise.getSurvey(), userActivity);
+    authUser.checkUserPermission(createdBy, collectionExercise.getSurvey().getId(), userActivity);
 
     ActionRule actionRule = new ActionRule();
     actionRule.setId(UUID.randomUUID());
@@ -269,7 +269,7 @@ public class ActionRuleEndpoint {
               "Unexpected value: " + actionRuleDTO.getType());
         };
 
-    userIdentity.checkUserPermission(createdBy, collectionExercise.getSurvey(), userActivity);
+    authUser.checkUserPermission(createdBy, collectionExercise.getSurvey().getId(), userActivity);
 
     ActionRule actionRule =
         collectionExercise.getActionRules().stream()
@@ -325,9 +325,9 @@ public class ActionRuleEndpoint {
                   return new ResponseStatusException(HttpStatus.NOT_FOUND, "Action Rule not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        actionRule.getCollectionExercise().getSurvey(),
+        actionRule.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.LIST_ACTION_RULES);
 
     StringBuilder query = new StringBuilder();

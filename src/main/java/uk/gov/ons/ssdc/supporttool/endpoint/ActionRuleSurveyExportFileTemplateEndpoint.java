@@ -27,7 +27,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
 import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleSurveyExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/actionRuleSurveyExportFileTemplates")
@@ -38,18 +38,18 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
       actionRuleSurveyExportFileTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final ExportFileTemplateRepository exportFileTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   public ActionRuleSurveyExportFileTemplateEndpoint(
       ActionRuleSurveyExportFileTemplateRepository actionRuleSurveyExportFileTemplateRepository,
       SurveyRepository surveyRepository,
       ExportFileTemplateRepository exportFileTemplateRepository,
-      UserIdentity userIdentity) {
+      AuthUser authUser) {
     this.actionRuleSurveyExportFileTemplateRepository =
         actionRuleSurveyExportFileTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.exportFileTemplateRepository = exportFileTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping
@@ -69,9 +69,9 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        survey,
+        survey.getId(),
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES);
 
     return actionRuleSurveyExportFileTemplateRepository.findBySurvey(survey).stream()
@@ -96,9 +96,9 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        survey,
+        survey.getId(),
         UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_ACTION_RULE);
 
     ExportFileTemplate exportFileTemplate =

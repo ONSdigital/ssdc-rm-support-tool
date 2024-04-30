@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,13 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 @ConditionalOnProperty(name = "iap-enabled", havingValue = "true", matchIfMissing = true)
 public class IAPUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(IAPUser.class);
+
+  private final String IAP_ISSUER_URL = "https://cloud.google.com/iap";
+
+  @Value("${iapaudience}")
+  private String iapAudience;
+
+  private static TokenVerifier tokenVerifier = null;
 
   private final UserRepository userRepository;
 
@@ -73,7 +81,7 @@ public class IAPUser implements AuthUser {
 
   @Override
   public void checkUserPermission(
-      UUID surveyId, String userEmail, UserGroupAuthorisedActivityType activity) {
+      String userEmail, UUID surveyId, UserGroupAuthorisedActivityType activity) {
     User user = getUser(userEmail);
 
     for (UserGroupMember groupMember : user.getMemberOf()) {
@@ -123,7 +131,7 @@ public class IAPUser implements AuthUser {
   }
 
   @Override
-  public String getUserEmail(TokenVerifier tokenVerifier, String jwtToken) {
+  public String getUserEmail(String jwtToken) {
     if (!StringUtils.hasText(jwtToken)) {
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
       log.with("httpStatus", HttpStatus.FORBIDDEN)
@@ -131,13 +139,13 @@ public class IAPUser implements AuthUser {
       throw new ResponseStatusException(
           HttpStatus.FORBIDDEN, "Requests bypassing IAP are strictly forbidden");
     } else {
-      return verifyJwtAndGetEmail(jwtToken, tokenVerifier);
+      return verifyJwtAndGetEmail(jwtToken);
     }
   }
 
-  public String verifyJwtAndGetEmail(String jwtToken, TokenVerifier tokenVerifier) {
+  public String verifyJwtAndGetEmail(String jwtToken) {
     try {
-      JsonWebToken jsonWebToken = tokenVerifier.verify(jwtToken);
+      JsonWebToken jsonWebToken = getTokenVerifier().verify(jwtToken);
 
       // Verify that the token contain subject and email claims
       JsonWebToken.Payload payload = jsonWebToken.getPayload();
@@ -161,5 +169,15 @@ public class IAPUser implements AuthUser {
     }
 
     return userOpt.get();
+  }
+
+  private synchronized TokenVerifier getTokenVerifier() {
+
+    if (tokenVerifier == null) {
+      tokenVerifier =
+          TokenVerifier.newBuilder().setAudience(iapAudience).setIssuer(IAP_ISSUER_URL).build();
+    }
+
+    return tokenVerifier;
   }
 }

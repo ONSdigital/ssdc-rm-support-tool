@@ -25,7 +25,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupMemberDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupMemberRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/userGroupMembers")
@@ -33,17 +33,17 @@ public class UserGroupMemberEndpoint {
   private static final Logger log = LoggerFactory.getLogger(UserGroupMemberEndpoint.class);
 
   private final UserGroupMemberRepository userGroupMemberRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final UserRepository userRepository;
   private final UserGroupRepository userGroupRepository;
 
   public UserGroupMemberEndpoint(
       UserGroupMemberRepository userGroupMemberRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       UserRepository userRepository,
       UserGroupRepository userGroupRepository) {
     this.userGroupMemberRepository = userGroupMemberRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.userRepository = userRepository;
     this.userGroupRepository = userGroupRepository;
   }
@@ -52,7 +52,7 @@ public class UserGroupMemberEndpoint {
   public List<UserGroupMemberDto> findByUser(
       @RequestParam(value = "userId") UUID userId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     User user =
         userRepository
@@ -90,7 +90,7 @@ public class UserGroupMemberEndpoint {
     if (group.getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
       // If you're not admin of this group, you have to be super user
-      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+      authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
     }
 
     return userGroupMemberRepository.findByGroup(group).stream()
@@ -117,7 +117,7 @@ public class UserGroupMemberEndpoint {
     if (group.getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
       // If you're not admin of this group, you have to be super user
-      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+      authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
     }
 
     User user =
@@ -175,7 +175,7 @@ public class UserGroupMemberEndpoint {
     if (userGroupMember.getGroup().getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
       // If you're not admin of this group, you have to be super user
-      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+      authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
     }
 
     userGroupMemberRepository.delete(userGroupMember);

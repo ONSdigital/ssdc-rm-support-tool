@@ -18,25 +18,25 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.FulfilmentNextTrigger;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentNextTriggerRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/fulfilmentNextTriggers")
 public class FulfilmentNextTriggerEndpoint {
   private static final Logger log = LoggerFactory.getLogger(FulfilmentNextTriggerEndpoint.class);
   private final FulfilmentNextTriggerRepository fulfilmentNextTriggerRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   public FulfilmentNextTriggerEndpoint(
-      FulfilmentNextTriggerRepository fulfilmentNextTriggerRepository, UserIdentity userIdentity) {
+      FulfilmentNextTriggerRepository fulfilmentNextTriggerRepository, AuthUser authUser) {
     this.fulfilmentNextTriggerRepository = fulfilmentNextTriggerRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping
   public OffsetDateTime getTriggerDateTime(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CONFIGURE_FULFILMENT_TRIGGER);
 
     List<FulfilmentNextTrigger> fulfilmentNextTriggers = fulfilmentNextTriggerRepository.findAll();
@@ -62,7 +62,7 @@ public class FulfilmentNextTriggerEndpoint {
   public void setTriggerDateTime(
       @RequestParam(value = "triggerDateTime") String triggerDateTime,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CONFIGURE_FULFILMENT_TRIGGER);
 
     List<FulfilmentNextTrigger> fulfilmentNextTriggers = fulfilmentNextTriggerRepository.findAll();

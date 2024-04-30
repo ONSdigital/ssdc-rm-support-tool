@@ -1,6 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.security;
 
-import com.google.auth.oauth2.TokenVerifier;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -11,9 +10,9 @@ public interface AuthUser {
       Optional<UUID> surveyId, String userEmail);
 
   public void checkUserPermission(
-      UUID surveyId, String userEmail, UserGroupAuthorisedActivityType activity);
+      String userEmail, UUID surveyId, UserGroupAuthorisedActivityType activity);
 
   public void checkGlobalUserPermission(String userEmail, UserGroupAuthorisedActivityType activity);
 
-  public String getUserEmail(TokenVerifier tokenVerifier, String jwtToken);
+  public String getUserEmail(String jwtToken);
 }

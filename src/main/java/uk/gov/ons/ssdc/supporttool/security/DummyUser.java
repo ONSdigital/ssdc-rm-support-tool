@@ -2,7 +2,6 @@ package uk.gov.ons.ssdc.supporttool.security;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
-import com.google.auth.oauth2.TokenVerifier;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -17,7 +16,6 @@ import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 @ConditionalOnProperty(name = "iap-enabled", havingValue = "false")
 public class DummyUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(DummyUser.class);
-
   private final IAPUser iapUser;
 
   private final String dummyUserIdentity;
@@ -47,10 +45,10 @@ public class DummyUser implements AuthUser {
 
   @Override
   public void checkUserPermission(
-      UUID surveyId, String userEmail, UserGroupAuthorisedActivityType activity) {
+      String userEmail, UUID surveyId, UserGroupAuthorisedActivityType activity) {
     // If user isn't the dummy user, it should be treated as an IAPUser
     if (!isDummyUser(userEmail)) {
-      iapUser.checkUserPermission(surveyId, userEmail, activity);
+      iapUser.checkUserPermission(userEmail, surveyId, activity);
     }
   }
 
@@ -64,10 +62,10 @@ public class DummyUser implements AuthUser {
   }
 
   @Override
-  public String getUserEmail(TokenVerifier tokenVerifier, String jwtToken) {
+  public String getUserEmail(String jwtToken) {
     if (StringUtils.hasText(jwtToken)) {
       // If there is a token, we should get the user email for that token and not the dummy
-      return iapUser.verifyJwtAndGetEmail(jwtToken, tokenVerifier);
+      return iapUser.verifyJwtAndGetEmail(jwtToken);
     }
     return dummyUserIdentity;
   }

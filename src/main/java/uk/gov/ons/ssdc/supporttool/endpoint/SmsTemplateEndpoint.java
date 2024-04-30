@@ -20,25 +20,24 @@ import uk.gov.ons.ssdc.common.model.entity.SmsTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/smsTemplates")
 public class SmsTemplateEndpoint {
   private static final Logger log = LoggerFactory.getLogger(SmsTemplateEndpoint.class);
   private final SmsTemplateRepository smsTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
-  public SmsTemplateEndpoint(
-      SmsTemplateRepository smsTemplateRepository, UserIdentity userIdentity) {
+  public SmsTemplateEndpoint(SmsTemplateRepository smsTemplateRepository, AuthUser authUser) {
     this.smsTemplateRepository = smsTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping
   public List<SmsTemplateDto> getTemplates(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.LIST_SMS_TEMPLATES);
 
     return smsTemplateRepository.findAll().stream()
@@ -60,7 +59,7 @@ public class SmsTemplateEndpoint {
   public ResponseEntity<Void> createTemplate(
       @RequestBody SmsTemplateDto smsTemplateDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_SMS_TEMPLATE);
 
     validateTemplate(smsTemplateDto, userEmail);
