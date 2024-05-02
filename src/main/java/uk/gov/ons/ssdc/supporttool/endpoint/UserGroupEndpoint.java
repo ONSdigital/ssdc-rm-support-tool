@@ -1,10 +1,10 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,10 +50,12 @@ public class UserGroupEndpoint {
             .findById(groupId)
             .orElseThrow(
                 () -> {
-                  log.with("groupId", groupId)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("userEmail", userEmail)
-                      .warn("Failed to get user group, group not found");
+                  log.atWarn()
+                      .setMessage("Failed to get user group, group not found")
+                      .addKeyValue("groupId", groupId)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .addKeyValue("userEmail", userEmail)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
@@ -98,11 +100,13 @@ public class UserGroupEndpoint {
     authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     if (userGroupRepository.existsByName(userGroupDto.getName())) {
-      log.with("groupId", userGroupDto.getId())
-          .with("groupName", userGroupDto.getName())
-          .with("userEmail", userEmail)
-          .with("httpStatus", HttpStatus.CONFLICT)
-          .warn("Failed to create group, group name already exists");
+      log.atWarn()
+          .setMessage("Failed to create group, group name already exists")
+          .addKeyValue("groupId", userGroupDto.getId())
+          .addKeyValue("groupName", userGroupDto.getName())
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("httpStatus", HttpStatus.CONFLICT)
+          .log();
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Group name already exists");
     }
 

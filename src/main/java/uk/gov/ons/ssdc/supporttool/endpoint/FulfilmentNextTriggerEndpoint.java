@@ -1,11 +1,11 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,17 +41,22 @@ public class FulfilmentNextTriggerEndpoint {
 
     List<FulfilmentNextTrigger> fulfilmentNextTriggers = fulfilmentNextTriggerRepository.findAll();
     if (fulfilmentNextTriggers.size() > 1) {
-      log.with("userEmail", userEmail)
-          .with("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR)
-          .warn("Failed to get fulfilment trigger time, multiple triggers not currently supported");
+      log.atWarn()
+          .setMessage(
+              "Failed to get fulfilment trigger time, multiple triggers not currently supported")
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR)
+          .log();
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }
 
     if (fulfilmentNextTriggers.isEmpty()) {
-      log.with("userEmail", userEmail)
-          .with("httpStatus", HttpStatus.NOT_FOUND)
-          .warn("Failed to get fulfilment trigger time, no fulfilment trigger found");
+      log.atWarn()
+          .setMessage("Failed to get fulfilment trigger time, no fulfilment trigger found")
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("httpStatus", HttpStatus.NOT_FOUND)
+          .log();
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -68,9 +73,12 @@ public class FulfilmentNextTriggerEndpoint {
     List<FulfilmentNextTrigger> fulfilmentNextTriggers = fulfilmentNextTriggerRepository.findAll();
 
     if (fulfilmentNextTriggers.size() > 1) {
-      log.with("userEmail", userEmail)
-          .with("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR)
-          .warn("Failed to set fulfilment trigger time, multiple triggers not currently supported");
+      log.atWarn()
+          .setMessage(
+              "Failed to set fulfilment trigger time, multiple triggers not currently supported")
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR)
+          .log();
       throw new HttpClientErrorException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Multiple triggers not currently supported");
     }

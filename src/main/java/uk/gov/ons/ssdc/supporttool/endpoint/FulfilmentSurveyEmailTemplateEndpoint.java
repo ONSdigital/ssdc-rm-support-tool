@@ -2,12 +2,12 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,10 +64,12 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.with("surveyId", surveyId)
-                      .with("userEmail", userEmail)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Failed to get allowed email templates, survey not found");
+                  log.atWarn()
+                      .setMessage("Failed to get allowed email templates, survey not found")
+                      .addKeyValue("surveyId", surveyId)
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -90,10 +92,13 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.with("surveyId", allowTemplateOnSurvey.getSurveyId())
-                      .with("userEmail", userEmail)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Failed to create fulfilment survey email templates, survey not found");
+                  log.atWarn()
+                      .setMessage(
+                          "Failed to create fulfilment survey email templates, survey not found")
+                      .addKeyValue("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -107,22 +112,26 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
                 () -> {
-                  log.with("packCode", allowTemplateOnSurvey.getPackCode())
-                      .with("userEmail", userEmail)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn(
-                          "Failed to create fulfilment survey email templates, email template not found");
+                  log.atWarn()
+                      .setMessage(
+                          "Failed to create fulfilment survey email templates, email template not found")
+                      .addKeyValue("packCode", allowTemplateOnSurvey.getPackCode())
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .log();
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Email template not found");
                 });
 
     if (fulfilmentSurveyEmailTemplateRepository
         .existsFulfilmentSurveyEmailTemplateByEmailTemplateAndSurvey(emailTemplate, survey)) {
-      log.with("httpStatus", HttpStatus.CONFLICT)
-          .with("packCode", allowTemplateOnSurvey.getPackCode())
-          .with("userEmail", userEmail)
-          .warn(
-              "Failed to create fulfilment email template, Email Template already exists for survey");
+      log.atWarn()
+          .setMessage(
+              "Failed to create fulfilment email template, Email Template already exists for survey")
+          .addKeyValue("httpStatus", HttpStatus.CONFLICT)
+          .addKeyValue("packCode", allowTemplateOnSurvey.getPackCode())
+          .addKeyValue("userEmail", userEmail)
+          .log();
       return new ResponseEntity<>("Email Template already exists for survey", HttpStatus.CONFLICT);
     }
 

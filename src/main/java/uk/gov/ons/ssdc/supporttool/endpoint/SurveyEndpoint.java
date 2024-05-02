@@ -1,10 +1,10 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,10 +68,12 @@ public class SurveyEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.with("surveyId", surveyId)
-                      .with("userEmail", userEmail)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Failed to get survey, survey not found");
+                  log.atWarn()
+                      .setMessage("Failed to get survey, survey not found")
+                      .addKeyValue("surveyId", surveyId)
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 

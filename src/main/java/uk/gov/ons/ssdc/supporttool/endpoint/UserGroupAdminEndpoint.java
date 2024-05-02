@@ -1,10 +1,10 @@
 package uk.gov.ons.ssdc.supporttool.endpoint;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,10 +76,12 @@ public class UserGroupAdminEndpoint {
             .findById(userGroupAdminDto.getUserId())
             .orElseThrow(
                 () -> {
-                  log.with("userId", userGroupAdminDto.getUserId())
-                      .with("userEmail", userEmail)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Failed to add user group admin, user not found");
+                  log.atWarn()
+                      .setMessage("Failed to add user group admin, user not found")
+                      .addKeyValue("userId", userGroupAdminDto.getUserId())
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
                 });
 
@@ -88,21 +90,25 @@ public class UserGroupAdminEndpoint {
             .findById(userGroupAdminDto.getGroupId())
             .orElseThrow(
                 () -> {
-                  log.with("groupId", userGroupAdminDto.getGroupId())
-                      .with("userEmail", userEmail)
-                      .with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .warn("Failed to add user group admin, group not found");
+                  log.atWarn()
+                      .setMessage("Failed to add user group admin, group not found")
+                      .addKeyValue("groupId", userGroupAdminDto.getGroupId())
+                      .addKeyValue("userEmail", userEmail)
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group not found");
                 });
 
     if (user.getAdminOf().stream().anyMatch(userGroupAdmin -> userGroupAdmin.getGroup() == group)) {
-      log.with("userId", user.getId())
-          .with("groupId", group.getId())
-          .with("groupName", group.getName())
-          .with("userEmail", user.getEmail())
-          .with("httpStatus", HttpStatus.CONFLICT)
-          .with("userEmail", userEmail)
-          .warn("Failed to add user group admin, user is already an admin of this group");
+      log.atWarn()
+          .setMessage("Failed to add user group admin, user is already an admin of this group")
+          .addKeyValue("userId", user.getId())
+          .addKeyValue("groupId", group.getId())
+          .addKeyValue("groupName", group.getName())
+          .addKeyValue("userEmail", user.getEmail())
+          .addKeyValue("httpStatus", HttpStatus.CONFLICT)
+          .addKeyValue("userEmail", userEmail)
+          .log();
       throw new ResponseStatusException(
           HttpStatus.CONFLICT, "User is already an admin of this group");
     }

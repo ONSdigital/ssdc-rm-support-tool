@@ -2,13 +2,13 @@ package uk.gov.ons.ssdc.supporttool.endpoint;
 
 import static uk.gov.ons.ssdc.supporttool.utility.AllowTemplateOnSurveyValidator.validate;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,10 +61,12 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
             .findById(surveyId)
             .orElseThrow(
                 () -> {
-                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("surveyId", surveyId)
-                      .with("userEmail", userEmail)
-                      .warn("Failed to get allowed pack codes, survey not found");
+                  log.atWarn()
+                      .setMessage("Failed to get allowed pack codes, survey not found")
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .addKeyValue("surveyId", surveyId)
+                      .addKeyValue("userEmail", userEmail)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -87,10 +89,13 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getSurveyId())
             .orElseThrow(
                 () -> {
-                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("surveyId", allowTemplateOnSurvey.getSurveyId())
-                      .with("userEmail", userEmail)
-                      .warn("Failed to create action rule survey email template, survey not found");
+                  log.atWarn()
+                      .setMessage(
+                          "Failed to create action rule survey email template, survey not found")
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .addKeyValue("surveyId", allowTemplateOnSurvey.getSurveyId())
+                      .addKeyValue("userEmail", userEmail)
+                      .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
@@ -104,32 +109,38 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
             .findById(allowTemplateOnSurvey.getPackCode())
             .orElseThrow(
                 () -> {
-                  log.with("httpStatus", HttpStatus.BAD_REQUEST)
-                      .with("packCode", allowTemplateOnSurvey.getPackCode())
-                      .with("userEmail", userEmail)
-                      .warn(
-                          "Failed to create action rule survey email template, email template not found");
+                  log.atWarn()
+                      .setMessage(
+                          "Failed to create action rule survey email template, email template not found")
+                      .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                      .addKeyValue("packCode", allowTemplateOnSurvey.getPackCode())
+                      .addKeyValue("userEmail", userEmail)
+                      .log();
                   return new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "Email template not found");
                 });
 
     if (actionRuleSurveyEmailTemplateRepository
         .existsActionRuleSurveyEmailTemplateByEmailTemplateAndSurvey(emailTemplate, survey)) {
-      log.with("httpStatus", HttpStatus.CONFLICT)
-          .with("packCode", allowTemplateOnSurvey.getPackCode())
-          .with("userEmail", userEmail)
-          .warn(
-              "Failed to create action rule email template, Email Template already exists for survey");
+      log.atWarn()
+          .setMessage(
+              "Failed to create action rule email template, Email Template already exists for survey")
+          .addKeyValue("httpStatus", HttpStatus.CONFLICT)
+          .addKeyValue("packCode", allowTemplateOnSurvey.getPackCode())
+          .addKeyValue("userEmail", userEmail)
+          .log();
       return new ResponseEntity<>("Email Template already exists for survey", HttpStatus.CONFLICT);
     }
 
     Optional<String> errorOpt = validate(survey, Set.of(emailTemplate.getTemplate()));
     if (errorOpt.isPresent()) {
-      log.with("httpStatus", HttpStatus.BAD_REQUEST)
-          .with("userEmail", userEmail)
-          .with("validationErrors", errorOpt.get())
-          .warn(
-              "Failed to create action rule survey email template, there were errors validating the email template");
+      log.atWarn()
+          .setMessage(
+              "Failed to create action rule survey email template, there were errors validating the email template")
+          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+          .addKeyValue("userEmail", userEmail)
+          .addKeyValue("validationErrors", errorOpt.get())
+          .log();
       return new ResponseEntity<>(errorOpt.get(), HttpStatus.BAD_REQUEST);
     }
 

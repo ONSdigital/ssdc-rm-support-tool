@@ -1,7 +1,5 @@
 package uk.gov.ons.ssdc.supporttool.schedule;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -15,6 +13,8 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -61,9 +61,12 @@ public class RowStager {
     for (Job job : jobs) {
       String filePath = fileUploadStoragePath + job.getFileId();
       if (!new File(filePath).exists()) {
-        log.with("filePath", filePath)
-            .with("hostName", hostName)
-            .info("File can't be seen by this host; probably being handled by a different host");
+        log.atInfo()
+            .setMessage(
+                "File can't be seen by this host; probably being handled by a different host")
+            .addKeyValue("filePath", filePath)
+            .addKeyValue("hostName", hostName)
+            .log();
         continue; // Skip this job... hopefully another host (pod) is handling it
       }
 
@@ -120,10 +123,12 @@ public class RowStager {
             });
       }
     } catch (IOException e) {
-      log.with("file_id", job.getFileId())
-          .with("job_id", job.getId())
-          .with("file_name", job.getFileName())
-          .error("IOException staging job, CSV data is malformed");
+      log.atError()
+          .setMessage("IOException staging job, CSV data is malformed")
+          .addKeyValue("file_id", job.getFileId())
+          .addKeyValue("job_id", job.getId())
+          .addKeyValue("file_name", job.getFileName())
+          .log();
 
       job.setFatalErrorDescription("Exception Message: " + e.getMessage());
       job.setJobStatus(JobStatus.VALIDATED_TOTAL_FAILURE);

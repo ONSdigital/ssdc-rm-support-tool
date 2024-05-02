@@ -2,8 +2,6 @@ package uk.gov.ons.ssdc.supporttool.security;
 
 import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType.SUPER_USER;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
 import java.util.Arrays;
@@ -12,6 +10,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
@@ -121,10 +121,12 @@ public class IAPUser implements AuthUser {
       }
     }
 
-    log.with("userEmail", userEmail)
-        .with("activity", activity)
-        .with("httpStatus", HttpStatus.FORBIDDEN)
-        .warn("User not authorised for attempted activity");
+    log.atWarn()
+        .setMessage("User not authorised for attempted activity")
+        .addKeyValue("userEmail", userEmail)
+        .addKeyValue("activity", activity)
+        .addKeyValue("httpStatus", HttpStatus.FORBIDDEN)
+        .log();
     throw new ResponseStatusException(
         HttpStatus.FORBIDDEN,
         String.format("User not authorised for activity %s", activity.name()));
@@ -134,8 +136,10 @@ public class IAPUser implements AuthUser {
   public String getUserEmail(String jwtToken) {
     if (!StringUtils.hasText(jwtToken)) {
       // This request must have come from __inside__ the firewall/cluster, and should not be allowed
-      log.with("httpStatus", HttpStatus.FORBIDDEN)
-          .warn("Requests bypassing IAP are strictly forbidden");
+      log.atWarn()
+          .setMessage("Requests bypassing IAP are strictly forbidden")
+          .addKeyValue("httpStatus", HttpStatus.FORBIDDEN)
+          .log();
       throw new ResponseStatusException(
           HttpStatus.FORBIDDEN, "Requests bypassing IAP are strictly forbidden");
     } else {
@@ -162,9 +166,11 @@ public class IAPUser implements AuthUser {
   private User getUser(String userEmail) {
     Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userEmail);
     if (userOpt.isEmpty()) {
-      log.with("userEmail", userEmail)
-          .with("httpStatus", HttpStatus.FORBIDDEN)
-          .warn("User not known to RM");
+      log.atWarn()
+          .addKeyValue("userEmail", userEmail)
+          .setMessage("User not known to RM")
+          .addKeyValue("httpStatus", HttpStatus.FORBIDDEN)
+          .log();
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not known to RM");
     }
 

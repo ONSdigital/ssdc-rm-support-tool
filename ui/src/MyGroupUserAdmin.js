@@ -31,6 +31,7 @@ class MyGroupUserAdmin extends Component {
     emailValidationError: false,
     showRemoveDialog: false,
     groupMemberIdToRemove: null,
+    groupMemberEmailToRemove: null,
     allUsers: [],
   };
 
@@ -155,11 +156,12 @@ class MyGroupUserAdmin extends Component {
     this.refreshBackendData(this.state.allUsers);
   };
 
-  openRemoveDialog = (groupMemberIdToRemove) => {
+  openRemoveDialog = (groupMemberToRemove) => {
     this.removeUserFromGroupInProgress = false;
 
     this.setState({
-      groupMemberIdToRemove: groupMemberIdToRemove,
+      groupMemberIdToRemove: groupMemberToRemove.id,
+      groupMemberEmailToRemove: groupMemberToRemove.userEmail,
       showRemoveDialog: true,
     });
   };
@@ -167,6 +169,7 @@ class MyGroupUserAdmin extends Component {
   closeRemoveDialog = () => {
     this.setState({
       groupMemberIdToRemove: null,
+      groupMemberEmailToRemove: null,
       showRemoveDialog: false,
     });
   };
@@ -201,7 +204,7 @@ class MyGroupUserAdmin extends Component {
         <TableCell component="th" scope="row">
           <Button
             variant="contained"
-            onClick={() => this.openRemoveDialog(groupMember.id)}
+            onClick={() => this.openRemoveDialog(groupMember)}
           >
             Remove
           </Button>
@@ -277,7 +280,8 @@ class MyGroupUserAdmin extends Component {
           <DialogTitle id="alert-dialog-title">{"Confirm remove?"}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              Are you sure you wish to remove user from group?
+              Are you sure you wish to remove{" "}
+              {this.state.groupMemberEmailToRemove} from group?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
