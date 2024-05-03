@@ -13,7 +13,7 @@ import MyGroupUserAdmin from "./MyGroupUserAdmin";
 import BulkUploads from "./BulkUploads";
 import {
   BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
   useLocation,
   Link,
@@ -52,50 +52,55 @@ function QueryRouting() {
   let query = useQuery();
 
   return (
-    <Switch>
-      <Route exact path="/">
-        <LandingPage />
-      </Route>
-      <Route path="/survey">
-        <SurveyDetails surveyId={query.get("surveyId")} />
-      </Route>
-      <Route path="/search">
-        <SurveyCaseSearch
-          surveyId={query.get("surveyId")}
-          caseId={query.get("caseId")}
-        />
-      </Route>
-      <Route path="/collex">
-        <CollectionExerciseDetails
-          surveyId={query.get("surveyId")}
-          collectionExerciseId={query.get("collexId")}
-        />
-      </Route>
-      <Route path="/userAdmin">
-        <UserAdmin />
-      </Route>
-      <Route path="/userDetails">
-        <UserDetails userId={query.get("userId")} />
-      </Route>
-      <Route path="/groupDetails">
-        <GroupDetails groupId={query.get("groupId")} />
-      </Route>
-      <Route path="/exceptionManager">
-        <ExceptionManager />
-      </Route>
-      <Route path="/myGroupsAdmin">
-        <MyGroupsAdmin />
-      </Route>
-      <Route path="/myGroupUserAdmin">
-        <MyGroupUserAdmin groupId={query.get("groupId")} />
-      </Route>
-      <Route path="/bulkUploads">
-        <BulkUploads
-          surveyId={query.get("surveyId")}
-          collectionExerciseId={query.get("collexId")}
-        />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route
+        path="/survey"
+        element={<SurveyDetails surveyId={query.get("surveyId")} />}
+      />
+      <Route
+        path="/search"
+        element={
+          <SurveyCaseSearch
+            surveyId={query.get("surveyId")}
+            caseId={query.get("caseId")}
+          />
+        }
+      />
+      <Route
+        path="/collex"
+        element={
+          <CollectionExerciseDetails
+            surveyId={query.get("surveyId")}
+            collectionExerciseId={query.get("collexId")}
+          />
+        }
+      />
+      <Route path="/userAdmin" element={<UserAdmin />} />
+      <Route
+        path="/userDetails"
+        element={<UserDetails userId={query.get("userId")} />}
+      />
+      <Route
+        path="/groupDetails"
+        element={<GroupDetails groupId={query.get("groupId")} />}
+      />
+      <Route path="/exceptionManager" element={<ExceptionManager />} />
+      <Route path="/myGroupsAdmin" element={<MyGroupsAdmin />} />
+      <Route
+        path="/myGroupUserAdmin"
+        element={<MyGroupUserAdmin groupId={query.get("groupId")} />}
+      />
+      <Route
+        path="/bulkUploads"
+        element={
+          <BulkUploads
+            surveyId={query.get("surveyId")}
+            collectionExerciseId={query.get("collexId")}
+          />
+        }
+      />
+    </Routes>
   );
 }
 
