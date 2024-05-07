@@ -8,5 +8,5 @@ spring:
 queueconfig:
   shared-pubsub-project: our-project
 
-iap-enabled: false # This ** MUST ALWAYS!! ** be true in production!!!
+iap-enforced: false # This ** MUST ALWAYS!! ** be true in production!!!
 

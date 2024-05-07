@@ -18,5 +18,5 @@ exception-manager:
 queueconfig:
   shared-pubsub-project: shared-project
 
-iap-enabled: false # This ** MUST ALWAYS!! ** be true in production!!!
+iap-enforced: false # This ** MUST ALWAYS!! ** be true in production!!!
 dummyuseridentity: integration-tests@testymctest.com

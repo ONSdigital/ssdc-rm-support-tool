@@ -13,7 +13,7 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserRepository;
 
 @Component
-@ConditionalOnProperty(name = "iap-enabled", havingValue = "false")
+@ConditionalOnProperty(name = "iap-enforced", havingValue = "false")
 public class DummyUser implements AuthUser {
   private static final Logger log = LoggerFactory.getLogger(DummyUser.class);
   private final IAPUser iapUser;
