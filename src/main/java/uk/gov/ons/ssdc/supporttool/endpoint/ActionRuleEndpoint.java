@@ -124,6 +124,7 @@ public class ActionRuleEndpoint {
                   actionRuleDTO.setTriggerDateTime(actionRule.getTriggerDateTime());
                   actionRuleDTO.setHasTriggered(actionRule.isHasTriggered());
                   actionRuleDTO.setUacMetadata(actionRule.getUacMetadata());
+                  actionRuleDTO.setSelectedCaseCount(actionRule.getSelectedCaseCount());
                   return actionRuleDTO;
                 })
             .collect(Collectors.toList());
