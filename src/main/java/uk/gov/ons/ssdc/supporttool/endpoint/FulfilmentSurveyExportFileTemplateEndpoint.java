@@ -27,7 +27,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.ExportFileTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveyExportFileTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 
 @RestController
@@ -39,20 +39,20 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
       fulfilmentSurveyExportFileTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final ExportFileTemplateRepository exportFileTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final SurveyService surveyService;
 
   public FulfilmentSurveyExportFileTemplateEndpoint(
       FulfilmentSurveyExportFileTemplateRepository fulfilmentSurveyExportFileTemplateRepository,
       SurveyRepository surveyRepository,
       ExportFileTemplateRepository exportFileTemplateRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       SurveyService surveyService) {
     this.fulfilmentSurveyExportFileTemplateRepository =
         fulfilmentSurveyExportFileTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.exportFileTemplateRepository = exportFileTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.surveyService = surveyService;
   }
 
@@ -75,9 +75,9 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        survey,
+        survey.getId(),
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS);
 
     return fulfilmentSurveyExportFileTemplateRepository.findBySurvey(survey).stream()
@@ -104,9 +104,9 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        survey,
+        survey.getId(),
         UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT);
 
     ExportFileTemplate exportFileTemplate =

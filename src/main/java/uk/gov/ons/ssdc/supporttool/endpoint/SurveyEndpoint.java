@@ -20,7 +20,7 @@ import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SurveyDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 
 @RestController
@@ -28,13 +28,13 @@ import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 public class SurveyEndpoint {
   private static final Logger log = LoggerFactory.getLogger(SurveyEndpoint.class);
   private final SurveyRepository surveyRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final SurveyService surveyService;
 
   public SurveyEndpoint(
-      SurveyRepository surveyRepository, UserIdentity userIdentity, SurveyService surveyService) {
+      SurveyRepository surveyRepository, AuthUser authUser, SurveyService surveyService) {
     this.surveyRepository = surveyRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.surveyService = surveyService;
   }
 
@@ -42,7 +42,7 @@ public class SurveyEndpoint {
   public List<SurveyDto> getSurveys(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.LIST_SURVEYS);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.LIST_SURVEYS);
 
     return surveyRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
   }
@@ -77,8 +77,8 @@ public class SurveyEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.VIEW_SURVEY);
+    authUser.checkUserPermission(
+        userEmail, survey.getId(), UserGroupAuthorisedActivityType.VIEW_SURVEY);
 
     return mapToDto(survey);
   }
@@ -88,8 +88,7 @@ public class SurveyEndpoint {
   public ResponseEntity<UUID> createSurvey(
       @RequestBody SurveyDto surveyDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
-        userEmail, UserGroupAuthorisedActivityType.CREATE_SURVEY);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.CREATE_SURVEY);
 
     Survey survey = new Survey();
     survey.setId(UUID.randomUUID());

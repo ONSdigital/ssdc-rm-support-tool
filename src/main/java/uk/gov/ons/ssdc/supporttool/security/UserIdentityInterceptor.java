@@ -8,12 +8,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 public class UserIdentityInterceptor implements HandlerInterceptor {
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   private static final Logger log = LoggerFactory.getLogger(UserIdentityInterceptor.class);
 
-  public UserIdentityInterceptor(UserIdentity userIdentity) {
-    this.userIdentity = userIdentity;
+  public UserIdentityInterceptor(AuthUser authUser) {
+    this.authUser = authUser;
   }
 
   @Override
@@ -24,7 +24,7 @@ public class UserIdentityInterceptor implements HandlerInterceptor {
       return true;
     }
     String jwtToken = request.getHeader("x-goog-iap-jwt-assertion");
-    String userEmail = userIdentity.getUserEmail(jwtToken);
+    String userEmail = authUser.getUserEmail(jwtToken);
     request.setAttribute("userEmail", userEmail);
     return true;
   }

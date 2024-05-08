@@ -10,27 +10,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.client.ExceptionManagerClient;
 import uk.gov.ons.ssdc.supporttool.model.dto.rest.SkipMessageRequest;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @Controller
 @RequestMapping(value = "/api/exceptionManager")
 public class ExceptionManagerEndpoint {
   private final ExceptionManagerClient exceptionManagerClient;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   @Value("${exceptionmanager.exceptioncountthreshold}")
   private int exceptionCountThreshold;
 
   public ExceptionManagerEndpoint(
-      ExceptionManagerClient exceptionManagerClient, UserIdentity userIdentity) {
+      ExceptionManagerClient exceptionManagerClient, AuthUser authUser) {
     this.exceptionManagerClient = exceptionManagerClient;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping(value = "/badMessagesSummary", produces = "application/json")
   public ResponseEntity<String> getBadMessagesSummary(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
     if (Integer.parseInt(exceptionManagerClient.getBadMessagesCount()) > exceptionCountThreshold) {
@@ -43,7 +43,7 @@ public class ExceptionManagerEndpoint {
   @GetMapping(value = "/badMessagesCount", produces = "application/json")
   public ResponseEntity<String> getBadMessagesCount(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
     return new ResponseEntity<>(exceptionManagerClient.getBadMessagesCount(), HttpStatus.OK);
@@ -53,7 +53,7 @@ public class ExceptionManagerEndpoint {
   public ResponseEntity<String> getBadMessageDetails(
       @PathVariable("messageHash") String messageHash,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_VIEWER);
 
     return new ResponseEntity<>(
@@ -64,7 +64,7 @@ public class ExceptionManagerEndpoint {
   public ResponseEntity<String> peekMessage(
       @PathVariable("messageHash") String messageHash,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_PEEK);
 
     return new ResponseEntity<>(exceptionManagerClient.peekMessage(messageHash), HttpStatus.OK);
@@ -74,7 +74,7 @@ public class ExceptionManagerEndpoint {
   public ResponseEntity<Void> skipMessage(
       @PathVariable("messageHash") String messageHash,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.EXCEPTION_MANAGER_QUARANTINE);
 
     SkipMessageRequest skipMessageRequest = new SkipMessageRequest();

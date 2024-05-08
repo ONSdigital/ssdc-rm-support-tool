@@ -20,7 +20,7 @@ import uk.gov.ons.ssdc.common.model.entity.EmailTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.EmailTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/emailTemplates")
@@ -28,18 +28,17 @@ public class EmailTemplateEndpoint {
 
   private static final Logger log = LoggerFactory.getLogger(EmailTemplateEndpoint.class);
   private final EmailTemplateRepository emailTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
-  public EmailTemplateEndpoint(
-      EmailTemplateRepository emailTemplateRepository, UserIdentity userIdentity) {
+  public EmailTemplateEndpoint(EmailTemplateRepository emailTemplateRepository, AuthUser authUser) {
     this.emailTemplateRepository = emailTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping
   public List<EmailTemplateDto> getTemplates(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.LIST_EMAIL_TEMPLATES);
 
     return emailTemplateRepository.findAll().stream()
@@ -61,7 +60,7 @@ public class EmailTemplateEndpoint {
   public ResponseEntity<Void> createTemplate(
       @RequestBody EmailTemplateDto emailTemplateDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EMAIL_TEMPLATE);
 
     validateEmailTemplate(emailTemplateDto, userEmail);

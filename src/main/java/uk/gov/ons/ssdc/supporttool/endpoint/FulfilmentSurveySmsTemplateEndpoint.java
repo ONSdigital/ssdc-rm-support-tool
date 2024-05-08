@@ -27,7 +27,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveySmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 
 @RestController
@@ -38,19 +38,19 @@ public class FulfilmentSurveySmsTemplateEndpoint {
   private final FulfilmentSurveySmsTemplateRepository fulfilmentSurveySmsTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final SmsTemplateRepository smsTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final SurveyService surveyService;
 
   public FulfilmentSurveySmsTemplateEndpoint(
       FulfilmentSurveySmsTemplateRepository fulfilmentSurveySmsTemplateRepository,
       SurveyRepository surveyRepository,
       SmsTemplateRepository smsTemplateRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       SurveyService surveyService) {
     this.fulfilmentSurveySmsTemplateRepository = fulfilmentSurveySmsTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.smsTemplateRepository = smsTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.surveyService = surveyService;
   }
 
@@ -72,9 +72,9 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        survey,
+        survey.getId(),
         UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS);
 
     return fulfilmentSurveySmsTemplateRepository.findBySurvey(survey).stream()
@@ -101,8 +101,10 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_FULFILMENT);
+    authUser.checkUserPermission(
+        userEmail,
+        survey.getId(),
+        UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_FULFILMENT);
 
     SmsTemplate smsTemplate =
         smsTemplateRepository

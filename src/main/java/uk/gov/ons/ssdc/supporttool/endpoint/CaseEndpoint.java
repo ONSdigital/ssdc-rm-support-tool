@@ -38,7 +38,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.PrintFulfilment;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.Refusal;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.SmsFulfilmentAction;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UacQidLinkDto;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.service.CaseService;
 
 @RestController
@@ -48,12 +48,12 @@ public class CaseEndpoint {
   private static final Logger log = LoggerFactory.getLogger(CaseEndpoint.class);
   private final NotifyServiceClient notifyServiceClient;
   private final CaseService caseService;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   public CaseEndpoint(
-      NotifyServiceClient notifyServiceClient, UserIdentity userIdentity, CaseService caseService) {
+      NotifyServiceClient notifyServiceClient, AuthUser authUser, CaseService caseService) {
     this.notifyServiceClient = notifyServiceClient;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.caseService = caseService;
   }
 
@@ -63,9 +63,9 @@ public class CaseEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
     Case caze = caseService.getCaseByCaseId(caseId);
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        caze.getCollectionExercise().getSurvey(),
+        caze.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.VIEW_CASE_DETAILS);
 
     CaseDto caseDto = new CaseDto();
@@ -128,9 +128,9 @@ public class CaseEndpoint {
 
     Case caze = caseService.getCaseByCaseId(caseId);
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        caze.getCollectionExercise().getSurvey(),
+        caze.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.UPDATE_SAMPLE_SENSITIVE);
 
     List<String> validationErrors =
@@ -161,9 +161,9 @@ public class CaseEndpoint {
 
     Case caze = caseService.getCaseByCaseId(caseId);
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        caze.getCollectionExercise().getSurvey(),
+        caze.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.UPDATE_SAMPLE);
 
     List<String> validationErrors = validateFieldToUpdate(caze, updateSample.getSample(), false);
@@ -221,9 +221,9 @@ public class CaseEndpoint {
     Case caze = caseService.getCaseByCaseId(caseId);
 
     // Check user is authorised to refuse a case for this survey
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        caze.getCollectionExercise().getSurvey(),
+        caze.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.CREATE_CASE_REFUSAL);
 
     caseService.buildAndSendRefusalEvent(refusal, caze, userEmail);
@@ -240,9 +240,9 @@ public class CaseEndpoint {
     Case caze = caseService.getCaseByCaseId(caseId);
 
     // Check user is authorised to request a fulfilment on a case for this survey
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        caze.getCollectionExercise().getSurvey(),
+        caze.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.CREATE_CASE_EXPORT_FILE_FULFILMENT);
 
     caseService.buildAndSendPrintFulfilmentCaseEvent(printFulfilment, caze, userEmail);
@@ -259,9 +259,9 @@ public class CaseEndpoint {
     Case caze = caseService.getCaseByCaseId(caseId);
 
     // Check user is authorised to invalidate a case address for this survey
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        caze.getCollectionExercise().getSurvey(),
+        caze.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.CREATE_CASE_INVALID_CASE);
 
     caseService.buildAndSendInvalidAddressCaseEvent(invalidCase, caze, userEmail);
@@ -278,9 +278,9 @@ public class CaseEndpoint {
     Case caze = caseService.getCaseByCaseId(caseId);
 
     // Check user is authorised to request a fulfilment on a case for this survey
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        caze.getCollectionExercise().getSurvey(),
+        caze.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.CREATE_CASE_SMS_FULFILMENT);
 
     RequestDTO smsFulfilmentRequest = new RequestDTO();
@@ -325,9 +325,9 @@ public class CaseEndpoint {
     Case caze = caseService.getCaseByCaseId(caseId);
 
     // Check user is authorised to request a fulfilment on a case for this survey
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        caze.getCollectionExercise().getSurvey(),
+        caze.getCollectionExercise().getSurvey().getId(),
         UserGroupAuthorisedActivityType.CREATE_CASE_EMAIL_FULFILMENT);
 
     RequestDTO emailFulfilmentRequest = new RequestDTO();

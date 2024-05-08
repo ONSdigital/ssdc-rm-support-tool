@@ -22,7 +22,7 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CaseSearchResult;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UIRefusalTypeDTO;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.utility.CaseSearchResultsMapper;
 
 @RestController
@@ -33,7 +33,7 @@ public class SurveyCasesEndpoint {
   private final SurveyRepository surveyRepository;
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
   private final CaseSearchResultsMapper caseRowMapper;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   private static final String searchCasesPartialQuery =
       "SELECT c.id, c.case_ref, c.sample, e.name collex_name";
@@ -46,11 +46,11 @@ public class SurveyCasesEndpoint {
       SurveyRepository surveyRepository,
       NamedParameterJdbcTemplate namedParameterJdbcTemplate,
       CaseSearchResultsMapper caseRowMapper,
-      UserIdentity userIdentity) {
+      AuthUser authUser) {
     this.surveyRepository = surveyRepository;
     this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     this.caseRowMapper = caseRowMapper;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping(value = "/{surveyId}")
@@ -150,8 +150,8 @@ public class SurveyCasesEndpoint {
           .log();
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Survey not found");
     }
-    userIdentity.checkUserPermission(
-        userEmail, surveyOptional.get(), UserGroupAuthorisedActivityType.SEARCH_CASES);
+    authUser.checkUserPermission(
+        userEmail, surveyOptional.get().getId(), UserGroupAuthorisedActivityType.SEARCH_CASES);
   }
 
   private String escapeSqlLikeSpecialCharacters(String stringToEscape) {

@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
@@ -23,21 +23,21 @@ public class ExportFileDestinationsEndpoint {
 
   public static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
 
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   @Value("${exportfiledestinationconfigfile}")
   private String configFile;
 
   private Set<String> exportFileDestinations = null;
 
-  public ExportFileDestinationsEndpoint(UserIdentity userIdentity) {
-    this.userIdentity = userIdentity;
+  public ExportFileDestinationsEndpoint(AuthUser authUser) {
+    this.authUser = authUser;
   }
 
   @GetMapping
   public Set<String> getExportFileDestinations(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, LIST_EXPORT_FILE_DESTINATIONS);
+    authUser.checkGlobalUserPermission(userEmail, LIST_EXPORT_FILE_DESTINATIONS);
 
     if (exportFileDestinations != null) {
       return exportFileDestinations;

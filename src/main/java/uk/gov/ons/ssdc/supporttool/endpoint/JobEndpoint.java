@@ -39,7 +39,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.JobTypeDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.JobRowRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.utility.JobTypeHelper;
 
 @RestController
@@ -50,7 +50,7 @@ public class JobEndpoint {
   private final JobRepository jobRepository;
   private final JobRowRepository jobRowRepository;
   private final CollectionExerciseRepository collectionExerciseRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final JobTypeHelper jobTypeHelper;
 
   @Value("${file-upload-storage-path}")
@@ -60,12 +60,12 @@ public class JobEndpoint {
       JobRepository jobRepository,
       JobRowRepository jobRowRepository,
       CollectionExerciseRepository collectionExerciseRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       JobTypeHelper jobTypeHelper) {
     this.jobRepository = jobRepository;
     this.jobRowRepository = jobRowRepository;
     this.collectionExerciseRepository = collectionExerciseRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.jobTypeHelper = jobTypeHelper;
   }
 
@@ -302,15 +302,17 @@ public class JobEndpoint {
 
   private void checkUserLoadFilePermissionByJobType(
       String userEmail, CollectionExercise collectionExercise, JobType jobType) {
-    userIdentity.checkUserPermission(
-        userEmail, collectionExercise.getSurvey(), jobTypeHelper.getFileLoadPermission(jobType));
+    authUser.checkUserPermission(
+        userEmail,
+        collectionExercise.getSurvey().getId(),
+        jobTypeHelper.getFileLoadPermission(jobType));
   }
 
   private void checkUserViewProgressPermissionByJobType(
       String userEmail, CollectionExercise collectionExercise, JobType jobType) {
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        collectionExercise.getSurvey(),
+        collectionExercise.getSurvey().getId(),
         jobTypeHelper.getFileViewProgressPermission(jobType));
   }
 

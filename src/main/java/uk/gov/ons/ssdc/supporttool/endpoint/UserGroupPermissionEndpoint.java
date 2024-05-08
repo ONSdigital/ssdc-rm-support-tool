@@ -25,7 +25,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupPermissionDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupPermissionRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/userGroupPermissions")
@@ -33,17 +33,17 @@ public class UserGroupPermissionEndpoint {
   private static final Logger log = LoggerFactory.getLogger(UserGroupPermissionEndpoint.class);
 
   private final UserGroupPermissionRepository userGroupPermissionRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final UserGroupRepository userGroupRepository;
   private final SurveyRepository surveyRepository;
 
   public UserGroupPermissionEndpoint(
       UserGroupPermissionRepository userGroupPermissionRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       UserGroupRepository userGroupRepository,
       SurveyRepository surveyRepository) {
     this.userGroupPermissionRepository = userGroupPermissionRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.userGroupRepository = userGroupRepository;
     this.surveyRepository = surveyRepository;
   }
@@ -52,7 +52,7 @@ public class UserGroupPermissionEndpoint {
   public List<UserGroupPermissionDto> findByGroup(
       @RequestParam(value = "groupId") UUID groupId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     UserGroup group =
         userGroupRepository
@@ -91,7 +91,7 @@ public class UserGroupPermissionEndpoint {
   public ResponseEntity<Void> addPermissionToGroup(
       @RequestBody UserGroupPermissionDto userGroupPermissionDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     UserGroup group =
         userGroupRepository
@@ -172,7 +172,7 @@ public class UserGroupPermissionEndpoint {
   public void revokePermissionFromGroup(
       @PathVariable(value = "groupPermissionId") UUID groupPermissionId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     userGroupPermissionRepository.deleteById(groupPermissionId);
   }

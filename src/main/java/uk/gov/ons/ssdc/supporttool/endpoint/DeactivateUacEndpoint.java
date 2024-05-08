@@ -20,7 +20,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.EventHeaderDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.repository.UacQidLinkRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 
 @RestController
@@ -28,7 +28,7 @@ import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 public class DeactivateUacEndpoint {
 
   private static final Logger log = LoggerFactory.getLogger(DeactivateUacEndpoint.class);
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final UacQidLinkRepository qidLinkRepository;
   private final PubSubTemplate pubSubTemplate;
 
@@ -39,10 +39,8 @@ public class DeactivateUacEndpoint {
   private String sharedPubsubProject;
 
   public DeactivateUacEndpoint(
-      UserIdentity userIdentity,
-      UacQidLinkRepository qidLinkRepository,
-      PubSubTemplate pubSubTemplate) {
-    this.userIdentity = userIdentity;
+      AuthUser authUser, UacQidLinkRepository qidLinkRepository, PubSubTemplate pubSubTemplate) {
+    this.authUser = authUser;
     this.qidLinkRepository = qidLinkRepository;
     this.pubSubTemplate = pubSubTemplate;
   }
@@ -63,9 +61,9 @@ public class DeactivateUacEndpoint {
           HttpStatus.NOT_FOUND, String.format("Could not find QID %s", qid));
     }
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        uacQidLinkOpt.get().getCaze().getCollectionExercise().getSurvey(),
+        uacQidLinkOpt.get().getCaze().getCollectionExercise().getSurvey().getId(),
         DEACTIVATE_UAC);
 
     EventDTO event = new EventDTO();

@@ -27,7 +27,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.EmailTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.FulfilmentSurveyEmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.service.SurveyService;
 
 @RestController
@@ -39,19 +39,19 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
   private final FulfilmentSurveyEmailTemplateRepository fulfilmentSurveyEmailTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final EmailTemplateRepository emailTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final SurveyService surveyService;
 
   public FulfilmentSurveyEmailTemplateEndpoint(
       FulfilmentSurveyEmailTemplateRepository fulfilmentSurveyEmailTemplateRepository,
       SurveyRepository surveyRepository,
       EmailTemplateRepository emailTemplateRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       SurveyService surveyService) {
     this.fulfilmentSurveyEmailTemplateRepository = fulfilmentSurveyEmailTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.emailTemplateRepository = emailTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.surveyService = surveyService;
   }
 
@@ -73,9 +73,9 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        survey,
+        survey.getId(),
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
 
     return fulfilmentSurveyEmailTemplateRepository.findBySurvey(survey).stream()
@@ -102,8 +102,10 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT);
+    authUser.checkUserPermission(
+        userEmail,
+        survey.getId(),
+        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT);
 
     EmailTemplate emailTemplate =
         emailTemplateRepository

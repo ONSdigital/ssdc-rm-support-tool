@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.utility.ObjectMapperFactory;
 
 @RestController
@@ -23,21 +23,21 @@ public class NotifyServiceRefEndpoint {
 
   public static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.objectMapper();
 
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   @Value("${notifyserviceconfigfile}")
   private String configFile;
 
   private Set<String> notifyServiceRefs = null;
 
-  public NotifyServiceRefEndpoint(UserIdentity userIdentity) {
-    this.userIdentity = userIdentity;
+  public NotifyServiceRefEndpoint(AuthUser authUser) {
+    this.authUser = authUser;
   }
 
   @GetMapping
   public Set<String> getNotifyServiceRefs(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, LIST_EMAIL_TEMPLATES);
+    authUser.checkGlobalUserPermission(userEmail, LIST_EMAIL_TEMPLATES);
 
     if (notifyServiceRefs != null) {
       return notifyServiceRefs;

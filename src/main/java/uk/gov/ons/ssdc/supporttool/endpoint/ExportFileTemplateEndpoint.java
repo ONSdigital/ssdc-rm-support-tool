@@ -20,7 +20,7 @@ import uk.gov.ons.ssdc.common.model.entity.ExportFileTemplate;
 import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.ExportFileTemplateDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.ExportFileTemplateRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/exportFileTemplates")
@@ -28,18 +28,18 @@ public class ExportFileTemplateEndpoint {
   private static final Logger log = LoggerFactory.getLogger(ExportFileTemplateEndpoint.class);
 
   private final ExportFileTemplateRepository exportFileTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   public ExportFileTemplateEndpoint(
-      ExportFileTemplateRepository exportFileTemplateRepository, UserIdentity userIdentity) {
+      ExportFileTemplateRepository exportFileTemplateRepository, AuthUser authUser) {
     this.exportFileTemplateRepository = exportFileTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping
   public List<ExportFileTemplateDto> getTemplates(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.LIST_EXPORT_FILE_TEMPLATES);
 
     return exportFileTemplateRepository.findAll().stream()
@@ -61,7 +61,7 @@ public class ExportFileTemplateEndpoint {
   public ResponseEntity<Void> createTemplate(
       @RequestBody ExportFileTemplateDto exportFileTemplateDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(
+    authUser.checkGlobalUserPermission(
         userEmail, UserGroupAuthorisedActivityType.CREATE_EXPORT_FILE_TEMPLATE);
 
     checkDuplicateTemplateItems(exportFileTemplateDto, userEmail);

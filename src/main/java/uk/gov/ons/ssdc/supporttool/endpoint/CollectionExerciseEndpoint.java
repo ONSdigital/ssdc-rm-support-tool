@@ -38,7 +38,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.messaging.PayloadDTO;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CollectionExerciseDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.CollectionExerciseRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 import uk.gov.ons.ssdc.supporttool.utility.EventHelper;
 
 @RestController
@@ -50,7 +50,7 @@ public class CollectionExerciseEndpoint {
 
   private final CollectionExerciseRepository collectionExerciseRepository;
   private final SurveyRepository surveyRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final PubSubTemplate pubSubTemplate;
 
   @Value("${queueconfig.collection-exercise-update-event-topic}")
@@ -65,11 +65,11 @@ public class CollectionExerciseEndpoint {
   public CollectionExerciseEndpoint(
       CollectionExerciseRepository collectionExerciseRepository,
       SurveyRepository surveyRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       PubSubTemplate pubSubTemplate) {
     this.collectionExerciseRepository = collectionExerciseRepository;
     this.surveyRepository = surveyRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.pubSubTemplate = pubSubTemplate;
   }
 
@@ -93,9 +93,9 @@ public class CollectionExerciseEndpoint {
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        collectionExercise.getSurvey(),
+        collectionExercise.getSurvey().getId(),
         UserGroupAuthorisedActivityType.VIEW_COLLECTION_EXERCISE);
 
     return mapDto(collectionExercise.getSurvey().getId(), collectionExercise);
@@ -120,8 +120,8 @@ public class CollectionExerciseEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES);
+    authUser.checkUserPermission(
+        userEmail, survey.getId(), UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES);
 
     return collectionExerciseRepository.findBySurvey(survey).stream()
         .map(collex -> mapDto(surveyId, collex))
@@ -162,8 +162,8 @@ public class CollectionExerciseEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.CREATE_COLLECTION_EXERCISE);
+    authUser.checkUserPermission(
+        userEmail, survey.getId(), UserGroupAuthorisedActivityType.CREATE_COLLECTION_EXERCISE);
 
     validateCollectionInstrumentRules(
         collectionExerciseDto.getCollectionInstrumentSelectionRules(), userEmail);

@@ -17,12 +17,12 @@ import uk.gov.ons.ssdc.common.model.entity.CollectionInstrumentSelectionRule;
 import uk.gov.ons.ssdc.common.model.entity.Survey;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.CollectionExerciseDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @ExtendWith(MockitoExtension.class)
 public class CollectionExerciseEndpointTest {
   @Mock SurveyRepository surveyRepository;
-  @Mock UserIdentity userIdentity; // This is required, trust me
+  @Mock AuthUser authUser; // This is required, trust me
 
   @InjectMocks CollectionExerciseEndpoint underTest;
 

@@ -27,7 +27,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
 import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleSurveySmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SmsTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/actionRuleSurveySmsTemplates")
@@ -37,17 +37,17 @@ public class ActionRuleSurveySmsTemplateEndpoint {
   private final ActionRuleSurveySmsTemplateRepository actionRuleSurveySmsTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final SmsTemplateRepository smsTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   public ActionRuleSurveySmsTemplateEndpoint(
       ActionRuleSurveySmsTemplateRepository actionRuleSurveySmsTemplateRepository,
       SurveyRepository surveyRepository,
       SmsTemplateRepository smsTemplateRepository,
-      UserIdentity userIdentity) {
+      AuthUser authUser) {
     this.actionRuleSurveySmsTemplateRepository = actionRuleSurveySmsTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.smsTemplateRepository = smsTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping
@@ -68,9 +68,9 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        survey,
+        survey.getId(),
         UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES);
 
     return actionRuleSurveySmsTemplateRepository.findBySurvey(survey).stream()
@@ -97,8 +97,10 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_ACTION_RULE);
+    authUser.checkUserPermission(
+        userEmail,
+        survey.getId(),
+        UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_ACTION_RULE);
 
     SmsTemplate smsTemplate =
         smsTemplateRepository

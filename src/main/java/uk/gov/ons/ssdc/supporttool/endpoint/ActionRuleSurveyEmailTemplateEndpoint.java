@@ -27,7 +27,7 @@ import uk.gov.ons.ssdc.supporttool.model.dto.ui.AllowTemplateOnSurvey;
 import uk.gov.ons.ssdc.supporttool.model.repository.ActionRuleSurveyEmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.EmailTemplateRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.SurveyRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/actionRuleSurveyEmailTemplates")
@@ -38,17 +38,17 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
   private final ActionRuleSurveyEmailTemplateRepository actionRuleSurveyEmailTemplateRepository;
   private final SurveyRepository surveyRepository;
   private final EmailTemplateRepository emailTemplateRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
 
   public ActionRuleSurveyEmailTemplateEndpoint(
       ActionRuleSurveyEmailTemplateRepository actionRuleSurveyEmailTemplateRepository,
       SurveyRepository surveyRepository,
       EmailTemplateRepository emailTemplateRepository,
-      UserIdentity userIdentity) {
+      AuthUser authUser) {
     this.actionRuleSurveyEmailTemplateRepository = actionRuleSurveyEmailTemplateRepository;
     this.surveyRepository = surveyRepository;
     this.emailTemplateRepository = emailTemplateRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
   }
 
   @GetMapping
@@ -70,9 +70,9 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
+    authUser.checkUserPermission(
         userEmail,
-        survey,
+        survey.getId(),
         UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES);
 
     return actionRuleSurveyEmailTemplateRepository.findBySurvey(survey).stream()
@@ -99,8 +99,10 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    userIdentity.checkUserPermission(
-        userEmail, survey, UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE);
+    authUser.checkUserPermission(
+        userEmail,
+        survey.getId(),
+        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE);
 
     EmailTemplate emailTemplate =
         emailTemplateRepository

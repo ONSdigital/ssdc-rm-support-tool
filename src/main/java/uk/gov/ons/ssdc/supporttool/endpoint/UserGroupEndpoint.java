@@ -21,7 +21,7 @@ import uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityType;
 import uk.gov.ons.ssdc.supporttool.model.dto.ui.UserGroupDto;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupAdminRepository;
 import uk.gov.ons.ssdc.supporttool.model.repository.UserGroupRepository;
-import uk.gov.ons.ssdc.supporttool.security.UserIdentity;
+import uk.gov.ons.ssdc.supporttool.security.AuthUser;
 
 @RestController
 @RequestMapping(value = "/api/userGroups")
@@ -29,15 +29,15 @@ public class UserGroupEndpoint {
   private static final Logger log = LoggerFactory.getLogger(UserGroupEndpoint.class);
 
   private final UserGroupRepository userGroupRepository;
-  private final UserIdentity userIdentity;
+  private final AuthUser authUser;
   private final UserGroupAdminRepository userGroupAdminRepository;
 
   public UserGroupEndpoint(
       UserGroupRepository userGroupRepository,
-      UserIdentity userIdentity,
+      AuthUser authUser,
       UserGroupAdminRepository userGroupAdminRepository) {
     this.userGroupRepository = userGroupRepository;
-    this.userIdentity = userIdentity;
+    this.authUser = authUser;
     this.userGroupAdminRepository = userGroupAdminRepository;
   }
 
@@ -62,7 +62,7 @@ public class UserGroupEndpoint {
     if (group.getAdmins().stream()
         .noneMatch(groupAdmin -> groupAdmin.getUser().getEmail().equalsIgnoreCase(userEmail))) {
       // If you're not admin of this group, you have to be super user
-      userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+      authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
     }
 
     return mapDto(group);
@@ -71,7 +71,7 @@ public class UserGroupEndpoint {
   @GetMapping
   public List<UserGroupDto> getUserGroups(
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     return userGroupRepository.findAll().stream().map(this::mapDto).collect(Collectors.toList());
   }
@@ -97,7 +97,7 @@ public class UserGroupEndpoint {
   public ResponseEntity<Void> createGroup(
       @RequestBody UserGroupDto userGroupDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
-    userIdentity.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
+    authUser.checkGlobalUserPermission(userEmail, UserGroupAuthorisedActivityType.SUPER_USER);
 
     if (userGroupRepository.existsByName(userGroupDto.getName())) {
       log.atWarn()
