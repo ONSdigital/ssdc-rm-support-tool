@@ -625,7 +625,7 @@ class CollectionExerciseDetails extends Component {
             {actionRule.packCode}
           </TableCell>
           <TableCell component="th" scope="row">
-            {actionRule.selectedCaseCount}
+            {actionRule.hasTriggered ? actionRule.selectedCaseCount : null}
           </TableCell>
           <TableCell component="th" scope="row">
             {!actionRule.hasTriggered ? (

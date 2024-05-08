@@ -28,5 +28,5 @@ public class ActionRuleDto {
 
   private boolean hasTriggered;
 
-  private int selectedCaseCount;
+  private Integer selectedCaseCount;
 }
