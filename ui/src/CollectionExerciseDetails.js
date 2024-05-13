@@ -625,6 +625,9 @@ class CollectionExerciseDetails extends Component {
             {actionRule.packCode}
           </TableCell>
           <TableCell component="th" scope="row">
+            {actionRule.hasTriggered ? actionRule.selectedCaseCount : null}
+          </TableCell>
+          <TableCell component="th" scope="row">
             {!actionRule.hasTriggered ? (
               <Button
                 variant="contained"
@@ -797,6 +800,7 @@ class CollectionExerciseDetails extends Component {
                     <TableCell>UAC Metadata</TableCell>
                     <TableCell>Classifiers</TableCell>
                     <TableCell>Pack Code</TableCell>
+                    <TableCell>Selected Cases</TableCell>
                     <TableCell></TableCell>
                   </TableRow>
                 </TableHead>

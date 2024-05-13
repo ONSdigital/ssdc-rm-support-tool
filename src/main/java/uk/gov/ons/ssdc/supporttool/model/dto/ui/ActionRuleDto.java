@@ -27,4 +27,6 @@ public class ActionRuleDto {
   private Object uacMetadata;
 
   private boolean hasTriggered;
+
+  private Integer selectedCaseCount;
 }
