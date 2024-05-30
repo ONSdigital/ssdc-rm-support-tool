@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.ssdc.common.model.entity.ActionRule;
+import uk.gov.ons.ssdc.common.model.entity.ActionRuleStatus;
 import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
 import uk.gov.ons.ssdc.common.model.entity.EmailTemplate;
@@ -125,6 +126,7 @@ public class ActionRuleEndpoint {
                   actionRuleDTO.setHasTriggered(actionRule.isHasTriggered());
                   actionRuleDTO.setUacMetadata(actionRule.getUacMetadata());
                   actionRuleDTO.setSelectedCaseCount(actionRule.getSelectedCaseCount());
+                  actionRuleDTO.setActionRuleStatus(actionRule.getActionRuleStatus());
                   return actionRuleDTO;
                 })
             .collect(Collectors.toList());
@@ -252,6 +254,7 @@ public class ActionRuleEndpoint {
     actionRule.setEmailTemplate(emailTemplate);
     actionRule.setEmailColumn(actionRuleDTO.getEmailColumn());
     actionRule.setUacMetadata(actionRuleDTO.getUacMetadata());
+    actionRule.setActionRuleStatus(ActionRuleStatus.SCHEDULED);
 
     actionRuleRepository.saveAndFlush(actionRule);
 
