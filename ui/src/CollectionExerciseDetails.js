@@ -340,7 +340,7 @@ class CollectionExerciseDetails extends Component {
       this.state.newActionRuleDescription.length >
       ACTION_RULE_DESCRIPTION_MAX_LEN
     ) {
-      this.setState({ descriptionValidationError: true });
+      this.setState({ actionRuleDescriptionTooLongError: true });
       failedValidation = true;
     }
 
@@ -971,9 +971,9 @@ class CollectionExerciseDetails extends Component {
                 />
                 <TextField
                   fullWidth={true}
-                  error={this.state.descriptionValidationError}
+                  error={this.state.actionRuleDescriptionTooLongError}
                   helperText={
-                    this.state.descriptionValidationError &&
+                    this.state.actionRuleDescriptionTooLongError &&
                     ACTION_RULE_DESCRIPTION_TOO_LONG_ERROR_MSG
                   }
                   label="Description"
