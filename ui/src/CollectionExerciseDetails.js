@@ -28,6 +28,10 @@ import {
 } from "./Utils";
 import { Link } from "react-router-dom";
 import JSONPretty from "react-json-pretty";
+import {
+  ACTION_RULE_DESCRIPTION_MAX_LEN,
+  ACTION_RULE_DESCRIPTION_TOO_LONG_ERROR_MSG,
+} from "./constants";
 
 class CollectionExerciseDetails extends Component {
   state = {
@@ -53,6 +57,7 @@ class CollectionExerciseDetails extends Component {
     newActionRuleSmsPhoneNumberColumn: "",
     newActionRuleEmailPackCode: "",
     newActionRuleEmailColumn: "",
+    newActionRuleDescription: "",
     newActionRuleClassifiers: "",
     newActionRuleType: "",
     newUacQidMetadata: "",
@@ -213,6 +218,7 @@ class CollectionExerciseDetails extends Component {
       emailColumnValidationError: false,
       uacQidMetadataValidationError: false,
       newActionRuleClassifiers: "",
+      newActionRuleDescription: "",
       newUacQidMetadata: "",
       createActionRulesDialogDisplayed: true,
       newActionRuleTriggerDate: this.getTimeNowForDateTimePicker(),
@@ -274,6 +280,12 @@ class CollectionExerciseDetails extends Component {
     });
   };
 
+  onNewActionRuleDescriptionChange = (event) => {
+    this.setState({
+      newActionRuleDescription: event.target.value,
+    });
+  };
+
   onNewActionRuleTriggerDateChange = (event) => {
     this.setState({ newActionRuleTriggerDate: event.target.value });
   };
@@ -321,6 +333,14 @@ class CollectionExerciseDetails extends Component {
 
     if (!this.state.newActionRuleType) {
       this.setState({ actionRuleTypeValidationError: true });
+      failedValidation = true;
+    }
+
+    if (
+      this.state.newActionRuleDescription.length >
+      ACTION_RULE_DESCRIPTION_MAX_LEN
+    ) {
+      this.setState({ actionRuleDescriptionTooLongError: true });
       failedValidation = true;
     }
 
@@ -406,6 +426,7 @@ class CollectionExerciseDetails extends Component {
 
     const newActionRule = {
       type: this.state.newActionRuleType,
+      description: this.state.newActionRuleDescription,
       triggerDateTime: new Date(
         this.state.newActionRuleTriggerDate,
       ).toISOString(),
@@ -596,6 +617,9 @@ class CollectionExerciseDetails extends Component {
         <TableRow key={index}>
           <TableCell component="th" scope="row">
             {actionRule.type}
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {actionRule.description}
           </TableCell>
           <TableCell component="th" scope="row">
             {actionRule.triggerDateTime}
@@ -794,6 +818,7 @@ class CollectionExerciseDetails extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Type</TableCell>
+                    <TableCell>Description</TableCell>
                     <TableCell>Trigger date</TableCell>
                     <TableCell></TableCell>
                     <TableCell>Has triggered?</TableCell>
@@ -943,6 +968,17 @@ class CollectionExerciseDetails extends Component {
                   label="Classifiers"
                   onChange={this.onNewActionRuleClassifiersChange}
                   value={this.state.newActionRuleClassifiers}
+                />
+                <TextField
+                  fullWidth={true}
+                  error={this.state.actionRuleDescriptionTooLongError}
+                  helperText={
+                    this.state.actionRuleDescriptionTooLongError &&
+                    ACTION_RULE_DESCRIPTION_TOO_LONG_ERROR_MSG
+                  }
+                  label="Description"
+                  onChange={this.onNewActionRuleDescriptionChange}
+                  value={this.state.newActionRuleDescription}
                 />
                 <TextField
                   label="Trigger Date"

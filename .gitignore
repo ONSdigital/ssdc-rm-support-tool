@@ -6,3 +6,4 @@ ui/.vscode/launch.json
 ui/build
 ui/node_modules
 *.iml
+.vscode/
