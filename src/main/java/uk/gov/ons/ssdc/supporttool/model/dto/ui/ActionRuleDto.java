@@ -17,6 +17,8 @@ public class ActionRuleDto {
 
   private String classifiers;
 
+  private String description;
+
   private ActionRuleType type;
 
   private OffsetDateTime triggerDateTime;

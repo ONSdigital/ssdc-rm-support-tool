@@ -119,6 +119,7 @@ public class ActionRuleEndpoint {
 
                   actionRuleDTO.setActionRuleId(actionRule.getId());
                   actionRuleDTO.setType(actionRule.getType());
+                  actionRuleDTO.setDescription(actionRule.getDescription());
                   actionRuleDTO.setCollectionExerciseId(actionRule.getCollectionExercise().getId());
                   actionRuleDTO.setPhoneNumberColumn(actionRule.getPhoneNumberColumn());
                   actionRuleDTO.setEmailColumn(actionRule.getEmailColumn());
@@ -243,6 +244,7 @@ public class ActionRuleEndpoint {
 
     ActionRule actionRule = new ActionRule();
     actionRule.setId(UUID.randomUUID());
+    actionRule.setDescription(actionRuleDTO.getDescription());
     actionRule.setClassifiers(actionRuleDTO.getClassifiers());
     actionRule.setExportFileTemplate(exportFileTemplate);
     actionRule.setCollectionExercise(collectionExercise);
