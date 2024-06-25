@@ -77,6 +77,12 @@ public class CollectionExerciseEndpoint {
   public CollectionExerciseDto getCollex(
       @PathVariable(value = "collexId") UUID collexId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+            userEmail,
+            collectionExercise.getSurvey().getId(),
+            UserGroupAuthorisedActivityType.VIEW_COLLECTION_EXERCISE);
+
     CollectionExercise collectionExercise =
         collectionExerciseRepository
             .findById(collexId)
@@ -93,10 +99,6 @@ public class CollectionExerciseEndpoint {
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
 
-    authUser.checkUserPermission(
-        userEmail,
-        collectionExercise.getSurvey().getId(),
-        UserGroupAuthorisedActivityType.VIEW_COLLECTION_EXERCISE);
 
     return mapDto(collectionExercise.getSurvey().getId(), collectionExercise);
   }

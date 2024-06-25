@@ -56,6 +56,12 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
   public List<String> getAllowedPackCodesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+            userEmail,
+            survey.getId(),
+            UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES);
+
     Survey survey =
         surveyRepository
             .findById(surveyId)
@@ -70,10 +76,7 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES);
+
 
     return actionRuleSurveyEmailTemplateRepository.findBySurvey(survey).stream()
         .map(arsst -> arsst.getEmailTemplate().getPackCode())
