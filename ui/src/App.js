@@ -20,6 +20,10 @@ import {
 } from "react-router-dom";
 
 class App extends Component {
+  componentDidMount() {
+    document.title = "Support Tool";
+  }
+
   render() {
     return (
       <Router>
