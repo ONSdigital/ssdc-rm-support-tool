@@ -59,6 +59,12 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
   public List<EmailTemplateDto> getAllowedEmailTemplatesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+            userEmail,
+            survey.getId(),
+            UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
+
     Survey survey =
         surveyRepository
             .findById(surveyId)
@@ -73,10 +79,6 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
 
     return fulfilmentSurveyEmailTemplateRepository.findBySurvey(survey).stream()
         .map(fset -> new EmailTemplateDto(fset.getEmailTemplate()))

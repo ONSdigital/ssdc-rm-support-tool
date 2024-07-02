@@ -49,6 +49,12 @@ public class DeactivateUacEndpoint {
   public void deactivateUac(
       @PathVariable("qid") String qid,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+            userEmail,
+            uacQidLinkOpt.get().getCaze().getCollectionExercise().getSurvey().getId(),
+            DEACTIVATE_UAC);
+
     Optional<UacQidLink> uacQidLinkOpt = qidLinkRepository.findByQid(qid);
     if (!uacQidLinkOpt.isPresent()) {
       log.atWarn()
@@ -61,10 +67,7 @@ public class DeactivateUacEndpoint {
           HttpStatus.NOT_FOUND, String.format("Could not find QID %s", qid));
     }
 
-    authUser.checkUserPermission(
-        userEmail,
-        uacQidLinkOpt.get().getCaze().getCollectionExercise().getSurvey().getId(),
-        DEACTIVATE_UAC);
+
 
     EventDTO event = new EventDTO();
 
