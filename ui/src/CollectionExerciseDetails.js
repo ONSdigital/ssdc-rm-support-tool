@@ -636,8 +636,8 @@ class CollectionExerciseDetails extends Component {
               </Button>
             ) : null}
           </TableCell>
-          <TableCell component="th" scope="row" id="hasTriggered">
-            {actionRule.hasTriggered ? "YES" : "NO"}
+          <TableCell component="th" scope="row" id="actionRuleStatus">
+            {actionRule.actionRuleStatus}
           </TableCell>
           <TableCell component="th" scope="row">
             {JSON.stringify(actionRule.uacMetadata)}
@@ -821,7 +821,7 @@ class CollectionExerciseDetails extends Component {
                     <TableCell>Description</TableCell>
                     <TableCell>Trigger date</TableCell>
                     <TableCell></TableCell>
-                    <TableCell>Has triggered?</TableCell>
+                    <TableCell>Status</TableCell>
                     <TableCell>UAC Metadata</TableCell>
                     <TableCell>Classifiers</TableCell>
                     <TableCell>Pack Code</TableCell>
