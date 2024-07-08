@@ -78,11 +78,6 @@ public class CollectionExerciseEndpoint {
       @PathVariable(value = "collexId") UUID collexId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
-    authUser.checkUserPermission(
-            userEmail,
-            collectionExercise.getSurvey().getId(),
-            UserGroupAuthorisedActivityType.VIEW_COLLECTION_EXERCISE);
-
     CollectionExercise collectionExercise =
         collectionExerciseRepository
             .findById(collexId)
@@ -99,6 +94,10 @@ public class CollectionExerciseEndpoint {
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
 
+    authUser.checkUserPermission(
+        userEmail,
+        collectionExercise.getSurvey().getId(),
+        UserGroupAuthorisedActivityType.VIEW_COLLECTION_EXERCISE);
 
     return mapDto(collectionExercise.getSurvey().getId(), collectionExercise);
   }
@@ -107,6 +106,9 @@ public class CollectionExerciseEndpoint {
   public List<CollectionExerciseDto> findCollexsBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail, surveyId, UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES);
 
     Survey survey =
         surveyRepository
@@ -121,9 +123,6 @@ public class CollectionExerciseEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail, survey.getId(), UserGroupAuthorisedActivityType.LIST_COLLECTION_EXERCISES);
 
     return collectionExerciseRepository.findBySurvey(survey).stream()
         .map(collex -> mapDto(surveyId, collex))
@@ -150,6 +149,11 @@ public class CollectionExerciseEndpoint {
       @RequestBody CollectionExerciseDto collectionExerciseDto,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
+    authUser.checkUserPermission(
+        userEmail,
+        collectionExerciseDto.getSurveyId(),
+        UserGroupAuthorisedActivityType.CREATE_COLLECTION_EXERCISE);
+
     Survey survey =
         surveyRepository
             .findById(collectionExerciseDto.getSurveyId())
@@ -163,9 +167,6 @@ public class CollectionExerciseEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail, survey.getId(), UserGroupAuthorisedActivityType.CREATE_COLLECTION_EXERCISE);
 
     validateCollectionInstrumentRules(
         collectionExerciseDto.getCollectionInstrumentSelectionRules(), userEmail);

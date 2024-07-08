@@ -60,6 +60,12 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
   public List<ExportFileTemplateDto> getAllowedExportFileTemplatesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail,
+        surveyId,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS);
+
     Survey survey =
         surveyRepository
             .findById(surveyId)
@@ -75,11 +81,6 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS);
-
     return fulfilmentSurveyExportFileTemplateRepository.findBySurvey(survey).stream()
         .map(fspt -> new ExportFileTemplateDto(fspt.getExportFileTemplate()))
         .toList();
@@ -89,6 +90,12 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
   public ResponseEntity<String> createFulfilmentSurveyPrintTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail,
+        allowTemplateOnSurvey.getSurveyId(),
+        UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT);
+
     Survey survey =
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
@@ -103,11 +110,6 @@ public class FulfilmentSurveyExportFileTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT);
 
     ExportFileTemplate exportFileTemplate =
         exportFileTemplateRepository

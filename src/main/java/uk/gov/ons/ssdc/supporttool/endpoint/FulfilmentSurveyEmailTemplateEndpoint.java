@@ -61,9 +61,9 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
     authUser.checkUserPermission(
-            userEmail,
-            survey.getId(),
-            UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
+        userEmail,
+        surveyId,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
 
     Survey survey =
         surveyRepository
@@ -79,7 +79,6 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-
     return fulfilmentSurveyEmailTemplateRepository.findBySurvey(survey).stream()
         .map(fset -> new EmailTemplateDto(fset.getEmailTemplate()))
         .toList();
@@ -89,6 +88,11 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
   public ResponseEntity<String> createFulfilmentSurveyEmailTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    authUser.checkUserPermission(
+        userEmail,
+        allowTemplateOnSurvey.getSurveyId(),
+        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT);
+
     Survey survey =
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
@@ -103,11 +107,6 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT);
 
     EmailTemplate emailTemplate =
         emailTemplateRepository

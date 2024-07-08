@@ -57,6 +57,12 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
   public List<String> getAllowedPackCodesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail,
+        surveyId,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES);
+
     Survey survey =
         surveyRepository
             .findById(surveyId)
@@ -71,11 +77,6 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES);
-
     return actionRuleSurveyExportFileTemplateRepository.findBySurvey(survey).stream()
         .map(arspt -> arspt.getExportFileTemplate().getPackCode())
         .collect(Collectors.toList());
@@ -85,6 +86,12 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
   public ResponseEntity<String> createActionRuleSurveyExportFileTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail,
+        allowTemplateOnSurvey.getSurveyId(),
+        UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_ACTION_RULE);
+
     Survey survey =
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
@@ -99,11 +106,6 @@ public class ActionRuleSurveyExportFileTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.ALLOW_EXPORT_FILE_TEMPLATE_ON_ACTION_RULE);
 
     ExportFileTemplate exportFileTemplate =
         exportFileTemplateRepository

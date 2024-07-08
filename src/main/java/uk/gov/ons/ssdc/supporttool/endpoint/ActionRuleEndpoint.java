@@ -79,11 +79,6 @@ public class ActionRuleEndpoint {
       @RequestParam(value = "collectionExercise") UUID collectionExerciseId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
-      authUser.checkUserPermission(
-              userEmail,
-              collectionExercise.getSurvey().getId(),
-              UserGroupAuthorisedActivityType.LIST_ACTION_RULES);
-
     CollectionExercise collectionExercise =
         collectionExerciseRepository
             .findById(collectionExerciseId)
@@ -99,7 +94,10 @@ public class ActionRuleEndpoint {
                       HttpStatus.BAD_REQUEST, "Collection exercise not found");
                 });
 
-
+    authUser.checkUserPermission(
+        userEmail,
+        collectionExercise.getSurvey().getId(),
+        UserGroupAuthorisedActivityType.LIST_ACTION_RULES);
 
     List<ActionRule> actionRules =
         actionRuleRepository.findByCollectionExercise(collectionExercise);

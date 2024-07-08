@@ -58,9 +58,9 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
 
     authUser.checkUserPermission(
-            userEmail,
-            survey.getId(),
-            UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES);
+        userEmail,
+        surveyId,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES);
 
     Survey survey =
         surveyRepository
@@ -76,8 +76,6 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-
-
     return actionRuleSurveyEmailTemplateRepository.findBySurvey(survey).stream()
         .map(arsst -> arsst.getEmailTemplate().getPackCode())
         .collect(Collectors.toList());
@@ -87,6 +85,12 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
   public ResponseEntity<String> createActionRuleSurveyEmailTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail,
+        allowTemplateOnSurvey.getSurveyId(),
+        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE);
+
     Survey survey =
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
@@ -101,11 +105,6 @@ public class ActionRuleSurveyEmailTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE);
 
     EmailTemplate emailTemplate =
         emailTemplateRepository
