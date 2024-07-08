@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.ssdc.common.model.entity.ActionRule;
+import uk.gov.ons.ssdc.common.model.entity.ActionRuleStatus;
 import uk.gov.ons.ssdc.common.model.entity.ActionRuleType;
 import uk.gov.ons.ssdc.common.model.entity.Case;
 import uk.gov.ons.ssdc.common.model.entity.CollectionExercise;
@@ -290,13 +291,12 @@ public class IntegrationTestHelper {
     actionRule.setId(UUID.randomUUID());
     actionRule.setCollectionExercise(collectionExercise);
     actionRule.setType(ActionRuleType.EMAIL);
-
     actionRule.setClassifiers("sample ->> 'ORG_SIZE' = 'HUGE'");
-
     actionRule.setTriggerDateTime(OffsetDateTime.now());
     actionRule.setCreatedBy("TEST_USER");
     actionRule.setEmailTemplate(emailTemplate);
     actionRule.setEmailColumn("emailAddress");
+    actionRule.setActionRuleStatus(ActionRuleStatus.SCHEDULED);
 
     actionRuleRepository.saveAndFlush(actionRule);
 
