@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -29,23 +29,7 @@ public class IAPUserTest {
     user.setId(UUID.randomUUID());
     user.setEmail("unit-tests@testymctest.com");
 
-    UserGroup group = new UserGroup();
-    group.setId(UUID.randomUUID());
-    group.setName("Test group");
-
-    UserGroupMember userGroupMember = new UserGroupMember();
-    userGroupMember.setId(UUID.randomUUID());
-    userGroupMember.setUser(user);
-    userGroupMember.setGroup(group);
-
-    UserGroupPermission permission = new UserGroupPermission();
-    permission.setId(UUID.randomUUID());
-    permission.setAuthorisedActivity(UserGroupAuthorisedActivityType.VIEW_COLLECTION_EXERCISE);
-    permission.setGroup(group);
-
-    group.setPermissions(List.of(permission));
-
-    user.setMemberOf(List.of(userGroupMember));
+    user.setMemberOf(Collections.emptyList());
     // When
     when(userRepository.findByEmailIgnoreCase(user.getEmail())).thenReturn(Optional.of(user));
 
