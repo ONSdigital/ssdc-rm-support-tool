@@ -55,6 +55,12 @@ public class ActionRuleSurveySmsTemplateEndpoint {
   public List<String> getAllowedPackCodesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail,
+        surveyId,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES);
+
     Survey survey =
         surveyRepository
             .findById(surveyId)
@@ -68,10 +74,6 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES);
 
     return actionRuleSurveySmsTemplateRepository.findBySurvey(survey).stream()
         .map(arsst -> arsst.getSmsTemplate().getPackCode())
@@ -82,6 +84,12 @@ public class ActionRuleSurveySmsTemplateEndpoint {
   public ResponseEntity<String> createActionRuleSurveySmsTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail,
+        allowTemplateOnSurvey.getSurveyId(),
+        UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_ACTION_RULE);
+
     Survey survey =
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
@@ -96,11 +104,6 @@ public class ActionRuleSurveySmsTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_ACTION_RULE);
 
     SmsTemplate smsTemplate =
         smsTemplateRepository

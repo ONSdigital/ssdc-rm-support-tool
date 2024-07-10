@@ -49,6 +49,7 @@ public class DeactivateUacEndpoint {
   public void deactivateUac(
       @PathVariable("qid") String qid,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
     Optional<UacQidLink> uacQidLinkOpt = qidLinkRepository.findByQid(qid);
     if (!uacQidLinkOpt.isPresent()) {
       log.atWarn()

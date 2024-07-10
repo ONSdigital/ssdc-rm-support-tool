@@ -59,6 +59,12 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
   public List<EmailTemplateDto> getAllowedEmailTemplatesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(
+        userEmail,
+        surveyId,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
+
     Survey survey =
         surveyRepository
             .findById(surveyId)
@@ -73,11 +79,6 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS);
-
     return fulfilmentSurveyEmailTemplateRepository.findBySurvey(survey).stream()
         .map(fset -> new EmailTemplateDto(fset.getEmailTemplate()))
         .toList();
@@ -87,6 +88,11 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
   public ResponseEntity<String> createFulfilmentSurveyEmailTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    authUser.checkUserPermission(
+        userEmail,
+        allowTemplateOnSurvey.getSurveyId(),
+        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT);
+
     Survey survey =
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
@@ -101,11 +107,6 @@ public class FulfilmentSurveyEmailTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT);
 
     EmailTemplate emailTemplate =
         emailTemplateRepository

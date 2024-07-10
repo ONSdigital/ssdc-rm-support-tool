@@ -63,6 +63,9 @@ public class SurveyEndpoint {
   public SurveyDto getSurvey(
       @PathVariable(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+
+    authUser.checkUserPermission(userEmail, surveyId, UserGroupAuthorisedActivityType.VIEW_SURVEY);
+
     Survey survey =
         surveyRepository
             .findById(surveyId)
@@ -76,9 +79,6 @@ public class SurveyEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail, survey.getId(), UserGroupAuthorisedActivityType.VIEW_SURVEY);
 
     return mapToDto(survey);
   }

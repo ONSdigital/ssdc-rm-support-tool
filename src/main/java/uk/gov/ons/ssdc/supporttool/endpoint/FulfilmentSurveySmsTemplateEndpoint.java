@@ -58,6 +58,11 @@ public class FulfilmentSurveySmsTemplateEndpoint {
   public List<SmsTemplateDto> getAllowedSmsTemplatesBySurvey(
       @RequestParam(value = "surveyId") UUID surveyId,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    authUser.checkUserPermission(
+        userEmail,
+        surveyId,
+        UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS);
+
     Survey survey =
         surveyRepository
             .findById(surveyId)
@@ -72,11 +77,6 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
 
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS);
-
     return fulfilmentSurveySmsTemplateRepository.findBySurvey(survey).stream()
         .map(fsst -> new SmsTemplateDto(fsst.getSmsTemplate()))
         .toList();
@@ -86,6 +86,11 @@ public class FulfilmentSurveySmsTemplateEndpoint {
   public ResponseEntity<String> createFulfilmentSurveySmsTemplate(
       @RequestBody AllowTemplateOnSurvey allowTemplateOnSurvey,
       @Value("#{request.getAttribute('userEmail')}") String userEmail) {
+    authUser.checkUserPermission(
+        userEmail,
+        allowTemplateOnSurvey.getSurveyId(),
+        UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_FULFILMENT);
+
     Survey survey =
         surveyRepository
             .findById(allowTemplateOnSurvey.getSurveyId())
@@ -100,11 +105,6 @@ public class FulfilmentSurveySmsTemplateEndpoint {
                       .log();
                   return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Survey not found");
                 });
-
-    authUser.checkUserPermission(
-        userEmail,
-        survey.getId(),
-        UserGroupAuthorisedActivityType.ALLOW_SMS_TEMPLATE_ON_FULFILMENT);
 
     SmsTemplate smsTemplate =
         smsTemplateRepository

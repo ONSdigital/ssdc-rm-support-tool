@@ -102,6 +102,15 @@ public class IAPUser implements AuthUser {
         }
       }
     }
+    log.atWarn()
+        .setMessage("User not authorised for attempted activity")
+        .addKeyValue("userEmail", userEmail)
+        .addKeyValue("activity", activity)
+        .addKeyValue("httpStatus", HttpStatus.FORBIDDEN)
+        .log();
+    throw new ResponseStatusException(
+        HttpStatus.FORBIDDEN,
+        String.format("User not authorised for activity %s", activity.name()));
   }
 
   @Override
