@@ -35,8 +35,8 @@ public class DeactivateUacEndpoint {
   @Value("${queueconfig.deactivate-uac-topic}")
   private String deactivateUacTopic;
 
-  @Value("${queueconfig.shared-pubsub-project}")
-  private String sharedPubsubProject;
+  @Value("${spring.cloud.gcp.pubsub.project-id}")
+  private String pubsubProject;
 
   public DeactivateUacEndpoint(
       AuthUser authUser, UacQidLinkRepository qidLinkRepository, PubSubTemplate pubSubTemplate) {
@@ -78,7 +78,7 @@ public class DeactivateUacEndpoint {
     payload.setDeactivateUac(deactivateUac);
     event.setPayload(payload);
 
-    String topic = toProjectTopicName(deactivateUacTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(deactivateUacTopic, pubsubProject).toString();
     pubSubTemplate.publish(topic, event);
   }
 }

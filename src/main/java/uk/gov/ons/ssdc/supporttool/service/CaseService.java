@@ -43,8 +43,8 @@ public class CaseService {
   @Value("${queueconfig.update-sample-topic}")
   private String updateSampleTopic;
 
-  @Value("${queueconfig.shared-pubsub-project}")
-  private String sharedPubsubProject;
+  @Value("${spring.cloud.gcp.pubsub.project-id}")
+  private String pubsubProject;
 
   public CaseService(CaseRepository caseRepository, PubSubTemplate pubSubTemplate) {
     this.caseRepository = caseRepository;
@@ -74,7 +74,7 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    String topic = toProjectTopicName(refusalEventTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(refusalEventTopic, pubsubProject).toString();
     pubSubTemplate.publish(topic, event);
   }
 
@@ -89,7 +89,7 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    String topic = toProjectTopicName(updateSampleSensitiveTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(updateSampleSensitiveTopic, pubsubProject).toString();
     pubSubTemplate.publish(topic, event);
   }
 
@@ -103,7 +103,7 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    String topic = toProjectTopicName(updateSampleTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(updateSampleTopic, pubsubProject).toString();
     pubSubTemplate.publish(topic, event);
   }
 
@@ -122,7 +122,7 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    String topic = toProjectTopicName(invalidCaseEventTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(invalidCaseEventTopic, pubsubProject).toString();
     pubSubTemplate.publish(topic, event);
   }
 
@@ -144,7 +144,7 @@ public class CaseService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    String topic = toProjectTopicName(printFulfilmentTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(printFulfilmentTopic, pubsubProject).toString();
     pubSubTemplate.publish(topic, event);
   }
 }

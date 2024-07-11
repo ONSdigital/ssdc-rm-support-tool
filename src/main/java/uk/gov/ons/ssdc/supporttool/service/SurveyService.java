@@ -27,8 +27,8 @@ public class SurveyService {
   @Value("${queueconfig.survey-update-event-topic}")
   private String surveyUpdateEventTopic;
 
-  @Value("${queueconfig.shared-pubsub-project}")
-  private String sharedPubsubProject;
+  @Value("${spring.cloud.gcp.pubsub.project-id}")
+  private String pubsubProject;
 
   @Value("${queueconfig.publishtimeout}")
   private int publishTimeout;
@@ -117,7 +117,7 @@ public class SurveyService {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    String topic = toProjectTopicName(surveyUpdateEventTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(surveyUpdateEventTopic, pubsubProject).toString();
     CompletableFuture<String> future = pubSubTemplate.publish(topic, event);
 
     try {

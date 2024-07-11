@@ -45,15 +45,14 @@ public class CollectionExerciseEndpointIT {
 
   @BeforeEach
   public void setUp() {
-    pubsubHelper.purgeSharedProjectMessages(
+    pubsubHelper.purgeProjectMessages(
         COLLECTION_EXERCISE_UPDATE_TEST_SUBSCRIPTION, collectionExerciseUpdateEventTopic);
   }
 
   @Test
   public void testPostCollectionExercise() throws InterruptedException {
     try (QueueSpy<EventDTO> collectionExerciseUpdateQueue =
-        pubsubHelper.sharedProjectListen(
-            COLLECTION_EXERCISE_UPDATE_TEST_SUBSCRIPTION, EventDTO.class)) {
+        pubsubHelper.projectListen(COLLECTION_EXERCISE_UPDATE_TEST_SUBSCRIPTION, EventDTO.class)) {
 
       OffsetDateTime collexStartDate = OffsetDateTime.now();
       OffsetDateTime collexEndDate = OffsetDateTime.now().plusDays(2);

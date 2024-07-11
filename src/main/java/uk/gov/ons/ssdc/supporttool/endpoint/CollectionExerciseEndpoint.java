@@ -56,8 +56,8 @@ public class CollectionExerciseEndpoint {
   @Value("${queueconfig.collection-exercise-update-event-topic}")
   private String collectionExerciseUpdateEventTopic;
 
-  @Value("${queueconfig.shared-pubsub-project}")
-  private String sharedPubsubProject;
+  @Value("${spring.cloud.gcp.pubsub.project-id}")
+  private String pubsubProject;
 
   @Value("${queueconfig.publishtimeout}")
   private int publishTimeout;
@@ -204,8 +204,7 @@ public class CollectionExerciseEndpoint {
     event.setHeader(eventHeader);
     event.setPayload(payloadDTO);
 
-    String topic =
-        toProjectTopicName(collectionExerciseUpdateEventTopic, sharedPubsubProject).toString();
+    String topic = toProjectTopicName(collectionExerciseUpdateEventTopic, pubsubProject).toString();
     CompletableFuture<String> future = pubSubTemplate.publish(topic, event);
 
     try {
