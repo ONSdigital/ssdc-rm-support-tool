@@ -15,8 +15,6 @@ exception-manager:
     port: 8667
     scheme: http
 
-queueconfig:
-  shared-pubsub-project: shared-project
 
 iap-enforced: false # This ** MUST ALWAYS!! ** be true in production!!!
 dummyuseridentity: integration-tests@testymctest.com

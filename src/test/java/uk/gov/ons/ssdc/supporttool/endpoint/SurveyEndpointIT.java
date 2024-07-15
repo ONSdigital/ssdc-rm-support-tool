@@ -40,14 +40,13 @@ public class SurveyEndpointIT {
 
   @BeforeEach
   public void setUp() {
-    pubsubHelper.purgeSharedProjectMessages(
-        SURVEY_UPDATE_TEST_SUBSCRIPTION, surveyUpdateEventTopic);
+    pubsubHelper.purgeProjectMessages(SURVEY_UPDATE_TEST_SUBSCRIPTION, surveyUpdateEventTopic);
   }
 
   @Test
   public void testPostSurvey() throws InterruptedException {
     try (QueueSpy<EventDTO> surveyUpdateQueue =
-        pubsubHelper.sharedProjectListen(SURVEY_UPDATE_TEST_SUBSCRIPTION, EventDTO.class)) {
+        pubsubHelper.projectListen(SURVEY_UPDATE_TEST_SUBSCRIPTION, EventDTO.class)) {
 
       ColumnValidator[] testRules =
           new ColumnValidator[] {new ColumnValidator("foo", false, new Rule[] {})};
