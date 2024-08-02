@@ -231,7 +231,7 @@ class CollectionExerciseDetails extends Component {
     this.setState({
       actionRuleToBeUpdated: actionRule,
       rescheduleActionRulesDialogDisplayed: true,
-      currentTriggerDateTime: actionRule.triggerDateTime.slice(0, 16),
+      currentTriggerDateTime: actionRule.triggerDateTime,
     });
   };
 
@@ -484,7 +484,7 @@ class CollectionExerciseDetails extends Component {
   onRescheduleConfirm = async () => {
     const actionRule = this.state.actionRuleToBeUpdated;
 
-    actionRule.triggerDateTime = this.getUpdatedTriggerDateTimeString();
+    actionRule.triggerDateTime = new Date(this.state.updatedTriggerDateTime).toISOString();
 
     const response = await fetch("/api/actionRules", {
       method: "PUT",
@@ -562,19 +562,15 @@ class CollectionExerciseDetails extends Component {
     const currentDateISOString = this.getCurrentTriggerDateTimeString();
     return `Are you sure you wish to change the date for ${
       this.state.actionRuleToBeUpdated.type
-    } from ${currentDateISOString
-      .slice(0, 16)
-      .replace("T", " ")} to ${updatedDateISOString
-      .slice(0, 16)
-      .replace("T", " ")}?`;
+    } from ${currentDateISOString} to ${updatedDateISOString}?`;
   };
 
   getUpdatedTriggerDateTimeString = () => {
-    return new Date(this.state.updatedTriggerDateTime).toISOString();
+    return new Date(this.state.updatedTriggerDateTime).toLocaleString('en-UK',{ timeZone: 'Europe/London' });
   };
 
   getCurrentTriggerDateTimeString = () => {
-    return new Date(this.state.currentTriggerDateTime).toISOString();
+    return new Date(this.state.currentTriggerDateTime).toLocaleString('en-UK',{ timeZone: 'Europe/London' });
   };
 
   render() {
@@ -613,6 +609,7 @@ class CollectionExerciseDetails extends Component {
     );
 
     const actionRuleTableRows = sortedActionRules.map((actionRule, index) => {
+      const updatedDateTime = new Date(actionRule.triggerDateTime).toLocaleString('en-UK',{ timeZone: 'Europe/London', timeZoneName: 'longOffset' });
       return (
         <TableRow key={index}>
           <TableCell component="th" scope="row">
@@ -621,8 +618,8 @@ class CollectionExerciseDetails extends Component {
           <TableCell component="th" scope="row">
             {actionRule.description}
           </TableCell>
-          <TableCell component="th" scope="row">
-            {actionRule.triggerDateTime}
+          <TableCell component="th" scope="row" id="actionRuleDateTime">
+            {updatedDateTime}
           </TableCell>
           <TableCell component="th" scope="row">
             {!actionRule.hasTriggered &&
