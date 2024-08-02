@@ -979,6 +979,7 @@ class CollectionExerciseDetails extends Component {
                 />
                 <TextField
                   label="Trigger Date"
+                  id="triggerDate"
                   type="datetime-local"
                   value={this.state.newActionRuleTriggerDate}
                   onChange={this.onNewActionRuleTriggerDateChange}
