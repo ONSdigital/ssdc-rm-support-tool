@@ -484,7 +484,9 @@ class CollectionExerciseDetails extends Component {
   onRescheduleConfirm = async () => {
     const actionRule = this.state.actionRuleToBeUpdated;
 
-    actionRule.triggerDateTime = new Date(this.state.updatedTriggerDateTime).toISOString();
+    actionRule.triggerDateTime = new Date(
+      this.state.updatedTriggerDateTime,
+    ).toISOString();
 
     const response = await fetch("/api/actionRules", {
       method: "PUT",
@@ -560,17 +562,19 @@ class CollectionExerciseDetails extends Component {
 
     const updatedDateISOString = this.getUpdatedTriggerDateTimeString();
     const currentDateISOString = this.getCurrentTriggerDateTimeString();
-    return `Are you sure you wish to change the date for ${
-      this.state.actionRuleToBeUpdated.type
-    } from ${currentDateISOString} to ${updatedDateISOString}?`;
+    return `Are you sure you wish to change the date for ${this.state.actionRuleToBeUpdated.type} from ${currentDateISOString} to ${updatedDateISOString}?`;
   };
 
   getUpdatedTriggerDateTimeString = () => {
-    return new Date(this.state.updatedTriggerDateTime).toLocaleString('en-UK',{ timeZone: 'Europe/London' });
+    return new Date(this.state.updatedTriggerDateTime).toLocaleString("en-UK", {
+      timeZone: "Europe/London",
+    });
   };
 
   getCurrentTriggerDateTimeString = () => {
-    return new Date(this.state.currentTriggerDateTime).toLocaleString('en-UK',{ timeZone: 'Europe/London' });
+    return new Date(this.state.currentTriggerDateTime).toLocaleString("en-UK", {
+      timeZone: "Europe/London",
+    });
   };
 
   render() {
@@ -609,7 +613,12 @@ class CollectionExerciseDetails extends Component {
     );
 
     const actionRuleTableRows = sortedActionRules.map((actionRule, index) => {
-      const updatedDateTime = new Date(actionRule.triggerDateTime).toLocaleString('en-UK',{ timeZone: 'Europe/London', timeZoneName: 'longOffset' });
+      const updatedDateTime = new Date(
+        actionRule.triggerDateTime,
+      ).toLocaleString("en-UK", {
+        timeZone: "Europe/London",
+        timeZoneName: "longOffset",
+      });
       return (
         <TableRow key={index}>
           <TableCell component="th" scope="row">
