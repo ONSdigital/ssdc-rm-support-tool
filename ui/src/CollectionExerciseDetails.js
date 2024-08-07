@@ -562,7 +562,7 @@ class CollectionExerciseDetails extends Component {
 
     const updatedDateISOString = this.getUpdatedTriggerDateTimeString();
     const currentDateISOString = this.getCurrentTriggerDateTimeString();
-    return `Are you sure you wish to change the date for ${this.state.actionRuleToBeUpdated.type} from ${currentDateISOString} to ${updatedDateISOString}?`;
+    return `Are you sure you wish to change the date for "${this.state.actionRuleToBeUpdated.description || this.state.actionRuleToBeUpdated.type}"\n from ${currentDateISOString}\n to ${updatedDateISOString}?`;
   };
 
   getUpdatedTriggerDateTimeString = () => {
@@ -613,7 +613,7 @@ class CollectionExerciseDetails extends Component {
     );
 
     const actionRuleTableRows = sortedActionRules.map((actionRule, index) => {
-      const updatedDateTime = new Date(
+      const localisedDateTime = new Date(
         actionRule.triggerDateTime,
       ).toLocaleString("en-UK", {
         timeZone: "Europe/London",
@@ -628,7 +628,7 @@ class CollectionExerciseDetails extends Component {
             {actionRule.description}
           </TableCell>
           <TableCell component="th" scope="row" id="actionRuleDateTime">
-            {updatedDateTime}
+            {localisedDateTime}
           </TableCell>
           <TableCell component="th" scope="row">
             {!actionRule.hasTriggered &&
@@ -1056,7 +1056,7 @@ class CollectionExerciseDetails extends Component {
         <Dialog open={this.state.confirmRescheduleDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
-              <div>
+              <div className="display-linebreak">
                 <p style={{ marginTop: 20 }}>
                   {this.getConfirmRescheduleText()}
                 </p>
