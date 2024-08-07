@@ -13,9 +13,7 @@ updates:
     labels:
       - "patch"
       - "dependencies"
-    ignore:
-      - dependency-name: "*"
-        update-types: [ "version-update:semver-patch", "version-update:semver-minor", "version-update:semver-major" ]
+    open-pull-requests-limit: 0
 
   - package-ecosystem: "npm"
     directory: "/ui"
@@ -30,6 +28,4 @@ updates:
     labels:
       - "patch"
       - "dependencies"
-    ignore:
-      - dependency-name: "*"
-        update-types: [ "version-update:semver-patch", "version-update:semver-minor", "version-update:semver-major" ]
+    open-pull-requests-limit: 0
