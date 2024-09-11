@@ -2,7 +2,7 @@
 mkdir -p src/main/resources/static
 rm -r src/main/resources/static/* || true
 rm -r ui/build/* || true
-cd ui
+cd ui || { echo "Unable to access ui directory"; exit 1; }
 npm install
 
 if ! npx npx eslint .; then
