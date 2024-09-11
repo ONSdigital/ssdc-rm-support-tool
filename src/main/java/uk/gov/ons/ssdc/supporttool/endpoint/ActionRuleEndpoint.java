@@ -236,6 +236,9 @@ public class ActionRuleEndpoint {
       case EQ_FLUSH:
         userActivity = CREATE_EQ_FLUSH_ACTION_RULE;
         break;
+      case REMOVE_PERSONAL_DATA:
+        userActivity = CREATE_EQ_FLUSH_ACTION_RULE; // TODO: This is only for the prototype to work
+        break;
       default:
         throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
     }
@@ -284,6 +287,8 @@ public class ActionRuleEndpoint {
           case SMS -> CREATE_SMS_ACTION_RULE;
           case EMAIL -> CREATE_EMAIL_ACTION_RULE;
           case EQ_FLUSH -> CREATE_EQ_FLUSH_ACTION_RULE;
+          case REMOVE_PERSONAL_DATA -> CREATE_EQ_FLUSH_ACTION_RULE; // TODO: This is only for the
+            // prototype to work
           default -> throw new IllegalStateException(
               "Unexpected value: " + actionRuleDTO.getType());
         };

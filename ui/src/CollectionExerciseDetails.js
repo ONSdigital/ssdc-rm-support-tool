@@ -754,6 +754,13 @@ class CollectionExerciseDetails extends Component {
         <MenuItem value={"EQ_FLUSH"}>EQ Flush</MenuItem>,
       );
     }
+    if (
+        this.state.authorisedActivities.includes("CREATE_EQ_FLUSH_ACTION_RULE")
+    ) {
+      allowedActionRuleTypeMenuItems.push(
+          <MenuItem value={"REMOVE_PERSONAL_DATA"}>Remove Personal Data</MenuItem>,
+      );
+    }
 
     return (
       <div style={{ padding: 20 }}>
@@ -875,6 +882,7 @@ class CollectionExerciseDetails extends Component {
                     {allowedActionRuleTypeMenuItems}
                   </Select>
                 </FormControl>
+                {this.state.newActionRuleType === "REMOVE_PERSONAL_DATA"}
                 {this.state.newActionRuleType === "EXPORT_FILE" && (
                   <>
                     <FormControl required fullWidth={true}>
