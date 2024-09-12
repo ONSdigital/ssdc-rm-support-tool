@@ -7,3 +7,6 @@ ui/build
 ui/node_modules
 *.iml
 .vscode/
+
+# Megalinter reports
+megalinter-reports/

@@ -4,7 +4,7 @@
 
 1st apply security as below
 
-Locally if you bring up your docker dev you should navigate to: http://localhost:9999/ and see surveys, 
+Locally if you bring up your docker dev you should navigate to: <http://localhost:9999/> and see surveys,
 print templates etc. Running a few AT tests is a great way to populate this data.
 
 For testing/debugging it's advised you use VSCode and have Babel Javascript installed, this does cunning things
