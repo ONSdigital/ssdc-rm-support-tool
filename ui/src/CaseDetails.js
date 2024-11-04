@@ -24,7 +24,7 @@ import { Link } from "react-router-dom";
 import SmsFulfilment from "./SmsFulfilment";
 import EmailFulfilment from "./EmailFulfilment";
 import JSONPretty from "react-json-pretty";
-import { errorAlert } from "./Utils";
+import { errorAlert, getLocalDateTime } from "./Utils";
 
 class CaseDetails extends Component {
   state = {
@@ -147,7 +147,7 @@ class CaseDetails extends Component {
     const caseEvents = sortedCaseEvents.map((event, index) => (
       <TableRow key={index}>
         <TableCell component="th" scope="row">
-          {event.dateTime}
+          {getLocalDateTime(event.dateTime)}
         </TableCell>
         <TableCell component="th" scope="row">
           {event.description}
@@ -177,10 +177,10 @@ class CaseDetails extends Component {
           {uacQidLink.qid}
         </TableCell>
         <TableCell component="th" scope="row">
-          {uacQidLink.createdAt}
+          {getLocalDateTime(uacQidLink.createdAt)}
         </TableCell>
         <TableCell component="th" scope="row">
-          {uacQidLink.lastUpdatedAt}
+          {getLocalDateTime(uacQidLink.lastUpdatedAt)}
         </TableCell>
         <TableCell component="th" scope="row">
           {uacQidLink.active ? "Yes" : "No"}
@@ -243,8 +243,13 @@ class CaseDetails extends Component {
                       Collection Exercise name:{" "}
                       {this.state.case.collectionExerciseName}
                     </div>
-                    <div>Created at: {this.state.case.createdAt}</div>
-                    <div>Last updated at: {this.state.case.lastUpdatedAt}</div>
+                    <div>
+                      Created at: {getLocalDateTime(this.state.case.createdAt)}
+                    </div>
+                    <div>
+                      Last updated at:{" "}
+                      {getLocalDateTime(this.state.case.lastUpdatedAt)}
+                    </div>
                     <div>
                       Refused:{" "}
                       {this.state.case.refusalReceived
@@ -384,7 +389,8 @@ class CaseDetails extends Component {
                   color="inherit"
                   style={{ margin: 10, padding: 10 }}
                 >
-                  Time of event: {this.state.eventToShow.dateTime}
+                  Time of event:{" "}
+                  {getLocalDateTime(this.state.eventToShow.dateTime)}
                 </Typography>
               </div>
               <div>

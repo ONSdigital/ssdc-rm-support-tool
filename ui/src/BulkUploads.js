@@ -20,7 +20,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import JobDetails from "./JobDetails";
 import { Link } from "react-router-dom";
-import { errorAlert } from "./Utils";
+import { errorAlert, getLocalDateTime } from "./Utils";
 
 const BULK_REFUSAL_JOB_TYPE = "BULK_REFUSAL";
 const BULK_REFUSAL_VIEW_PERMISSION = "VIEW_BULK_REFUSAL_PROGRESS";
@@ -269,7 +269,7 @@ class BulkUploads extends Component {
         <TableCell component="th" scope="row">
           {job.fileName}
         </TableCell>
-        <TableCell>{job.createdAt}</TableCell>
+        <TableCell>{getLocalDateTime(job.createdAt)}</TableCell>
         <TableCell align="right">
           <Button
             onClick={() => this.handleOpenDetails(job, jobType)}

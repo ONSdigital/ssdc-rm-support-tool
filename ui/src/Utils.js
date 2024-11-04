@@ -204,3 +204,10 @@ export function errorAlert(errorJson) {
     `Something went wrong\nStatus: ${errorJson.status}\nError: ${errorJson.error}\nPath: ${errorJson.path}`,
   );
 }
+
+export const getLocalDateTime = (date) => {
+  return new Date(date).toLocaleString("en-UK", {
+    timeZone: "Europe/London",
+    timeZoneName: "longOffset",
+  });
+};

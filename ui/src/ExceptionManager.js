@@ -16,7 +16,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { errorAlert } from "./Utils";
+import { errorAlert, getLocalDateTime } from "./Utils";
 
 class ExceptionManager extends Component {
   state = {
@@ -167,10 +167,10 @@ class ExceptionManager extends Component {
     const exceptionTableRows = sortedExceptions.map((exception) => (
       <TableRow key={exception.messageHash}>
         <TableCell component="th" scope="row">
-          {exception.firstSeen}
+          {getLocalDateTime(exception.firstSeen)}
         </TableCell>
         <TableCell component="th" scope="row">
-          {exception.lastSeen}
+          {getLocalDateTime(exception.lastSeen)}
         </TableCell>
         <TableCell component="th" scope="row">
           {exception.affectedServices.join(", ")}

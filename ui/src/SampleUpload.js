@@ -19,7 +19,7 @@ import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import JobDetails from "./JobDetails";
-import { errorAlert } from "./Utils";
+import { errorAlert, getLocalDateTime } from "./Utils";
 
 class SampleUpload extends Component {
   state = {
@@ -197,7 +197,7 @@ class SampleUpload extends Component {
         <TableCell component="th" scope="row">
           {job.fileName}
         </TableCell>
-        <TableCell>{job.createdAt}</TableCell>
+        <TableCell>{getLocalDateTime(job.createdAt)}</TableCell>
         <TableCell align="right">
           <Button
             id={"sampleStatus" + index}

@@ -12,6 +12,7 @@ import {
   DialogActions,
 } from "@material-ui/core";
 import { convertStatusText } from "./common";
+import { getLocalDateTime } from "./Utils";
 
 class JobDetails extends Component {
   render() {
@@ -147,7 +148,7 @@ class JobDetails extends Component {
               color="inherit"
               style={{ margin: 10, padding: 10 }}
             >
-              Uploaded at: {this.props.job.createdAt}
+              Uploaded at: {getLocalDateTime(this.props.job.createdAt)}
             </Typography>
           </Grid>
           <Grid container item xs={12} spacing={3}>
@@ -167,7 +168,7 @@ class JobDetails extends Component {
                   color="inherit"
                   style={{ margin: 10, padding: 10 }}
                 >
-                  Processed at: {this.props.job.processedAt}
+                  Processed at: {getLocalDateTime(this.props.job.processedAt)}
                 </Typography>
               </Grid>
               <Grid container item xs={12} spacing={3}>
@@ -189,7 +190,7 @@ class JobDetails extends Component {
                   color="inherit"
                   style={{ margin: 10, padding: 10 }}
                 >
-                  Cancelled at: {this.props.job.cancelledAt}
+                  Cancelled at: {getLocalDateTime(this.props.job.cancelledAt)}
                 </Typography>
               </Grid>
               <Grid container item xs={12} spacing={3}>
