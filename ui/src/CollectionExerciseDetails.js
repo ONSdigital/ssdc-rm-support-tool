@@ -25,6 +25,7 @@ import {
   getActionRuleExportFilePackCodesForSurvey,
   getActionRuleSmsPackCodesForSurvey,
   getSensitiveSampleColumns,
+  getLocalDateTime,
 } from "./Utils";
 import { Link } from "react-router-dom";
 import JSONPretty from "react-json-pretty";
@@ -588,10 +589,10 @@ class CollectionExerciseDetails extends Component {
             {this.state.collectionExerciseDetails.reference}
           </TableCell>
           <TableCell component="th" scope="row">
-            {this.state.collectionExerciseDetails.startDate}
+            {getLocalDateTime(this.state.collectionExerciseDetails.startDate)}
           </TableCell>
           <TableCell component="th" scope="row">
-            {this.state.collectionExerciseDetails.endDate}
+            {getLocalDateTime(this.state.collectionExerciseDetails.endDate)}
           </TableCell>
           <TableCell component="th" scope="row">
             {JSON.stringify(this.state.collectionExerciseDetails.metadata)}
