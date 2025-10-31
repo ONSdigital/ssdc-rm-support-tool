@@ -9,13 +9,17 @@
     "plugin:react/recommended",
     "plugin:jest/recommended"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
+    "requireConfigFile": false,
     "ecmaFeatures": {
       "jsx": true
     },
     "ecmaVersion": 12,
-    "sourceType": "module"
+    "sourceType": "module",
+    "babelOptions": {
+      "plugins": ["@babel/plugin-syntax-jsx"]
+    }
   },
   "plugins": ["react", "jest"],
   "rules": {
@@ -30,7 +34,7 @@
   "settings": {
     "react": {
       "version": "detect",
-      "flowVersion": "0.53" // Flow version
+      "flowVersion": "0.53"
     }
   },
   "globals": {
