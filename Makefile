@@ -10,7 +10,7 @@ test-mvn:
 	mvn clean verify jacoco:report
 
 test-ui:
-	cd ui && npm install && npx eslint . && npm test -- --watchAll=false
+	cd ui && npm install && npx eslint . && npm test -- run
 
 run-dev-api: build
 	docker run -e spring_profiles_active=docker --network=ssdcrmdockerdev_default --link ons-postgres:postgres -p 9999:9999 europe-west2-docker.pkg.dev/ssdc-rm-ci/docker/ssdc-rm-support-tool:latest
