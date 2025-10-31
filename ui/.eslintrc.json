@@ -1,13 +1,12 @@
 {
   "env": {
-    "jest/globals": true,
     "browser": true,
     "es2021": true
   },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:jest/recommended"
+    "plugin:@vitest/legacy-recommended"
   ],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
@@ -21,14 +20,14 @@
       "plugins": ["@babel/plugin-syntax-jsx"]
     }
   },
-  "plugins": ["react", "jest"],
+  "plugins": ["react", "@vitest"],
   "rules": {
     "react/prop-types": "off",
-    "jest/no-disabled-tests": "warn",
-    "jest/no-focused-tests": "error",
-    "jest/no-identical-title": "error",
-    "jest/prefer-to-have-length": "warn",
-    "jest/valid-expect": "error",
+    "@vitest/no-disabled-tests": "warn",
+    "@vitest/no-focused-tests": "error",
+    "@vitest/no-identical-title": "error",
+    "@vitest/prefer-to-have-length": "warn",
+    "@vitest/valid-expect": "error",
     "react/no-unescaped-entities": 0
   },
   "settings": {
