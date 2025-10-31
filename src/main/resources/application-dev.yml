@@ -5,5 +5,12 @@ spring:
         emulator-host: localhost:8538
         project-id: our-project
 
+  datasource:
+    url: jdbc:postgresql://localhost:6432/rm?readOnly=true
+    username: appuser
+    password: postgres
+    driverClassName: org.postgresql.Driver
+    hikari:
+      maximumPoolSize: 50
 iap-enforced: false # This ** MUST ALWAYS!! ** be true in production!!!
 
