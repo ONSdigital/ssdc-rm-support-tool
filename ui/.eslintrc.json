@@ -37,6 +37,8 @@
     }
   },
   "globals": {
-    "process": true
+    "process": true,
+    "test": true,
+    "expect": true
   }
 }
