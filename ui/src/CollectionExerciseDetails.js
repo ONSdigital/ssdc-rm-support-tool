@@ -237,10 +237,10 @@ class CollectionExerciseDetails extends Component {
   };
 
   openCaseCountDialog = (actionRule) => {
-    (this.getDryRunCaseCount(this.state.authorisedActivities, actionRule),
+    this.getDryRunCaseCount(this.state.authorisedActivities, actionRule),
       this.setState({
         displayCaseCount: true,
-      }));
+      });
   };
 
   closeDialog = () => {
