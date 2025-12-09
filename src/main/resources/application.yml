@@ -53,10 +53,11 @@ logging:
 
 management:
   endpoints:
-    enabled-by-default: false
+    access:
+      default: none
   endpoint:
     health:
-      enabled: true
+      access: READ_ONLY
   health:
     pubsub:
       enabled: false
