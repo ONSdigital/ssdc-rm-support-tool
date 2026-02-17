@@ -26,10 +26,9 @@
     "npm": "^10.4.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "eslintConfig": {
     "extends": [
@@ -54,11 +53,12 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react": "^5.1.4",
     "audit-ci": "^6.6.1",
     "eslint": "^7.32.0",
     "eslint-plugin-jest": "^27.6.3",
     "eslint-plugin-react": "^7.33.2",
     "prettier": "^3.2.4",
-    "react-scripts": "^5.0.1"
+    "vite": "^7.3.1"
   }
 }
