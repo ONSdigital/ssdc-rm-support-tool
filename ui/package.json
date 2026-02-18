@@ -26,7 +26,8 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "echo \"WARNING: Tests haven't been updated for Vite yet. Please use Acceptance Tests for testing\""
   },
   "eslintConfig": {
     "extends": [
