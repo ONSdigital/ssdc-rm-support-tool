@@ -6,6 +6,7 @@ export default defineConfig(() => {
   return {
     build: {
       outDir: "build",
+      assetsInlineLimit: 0,
     },
     plugins: [react(), eslint()],
     server: {
