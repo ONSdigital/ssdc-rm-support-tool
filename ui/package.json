@@ -29,31 +29,12 @@
     "serve": "vite preview",
     "test": "echo \"WARNING: Tests haven't been updated for Vite yet. Please use Acceptance Tests for testing\""
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.10",
     "@testing-library/user-event": "^14.5.2",
     "@vitejs/plugin-react": "^5.1.4",
     "audit-ci": "^6.6.1",
     "eslint": "^8.57.1",
-    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-jest": "^21.27.2",
     "eslint-plugin-react": "^7.33.2",
     "jest": "^30.2.0",
