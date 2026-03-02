@@ -1,6 +1,5 @@
 {
   "env": {
-    "jest/globals": true,
     "browser": true,
     "es2021": true
   },
@@ -9,13 +8,17 @@
     "plugin:react/recommended",
     "plugin:jest/recommended"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
+    "requireConfigFile": false,
     "ecmaFeatures": {
       "jsx": true
     },
     "ecmaVersion": 12,
-    "sourceType": "module"
+    "sourceType": "module",
+    "babelOptions": {
+      "plugins": ["@babel/plugin-syntax-jsx"]
+    }
   },
   "plugins": ["react", "jest"],
   "rules": {
