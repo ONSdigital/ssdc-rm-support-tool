@@ -2,7 +2,7 @@
 DOCKER ?= $(shell if [ "$$(uname -m)" = "arm64" ]; then echo podman; else echo docker; fi)
 
 build:
-	./build.sh
+	DOCKER=$(DOCKER) ./build.sh
 
 build-no-test:
 	SKIP_TESTS=true ./build.sh
