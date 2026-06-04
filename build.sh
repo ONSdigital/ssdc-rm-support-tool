@@ -25,7 +25,5 @@ else
   CONTAINER_CLI=$DOCKER mvn clean install
 fi
 
-echo "Testing Docker = $DOCKER"
 $DOCKER build . --platform linux/amd64 -t europe-west2-docker.pkg.dev/ssdc-rm-ci/docker/ssdc-rm-support-tool:latest
 
-echo "Testing Docker = $DOCKER"
