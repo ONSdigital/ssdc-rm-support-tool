@@ -1,7 +1,10 @@
 #!/bin/sh
 
 # Set the container runtime based on architecture, default to docker for amd64 and podman for arm64
-DOCKER=$(if [ "$(uname -m)" = "arm64" ]; then echo podman; else echo docker; fi)
+DOCKER=${DOCKER:-$(if [ "$(uname -m)" = "arm64" ]; then echo podman; else echo docker; fi)}
+
+echo "Testing Docker"
+echo "Using container runtime: $DOCKER"
 
 mkdir -p src/main/resources/static
 rm -r src/main/resources/static/* || true
@@ -25,4 +28,7 @@ else
   CONTAINER_CLI=$DOCKER mvn clean install
 fi
 
+echo "Testing Docker = $DOCKER"
 $DOCKER build . --platform linux/amd64 -t europe-west2-docker.pkg.dev/ssdc-rm-ci/docker/ssdc-rm-support-tool:latest
+
+echo "Testing Docker = $DOCKER"
