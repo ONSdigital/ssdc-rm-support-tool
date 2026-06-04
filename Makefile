@@ -5,7 +5,7 @@ build:
 	DOCKER=$(DOCKER) ./build.sh
 
 build-no-test:
-	SKIP_TESTS=true ./build.sh
+	DOCKER=$(DOCKER) SKIP_TESTS=true ./build.sh
 
 test: test-mvn test-ui
 

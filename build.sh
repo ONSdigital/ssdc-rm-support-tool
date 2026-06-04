@@ -3,8 +3,6 @@
 # Set the container runtime based on architecture, default to docker for amd64 and podman for arm64
 DOCKER=${DOCKER:-$(if [ "$(uname -m)" = "arm64" ]; then echo podman; else echo docker; fi)}
 
-echo "Using container runtime: $DOCKER"
-
 mkdir -p src/main/resources/static
 rm -r src/main/resources/static/* || true
 rm -r ui/build/* || true
