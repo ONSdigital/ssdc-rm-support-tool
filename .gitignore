@@ -10,3 +10,6 @@ ui/node_modules
 
 # Megalinter reports
 megalinter-reports/
+
+# Podman secrets
+podman-build-secret*
