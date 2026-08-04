@@ -5,10 +5,10 @@ format-check:
 	npx prettier --check .
 
 package-audit:
-	npx audit-ci --moderate --skip-dev
+	npx audit-ci --config ./audit-ci.json --moderate --skip-dev
 
 package-audit-dev:
-	npx audit-ci --moderate
+	npx audit-ci --config ./audit-ci.json --moderate
 
 install:
 	npm install
