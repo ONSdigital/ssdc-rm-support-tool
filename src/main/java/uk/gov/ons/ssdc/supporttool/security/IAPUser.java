@@ -161,9 +161,10 @@ public class IAPUser implements AuthUser {
       JsonWebToken jsonWebToken = getTokenVerifier().verify(jwtToken);
 
       // Verify that the token contain subject and email claims
-      JsonWebToken.Payload payload = jsonWebToken.getPayload();
-      if (payload.getSubject() != null && payload.get("email") != null) {
-        return (String) payload.get("email");
+      String subject = jsonWebToken.getPayload().getSubject();
+      String email = (String) jsonWebToken.getPayload().get("email");
+      if (subject != null && email != null) {
+        return email;
       } else {
         return null;
       }
