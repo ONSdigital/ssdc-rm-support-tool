@@ -10,13 +10,13 @@ import {
   FormControl,
   InputLabel,
   Select,
-} from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+} from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import {
   getAuthorisedActivities,
   getAllSmsPackCodes,
@@ -150,34 +150,34 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS",
         ) && (
-          <>
-            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-              SMS Templates Allowed on Fulfilments
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{smsFulfilmentTemplateTableRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+                SMS Templates Allowed on Fulfilments
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Pack Code</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{smsFulfilmentTemplateTableRows}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
 
         {this.state.authorisedActivities.includes(
           "ALLOW_SMS_TEMPLATE_ON_FULFILMENT",
         ) && (
-          <Button
-            variant="contained"
-            onClick={this.openSmsFulfilmentTemplateDialog}
-            style={{ marginTop: 10 }}
-          >
-            Allow SMS Template on Fulfilment
-          </Button>
-        )}
+            <Button
+              variant="contained"
+              onClick={this.openSmsFulfilmentTemplateDialog}
+              style={{ marginTop: 10 }}
+            >
+              Allow SMS Template on Fulfilment
+            </Button>
+          )}
 
         <Dialog open={this.state.allowSmsFulfilmentTemplateDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>

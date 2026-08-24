@@ -10,13 +10,13 @@ import {
   FormControl,
   InputLabel,
   Select,
-} from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+} from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import {
   getAuthorisedActivities,
   getAllEmailPackCodes,
@@ -146,35 +146,35 @@ class AllowedEmailTemplatesOnActionRulesList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_ALLOWED_EMAIL_TEMPLATES_ON_ACTION_RULES",
         ) && (
-          <>
-            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-              Email Templates Allowed on Action Rules
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{actionRuleEmailTemplateTableRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+                Email Templates Allowed on Action Rules
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Pack Code</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{actionRuleEmailTemplateTableRows}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
 
         {this.state.authorisedActivities.includes(
           "ALLOW_EMAIL_TEMPLATE_ON_ACTION_RULE",
         ) && (
-          <Button
-            variant="contained"
-            onClick={this.openActionRuleEmailTemplateDialog}
-            style={{ marginTop: 10 }}
-            id="allowEmailTemplateDialogBtn"
-          >
-            Allow Email Template on Action Rule
-          </Button>
-        )}
+            <Button
+              variant="contained"
+              onClick={this.openActionRuleEmailTemplateDialog}
+              style={{ marginTop: 10 }}
+              id="allowEmailTemplateDialogBtn"
+            >
+              Allow Email Template on Action Rule
+            </Button>
+          )}
 
         <Dialog open={this.state.allowActionRuleEmailTemplateDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>

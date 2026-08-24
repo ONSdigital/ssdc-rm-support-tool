@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Box, Typography, AppBar, Toolbar } from "@material-ui/core";
+import { Box, Typography, AppBar, Toolbar } from "@mui/material";
 import LandingPage from "./LandingPage";
 import SurveyDetails from "./SurveyDetails";
 import CollectionExerciseDetails from "./CollectionExerciseDetails";

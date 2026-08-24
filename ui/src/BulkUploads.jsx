@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { convertStatusText } from "./common";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
 import {
   Button,
   CircularProgress,
@@ -13,11 +13,11 @@ import {
   Snackbar,
   SnackbarContent,
   Typography,
-} from "@material-ui/core";
-import TableContainer from "@material-ui/core/TableContainer";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
+} from "@mui/material";
+import TableContainer from "@mui/material/TableContainer";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableBody from "@mui/material/TableBody";
 import JobDetails from "./JobDetails";
 import { Link } from "react-router-dom";
 import { errorAlert, getLocalDateTime } from "./Utils";
@@ -154,10 +154,10 @@ class BulkUploads extends Component {
     if (file_size_in_mb > max_file_size_in_mb) {
       alert(
         "Maximum file size is " +
-          max_file_size_in_mb +
-          "MB. This file size is: " +
-          file_size_in_mb +
-          "MB.",
+        max_file_size_in_mb +
+        "MB. This file size is: " +
+        file_size_in_mb +
+        "MB.",
       );
       return;
     }
@@ -281,8 +281,8 @@ class BulkUploads extends Component {
               "VALIDATION_IN_PROGRESS",
               "PROCESSING_IN_PROGRESS",
             ].includes(job.jobStatus) && (
-              <CircularProgress size={15} style={{ marginLeft: 10 }} />
-            )}
+                <CircularProgress size={15} style={{ marginLeft: 10 }} />
+              )}
           </Button>
         </TableCell>
       </TableRow>

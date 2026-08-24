@@ -7,13 +7,13 @@ import {
   Paper,
   TextField,
   Typography,
-} from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+} from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import { errorAlert, getAuthorisedActivities, getLocalDateTime } from "./Utils";
 import { Link } from "react-router-dom";
 import JSONPretty from "react-json-pretty";
@@ -287,28 +287,28 @@ class CollectionExerciseList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_COLLECTION_EXERCISES",
         ) && (
-          <>
-            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-              Collection Exercises
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table id="collectionExerciseTableList">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Reference</TableCell>
-                    <TableCell>Start Date</TableCell>
-                    <TableCell>End Date</TableCell>
-                    <TableCell>Metadata</TableCell>
-                    <TableCell>Collection Instrument Rules</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{collectionExerciseTableRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+                Collection Exercises
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table id="collectionExerciseTableList">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>ID</TableCell>
+                      <TableCell>Reference</TableCell>
+                      <TableCell>Start Date</TableCell>
+                      <TableCell>End Date</TableCell>
+                      <TableCell>Metadata</TableCell>
+                      <TableCell>Collection Instrument Rules</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{collectionExerciseTableRows}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
         {this.state.collectionInstrumentRulesToShow && (
           <Dialog open={true}>
             <DialogContent style={{ padding: 30 }}>
@@ -339,15 +339,15 @@ class CollectionExerciseList extends Component {
         {this.state.authorisedActivities.includes(
           "CREATE_COLLECTION_EXERCISE",
         ) && (
-          <Button
-            id="createCollectionExerciseBtn"
-            variant="contained"
-            onClick={this.openCreateCollectionExerciseDialog}
-            style={{ marginTop: 10 }}
-          >
-            Create Collection Exercise
-          </Button>
-        )}
+            <Button
+              id="createCollectionExerciseBtn"
+              variant="contained"
+              onClick={this.openCreateCollectionExerciseDialog}
+              style={{ marginTop: 10 }}
+            >
+              Create Collection Exercise
+            </Button>
+          )}
         <Dialog open={this.state.showCreateCollectionExerciseDialog}>
           <DialogContent style={{ padding: 30 }}>
             <div>

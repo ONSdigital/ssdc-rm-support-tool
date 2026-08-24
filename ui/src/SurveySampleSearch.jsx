@@ -9,7 +9,7 @@ import {
   MenuItem,
   Typography,
   Box,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const SEARCH_FIELD_WIDTH = 200;
 const SEARCH_BUTTON_WIDTH = 200;
@@ -57,9 +57,8 @@ class SurveySampleSearch extends Component {
       return;
     }
     this.setState({ searchTermFailedValidation: false });
-    let searchUrl = `/api/surveyCases/${
-      this.props.surveyId
-    }?searchTerm=${encodeURIComponent(this.state.searchTerm)}`;
+    let searchUrl = `/api/surveyCases/${this.props.surveyId
+      }?searchTerm=${encodeURIComponent(this.state.searchTerm)}`;
 
     searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
 

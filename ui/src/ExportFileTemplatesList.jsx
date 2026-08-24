@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
 import {
   Button,
   Dialog,
@@ -16,7 +16,7 @@ import {
   Select,
   MenuItem,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { errorAlert, getAuthorisedActivities } from "./Utils";
 
 class ExportFileTemplateList extends Component {
@@ -298,38 +298,38 @@ class ExportFileTemplateList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_EXPORT_FILE_TEMPLATES",
         ) && (
-          <>
-            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-              Export File Templates
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table id="exportFileTemplateTable">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Export File Destination</TableCell>
-                    <TableCell>Template</TableCell>
-                    <TableCell>Metadata</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{exportFileTemplateRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+                Export File Templates
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table id="exportFileTemplateTable">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Pack Code</TableCell>
+                      <TableCell>Description</TableCell>
+                      <TableCell>Export File Destination</TableCell>
+                      <TableCell>Template</TableCell>
+                      <TableCell>Metadata</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{exportFileTemplateRows}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
         {this.state.authorisedActivities.includes(
           "CREATE_EXPORT_FILE_TEMPLATE",
         ) && (
-          <Button
-            variant="contained"
-            onClick={this.openExportFileTemplateDialog}
-            style={{ marginTop: 10 }}
-            id="createExportFileTemplateBtn"
-          >
-            Create Export File Template
-          </Button>
-        )}
+            <Button
+              variant="contained"
+              onClick={this.openExportFileTemplateDialog}
+              style={{ marginTop: 10 }}
+              id="createExportFileTemplateBtn"
+            >
+              Create Export File Template
+            </Button>
+          )}
 
         <Dialog
           open={this.state.createExportFileTemplateDialogDisplayed}

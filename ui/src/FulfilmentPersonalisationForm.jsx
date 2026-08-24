@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { FormControl, TextField } from "@material-ui/core";
+import { FormControl, TextField } from "@mui/material";
 
 class FulfilmentPersonalisationForm extends Component {
   getTemplateRequestPersonalisationKeys = (templateKeys) => {

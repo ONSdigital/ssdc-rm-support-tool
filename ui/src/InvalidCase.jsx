@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import { Button, Dialog, DialogContent, TextField } from "@material-ui/core";
+import { Button, Dialog, DialogContent, TextField } from "@mui/material";
 
 class InvalidCase extends Component {
   state = {

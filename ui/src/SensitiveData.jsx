@@ -9,7 +9,7 @@ import {
   MenuItem,
   Select,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import { errorAlert, getSensitiveSampleColumns } from "./Utils";
 
 class SensitiveData extends Component {

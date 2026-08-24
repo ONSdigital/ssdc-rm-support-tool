@@ -10,13 +10,13 @@ import {
   FormControl,
   InputLabel,
   Select,
-} from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+} from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import {
   getAuthorisedActivities,
   getActionRuleExportFilePackCodesForSurvey,
@@ -151,34 +151,34 @@ class AllowedExportFileTemplatesActionRulesList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_ACTION_RULES",
         ) && (
-          <>
-            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-              Export File Templates Allowed on Action Rules
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pack Code</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{actionRuleExportFileTemplateTableRows}</TableBody>
-              </Table>
-            </TableContainer>
-          </>
-        )}
+            <>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+                Export File Templates Allowed on Action Rules
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Pack Code</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{actionRuleExportFileTemplateTableRows}</TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
         {this.state.authorisedActivities.includes(
           "ALLOW_EXPORT_FILE_TEMPLATE_ON_ACTION_RULE",
         ) && (
-          <Button
-            variant="contained"
-            onClick={this.openActionRuleExportFileTemplateDialog}
-            style={{ marginTop: 10 }}
-            id="actionRuleExportFileTemplateBtn"
-          >
-            Allow Export File Template on Action Rule
-          </Button>
-        )}
+            <Button
+              variant="contained"
+              onClick={this.openActionRuleExportFileTemplateDialog}
+              style={{ marginTop: 10 }}
+              id="actionRuleExportFileTemplateBtn"
+            >
+              Allow Export File Template on Action Rule
+            </Button>
+          )}
         <Dialog
           open={this.state.allowActionRuleExportFileTemplateDialogDisplayed}
         >

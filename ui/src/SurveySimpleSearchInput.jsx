@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField } from "@mui/material";
 
 class SurveySimpleSearchInput extends Component {
   state = {
@@ -8,7 +8,7 @@ class SurveySimpleSearchInput extends Component {
     failedValidation: false,
   };
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   onChange = (event) => {
     this.setState({

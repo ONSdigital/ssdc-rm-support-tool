@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogContentText,
   DialogActions,
-} from "@material-ui/core";
+} from "@mui/material";
 import { convertStatusText } from "./common";
 import { getLocalDateTime } from "./Utils";
 
@@ -75,7 +75,7 @@ class JobDetails extends Component {
               value={Math.round(
                 (this.props.job.stagedRowCount /
                   (this.props.job.fileRowCount - headerRowCorrection)) *
-                  100,
+                100,
               )}
               style={{ marginTop: 20, marginBottom: 20, width: 300 }}
             />
@@ -95,7 +95,7 @@ class JobDetails extends Component {
                   value={Math.round(
                     (this.props.job.validatedRowCount /
                       (this.props.job.fileRowCount - headerRowCorrection)) *
-                      100,
+                    100,
                   )}
                   style={{ marginTop: 20, marginBottom: 20, width: 300 }}
                 />
@@ -115,7 +115,7 @@ class JobDetails extends Component {
                       (this.props.job.fileRowCount -
                         headerRowCorrection -
                         this.props.job.rowErrorCount)) *
-                      100,
+                    100,
                   )}
                   style={{ marginTop: 20, marginBottom: 20, width: 300 }}
                 />
@@ -263,7 +263,7 @@ class JobDetails extends Component {
                 this.props.job.jobStatus,
               ) &&
               this.props.job.rowErrorCount <
-                this.props.job.fileRowCount - headerRowCorrection && (
+              this.props.job.fileRowCount - headerRowCorrection && (
                 <Button
                   onClick={this.props.onProcessJob}
                   variant="contained"

@@ -8,13 +8,13 @@ import {
   DialogContent,
   DialogTitle,
   DialogContentText,
-} from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+} from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import Refusal from "./Refusal";
 import InvalidCase from "./InvalidCase";
 import PrintFulfilment from "./PrintFulfilment";
@@ -262,54 +262,54 @@ class CaseDetails extends Component {
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_REFUSAL",
                     ) && (
-                      <Refusal
-                        caseId={this.props.caseId}
-                        case={this.state.case}
-                      />
-                    )}
+                        <Refusal
+                          caseId={this.props.caseId}
+                          case={this.state.case}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_INVALID_CASE",
                     ) && <InvalidCase caseId={this.props.caseId} />}
                     {this.state.authorisedActivities.includes(
                       "UPDATE_SAMPLE",
                     ) && (
-                      <SampleData
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <SampleData
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "UPDATE_SAMPLE_SENSITIVE",
                     ) && (
-                      <SensitiveData
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <SensitiveData
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_EXPORT_FILE_FULFILMENT",
                     ) && (
-                      <PrintFulfilment
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <PrintFulfilment
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_SMS_FULFILMENT",
                     ) && (
-                      <SmsFulfilment
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <SmsFulfilment
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                     {this.state.authorisedActivities.includes(
                       "CREATE_CASE_EMAIL_FULFILMENT",
                     ) && (
-                      <EmailFulfilment
-                        caseId={this.props.caseId}
-                        surveyId={this.props.surveyId}
-                      />
-                    )}
+                        <EmailFulfilment
+                          caseId={this.props.caseId}
+                          surveyId={this.props.surveyId}
+                        />
+                      )}
                   </TableCell>
                 </TableBody>
               </Table>
