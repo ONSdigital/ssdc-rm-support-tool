@@ -298,38 +298,38 @@ class ExportFileTemplateList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_EXPORT_FILE_TEMPLATES",
         ) && (
-            <>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-                Export File Templates
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table id="exportFileTemplateTable">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Pack Code</TableCell>
-                      <TableCell>Description</TableCell>
-                      <TableCell>Export File Destination</TableCell>
-                      <TableCell>Template</TableCell>
-                      <TableCell>Metadata</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{exportFileTemplateRows}</TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          )}
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              Export File Templates
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table id="exportFileTemplateTable">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Export File Destination</TableCell>
+                    <TableCell>Template</TableCell>
+                    <TableCell>Metadata</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{exportFileTemplateRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
         {this.state.authorisedActivities.includes(
           "CREATE_EXPORT_FILE_TEMPLATE",
         ) && (
-            <Button
-              variant="contained"
-              onClick={this.openExportFileTemplateDialog}
-              style={{ marginTop: 10 }}
-              id="createExportFileTemplateBtn"
-            >
-              Create Export File Template
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            onClick={this.openExportFileTemplateDialog}
+            style={{ marginTop: 10 }}
+            id="createExportFileTemplateBtn"
+          >
+            Create Export File Template
+          </Button>
+        )}
 
         <Dialog
           open={this.state.createExportFileTemplateDialogDisplayed}

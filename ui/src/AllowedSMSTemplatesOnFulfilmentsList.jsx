@@ -150,34 +150,34 @@ class AllowedSMSTemplatesOnFulfilmentsList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_ALLOWED_SMS_TEMPLATES_ON_FULFILMENTS",
         ) && (
-            <>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-                SMS Templates Allowed on Fulfilments
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Pack Code</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{smsFulfilmentTemplateTableRows}</TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          )}
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              SMS Templates Allowed on Fulfilments
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{smsFulfilmentTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
 
         {this.state.authorisedActivities.includes(
           "ALLOW_SMS_TEMPLATE_ON_FULFILMENT",
         ) && (
-            <Button
-              variant="contained"
-              onClick={this.openSmsFulfilmentTemplateDialog}
-              style={{ marginTop: 10 }}
-            >
-              Allow SMS Template on Fulfilment
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            onClick={this.openSmsFulfilmentTemplateDialog}
+            style={{ marginTop: 10 }}
+          >
+            Allow SMS Template on Fulfilment
+          </Button>
+        )}
 
         <Dialog open={this.state.allowSmsFulfilmentTemplateDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>

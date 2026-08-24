@@ -151,34 +151,34 @@ class AllowedEmailTemplatesOnFulfilments extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_ALLOWED_EMAIL_TEMPLATES_ON_FULFILMENTS",
         ) && (
-            <>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-                Email Templates Allowed on Fulfilments
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Pack Code</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{emailFulfilmentTemplateTableRows}</TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          )}
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              Email Templates Allowed on Fulfilments
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{emailFulfilmentTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
 
         {this.state.authorisedActivities.includes(
           "ALLOW_EMAIL_TEMPLATE_ON_FULFILMENT",
         ) && (
-            <Button
-              variant="contained"
-              onClick={this.openEmailFulfilmentTemplateDialog}
-              style={{ marginTop: 10 }}
-            >
-              Allow Email Template on Fulfilment
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            onClick={this.openEmailFulfilmentTemplateDialog}
+            style={{ marginTop: 10 }}
+          >
+            Allow Email Template on Fulfilment
+          </Button>
+        )}
         <Dialog open={this.state.allowEmailFulfilmentTemplateDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>

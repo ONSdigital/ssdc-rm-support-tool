@@ -154,33 +154,33 @@ class AllowedExportFileTemplatesOnFulfilmentsList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_ALLOWED_EXPORT_FILE_TEMPLATES_ON_FULFILMENTS",
         ) && (
-            <>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-                Export File Templates Allowed on Fulfilments
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Pack Code</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{fulfilmentExportFileTemplateTableRows}</TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          )}
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              Export File Templates Allowed on Fulfilments
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{fulfilmentExportFileTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
         {this.state.authorisedActivities.includes(
           "ALLOW_EXPORT_FILE_TEMPLATE_ON_FULFILMENT",
         ) && (
-            <Button
-              variant="contained"
-              onClick={this.openFulfilmentExportFileTemplateDialog}
-              style={{ marginTop: 10 }}
-            >
-              Allow Export File Template on Fulfilment
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            onClick={this.openFulfilmentExportFileTemplateDialog}
+            style={{ marginTop: 10 }}
+          >
+            Allow Export File Template on Fulfilment
+          </Button>
+        )}
 
         <Dialog
           open={this.state.allowFulfilmentExportFileTemplateDialogDisplayed}

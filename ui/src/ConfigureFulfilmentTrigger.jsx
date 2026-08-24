@@ -99,16 +99,16 @@ class ConfigureFulfilmentTrigger extends Component {
         {this.state.authorisedActivities.includes(
           "CONFIGURE_FULFILMENT_TRIGGER",
         ) && (
-            <div>
-              <Button
-                variant="contained"
-                onClick={this.openFulfilmentTriggerDialog}
-                style={{ marginTop: 20 }}
-              >
-                Configure fulfilment trigger
-              </Button>
-            </div>
-          )}
+          <div>
+            <Button
+              variant="contained"
+              onClick={this.openFulfilmentTriggerDialog}
+              style={{ marginTop: 20 }}
+            >
+              Configure fulfilment trigger
+            </Button>
+          </div>
+        )}
         <Dialog
           open={this.state.configureNextTriggerDisplayed}
           fullWidth={true}

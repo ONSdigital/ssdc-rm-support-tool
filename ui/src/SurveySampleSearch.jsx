@@ -57,8 +57,9 @@ class SurveySampleSearch extends Component {
       return;
     }
     this.setState({ searchTermFailedValidation: false });
-    let searchUrl = `/api/surveyCases/${this.props.surveyId
-      }?searchTerm=${encodeURIComponent(this.state.searchTerm)}`;
+    let searchUrl = `/api/surveyCases/${
+      this.props.surveyId
+    }?searchTerm=${encodeURIComponent(this.state.searchTerm)}`;
 
     searchUrl += `&collexId=${this.state.selectedCollectionExercise}`;
 

@@ -239,25 +239,25 @@ class ExceptionManager extends Component {
                 {this.state.authorisedActivities.includes(
                   "EXCEPTION_MANAGER_PEEK",
                 ) && (
-                    <Button
-                      onClick={this.onPeek}
-                      variant="contained"
-                      style={{ margin: 10 }}
-                    >
-                      Peek
-                    </Button>
-                  )}
+                  <Button
+                    onClick={this.onPeek}
+                    variant="contained"
+                    style={{ margin: 10 }}
+                  >
+                    Peek
+                  </Button>
+                )}
                 {this.state.authorisedActivities.includes(
                   "EXCEPTION_MANAGER_QUARANTINE",
                 ) && (
-                    <Button
-                      onClick={this.openQuarantineDialog}
-                      variant="contained"
-                      style={{ margin: 10 }}
-                    >
-                      Quarantine
-                    </Button>
-                  )}
+                  <Button
+                    onClick={this.openQuarantineDialog}
+                    variant="contained"
+                    style={{ margin: 10 }}
+                  >
+                    Quarantine
+                  </Button>
+                )}
                 <Button
                   onClick={this.closeDetailsDialog}
                   variant="contained"

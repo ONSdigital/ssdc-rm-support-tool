@@ -8,7 +8,7 @@ class SurveySimpleSearchInput extends Component {
     failedValidation: false,
   };
 
-  componentDidMount() { }
+  componentDidMount() {}
 
   onChange = (event) => {
     this.setState({

@@ -154,10 +154,10 @@ class BulkUploads extends Component {
     if (file_size_in_mb > max_file_size_in_mb) {
       alert(
         "Maximum file size is " +
-        max_file_size_in_mb +
-        "MB. This file size is: " +
-        file_size_in_mb +
-        "MB.",
+          max_file_size_in_mb +
+          "MB. This file size is: " +
+          file_size_in_mb +
+          "MB.",
       );
       return;
     }
@@ -281,8 +281,8 @@ class BulkUploads extends Component {
               "VALIDATION_IN_PROGRESS",
               "PROCESSING_IN_PROGRESS",
             ].includes(job.jobStatus) && (
-                <CircularProgress size={15} style={{ marginLeft: 10 }} />
-              )}
+              <CircularProgress size={15} style={{ marginLeft: 10 }} />
+            )}
           </Button>
         </TableCell>
       </TableRow>

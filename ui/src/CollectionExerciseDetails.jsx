@@ -633,7 +633,7 @@ class CollectionExerciseDetails extends Component {
           </TableCell>
           <TableCell component="th" scope="row">
             {!actionRule.hasTriggered &&
-              this.hasReschedulePerms(actionRule.type) ? (
+            this.hasReschedulePerms(actionRule.type) ? (
               <Button
                 variant="contained"
                 onClick={() => this.openRescheduleDialog(actionRule)}
@@ -767,54 +767,54 @@ class CollectionExerciseDetails extends Component {
         {this.state.authorisedActivities.includes(
           "VIEW_COLLECTION_EXERCISE",
         ) && (
-            <div>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
-                Collection Exercise Details
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table id="collectionExerciseTableList">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>ID</TableCell>
-                      <TableCell>Reference</TableCell>
-                      <TableCell>Start Date</TableCell>
-                      <TableCell>End Date</TableCell>
-                      <TableCell>Metadata</TableCell>
-                      <TableCell>Collection Instrument Rules</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{collectionExerciseDetails}</TableBody>
-                </Table>
-              </TableContainer>
-              {this.state.collectionInstrumentRulesDisplayed && (
-                <Dialog open={true}>
-                  <DialogContent style={{ padding: 30 }}>
-                    <JSONPretty
-                      id="json-pretty"
-                      data={
-                        this.state.collectionExerciseDetails
-                          .collectionInstrumentSelectionRules
-                      }
-                      style={{
-                        overflowY: "scroll",
-                        margin: 10,
-                        maxHeight: 500,
-                      }}
-                    />
-                    <div>
-                      <Button
-                        onClick={this.closeCollectionInstrumentRulesDialog}
-                        variant="contained"
-                        style={{ margin: 10, padding: 10 }}
-                      >
-                        Close
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
-            </div>
-          )}
+          <div>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 10 }}>
+              Collection Exercise Details
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table id="collectionExerciseTableList">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Reference</TableCell>
+                    <TableCell>Start Date</TableCell>
+                    <TableCell>End Date</TableCell>
+                    <TableCell>Metadata</TableCell>
+                    <TableCell>Collection Instrument Rules</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{collectionExerciseDetails}</TableBody>
+              </Table>
+            </TableContainer>
+            {this.state.collectionInstrumentRulesDisplayed && (
+              <Dialog open={true}>
+                <DialogContent style={{ padding: 30 }}>
+                  <JSONPretty
+                    id="json-pretty"
+                    data={
+                      this.state.collectionExerciseDetails
+                        .collectionInstrumentSelectionRules
+                    }
+                    style={{
+                      overflowY: "scroll",
+                      margin: 10,
+                      maxHeight: 500,
+                    }}
+                  />
+                  <div>
+                    <Button
+                      onClick={this.closeCollectionInstrumentRulesDialog}
+                      variant="contained"
+                      style={{ margin: 10, padding: 10 }}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        )}
         {this.state.authorisedActivities.includes("LIST_ACTION_RULES") && (
           <>
             <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
@@ -856,11 +856,11 @@ class CollectionExerciseDetails extends Component {
           this.state.authorisedActivities.includes(
             "VIEW_SAMPLE_LOAD_PROGRESS",
           )) && (
-            <SampleUpload
-              authorisedActivities={this.state.authorisedActivities}
-              collectionExerciseId={this.props.collectionExerciseId}
-            />
-          )}
+          <SampleUpload
+            authorisedActivities={this.state.authorisedActivities}
+            collectionExerciseId={this.props.collectionExerciseId}
+          />
+        )}
         <Dialog open={this.state.createActionRulesDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
             <div>
@@ -1105,16 +1105,16 @@ class CollectionExerciseDetails extends Component {
         {["LOAD_BULK_REFUSAL", "VIEW_BULK_REFUSAL_PROGRESS"].some((p) =>
           this.state.authorisedActivities.includes(p),
         ) && (
-            <>
-              <div style={{ marginTop: 20 }}>
-                <Link
-                  to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}
-                >
-                  Bulk Uploads
-                </Link>
-              </div>
-            </>
-          )}
+          <>
+            <div style={{ marginTop: 20 }}>
+              <Link
+                to={`/bulkUploads?surveyId=${this.props.surveyId}&collexId=${this.props.collectionExerciseId}`}
+              >
+                Bulk Uploads
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     );
   }

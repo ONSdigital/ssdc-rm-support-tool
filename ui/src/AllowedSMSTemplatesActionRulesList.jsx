@@ -148,34 +148,34 @@ class AllowedSMSTemplatesActionRulesList extends Component {
         {this.state.authorisedActivities.includes(
           "LIST_ALLOWED_SMS_TEMPLATES_ON_ACTION_RULES",
         ) && (
-            <>
-              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
-                SMS Templates Allowed on Action Rules
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Pack Code</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>{actionRuleSmsTemplateTableRows}</TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          )}
+          <>
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>
+              SMS Templates Allowed on Action Rules
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pack Code</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{actionRuleSmsTemplateTableRows}</TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
 
         {this.state.authorisedActivities.includes(
           "ALLOW_SMS_TEMPLATE_ON_ACTION_RULE",
         ) && (
-            <Button
-              variant="contained"
-              onClick={this.openActionRuleSmsTemplateDialog}
-              style={{ marginTop: 10 }}
-            >
-              Allow SMS Template on Action Rule
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            onClick={this.openActionRuleSmsTemplateDialog}
+            style={{ marginTop: 10 }}
+          >
+            Allow SMS Template on Action Rule
+          </Button>
+        )}
 
         <Dialog open={this.state.allowActionRuleSmsTemplateDialogDisplayed}>
           <DialogContent style={{ padding: 30 }}>
