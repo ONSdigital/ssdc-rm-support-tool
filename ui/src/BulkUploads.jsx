@@ -19,7 +19,7 @@ import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
 import TableBody from "@mui/material/TableBody";
 import JobDetails from "./JobDetails";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { errorAlert, getLocalDateTime } from "./Utils";
 
 const BULK_REFUSAL_JOB_TYPE = "BULK_REFUSAL";

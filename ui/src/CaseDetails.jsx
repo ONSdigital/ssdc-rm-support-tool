@@ -20,7 +20,7 @@ import InvalidCase from "./InvalidCase";
 import PrintFulfilment from "./PrintFulfilment";
 import SampleData from "./SampleData";
 import SensitiveData from "./SensitiveData";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import SmsFulfilment from "./SmsFulfilment";
 import EmailFulfilment from "./EmailFulfilment";
 import JSONPretty from "react-json-pretty";

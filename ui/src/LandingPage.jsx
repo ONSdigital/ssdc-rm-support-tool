@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import SurveysList from "./SurveysList";
 import ExportFileTemplateList from "./ExportFileTemplatesList";
 import SmsTemplatesList from "./SmsTemplatesList";
@@ -64,12 +64,12 @@ class LandingPage extends Component {
         {this.state.authorisedActivities.includes(
           "EXCEPTION_MANAGER_VIEWER",
         ) && (
-          <>
-            <div style={{ marginTop: 20 }}>
-              <Link to="/exceptionManager">Exception Manager</Link>
-            </div>
-          </>
-        )}
+            <>
+              <div style={{ marginTop: 20 }}>
+                <Link to="/exceptionManager">Exception Manager</Link>
+              </div>
+            </>
+          )}
       </div>
     );
   }

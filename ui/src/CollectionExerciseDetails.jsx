@@ -27,7 +27,7 @@ import {
   getSensitiveSampleColumns,
   getLocalDateTime,
 } from "./Utils";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import JSONPretty from "react-json-pretty";
 import {
   ACTION_RULE_DESCRIPTION_MAX_LEN,

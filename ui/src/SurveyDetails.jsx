@@ -7,7 +7,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import CollectionExerciseList from "./CollectionExerciseList";
 import AllowedExportFileTemplatesActionRulesList from "./AllowedExportFileTemplatesActionRulesList";
 import AllowedSMSTemplatesActionRulesList from "./AllowedSMSTemplatesActionRulesList";

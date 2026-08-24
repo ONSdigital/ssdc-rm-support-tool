@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import SurveySimpleSearchInput from "./SurveySimpleSearchInput";
 import SurveySampleSearch from "./SurveySampleSearch";
 import CaseDetails from "./CaseDetails";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { errorAlert } from "./Utils";
 
 class SurveyCaseSearch extends Component {

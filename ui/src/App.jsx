@@ -17,7 +17,7 @@ import {
   Route,
   useLocation,
   Link,
-} from "react-router-dom";
+} from "react-router";
 
 class App extends Component {
   componentDidMount() {

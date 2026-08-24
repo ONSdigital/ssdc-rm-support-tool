@@ -15,7 +15,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { errorAlert, getAuthorisedActivities, getLocalDateTime } from "./Utils";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import JSONPretty from "react-json-pretty";
 
 class CollectionExerciseList extends Component {
