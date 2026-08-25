@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import {
   Typography,
   Paper,
@@ -10,14 +10,14 @@ import {
   DialogTitle,
   DialogContentText,
   DialogActions,
-} from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+} from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Autocomplete from "@mui/material/Autocomplete";
 import { errorAlert } from "./Utils";
 
 class MyGroupUserAdmin extends Component {

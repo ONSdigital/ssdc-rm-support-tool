@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Button, Dialog, DialogContent, TextField } from "@material-ui/core";
+import { Button, Dialog, DialogContent, TextField } from "@mui/material";
 import { getAuthorisedActivities } from "./Utils";
 
 class ConfigureFulfilmentTrigger extends Component {
