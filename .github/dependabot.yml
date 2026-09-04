@@ -43,6 +43,43 @@ updates:
           - "minor"
           - "patch"
 
+  # Same as above, but for the UI's npm packages. Note the directory.
+  - package-ecosystem: "npm"
+    directory: "/ui"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "07:00"
+      timezone: "Europe/London"
+    labels:
+      - "patch"
+      - "javascript"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+    groups:
+      security-patch-minor:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      security-major:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+      version-patch-minor:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
   # Same as above, but for Github Actions
   - package-ecosystem: "github-actions"
     directory: "/"
