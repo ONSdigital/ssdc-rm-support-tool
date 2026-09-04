@@ -23,6 +23,10 @@
   "plugins": ["react", "jest"],
   "rules": {
     "react/prop-types": "off",
+    // Tests run on Vitest, whose API is Jest compatible, so the jest plugin's
+    // rules mostly apply.
+    // This one is the exception and needs to be disabled.
+    "jest/no-deprecated-functions": "off",
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
