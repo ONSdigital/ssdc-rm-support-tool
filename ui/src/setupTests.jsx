@@ -13,8 +13,11 @@ if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
 }
 
 // Components call the API on mount, and Node's fetch can't resolve the relative
-// URLs they use. Default every test to a stub returning an empty JSON response;
-// tests that care about the response should override fetch themselves.
+// URLs they use. Default every test to a stub returning an empty JSON response.
+// This runs before each test, and before the test file's own beforeEach, so a
+// test that needs different data must override fetch in its own beforeEach or
+// inside the test itself. Overriding in beforeAll or at module scope will not
+// work: the stub below replaces it again before every test.
 beforeEach(() => {
   vi.stubGlobal(
     "fetch",

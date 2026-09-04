@@ -85,6 +85,9 @@ jobs:
       - name: Run Format Check
         run: make format-check
 
+      - name: Run Lint
+        run: npx eslint .
+
       - name: Run Unit Tests
         run: npm test
 

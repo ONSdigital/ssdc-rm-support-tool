@@ -9,7 +9,7 @@ rm -r ui/build/* || true
 cd ui || { echo "Unable to access ui directory"; exit 1; }
 npm install
 
-if ! npx npx eslint .; then
+if ! npx eslint .; then
   echo "ESLint found issues"
   exit 1
 fi
