@@ -23,6 +23,10 @@
   "plugins": ["react", "jest"],
   "rules": {
     "react/prop-types": "off",
+    // Tests run on Vitest, whose API is Jest compatible, so the jest plugin's
+    // rules mostly apply.
+    // This one is the exception and needs to be disabled.
+    "jest/no-deprecated-functions": "off",
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
@@ -37,6 +41,16 @@
     }
   },
   "globals": {
-    "process": true
+    "process": true,
+    // Vitest exposes these as globals (test.globals in vite.config.js). The jest
+    // plugin's env covers the shared ones like describe/test/expect, but not the
+    // Vitest-only additions below.
+    "vi": true,
+    "vitest": true,
+    "suite": true,
+    "assertType": true,
+    "expectTypeOf": true,
+    "onTestFinished": true,
+    "onTestFailed": true
   }
 }
