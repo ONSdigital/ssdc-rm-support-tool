@@ -22,10 +22,10 @@ run-dev-ui:
 	cd ui && npm install && npm start
 
 format-check-mvn:
-	mvn fmt:check
+	mvn spotless:check
 
 check-mvn:
-	mvn fmt:check pmd:check
+	mvn spotless:check pmd:check
 
 format-check-ui:
 	$(MAKE) -C ui format-check
@@ -33,7 +33,7 @@ format-check-ui:
 format-check: format-check-mvn format-check-ui
 
 format-mvn:
-	mvn fmt:format
+	mvn spotless:apply
 
 format-ui:
 	$(MAKE) -C ui format
