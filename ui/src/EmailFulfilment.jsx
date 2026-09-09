@@ -8,7 +8,7 @@ import {
   MenuItem,
   Select,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import { errorAlert, getEmailFulfilmentTemplatesForSurvey } from "./Utils";
 import FulfilmentPersonalisationForm from "./FulfilmentPersonalisationForm";
 

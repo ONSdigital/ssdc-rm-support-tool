@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { convertStatusText } from "./common";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
 import {
   Button,
   CircularProgress,
@@ -13,11 +13,11 @@ import {
   Snackbar,
   SnackbarContent,
   Typography,
-} from "@material-ui/core";
-import TableContainer from "@material-ui/core/TableContainer";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
+} from "@mui/material";
+import TableContainer from "@mui/material/TableContainer";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableBody from "@mui/material/TableBody";
 import JobDetails from "./JobDetails";
 import { errorAlert, getLocalDateTime } from "./Utils";
 
