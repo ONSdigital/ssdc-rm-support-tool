@@ -284,8 +284,8 @@ public class ActionRuleEndpoint {
           case SMS -> CREATE_SMS_ACTION_RULE;
           case EMAIL -> CREATE_EMAIL_ACTION_RULE;
           case EQ_FLUSH -> CREATE_EQ_FLUSH_ACTION_RULE;
-          default -> throw new IllegalStateException(
-              "Unexpected value: " + actionRuleDTO.getType());
+          default ->
+              throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
         };
 
     authUser.checkUserPermission(createdBy, collectionExercise.getSurvey().getId(), userActivity);
