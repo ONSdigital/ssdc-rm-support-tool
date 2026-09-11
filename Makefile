@@ -13,7 +13,7 @@ test-mvn:
 	CONTAINER_CLI=$(DOCKER) mvn clean verify jacoco:report
 
 test-ui:
-	cd ui && npm install && npx eslint . && npm test -- --watchAll=false
+	cd ui && npm install && npx eslint . && npm test
 
 run-dev-api: build
 	$(DOCKER) run -e spring_profiles_active=docker --network=ssdcrmdockerdev_default -p 9999:9999 europe-west2-docker.pkg.dev/ssdc-rm-ci/docker/ssdc-rm-support-tool:latest
