@@ -5,7 +5,7 @@ import static uk.gov.ons.ssdc.common.model.entity.UserGroupAuthorisedActivityTyp
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -47,7 +47,8 @@ public class IAPUser implements AuthUser {
       Optional<UUID> surveyId, String userEmail) {
     User user = getUser(userEmail);
 
-    Set<UserGroupAuthorisedActivityType> result = new HashSet<>();
+    Set<UserGroupAuthorisedActivityType> result =
+        EnumSet.noneOf(UserGroupAuthorisedActivityType.class);
     for (UserGroupMember groupMember : user.getMemberOf()) {
       for (UserGroupPermission permission : groupMember.getGroup().getPermissions()) {
         if (permission.getAuthorisedActivity() == SUPER_USER
