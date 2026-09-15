@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,9 @@ public class FileUploadEndpoint {
     UUID fileId = UUID.randomUUID();
 
     try (FileOutputStream fos = new FileOutputStream(fileUploadStoragePath + fileId);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+        BufferedReader reader =
+            new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 
       boolean firstLine = true;
 
@@ -40,8 +43,8 @@ public class FileUploadEndpoint {
           firstLine = false;
         }
 
-        fos.write(line.getBytes());
-        fos.write("\n".getBytes());
+        fos.write(line.getBytes(StandardCharsets.UTF_8));
+        fos.write("\n".getBytes(StandardCharsets.UTF_8));
       }
 
     } catch (IOException e) {
@@ -56,7 +59,8 @@ public class FileUploadEndpoint {
 
   private String stripBomFromStringIfExists(String stringToCheckAndStrip) throws IOException {
 
-    try (InputStream input = new ByteArrayInputStream(stringToCheckAndStrip.getBytes())) {
+    try (InputStream input =
+        new ByteArrayInputStream(stringToCheckAndStrip.getBytes(StandardCharsets.UTF_8))) {
 
       // Read in the length of a possible BOM in bytes
       byte[] firstFewBytes = input.readNBytes(BYTE_ORDER_MARK.length);
@@ -67,7 +71,7 @@ public class FileUploadEndpoint {
       }
 
       // We've already read the BOM length at the start, so now make into a string
-      return new String(input.readAllBytes());
+      return new String(input.readAllBytes(), StandardCharsets.UTF_8);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
