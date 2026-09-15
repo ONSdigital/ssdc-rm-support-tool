@@ -219,8 +219,8 @@ public class ActionRuleEndpoint {
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
         }
       }
-      case OUTBOUND_TELEPHONE, FACE_TO_FACE, DEACTIVATE_UAC, EQ_FLUSH -> {
-        // These action rule types have no template to look up
+      default -> {
+        // The remaining action rule types have no template to look up
       }
     }
 
