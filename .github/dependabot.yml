@@ -10,6 +10,7 @@ updates:
       time: "07:00"
       timezone: "Europe/London"
     labels:
+      - "dependencies"
       - "patch"
       - "java"
     # Major version updates (when there are no security issues) are ignored.
@@ -58,6 +59,7 @@ updates:
       time: "07:00"
       timezone: "Europe/London"
     labels:
+      - "dependencies"
       - "patch"
       - "javascript"
     ignore:
@@ -95,6 +97,7 @@ updates:
       time: "07:00"
       timezone: "Europe/London"
     labels:
+      - "dependencies"
       - "patch"
       - "github-actions"
     ignore:

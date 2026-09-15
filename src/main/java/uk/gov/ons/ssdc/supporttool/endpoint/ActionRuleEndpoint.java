@@ -143,41 +143,28 @@ public class ActionRuleEndpoint {
 
     CollectionExercise collectionExercise =
         getCollectionExercise(actionRuleDTO.getCollectionExerciseId(), createdBy);
-    UserGroupAuthorisedActivityType userActivity;
 
     ExportFileTemplate exportFileTemplate = null;
     SmsTemplate smsTemplate = null;
     EmailTemplate emailTemplate = null;
     switch (actionRuleDTO.getType()) {
-      case EXPORT_FILE:
-        userActivity = CREATE_EXPORT_FILE_ACTION_RULE;
-        exportFileTemplate =
-            exportFileTemplateRepository
-                .findById(actionRuleDTO.getPackCode())
-                .orElseThrow(
-                    () -> {
-                      log.atWarn()
-                          .setMessage(
-                              "Failed to insert action rule, export file template not found")
-                          .addKeyValue("packcode", actionRuleDTO.getPackCode())
-                          .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
-                          .addKeyValue("userEmail", createdBy)
-                          .log();
-                      return new ResponseStatusException(
-                          HttpStatus.BAD_REQUEST, "Export file template not found");
-                    });
-        break;
-      case OUTBOUND_TELEPHONE:
-        userActivity = CREATE_OUTBOUND_PHONE_ACTION_RULE;
-        break;
-      case FACE_TO_FACE:
-        userActivity = CREATE_FACE_TO_FACE_ACTION_RULE;
-        break;
-      case DEACTIVATE_UAC:
-        userActivity = CREATE_DEACTIVATE_UAC_ACTION_RULE;
-        break;
-      case SMS:
-        userActivity = CREATE_SMS_ACTION_RULE;
+      case EXPORT_FILE ->
+          exportFileTemplate =
+              exportFileTemplateRepository
+                  .findById(actionRuleDTO.getPackCode())
+                  .orElseThrow(
+                      () -> {
+                        log.atWarn()
+                            .setMessage(
+                                "Failed to insert action rule, export file template not found")
+                            .addKeyValue("packcode", actionRuleDTO.getPackCode())
+                            .addKeyValue("httpStatus", HttpStatus.BAD_REQUEST)
+                            .addKeyValue("userEmail", createdBy)
+                            .log();
+                        return new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "Export file template not found");
+                      });
+      case SMS -> {
         smsTemplate =
             smsTemplateRepository
                 .findById(actionRuleDTO.getPackCode())
@@ -205,9 +192,8 @@ public class ActionRuleEndpoint {
           throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Phone number column does not exist");
         }
-        break;
-      case EMAIL:
-        userActivity = CREATE_EMAIL_ACTION_RULE;
+      }
+      case EMAIL -> {
         emailTemplate =
             emailTemplateRepository
                 .findById(actionRuleDTO.getPackCode())
@@ -232,13 +218,22 @@ public class ActionRuleEndpoint {
               .log();
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email column does not exist");
         }
-        break;
-      case EQ_FLUSH:
-        userActivity = CREATE_EQ_FLUSH_ACTION_RULE;
-        break;
-      default:
-        throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
+      }
+      default -> {
+        // The remaining action rule types have no template to look up
+      }
     }
+
+    UserGroupAuthorisedActivityType userActivity =
+        switch (actionRuleDTO.getType()) {
+          case EXPORT_FILE -> CREATE_EXPORT_FILE_ACTION_RULE;
+          case OUTBOUND_TELEPHONE -> CREATE_OUTBOUND_PHONE_ACTION_RULE;
+          case FACE_TO_FACE -> CREATE_FACE_TO_FACE_ACTION_RULE;
+          case DEACTIVATE_UAC -> CREATE_DEACTIVATE_UAC_ACTION_RULE;
+          case SMS -> CREATE_SMS_ACTION_RULE;
+          case EMAIL -> CREATE_EMAIL_ACTION_RULE;
+          case EQ_FLUSH -> CREATE_EQ_FLUSH_ACTION_RULE;
+        };
 
     authUser.checkUserPermission(createdBy, collectionExercise.getSurvey().getId(), userActivity);
 
@@ -284,8 +279,6 @@ public class ActionRuleEndpoint {
           case SMS -> CREATE_SMS_ACTION_RULE;
           case EMAIL -> CREATE_EMAIL_ACTION_RULE;
           case EQ_FLUSH -> CREATE_EQ_FLUSH_ACTION_RULE;
-          default ->
-              throw new IllegalStateException("Unexpected value: " + actionRuleDTO.getType());
         };
 
     authUser.checkUserPermission(createdBy, collectionExercise.getSurvey().getId(), userActivity);
