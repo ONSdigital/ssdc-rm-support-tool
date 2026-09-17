@@ -46,7 +46,7 @@ class SurveysList extends Component {
   getBackEndData = async () => {
     const authorisedActivities = await getAuthorisedActivities();
     this.setState({ authorisedActivities: authorisedActivities });
-    this.refreshDataFromBackend(this.state.authorisedActivities);
+    this.refreshDataFromBackend(authorisedActivities);
   };
 
   refreshDataFromBackend = async (authorisedActivities) => {
