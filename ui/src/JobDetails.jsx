@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogContentText,
   DialogActions,
-} from "@material-ui/core";
+} from "@mui/material";
 import { convertStatusText } from "./common";
 import { getLocalDateTime } from "./Utils";
 

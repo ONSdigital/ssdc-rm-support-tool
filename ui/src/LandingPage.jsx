@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "@fontsource/roboto";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import SurveysList from "./SurveysList";
 import ExportFileTemplateList from "./ExportFileTemplatesList";
 import SmsTemplatesList from "./SmsTemplatesList";

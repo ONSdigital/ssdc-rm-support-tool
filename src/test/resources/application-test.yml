@@ -15,6 +15,5 @@ exception-manager:
     port: 8667
     scheme: http
 
-
 iap-enforced: false # This ** MUST ALWAYS!! ** be true in production!!!
 dummyuseridentity: integration-tests@testymctest.com
