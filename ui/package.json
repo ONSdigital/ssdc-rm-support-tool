@@ -10,6 +10,7 @@
     "@mui/styles": "^6.5.0",
     "axios": "^1.18.0",
     "follow-redirects": "^1.15.6",
+    "jsdom": "^30.1.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-json-pretty": "^2.2.0",
