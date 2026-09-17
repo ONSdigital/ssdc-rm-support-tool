@@ -69,7 +69,7 @@ public class UserGroupMemberEndpoint {
                 });
 
     return userGroupMemberRepository.findByUser(user).stream()
-        .map(this::mapGroupMember)
+        .map(member -> mapGroupMember(member))
         .collect(Collectors.toList());
   }
 
@@ -98,7 +98,7 @@ public class UserGroupMemberEndpoint {
     }
 
     return userGroupMemberRepository.findByGroup(group).stream()
-        .map(this::mapGroupMember)
+        .map(member -> mapGroupMember(member))
         .collect(Collectors.toList());
   }
 
