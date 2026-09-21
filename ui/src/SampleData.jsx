@@ -9,7 +9,7 @@ import {
   MenuItem,
   Select,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import { errorAlert, getSampleColumns } from "./Utils";
 
 class SampleData extends Component {

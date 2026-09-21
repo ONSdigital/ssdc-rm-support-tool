@@ -14,7 +14,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-#     If these values change then you must update the max_file_size_in_mb in SampleUpload.js
+      #     If these values change then you must update the max_file_size_in_mb in SampleUpload.js
       max-file-size: 100MB
       max-request-size: 100MB
 
@@ -96,7 +96,7 @@ queueconfig:
   update-sample-sensitive-topic: event_update-sample-sensitive
   survey-update-event-topic: event_survey-update
   collection-exercise-update-event-topic: event_collection-exercise-update
-  publishtimeout: 30  # In seconds
+  publishtimeout: 30 # In seconds
 
 file-upload-storage-path: /tmp/
 
@@ -106,6 +106,5 @@ exceptionmanager:
     host: localhost
     port: 8666
   exceptioncountthreshold: 50
-
 
 CSP-upgrade-policy: "upgrade-insecure-requests;"

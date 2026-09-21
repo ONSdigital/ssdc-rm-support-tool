@@ -9,7 +9,7 @@ import {
   MenuItem,
   Typography,
   Box,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const SEARCH_FIELD_WIDTH = 200;
 const SEARCH_BUTTON_WIDTH = 200;
