@@ -145,7 +145,7 @@
     <dependency>
       <groupId>io.hypersistence</groupId>
       <artifactId>hypersistence-utils-hibernate-63</artifactId>
-      <version>3.15.5</version>
+      <version>3.16.0</version>
     </dependency>
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
@@ -160,7 +160,7 @@
     <dependency>
       <groupId>com.google.auth</groupId>
       <artifactId>google-auth-library-oauth2-http</artifactId>
-      <version>1.52.0</version>
+      <version>1.53.0</version>
     </dependency>
     <dependency>
       <groupId>com.opencsv</groupId>
